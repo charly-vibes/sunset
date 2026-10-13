@@ -18,8 +18,15 @@ Build on the executable **DSC 0.2** baseline while addressing the failure modes 
 2. [ACCEPTANCE.md](ACCEPTANCE.md) — falsifiable requirements and release gates.
 3. [RESEARCH-DECISIONS.md](RESEARCH-DECISIONS.md) — evidence/decision traceability.
 4. [ONTOLOGY-BOUNDARIES.md](ONTOLOGY-BOUNDARIES.md) — guaranteed expressivity, gap registry, extension/projection rules and counterexamples.
-5. `specs/` — six original capability specs plus a proposed ontology-boundaries capability.
+5. `openspec/specs/` (repo root, two levels up) — the capability specs, converted to OpenSpec format: 0.2 baselines deployed, 0.3 additions proposed as change `add-dsc-03`. This bundle originally shipped its own `specs/`; they were moved to avoid duplication (originals in git history).
 6. [CONTRACT-0.2.md](CONTRACT-0.2.md) — executable predecessor contract.
+
+## Relocation note
+
+This bundle is otherwise preserved as received; its original `specs/` directory
+was converted into the repo's `openspec/` tree (OpenSpec standard) and removed
+here so the corpus holds exactly one copy of each capability spec. Original
+file hashes remain in `manifest.json` history.
 
 ## Current executable truth
 

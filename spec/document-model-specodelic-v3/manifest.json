@@ -98,36 +98,9 @@
       "sha256": "ce128560bece77bc537854139e294f2a421eac62898b3743932cfdbf3a71ee2c"
     },
     {
-      "path": "specs/document-adapters.md",
-      "sha256": "f5f18ef5165dddfd09f94a79025df4958f263dec295e3bf21d8edf6874e26c69"
-    },
-    {
-      "path": "specs/document-conformance.md",
-      "sha256": "73221be437bdeadcbcbba9b9326314db804589e1c4c999d66d41a30f3ab93693"
-    },
-    {
-      "path": "specs/document-core.md",
-      "sha256": "41bbd166dbe8a83b81e7983e0e76abdd14f0caf4d0835129d3a3cca50ac15cd1"
-    },
-    {
-      "path": "specs/document-evidence.md",
-      "sha256": "2061d9008f34263c9f766dd82b20d5830bf923d4b0656ae3cddcaec56b9f9399"
-    },
-    {
-      "path": "specs/document-ontology-boundaries.md",
-      "sha256": "0a1328077e291404a9ba014413978dd6161875ee8d7eb86b23711addc6220c8a"
-    },
-    {
-      "path": "specs/document-semantics.md",
-      "sha256": "ac6a4005877eb697f7f3c9218c426abace6a1627aecc1930bd00dd2bd22cef62"
-    },
-    {
-      "path": "specs/document-structure.md",
-      "sha256": "4fb2180afcb0b7780ddb4262bba73babb8cf5958634f43ad7894531f7cb48daa"
-    },
-    {
       "path": "validator.py",
       "sha256": "8666f25b0cf292a51349ffe0a5718a0679564d3ca55e7b8fd40deb18ecb10767"
     }
-  ]
+  ],
+  "relocated": "specs/ capability specs were converted to OpenSpec format at repo-root openspec/specs/ (0.2 baselines) and openspec/changes/add-dsc-03/ (0.3 proposals); originals in git history"
 }

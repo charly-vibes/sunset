@@ -7,7 +7,7 @@ DSC is a **deterministic, loss-aware document-structure substrate**, not a unive
 ## Provenance and status
 
 - Authoring model: OpenAI GPT-6; date: 2026-10-13.
-- Based on `CONTRACT.md`, `specs/`, `ACCEPTANCE.md`, and the comparative research recorded in `RESEARCH-DECISIONS.md`.
+- Based on `CONTRACT.md`, the capability specs (now at repo-root `openspec/`), `ACCEPTANCE.md`, and the comparative research recorded in `RESEARCH-DECISIONS.md`.
 - Repository/source commit: **UNKNOWN**. Normative for the **proposed** boundary policy only; no v0.3 implementation or interoperability test is claimed.
 - Terms **MUST**, **SHOULD**, **MAY** denote proposed behavioral requirements. They do not imply working validation.
 

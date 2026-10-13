@@ -25,9 +25,17 @@ and is preserved verbatim under [`spec/`](spec/document-model-specodelic-v3/).
 - [`CONTRACT-0.2.md`](spec/document-model-specodelic-v3/CONTRACT-0.2.md) — executable 0.2 predecessor contract
 - [`ACCEPTANCE.md`](spec/document-model-specodelic-v3/ACCEPTANCE.md) — falsifiable requirements and release gates
 - [`ONTOLOGY-BOUNDARIES.md`](spec/document-model-specodelic-v3/ONTOLOGY-BOUNDARIES.md) — guaranteed expressivity, gap registry, extension rules
-- [`specs/`](spec/document-model-specodelic-v3/specs/) — six capability specs plus the proposed ontology-boundaries capability
 - `fixtures/` — 0.2 descriptor fixtures (valid + invalid)
 - [`validator.py`](spec/document-model-specodelic-v3/validator.py) — reference validator, **deliberately frozen at 0.2**
+
+## Capability specs (OpenSpec)
+
+The bundle's capability specs live **once**, in OpenSpec standard form:
+
+- [`openspec/specs/`](openspec/) — six 0.2-baseline capability specs (deployed truth, validated by `validator.py`)
+- [`openspec/changes/add-dsc-03/`](openspec/changes/add-dsc-03/proposal.md) — the DSC 0.3 design proposal as spec deltas (design-only)
+
+The bundle's original `specs/` were converted into these and removed from the bundle — no duplicates.
 
 ## Current executable truth
 

@@ -71,32 +71,9 @@
       "sha256": "dbc3348e91b515bea98fc4ea80564574639d9acc6d083f172ad2f165a7dd344e"
     },
     {
-      "path": "specs/document-adapters.md",
-      "sha256": "b2c07142f04ed94fd8c34079ac386327cc47146f798779a1b0c020b5524b1c41"
-    },
-    {
-      "path": "specs/document-conformance.md",
-      "sha256": "a8237ccc4d7cdf0e012f0b324a0c3545080bce76c12fba6c08d3dd2367e69f78"
-    },
-    {
-      "path": "specs/document-core.md",
-      "sha256": "b4a2bf3f39dbac73b0ca720aa8c03b4ddc64db6f071c5bcfa012daaecd13965a"
-    },
-    {
-      "path": "specs/document-evidence.md",
-      "sha256": "37352616c7cb2565a0db110baabd3cd72987bdea888fba6a3d77a4ebea60f866"
-    },
-    {
-      "path": "specs/document-semantics.md",
-      "sha256": "fe2a83c367decdcde9942c0b0da88105b34fa39c9d3bcefb590715fbf72873f9"
-    },
-    {
-      "path": "specs/document-structure.md",
-      "sha256": "2119f3abee1ed50175fd305c7aa98bd830ccb7f163d7722008776e50a2b7e201"
-    },
-    {
       "path": "validator.py",
       "sha256": "8666f25b0cf292a51349ffe0a5718a0679564d3ca55e7b8fd40deb18ecb10767"
     }
-  ]
+  ],
+  "relocated": "specs/ capability specs were converted to OpenSpec format at repo-root openspec/specs/ (0.2 baselines) and openspec/changes/add-dsc-03/ (0.3 proposals); originals in git history"
 }

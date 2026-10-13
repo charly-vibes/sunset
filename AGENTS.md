@@ -7,11 +7,21 @@ This project uses **bd** (beads) for issue tracking. Run `bd prime` for full wor
 `sunset` hosts the **DSC 0.3 (Document Structural Core) specification
 proposal** — preserved verbatim under `spec/document-model-specodelic-v3/`.
 
+## Spec layout (single source of truth)
+
+- Capability specs live ONLY under `openspec/` (OpenSpec standard:
+  `openspec/specs/<capability>/spec.md` = 0.2 deployed truth;
+  `openspec/changes/add-dsc-03/` = 0.3 design proposal). The research bundle's
+  original `specs/` were converted there — never re-create a second copy.
+- Spec edits: `openspec validate --specs --strict` and
+  `openspec validate add-dsc-03 --strict` must pass.
+
 Rules when touching the bundle:
 
 - The bundle is a **preserved research artifact** — do not rewrite, rename, or
   "improve" its documents in place. Provenance (agent/model, date, upstream
-  zip) is part of the record.
+  zip) is part of the record. (Recorded deviation: its `specs/` were moved to
+  `openspec/` to avoid duplication; originals are in git history.)
 - `validator.py` is **deliberately frozen at 0.2**. Never describe it as a 0.3
   validator; it must reject 0.3 descriptors.
 - 0.3 contract documents (`CONTRACT.md`, `ACCEPTANCE.md`,
