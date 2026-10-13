@@ -1,5 +1,9 @@
-> *Nothing gold can stay*
-> — Robert Frost
+> *I scanned the menu options*
+> *I did not have a choice*
+> *I'd like to teach the world to sing*
+> *But I do not have a voice*
+>
+> — A Sunset, PULP
 
 # sunset
 
