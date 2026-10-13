@@ -4,7 +4,12 @@
 # Update deliberately; the conformance test (dulce-de-leche
 # tests/standard_conformance.rs) requires this file to exist.
 #
-# §4 matrix row (sunset): pretender ❌ · wai ❌ · bd ✅ · openspec ❌ · ddl ✅
+# §4 matrix row (sunset): pretender ❌ · wai ✅ · bd ✅ · openspec ✅ · ddl ✅
+# Note: spec-only repo (no CLI yet) — dogfooding scope is intentionally
+# minimal; full conformance is deferred to ddl onboarding (beads sunset-408).
+# pretender remains unpinned until a gate-bearing workflow exists.
 [tools]
 dulce-de-leche = "0.7.0"   # crates.io (bin: ddl)
 bd = "1.3.0"               # beads — pinned GitHub release download (no versioned homebrew-core formula)
+wai = "2026.10.10"         # crates.io: wai-cli (.wai workspace initialized)
+openspec = "0.19.0"        # npm: @fission-ai/openspec (spec gates in justfile)

@@ -12,16 +12,20 @@
 
 > **Why:** document extractors claim structural completeness they cannot
 > prove — merged reading orders, silently dropped layout, unattributed text
-> transformations. sunset hosts the **DSC 0.3 (Document Structural Core)**
-> specification proposal, which keeps multiple structural views,
+> transformations. sunset hosts the **DSC (Document Structural Core)** spec
+> corpus — an executable 0.2 baseline plus the 0.3 proposal — which keeps
+> multiple structural views,
 > source-addressable selectors, explicit interpretation provenance, and honest
 > extraction coverage — uncertainty preserved, never merged away.
 > **Status:** [experimental](docs/src/status.md) · spec proposal, no implementation yet · [Bundle](spec/document-model-specodelic-v3/README.md)
 
-`sunset` is the home of the **DSC 0.3 specification proposal** in the
-[charly-vibes](https://github.com/charly-vibes) tool fleet. The bundle landed
-here from the specodelic v3 research pass (`document-model-specodelic-v3`)
-and is preserved verbatim under [`spec/`](spec/document-model-specodelic-v3/).
+`sunset` is the home of the **DSC specification corpus** in the
+[charly-vibes](https://github.com/charly-vibes) tool fleet: an executable
+**0.2 baseline** plus the **0.3 design proposal**. The research bundle landed
+here from the specodelic v3 pass (`document-model-specodelic-v3`) and is
+preserved as received under [`spec/`](spec/document-model-specodelic-v3/) —
+except its `specs/`, which were converted to the OpenSpec tree and removed
+from the bundle (see below).
 
 ## What's in the bundle
 
@@ -36,7 +40,7 @@ and is preserved verbatim under [`spec/`](spec/document-model-specodelic-v3/).
 
 The bundle's capability specs live **once**, in OpenSpec standard form:
 
-- [`openspec/specs/`](openspec/) — six 0.2-baseline capability specs (deployed truth, validated by `validator.py`)
+- [`openspec/specs/`](openspec/) → the six 0.2-baseline capability specs (deployed truth, validated by `validator.py`)
 - [`openspec/changes/add-dsc-03/`](openspec/changes/add-dsc-03/proposal.md) — the DSC 0.3 design proposal as spec deltas (design-only)
 
 The bundle's original `specs/` were converted into these and removed from the bundle — no duplicates.
