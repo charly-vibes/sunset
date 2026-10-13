@@ -15,6 +15,11 @@
 - DSC 0.3 is a design proposal: see
   [`openspec/changes/add-dsc-03/`](../../openspec/changes/add-dsc-03/proposal.md).
   No 0.3 validator, profiles, adapters, or benchmarks exist.
+- Active 0.3 deltas include the review corrections; the preserved research
+  draft is historical input where its details differ.
+- The baseline's [known validation limitations](baseline-limitations.md)
+  remain visible. The proposal composition regression checks specification
+  replacement only, not 0.3 behavior.
 - No CLI ships from this repo yet; ddl registry onboarding is tracked in
   beads (`sunset-408`).
 
@@ -34,7 +39,10 @@ until a CLI ships — tracked in beads `sunset-408`):
 
 ## Acceptance gates for the 0.3 proposal
 
-The falsifiable release gates live in the bundle's
-[ACCEPTANCE.md](../../spec/document-model-specodelic-v3/ACCEPTANCE.md); the
-per-capability deltas are in
-[`openspec/changes/add-dsc-03/`](../../openspec/changes/add-dsc-03/proposal.md).
+The bundle's [ACCEPTANCE.md](../../spec/document-model-specodelic-v3/ACCEPTANCE.md)
+provides the original cases. The active
+[capability deltas](../../openspec/changes/add-dsc-03/proposal.md) supersede
+conflicting details and add precise profile, Unicode, coverage, lineage and
+reader-comparison cases. The
+[first-consumer demonstration](../../openspec/changes/add-dsc-03/specs/document-conformance/spec.md#requirement-first-consumer-demonstration)
+is specified but unexecuted; adoption benefit remains unproven.

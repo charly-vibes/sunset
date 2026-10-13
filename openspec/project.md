@@ -34,3 +34,9 @@ change `add-dsc-03` — never described as implemented.
   `openspec validate add-dsc-03 --strict` must pass.
 - Property traces (which fixture exercises which requirement) live in the
   scenario text, mirroring the bundle's Properties tables.
+- `python3 -B -m unittest discover -s tests -v` exercises actual OpenSpec
+  composition in an isolated temporary workspace. Changed baseline rules
+  must be replaced, not retained beside contradictory additions.
+- Active 0.3 capability deltas supersede conflicting details in the immutable
+  research draft; rationale is in `changes/add-dsc-03/design.md`. Specification
+  checks do not establish 0.3 descriptor or real-carrier conformance.
