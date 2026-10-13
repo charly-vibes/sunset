@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-13",
+  "model": "OpenAI GPT-6",
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "22400d75a269b1311efbad7c0295a0f3ac0284b910d586c976fc73cb1104a1b3"
+    },
+    {
+      "path": "FIXES.md",
+      "sha256": "4e5fa6e36d3c888626176473058d3aa053f5d267129d25199a1530c768910abb"
+    },
+    {
+      "path": "README.md",
+      "sha256": "d4e1f7eef4c37b355ce080a46b791f9e92c59e22f5f91259c1934348620bdafb"
+    },
+    {
+      "path": "coverage.json",
+      "sha256": "b3378d4d53a19dee54ed2ed677e59724805a70df109c80f371196cb9e97d0e91"
+    },
+    {
+      "path": "fixtures/expected.json",
+      "sha256": "a7c6c9f4b31d14a1f9af622f5dbf2c27425afba78e559867aecc90ad871630db"
+    },
+    {
+      "path": "fixtures/invalid/cycle.json",
+      "sha256": "7e9e8a303d7ae5628b3ab7db5c5f05440f31876279c536ea36b2d3486403a2b4"
+    },
+    {
+      "path": "fixtures/invalid/dangling-evidence.json",
+      "sha256": "eedcaf9accf4be7eaa977544614c9c36869ba73d6f9ec04b4e2a43d4421b9f9e"
+    },
+    {
+      "path": "fixtures/invalid/dangling.json",
+      "sha256": "1e6c34d6ea657d643a71e4764d22991ccd10bb71ef1ec75a32b68e91d673b2d4"
+    },
+    {
+      "path": "fixtures/invalid/lineage-cycle.json",
+      "sha256": "462a8bc8dbcca875cd0f9ed16424ad9ede7407981b801c6e4bc78be195e32d81"
+    },
+    {
+      "path": "fixtures/invalid/order-cycle.json",
+      "sha256": "f3199086b2bfa68fc25e07dc595f7b8e293f839e03d3624b573eb94f4cbe4810"
+    },
+    {
+      "path": "fixtures/invalid/unknown-extension.json",
+      "sha256": "013e563339e9b669970591251280c63bcd5fbca046f058c6956047d701204573"
+    },
+    {
+      "path": "fixtures/results/unsupported.json",
+      "sha256": "d6208b5d1eea6b7b138df3da4f5dfcb1af3beb0d69ad63f2405a9261267cd261"
+    },
+    {
+      "path": "fixtures/valid/continuation.json",
+      "sha256": "528a836f0a7d13bb5a364ef45e642d97dafd333b879e29176249cf0f659982d0"
+    },
+    {
+      "path": "fixtures/valid/disputed.json",
+      "sha256": "eaf05a4bf39687722394143e7c4ea2310eb1c3a19f67e709013d5005a2ffa65e"
+    },
+    {
+      "path": "fixtures/valid/epub.json",
+      "sha256": "3bf23f43b7502a24161659a0920a22d0a9d2c87c8176b70b250bedbe805be8fd"
+    },
+    {
+      "path": "fixtures/valid/mixed-pdf.json",
+      "sha256": "8e48dcb715f14fd14591f4a51efd0d0572cc70730e9e4e3a9a2028c09eeb6c5f"
+    },
+    {
+      "path": "fixtures/valid/two-regions.json",
+      "sha256": "dbc3348e91b515bea98fc4ea80564574639d9acc6d083f172ad2f165a7dd344e"
+    },
+    {
+      "path": "specs/document-adapters.md",
+      "sha256": "b2c07142f04ed94fd8c34079ac386327cc47146f798779a1b0c020b5524b1c41"
+    },
+    {
+      "path": "specs/document-conformance.md",
+      "sha256": "a8237ccc4d7cdf0e012f0b324a0c3545080bce76c12fba6c08d3dd2367e69f78"
+    },
+    {
+      "path": "specs/document-core.md",
+      "sha256": "b4a2bf3f39dbac73b0ca720aa8c03b4ddc64db6f071c5bcfa012daaecd13965a"
+    },
+    {
+      "path": "specs/document-evidence.md",
+      "sha256": "37352616c7cb2565a0db110baabd3cd72987bdea888fba6a3d77a4ebea60f866"
+    },
+    {
+      "path": "specs/document-semantics.md",
+      "sha256": "fe2a83c367decdcde9942c0b0da88105b34fa39c9d3bcefb590715fbf72873f9"
+    },
+    {
+      "path": "specs/document-structure.md",
+      "sha256": "2119f3abee1ed50175fd305c7aa98bd830ccb7f163d7722008776e50a2b7e201"
+    },
+    {
+      "path": "validator.py",
+      "sha256": "8666f25b0cf292a51349ffe0a5718a0679564d3ca55e7b8fd40deb18ecb10767"
+    }
+  ]
+}

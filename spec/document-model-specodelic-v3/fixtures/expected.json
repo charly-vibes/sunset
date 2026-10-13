@@ -1,0 +1,8 @@
+{
+  "dangling.json": "dangling_reference",
+  "cycle.json": "containment_cycle",
+  "order-cycle.json": "order_cycle",
+  "unknown-extension.json": "unknown_term",
+  "dangling-evidence.json": "dangling_reference",
+  "lineage-cycle.json": "lineage_cycle"
+}

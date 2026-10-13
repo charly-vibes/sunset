@@ -1,0 +1,10 @@
+{
+  "descriptor_fixtures": "executed by validator.py test",
+  "actual_native_pdf_adapter": "MISSING",
+  "actual_scanned_pdf_adapter": "MISSING",
+  "actual_epub_adapter": "MISSING",
+  "actual_html_markdown_csv_adapters": "MISSING",
+  "independent_second_implementation": "MISSING",
+  "raw_source_fixture_integration": "MISSING",
+  "specodelic_cli_lint": "NOT_RUN"
+}

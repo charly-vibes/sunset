@@ -1,0 +1,13 @@
+{
+  "spec_version": "0.3-proposed",
+  "implementation": "0.2-only",
+  "v03_schema_validator": "missing",
+  "v03_positive_negative_fixtures": "missing",
+  "real_pdf_adapter": "missing",
+  "real_epub_adapter": "missing",
+  "reader_independence": "missing",
+  "status": "incomplete",
+  "ontology_boundary_spec": "design_only",
+  "ontology_projection_evaluator": "missing",
+  "ontology_boundary_fixtures": "missing"
+}

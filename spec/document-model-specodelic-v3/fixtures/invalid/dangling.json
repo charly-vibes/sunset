@@ -1,0 +1,91 @@
+{
+  "version": "0.2",
+  "id": "sample",
+  "source": {
+    "format": "json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "locator": "local:sample"
+  },
+  "regions": [
+    {
+      "id": "root",
+      "view": "logical",
+      "kind": "document"
+    },
+    {
+      "id": "p1",
+      "view": "physical",
+      "kind": "page"
+    },
+    {
+      "id": "p2",
+      "view": "physical",
+      "kind": "page"
+    }
+  ],
+  "contents": [
+    {
+      "id": "txt",
+      "kind": "text",
+      "value": "A\nB"
+    }
+  ],
+  "relations": [
+    {
+      "id": "c1",
+      "kind": "contains",
+      "from": "root",
+      "to": "nonexistent"
+    },
+    {
+      "id": "c2",
+      "kind": "contains",
+      "from": "root",
+      "to": "p2"
+    },
+    {
+      "id": "b1",
+      "kind": "has-content",
+      "from": "p1",
+      "to": "txt"
+    },
+    {
+      "id": "b2",
+      "kind": "has-content",
+      "from": "p2",
+      "to": "txt"
+    },
+    {
+      "id": "o1",
+      "kind": "precedes",
+      "from": "p1",
+      "to": "p2"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "ann",
+      "target": "p1",
+      "term": "demo:poem",
+      "value": "yes",
+      "origin": "manual",
+      "status": "supported",
+      "evidence": [
+        "ev"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev",
+      "origin": "source",
+      "source_ref": "local:sample#p1"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "demo",
+      "version": "1"
+    }
+  ]
+}
