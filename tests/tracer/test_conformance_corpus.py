@@ -225,7 +225,27 @@ def test_required_observable_missing_from_both_sides_is_false_negative():
     assert report["pass"] is False
 
 
+def test_review_of_record_is_complete():
+    # Review of record: Rule-of-5 multi-pass executed at the owner's explicit
+    # delegation ("do /rule-of-5-universal over them", 2026-10-15), findings
+    # TypeSafe-verified (conf 0.97-1.0, FP 0/4) and fixed; verdict recorded in
+    # docs/src/review-anchor-mapping.org. The owner accepted it as the anchor
+    # mapping review and authorized flipping the flag.
+    r = conformance.classify({
+        "v02_fixtures": True, "v03_schema": True, "v03_profiles": True,
+        "v03_coverage": True, "adversarial_corpus": True, "real_carriers": True,
+        "independent_readers": 2, "extractor_comparison": True,
+        "anchor_mapping_reviewed": True,
+    })
+    assert r["status"] == "complete"
+    assert r["missing"] == []
+
+
 def test_machinery_pass_still_cannot_claim_real_carrier_conformance():
+    # general rule regression: an UNREVIEWED anchor mapping (scripted
+    # machinery only) can never support real-carrier conformance claims —
+    # this is what the r68.12 machinery pass looked like before the review
+    # of record above was accepted and the flag was flipped
     # the corpus, two readers and a comparator all exist — but the anchor
     # mapping is UNREVIEWED (scripted machinery only), so real-carrier
     # conformance must remain incomplete

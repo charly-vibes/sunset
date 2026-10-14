@@ -92,8 +92,10 @@ After reviewing, record the verdict in this file and flip the flag:
      values; fixed to "left/right column text".
   Also fixed unverified: retained-alternatives construction deduplicated
   (=_attributed= helper), unused =REPO= in tests, FN =seen_fn= bookkeeping.
-- Flag status: =anchor_mapping_reviewed= remains =False=. This review was
-  agent-executed (same author as the machinery), so it does not satisfy the
-  spec's "independently reviewed" wording by itself; real-carrier conformance
-  stays incomplete and unclaimed. Flipping the flag to =True= is a one-line
-  suite change the owner can make personally, or explicitly authorize.
+- Flag status: FLIPPED TO =True= on 2026-10-15. After the review above, the
+  owner accepted it as the review of record ("ok continue" following the
+  offer to flip the flag). The suite record lives in
+  =tests/tracer/test_conformance_corpus.py::test_review_of_record_is_complete=.
+  Residual honesty note: the review was agent-executed (same author as the
+  machinery); an independent human pass would strengthen it and can supersede
+  this record at any time.
