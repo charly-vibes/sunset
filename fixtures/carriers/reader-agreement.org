@@ -1,0 +1,70 @@
+#+title: Two-reader annotation report (r68.12 pre-work)
+#+date: <2026-10-14 Tue>
+
+* Setup
+
+Two independent annotation personas ran in isolated sandboxes
+(/var/tmp/reader-a, /var/tmp/reader-b) over IDENTICAL pristine carrier copies
+(no reader saw the other's output; pre-existing placeholder annotations were
+removed from both layers before deployment). Each reader annotated all 10 PDF
+fixtures (2 annotations each) plus the EPUB via a CFI sidecar JSON.
+
+* Readers
+
+- reader-A — "Dr. Elena Sacriste", careful literature professor: ONE
+  Highlight per file quoting the document's central claim (Square over the
+  densest region for image-only scans), ONE ≤180-char Text margin note ("ES:")
+  on document STRUCTURE. Author tag = reader-A.
+- reader-B — "Ing. Rafa Quiroga", skeptical QA engineer: ONE StrikeOut per
+  file on the most suspicious/malformed fragment (Ink polyline on image-only
+  scans), ONE FreeText risk note ("RQ:") predicting extractor failure modes.
+  Author tag = reader-B.
+
+Deliberately disjoint annotation TAXONOMIES (Highlight vs StrikeOut, Text vs
+FreeText) make the two layers distinguishable in one PDF; they also give the
+adapters a wider annotation-type surface for pdf:annotations preservation.
+
+* Layers deployed
+
+- fixtures/carriers/*.pdf — pristine carriers + reader-A layer (2/file).
+- fixtures/carriers/reader-b/*.pdf — identical carriers + reader-B layer
+  (2/file). Filenames carry .annotated.pdf there.
+- fixtures/carriers/reader-a-epub-annotations.json (3 CFI annots, ra-*)
+- fixtures/carriers/reader-b-epub-annotations.json (3 CFI annots, rb-*)
+
+Placeholder reader-mock annotations were removed from both layers before
+deployment (52 stripped from the reader-b sandbox; reader-a's sandbox had
+already dropped them).
+
+* Region agreement (rect intersection over smaller rect, same page)
+
+Reader A anchors central claims; reader B anchors anomalies — agreement
+expected only where a document's central element IS its anomaly:
+
+| File                                 | A anchor ∩ B anchor                  |
+|--------------------------------------+--------------------------------------|
+| bank-statement-ca-excerpt.pdf        | 1/1 — 100% (both on "SALDO           |
+|                                      | ANTERIOR 1.234,56")                  |
+| all other 9 PDFs                     | 0/1 (different regions, by design)   |
+
+Page-level agreement: 10/10 readers picked the SAME first page as most
+salient; region-level agreement 1/10. This is the expected independent-reader
+divergence profile: full byte agreement is the r68.12 gate once humans run the
+exercise; this scripted run exists to exercise the machinery, not to claim
+conformance.
+
+* Notable reader-B risk findings (extractor-relevant)
+
+- budgeting-basics: endnote rebuilt one word per line — line-rebuilders will
+  misjoin.
+- agentic-patterns: URL hard-wrapped mid-token breaks link rect mapping.
+- cta-cte: truncated page-edge row + out-of-order dates break balance replay.
+- bank-transfer: 79-hyphen rule extracts as a real text line, drowning anchors.
+- estado-deuda: truncated label "Puerta alter:", zero-filled fields.
+- lab-result & diario: zero text layer — observations exist only as pixels.
+
+* Status caveat
+
+Scripted persona annotations = machinery exercise ONLY. tasks.md 3.1
+"independently annotated" conformance still requires HUMAN readers;
+deferred per reviewer decision (2026-10-14).

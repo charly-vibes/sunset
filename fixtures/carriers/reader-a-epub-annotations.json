@@ -1,0 +1,27 @@
+{
+  "carrier": "sunset-carrier-sample.epub",
+  "annotator": "reader-A",
+  "annotations": [
+    {
+      "id": "ra-1",
+      "type": "Highlight",
+      "target": "epubcfi(/6/4[c1]!/4/2/1:0,/4/2/1:114)",
+      "text_quote": "This synthetic chapter exists to exercise EPUB adapter features: manifest,\nspine, navigation and resource enumeration.",
+      "note": "ES: opening frame sentence; the chapter announces its own structural function before any observation is made."
+    },
+    {
+      "id": "ra-2",
+      "type": "Text",
+      "target": "epubcfi(/6/4[c1]!/4/4",
+      "text_quote": "Documents must declare their observations, not prove completeness.",
+      "note": "ES: terse thesis line set apart as its own paragraph; ch1 and ch2 close on the same two sentences, a deliberate mirrored structure."
+    },
+    {
+      "id": "ra-3",
+      "type": "Highlight",
+      "target": "epubcfi(/6/6[c2]!/4/6/1:0,/4/6/1:50)",
+      "text_quote": "Coverage is scoped, independent, and conservative.",
+      "note": "ES: closing principle of ch2, repeated verbatim from ch1; the excerpt is built as an exact structural rhyme."
+    }
+  ]
+}

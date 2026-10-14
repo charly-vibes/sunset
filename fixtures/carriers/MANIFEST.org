@@ -1,0 +1,120 @@
+#+title: Real carrier fixture samples (sunset-r68.11 pre-work)
+#+date: <2026-10-14 Tue>
+
+* Purpose
+
+Real PDF/EPUB carriers prepared for sunset-r68.11 ("Real PDF/EPUB fixtures and
+adapters preserving source observations", tasks.md 3.1). All PDFs now carry
+reader annotations (Highlight/Text/Underline/StrikeOut/FreeText/Square) so
+=pdf:annotations= adapters have real human-style observations to preserve.
+The EPUB carries a CFI-annotation sidecar.
+
+* PII screening and redaction (2026-10-14)
+
+Screened with pdftotext/pymupdf/pikepdf over full text, docinfo, XMP,
+annotation contents, and embedded-file scan. No personal data in any fixture:
+
+- no CUIT/CUIL/DNI, CBU, account, or reference numbers (redacted where present)
+- no real person or business names (redacted to MOCK values)
+- no real addresses or bank names (redacted to mock addresses / "Banco Mock")
+- no embedded attachments; no XMP identity data (only public ISBN)
+- excerpt docinfo scrubbed to Title + sampler producer string
+
+Redaction method: pymupdf =add_redact_annot= (real content removal, not
+overlay), mock text written back at the same coordinates; post-redaction text
+re-screened clean.
+
+* Inventory
+
+| Fixture                             | Pages | Annots | Images | Features exercised                      |
+|-------------------------------------+-------+--------+--------+------------------------------------------|
+| agentic-patterns-excerpt.pdf        |     6 |      2 |      0 | glyphs, 276 link annotations (src)       |
+| accounting-made-simple-excerpt.pdf  |     6 |      4 |      6 | glyphs, images, links (81 src)           |
+| budgeting-basics-excerpt.pdf        |     3 |      3 |     12 | glyphs, dense images (305 src)           |
+| diario-de-poesia-excerpt.pdf        |     6 |      2 |      6 | scanned image-only pages (36pp src)      |
+| invoice-arca-redacted.pdf           |     3 |      2 |      0 | ARCA factura (text); QRs removed         |
+| lab-result-redacted.pdf             |     6 |      2 |      6 | medical lab report, rasterized redaction |
+| bank-statement-ca-excerpt.pdf       |     1 |      2 |      0 | bank statement, bank name mocked         |
+| bank-transfer-redacted.pdf          |     1 |      3 |      0 | transfer receipt, all parties mocked     |
+| estado-deuda-abl-redacted.pdf       |     1 |      3 |      0 | gov debt constancia, address mocked      |
+| cta-cte-propietario-redacted.pdf    |     2 |      3 |      0 | account ledger, names/CUIT mocked        |
+| sunset-carrier-sample.epub          |     2 |  (cfi) |      - | synthetic EPUB 3: manifest/spine/nav/svg |
+| sunset-carrier-sample-annotations.json |  - |      3 |      - | CFI highlight/text sidecar for the EPUB  |
+
+Annotation types present across set: Highlight, Text, Underline, FreeText,
+Square. The image-only scans (diario, lab-result) carry Text/Square since
+search-based Highlight needs a text layer.
+
+* Provenance and anonymization detail
+
+- agentic-patterns-excerpt.pdf: pp 1,2,3,4,350,399 of ~/Downloads/book.pdf
+  ("Agentic Patterns", LaTeX/pandoc, 400pp)
+- accounting-made-simple-excerpt.pdf: pp 1,2,7,8,52,103 of "Mike Piper -
+  Accounting Made Simple" (~/Downloads/fpa/, libgen copy)
+- budgeting-basics-excerpt.pdf: pp 217,241,254 of "Shim et al. - Budgeting
+  Basics and Beyond" (~/Downloads/fpa/, libgen copy)
+- diario-de-poesia-excerpt.pdf: pp 1,2,3,4,18,35 of ~/Downloads/
+  Diario-de-Poesía-n1.pdf (historic magazine, winter 1986, digitized by
+  Archivo Histórico de Revistas Argentinas / ahira.com.ar; public publication
+  content, contributor names are publication text — kept; watermark kept as
+  provenance)
+- bank-statement-ca-excerpt.pdf: finanzas test fixture sample.pdf ("Resumen
+  Galicia" → bank name mocked; saldo 1.234,56 was already synthetic)
+- bank-transfer-redacted.pdf: uarup comprobante30145576014251106.pdf, all
+  counterparties, CBU, CUIT, account, bank, reference mocked
+- estado-deuda-abl-redacted.pdf: ~/Downloads/ESTADO-DEUDA-ABL-255229.pdf,
+  address and partida mocked
+- cta-cte-propietario-redacted.pdf: finanzas 2025-05-23_cta-cte-propietario-
+  uf32-historico.pdf, admin name, addresses, CUIT, owner name mocked
+- invoice-arca-redacted.pdf: ~/Downloads/20418400219_011_00003_00000001.pdf
+  (ARCA factura C, 3 copies ORIGINAL/DUPLICADO/TRIPLICADO). Redacted: issuer
+  and client names, both CUITs/IB, both domiciles, project line (real person
+  name), CAE; all QR codes removed (they encode invoice + CUIT data).
+- lab-result-redacted.pdf: ~/Downloads/35929.pdf (medical lab report,
+  6pp, image-only scan). Sensitive health data — header, lab identity
+  (doctor/MP/phone/email), patient, requesting physician, protocol number and
+  validation footer covered and replaced with MOCK values, then every page
+  rasterized at 150dpi and rebuilt so original pixels are discarded. Lab
+  VALUES kept (identity-free once mocked). Rasterization means this carrier
+  has no text layer — glyphs coverage is genuinely omitted for it.
+- sunset-carrier-sample.epub: generated locally (own content, no third-party)
+
+* Layers deployed
+
+Two scripted reader personas ran in isolated sandboxes over identical
+pristine carriers (details and agreement analysis in reader-agreement.org):
+
+- Top-level *.pdf: carriers + reader-A layer ("Dr. Elena Sacriste", careful
+  academic: 1 Highlight/Square anchor + 1 ES: Text note per file).
+- reader-b/*.annotated.pdf: identical carriers + reader-B layer ("Ing. Rafa
+  Quiroga", skeptical QA: 1 StrikeOut/Ink anchor + 1 RQ: FreeText/Text note
+  per file), plus annotate.py as generation provenance.
+- reader-a-epub-annotations.json / reader-b-epub-annotations.json: two
+  disjoint CFI annotation sets for sunset-carrier-sample.epub.
+- Placeholder reader-mock annotations were removed from all deployed layers.
+
+Region agreement between readers: 1/10 files (bank-statement saldo row,
+100% overlap); same first page chosen 10/10. See reader-agreement.org.
+
+* Annotation provenance caveat
+
+Scripted persona annotations (author tags reader-A / reader-B) are a
+machinery exercise for r68.12; they are NOT conformance evidence. tasks.md
+3.1 requires *independently annotated* carriers with HUMAN readers;
+deferred per reviewer decision (2026-10-14).
+
+* Caveats
+
+- Copyright: agentic-patterns/accounting/budgeting/diario are published
+  works; excerpts are for local fixture testing only — do not redistribute or
+  push to any public remote. (The full profit-first.epub copy was removed for
+  this reason, and litoral-dark-logo.pdf was dropped per reviewer decision;
+  EPUB fixture is now the synthetic sunset-carrier-sample.epub.)
+- Dates were kept as-is (dates alone were not considered PII); amounts in the
+  ledger and transfer were left because they are mock values.
+- Sources rejected as PII-bearing without redaction: all
+  ak/finanzas/receipts/, ak/uarup/data/media/ (invoices/contracts with real
+  CUITs, names, addresses), ~/Downloads/ invoices/contracts/statements.
+- lab-result-redacted.pdf is medical-adjacent: health VALUES kept under
+  mocked identity. If that is deemed too sensitive for the repo even
+  anonymized, replace with a fully synthetic lab report.

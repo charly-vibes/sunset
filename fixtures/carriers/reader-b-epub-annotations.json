@@ -1,0 +1,27 @@
+{
+  "carrier": "sunset-carrier-sample.epub",
+  "annotator": "reader-B",
+  "annotations": [
+    {
+      "id": "rb-1",
+      "type": "Highlight",
+      "target": "epubcfi(/6/4[ch1]!/4/4/1:168,/4/4/1:225)",
+      "text_quote": "all content was authored for the sunset carrier fixtures.",
+      "note": "reader-B: soft-wrapped sentence spans 3 source lines; per-line text matching or naive offset CFI anchoring can fail to resolve the quote."
+    },
+    {
+      "id": "rb-2",
+      "type": "Text",
+      "target": "epubcfi(/6/6[ch2]!/4/2/1:0,/4/2/1:29)",
+      "text_quote": "Chapter 2: More Observations",
+      "note": "reader-B: ch1 and ch2 duplicate paragraph bodies and both reuse id='p2'; ID-based anchors are ambiguous across spine items."
+    },
+    {
+      "id": "rb-3",
+      "type": "Text",
+      "target": "epubcfi(/6/2[nav]!/4/2/1:0,/4/2/1:30)",
+      "text_quote": "Chapter 1: Sample Observations",
+      "note": "reader-B: identical string exists in nav.xhtml and the ch1 heading; text-only dedupe cannot disambiguate TOC anchor from body anchor."
+    }
+  ]
+}

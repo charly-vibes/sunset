@@ -1,0 +1,27 @@
+{
+  "carrier": "sunset-carrier-sample.epub",
+  "annotator": "reader-mock",
+  "annotations": [
+    {
+      "id": "a1",
+      "type": "Highlight",
+      "target": "epubcfi(/6/4[ch1]!/4/2/1:0,/4/2/1:40)",
+      "text_quote": "This synthetic chapter exists to exercise EPUB adapter features",
+      "note": "reader-mock: manifest/spine/nav feature sentence"
+    },
+    {
+      "id": "a2",
+      "type": "Text",
+      "target": "epubcfi(/6/4[ch1]!/4/4",
+      "text_quote": "Documents must declare their observations, not prove completeness.",
+      "note": "reader-mock: key requirement line"
+    },
+    {
+      "id": "a3",
+      "type": "Highlight",
+      "target": "epubcfi(/6/6[ch2]!/4/4/1:0,/4/4/1:30)",
+      "text_quote": "Coverage is scoped, independent, and conservative.",
+      "note": "reader-mock: coverage principle"
+    }
+  ]
+}
