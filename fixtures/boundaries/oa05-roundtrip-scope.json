@@ -1,0 +1,49 @@
+{
+  "_comment": "O-A05 roundtrip scope (sunset-r68.14). A text-only projection DSC -> plain text advertises a reverse mapping Q. Compliant: roundtrip claimed only for the text subset over a tested domain; geometry is outside the claim (and honestly fails when forced). Counterexample: 'full-fidelity' roundtrip badge. Gap O09 / acceptance O-A05.",
+  "compliant": {
+    "projection_id": "text-only-projection",
+    "version": "1",
+    "source": {"format": "dsc-0.3-descriptor", "version": "0.3"},
+    "target": {"ontology": "plain-text", "version": "1"},
+    "rules": [
+      {"id": "r-text", "source": "contents[kind=text]", "target": "text stream"}
+    ],
+    "scope": {"selector_resolution": "none-required", "required_profiles": []},
+    "coverage_inventory": ["text", "geometry"],
+    "losses": {
+      "text": {"disposition": "preserved", "justification": "text stream is the projection"},
+      "geometry": {"disposition": "unsupported", "justification": "page geometry has no encoding in plain text"}
+    },
+    "equivalence": "byte",
+    "roundtrip": {"claimed": true, "scope": "subset", "subset": ["text"], "tested_domain": ["fixture-text-samples/1"]},
+    "reverse": {"id": "text-to-dsc", "version": "1", "declared": true},
+    "source_relations": [],
+    "output_relations": [],
+    "profiles": []
+  },
+  "counterexample": {
+    "projection_id": "text-only-projection-overclaimed",
+    "version": "1",
+    "source": {"format": "dsc-0.3-descriptor", "version": "0.3"},
+    "target": {"ontology": "plain-text", "version": "1"},
+    "rules": [
+      {"id": "r-text", "source": "contents[kind=text]", "target": "text stream"}
+    ],
+    "scope": {"selector_resolution": "none-required", "required_profiles": []},
+    "coverage_inventory": ["text", "geometry"],
+    "losses": {
+      "text": {"disposition": "preserved", "justification": "text stream is the projection"},
+      "geometry": {"disposition": "unsupported", "justification": "page geometry has no encoding in plain text"}
+    },
+    "equivalence": "byte",
+    "roundtrip": {"claimed": true, "scope": "full", "subset": [], "tested_domain": []},
+    "reverse": {"id": "text-to-dsc", "version": "1", "declared": true},
+    "source_relations": [],
+    "output_relations": [],
+    "profiles": []
+  },
+  "observations": {
+    "text": {"equal": true},
+    "geometry": {"equal": false}
+  }
+}

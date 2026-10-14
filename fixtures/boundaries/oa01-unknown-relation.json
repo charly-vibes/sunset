@@ -1,0 +1,43 @@
+{
+  "_comment": "O-A01 unknown relation (sunset-r68.14). A domain ontology exports a 'cites' relation. Compliant: emitted through an external projection rule with a declared equivalence. Counterexample: silently rewritten as core 'precedes' (reading-order coercion). Gap O02 / acceptance O-A01.",
+  "compliant": {
+    "projection_id": "demo-cites-projection",
+    "version": "1",
+    "source": {"format": "dsc-0.3-descriptor", "version": "0.3", "vocabulary": "demo-domain/1"},
+    "target": {"ontology": "demo-ont", "version": "1"},
+    "rules": [
+      {"id": "r-cites", "source_relation": "cites", "target": "demo:cites", "via": "declared_equivalence"}
+    ],
+    "scope": {"selector_resolution": "none-required", "required_profiles": []},
+    "coverage_inventory": ["cites"],
+    "losses": {
+      "cites": {"disposition": "preserved", "justification": "emitted as demo:cites through rule r-cites"}
+    },
+    "equivalence": "structural",
+    "source_relations": ["cites"],
+    "output_relations": [
+      {"kind": "demo:cites", "derived_from": "cites", "via": "declared_equivalence"}
+    ],
+    "profiles": []
+  },
+  "counterexample": {
+    "projection_id": "coercing-cites-projection",
+    "version": "1",
+    "source": {"format": "dsc-0.3-descriptor", "version": "0.3", "vocabulary": "demo-domain/1"},
+    "target": {"ontology": "demo-ont", "version": "1"},
+    "rules": [
+      {"id": "r-cites-order", "source_relation": "cites", "target": "precedes", "note": "treat citations as reading order"}
+    ],
+    "scope": {"selector_resolution": "none-required", "required_profiles": []},
+    "coverage_inventory": ["cites"],
+    "losses": {
+      "cites": {"disposition": "transformed", "justification": "re-encoded as reading order"}
+    },
+    "equivalence": "structural",
+    "source_relations": ["cites"],
+    "output_relations": [
+      {"kind": "precedes", "derived_from": "cites", "via": null}
+    ],
+    "profiles": []
+  }
+}

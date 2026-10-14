@@ -1,0 +1,46 @@
+{
+  "_comment": "O-A04 RDF/OWL projection loss manifest (sunset-r68.14). An OWL ontology is projected into a descriptor view. Compliant: unmapped axioms appear in the loss manifest with dispositions; equivalence is structural, not semantic. Counterexample: owl:Restriction silently dropped and semantic equivalence claimed without an entailment policy. Gap O07 / acceptance O-A04.",
+  "compliant": {
+    "projection_id": "owl-to-dsc-projection",
+    "version": "1",
+    "source": {"format": "text/turtle", "version": "OWL 2 DL", "vocabulary": "demo-ont/1"},
+    "target": {"ontology": "dsc-0.3-descriptor", "version": "0.3"},
+    "rules": [
+      {"id": "r-classes", "source": "owl:Class", "target": "kind:article"},
+      {"id": "r-annotations", "source": "rdfs:label", "target": "annotation:ex:label"}
+    ],
+    "scope": {"selector_resolution": "none-required", "required_profiles": []},
+    "coverage_inventory": ["owl:Class", "rdfs:label", "owl:Restriction", "owl:cardinality"],
+    "losses": {
+      "owl:Class": {"disposition": "transformed", "justification": "mapped to article regions via r-classes"},
+      "rdfs:label": {"disposition": "transformed", "justification": "mapped to namespaced annotations via r-annotations"},
+      "owl:Restriction": {"disposition": "unsupported", "justification": "logical restrictions have no core encoding; retained as unsupported, not proxied"},
+      "owl:cardinality": {"disposition": "omitted", "justification": "qualified cardinality dropped; declared omission"}
+    },
+    "equivalence": "structural",
+    "source_relations": [],
+    "output_relations": [],
+    "profiles": []
+  },
+  "counterexample": {
+    "projection_id": "lossy-owl-projection",
+    "version": "1",
+    "source": {"format": "text/turtle", "version": "OWL 2 DL", "vocabulary": "demo-ont/1"},
+    "target": {"ontology": "dsc-0.3-descriptor", "version": "0.3"},
+    "rules": [
+      {"id": "r-classes", "source": "owl:Class", "target": "kind:article"},
+      {"id": "r-annotations", "source": "rdfs:label", "target": "annotation:ex:label"}
+    ],
+    "scope": {"selector_resolution": "none-required", "required_profiles": []},
+    "coverage_inventory": ["owl:Class", "rdfs:label", "owl:Restriction", "owl:cardinality"],
+    "losses": {
+      "owl:Class": {"disposition": "transformed", "justification": "mapped to article regions via r-classes"},
+      "rdfs:label": {"disposition": "transformed", "justification": "mapped to namespaced annotations via r-annotations"},
+      "owl:cardinality": {"disposition": "omitted", "justification": "qualified cardinality dropped; declared omission"}
+    },
+    "equivalence": "semantic",
+    "source_relations": [],
+    "output_relations": [],
+    "profiles": []
+  }
+}
