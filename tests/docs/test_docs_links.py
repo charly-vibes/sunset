@@ -24,7 +24,9 @@ def test_explanation_page_exists() -> None:
 # Forward-path targets that do not exist yet by design (built in later
 # tickets). The page must link them anyway, marked "(in progress)", so the
 # forward path stays stable.
-EXPECTED_IN_PROGRESS = {"first-descriptor.md", "reference.md"}
+# sunset-msj.2 shipped the tutorial, so first-descriptor.md left this set and
+# is now resolved as a real target by test_all_markdown_links_resolve.
+EXPECTED_IN_PROGRESS = {"reference.md"}
 
 
 def _link_targets(md_text: str) -> list[str]:
