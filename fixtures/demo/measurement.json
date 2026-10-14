@@ -1,0 +1,99 @@
+{
+ "source": {
+  "path": "fixtures/carriers/resumen-periodical-excerpt.pdf",
+  "sha256": "4317fca9fe017f3cc3088c7188ea54432b9ab8875c44b36eea6a6bd769012162",
+  "license": "owner-provided private document, PII-redacted; digest + provenance published, not the original file",
+  "provenance": "BBVA Visa Platinum resumen (86), cierre 01-Dic-22, excerpt pp 1,2,3,5,6,13"
+ },
+ "pinned": {
+  "pdftotext_version": "pdftotext version 26.01.0",
+  "pymupdf_version": "1.28.2",
+  "tesseract_version": "tesseract 5.5.3",
+  "ocr_lang": "spa",
+  "ocr_dpi": 200
+ },
+ "projection_pin": {
+  "projection_id": "sunset-common-projection",
+  "version": "v1",
+  "projection_sha256": "180ebcf7b6e5ccde6bf13857ec74f6fb402bd036d4f7ad9ad6829ce77321a6c8",
+  "source_sha256": "4317fca9fe017f3cc3088c7188ea54432b9ab8875c44b36eea6a6bd769012162"
+ },
+ "oracle": {
+  "required": [
+   "page-text"
+  ],
+  "allowed_unresolved": [
+   "page-text"
+  ],
+  "forbidden": []
+ },
+ "comparison": {
+  "status": "complete",
+  "matches": 3,
+  "false_positives": [],
+  "false_negatives": [],
+  "unresolved": [
+   "page-text"
+  ],
+  "pass": true
+ },
+ "functional_gates": {
+  "projection_pass": true,
+  "resolvable_observations_nonempty": true,
+  "unresolved_subset_of_allowed": true,
+  "canonical_agreement_both_snapshots": true,
+  "native_ocr_disagreement_surfaced": true,
+  "unsupported_feature_declared": true
+ },
+ "functional_gates_passed": true,
+ "review_tasks": {
+  "R1": {
+   "time_dsc_s": 8e-06,
+   "time_native_s": 4e-06,
+   "decision_dsc": "correct",
+   "decision_native": "correct",
+   "task": "Verify heading text of lead article (cover saldo block, fixture p1)"
+  },
+  "R2": {
+   "time_dsc_s": 6e-06,
+   "time_native_s": 8e-06,
+   "decision_dsc": "correct",
+   "decision_native": "correct",
+   "task": "Trace a continuation sentence across pages (fixture p4->p5)"
+  },
+  "R3": {
+   "time_dsc_s": 7e-06,
+   "time_native_s": 2e-06,
+   "decision_dsc": "correct",
+   "decision_native": "incorrect",
+   "task": "Adjudicate a native/OCR disagreement (fixture p6, scanned)"
+  },
+  "R4": {
+   "time_dsc_s": 4e-06,
+   "time_native_s": 4e-06,
+   "decision_dsc": "correct",
+   "decision_native": "correct",
+   "task": "Confirm a footnote maps to its anchor (fixture p4, '(*) Ver Legales')"
+  },
+  "R5": {
+   "time_dsc_s": 2e-06,
+   "time_native_s": 2e-06,
+   "decision_dsc": "correct",
+   "decision_native": "incorrect",
+   "task": "Confirm the unsupported feature is declared, not hidden (coverage)"
+  }
+ },
+ "review_time_delta_s": 7e-06,
+ "descriptor_bytes": {
+  "snapshot-pdftotext": 47677,
+  "snapshot-pymupdf": 22012
+ },
+ "peak_memory_kb": {
+  "pdftotext": 174804,
+  "pymupdf": 180180,
+  "ocr": 180180
+ },
+ "memory_method": "ru_maxrss (KiB) via os.wait4 per child process (pdftotext, tesseract, pymupdf subprocess)",
+ "reviewers_agent_executed": true,
+ "deviation_note": "Reviewers are the recorded agent-executed personas; time measurements are agent time, and a human reviewer pass can supersede the reference set."
+}

@@ -142,16 +142,22 @@ def _coverage_entry(feature, scope, status, reason, inv_id, man_id):
 
 
 # -- PDF --------------------------------------------------------------------------
-def describe_pdf(source_path, out_dir):
+def describe_pdf(source_path, out_dir, page_texts=None, desc_suffix=""):
     """Adapter for a real PDF carrier; returns a 0.3 descriptor dict.
 
     Writes inventory.json/manifest.json artifacts under out_dir and pins them
     in the descriptor's profile declarations (kind, version, sha256).
+
+    page_texts: optional {page_number: text} override for the per-page text
+    contents (first-consumer demo, sunset-r68.13: one snapshot per pinned
+    extractor). Coverage, inventory, annotations and evidence still come from
+    the real carrier bytes; only the text-observation provenance changes to
+    the named extractor. desc_suffix disambiguates the descriptor id.
     """
     data = Path(source_path).read_bytes()
     sha = _sha256(data)
     desc = _base_descriptor(
-        f"adapter-{Path(source_path).stem}", "application/pdf", data,
+        f"adapter-{Path(source_path).stem}{desc_suffix}", "application/pdf", data,
         str(source_path), "physical",
     )
 
@@ -165,7 +171,10 @@ def describe_pdf(source_path, out_dir):
             desc["relations"].append(
                 {"id": f"rel-rc{i}", "kind": "contains", "from": "r-root", "to": rid}
             )
-            text = page.get_text().strip()
+            if page_texts is not None:
+                text = (page_texts.get(i) or "").strip()
+            else:
+                text = page.get_text().strip()
             cid = None
             if text:
                 cid = f"txt{i}"
