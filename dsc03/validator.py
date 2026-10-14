@@ -179,7 +179,7 @@ def type_phase(d):
                         errors.add("invalid_shape")
             if key == "contents" and item.get("kind") == "text" and not isinstance(item.get("value"), str):
                 errors.add("invalid_content")
-    _nfc_walk(d, errors)
+    _walk_doc(d, errors)
     return errors
 
 
