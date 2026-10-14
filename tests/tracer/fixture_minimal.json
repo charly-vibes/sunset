@@ -1,0 +1,81 @@
+{
+  "version": "0.3",
+  "id": "tracer-minimal",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "locator": "fixtures/tracer-minimal.pdf"
+  },
+  "views": [
+    { "id": "v-phys", "kind": "physical", "root": "r-page" },
+    { "id": "v-log", "kind": "logical", "root": "r-art" }
+  ],
+  "regions": [
+    { "id": "r-page", "view_id": "v-phys", "kind": "page" },
+    { "id": "r-body", "view_id": "v-phys", "kind": "paragraph" },
+    { "id": "r-art", "view_id": "v-log", "kind": "article" }
+  ],
+  "contents": [
+    { "id": "c0", "kind": "text", "value": "Hello page" }
+  ],
+  "relations": [
+    { "id": "rel-c1", "kind": "contains", "from": "r-page", "to": "r-body" },
+    { "id": "rel-hc", "kind": "has-content", "from": "r-body", "to": "c0" },
+    { "id": "rel-hc2", "kind": "has-content", "from": "r-art", "to": "c0" },
+    { "id": "rel-rz", "kind": "realizes", "from": "r-body", "to": "r-art" }
+  ],
+  "annotations": [
+    {
+      "id": "a-note",
+      "target": "c0",
+      "term": "ex:note",
+      "value": "disputed heading note",
+      "origin": "manual",
+      "status": "asserted_without_evidence",
+      "evidence": [],
+      "view_id": "v-log"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e0",
+      "origin": "source",
+      "source_ref": "urn:example:tracer:page1",
+      "content_ids": ["c0"],
+      "selector_ids": ["s0"]
+    }
+  ],
+  "selectors": [
+    {
+      "id": "s0",
+      "kind": "text-range",
+      "profile_id": "p-sel",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "c0",
+      "locator": "[0,5)"
+    }
+  ],
+  "interpretations": [
+    {
+      "id": "i-order",
+      "kind": "reading-order",
+      "view_id": "v-log",
+      "origin": "manual",
+      "status": "asserted_without_evidence",
+      "evidence": []
+    }
+  ],
+  "coverage": [],
+  "profiles": [
+    {
+      "id": "p-sel",
+      "kind": "selector",
+      "uri": "profiles/selector-text-scalar.json",
+      "version": "1",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "ex", "version": "1" }
+  ]
+}
