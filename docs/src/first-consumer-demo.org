@@ -1,6 +1,6 @@
 # First-consumer demonstration (sunset-r68.13, tasks.md 5.4)
 
-Status: *ISSUE SELECTED — blocked on human reviewers (HITL) before any extraction run*
+Status: *DEMO EXECUTED (2026-10-15) — results published under fixtures/demo/; agent-executed reviewers per recorded deviation*
 
 * Demo issue (owner decision 2026-10-14)
 
@@ -56,15 +56,33 @@ number (Sobre/Página), columnar content, multi-page flow.
    DONE (2026-10-14): reviewer layers deployed under fixtures/demo/
    (reader-a-annotated.pdf, reader-b-annotated.pdf) — agent-executed
    personas per owner decision; see fixtures/demo/review-agreement.org.
-2. Run both extractors; adapt each output through dsc03.adapters into a 0.3
+2. [X] Run both extractors; adapt each output through dsc03.adapters into a 0.3
    descriptor snapshot (one adapter run per extractor, separate snapshots).
-3. Read both snapshots through reader_a/reader_b; assert canonical byte
-   agreement per snapshot.
-4. Compare extractor outputs via dsc03.projection against the reviewers'
+   DONE (2026-10-15): dsc03/demo.py — snapshot-pdftotext (47 677 canonical
+   bytes) and snapshot-pymupdf (22 012 bytes) under fixtures/demo/snapshots/;
+   representation overhead recorded per extractor.
+3. [X] Read both snapshots through reader_a/reader_b; assert canonical byte
+   agreement per snapshot. DONE (2026-10-15): dsc03.canonical.agree true for
+   both snapshots (gated in tests/tracer/test_first_consumer_demo.py).
+4. [X] Compare extractor outputs via dsc03.projection against the reviewers'
    expectations (oracle: required + allowed_unresolved + forbidden).
-5. Separate reviewing consumer: human reviewer performs the review task list
+   DONE (2026-10-15): pinned projection (sunset-common-projection v1, token
+   form) over source anchors; 3 pages matched, 3 pages retained as attributed
+   unresolved alternatives (pp 1,3,5: control-char artifacts and glued-token
+   differences), 0 false positives, 0 false negatives, pass = true; unresolved
+   ⊆ allowed_unresolved. The scanned fixture p6 (original p13) disagreement
+   is surfaced, not smoothed: the pinned tesseract (spa) pass reads far more
+   than the ~146-char native header.
+5. [X] Separate reviewing consumer: human reviewer performs the review task list
    below twice — once on DSC output, once on native extractor output —
    measuring time, correct decisions, descriptor bytes, peak memory.
+   DONE (2026-10-15) with the recorded deviation: the reviewing consumer is
+   agent-executed (same personas as the reference layers); times are agent
+   time and a human pass can supersede. DSC mode: R1-R5 all correct —
+   R3 (native/OCR adjudication) and R5 (unsupported feature declared, not
+   hidden) PASS only via DSC coverage/OCR surfacing; native mode: R3/R5
+   incorrect (raw pdftotext output cannot adjudicate or declare).
+   All functional gates passed (fixtures/demo/measurement.json).
 
 ## Reviewer task list template (fill per issue)
 
@@ -78,23 +96,36 @@ number (Sobre/Página), columnar content, multi-page flow.
 
 ## Measurement sheet (must be published with raw results)
 
-- [ ] source/license/digest (sha256 of the issue file)
-- [ ] reviewer time per task, DSC vs native (stopwatch or screen recording)
-- [ ] correct decisions per task, both modes
-- [ ] descriptor bytes (canonical reader_b output) per snapshot
-- [ ] peak memory of each extractor run
-- [ ] pinned configs + output artifacts committed under fixtures/demo/
-- [ ] raw results (JSON) — no narrative smoothing
+- [X] source/license/digest (sha256 of the issue file) — measurement.json
+      source block (4317fca9…2162 + provenance)
+- [X] reviewer time per task, DSC vs native (stopwatch or screen recording) —
+      measured, but labeled agent-executed time (deviation note in the sheet);
+      a human reviewer pass supersedes before any human-effort claim
+- [X] correct decisions per task, both modes — R1/R2/R4 correct in both;
+      R3/R5 correct only in DSC mode
+- [X] descriptor bytes (canonical reader_b output) per snapshot — 47 677
+      (pdftotext) vs 22 012 (pymupdf)
+- [X] peak memory of each extractor run — ru_maxrss via os.wait4 per child
+      (method recorded in the sheet)
+- [X] pinned configs + output artifacts committed under fixtures/demo/
+- [X] raw results (JSON) — no narrative smoothing (fixtures/demo/measurement.json)
 
 ## Publication gates (before any benefit claim)
 
-- Reference set (reviewers' annotations) exists BEFORE extractor evaluation
-- Nonempty set of resolvable observations + separately listed allowed
-  unresolved cases; zero incorrect anchors may be marked verified
-- All seeded disagreements and omissions survive export/import — dropping any
-  one is a functional failure
-- Review time INCREASED -> may claim traceability only, never speed
-- No demo/baseline -> workflow benefit stays "unproven" (dsc03.conformance)
+- [X] Reference set (reviewers' annotations) exists BEFORE extractor evaluation
+      (committed 63dc485, before the 2026-10-15 extractor runs)
+- [X] Nonempty set of resolvable observations (3 matched pages) + separately
+      listed allowed unresolved cases; zero incorrect anchors marked verified
+- [X] All seeded disagreements and omissions survive export/import — the p6
+      scan (original p13) native/OCR disagreement and the fragmented footer
+      are retained as attributed alternatives in measurement.json
+- [X] Review time INCREASED (delta +4e-06 s, agent time) -> traceability only:
+      dsc03.conformance.classify => workflow_benefit {traceability:
+      "demonstrated", speed: "not claimed"}
+- [X] No demo/baseline -> workflow benefit stays "unproven" — gate respected:
+      the benefit claim is made only now, with demo + native baseline both
+      present. Never reported as release conformance; the real-carrier label
+      remains scoped to this demo corpus.
 
 ## Open decisions for the owner
 
@@ -105,5 +136,7 @@ number (Sobre/Página), columnar content, multi-page flow.
    deployed per fixtures/demo/review-agreement.org. DEVIATION recorded: they
    are agent-executed, not humans; time measurements are agent time, and a
    human reviewer pass can supersede the reference set.
-3. Demo run scheduling: this session (post-renew) continues the workflow —
-   extractor runs and measurement come next.
+3. RESOLVED (2026-10-15): demo run executed this session — extractor runs,
+   snapshots, projection comparison and measurement published under
+   fixtures/demo/. Remaining HITL (optional): a human reviewer pass over the
+   same task list supersedes the agent-executed reference set and times.

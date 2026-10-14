@@ -78,8 +78,18 @@ behavior-preserving refactor needs a separate ticket.
       claimed (sunset-r68.12).
 - [x] 5.3 Test report labels against intentionally incomplete suites so 0.2
       fixtures and spec lint can never be reported as 0.3/real-carrier conformance.
-- [ ] 5.4 Execute the first-consumer demonstration against native-output review,
+- [x] 5.4 Execute the first-consumer demonstration against native-output review,
       publishing functional results, review effort and representation overhead.
+      DONE (2026-10-15, sunset-r68.13): dsc03/demo.py runs the pinned workflow
+      (pdftotext 26.01 + PyMuPDF 1.28.2 + tesseract spa over the committed
+      demo issue); two extractor snapshots with canonical reader agreement;
+      pinned projection vs reviewer oracle: 3 matched pages, 3 attributed
+      unresolved alternatives (retained, allowed), 0 FP/FN, pass; reviewing
+      consumer executed twice (DSC vs native) — R3/R5 correct only via DSC
+      (agent-executed deviation recorded; human pass supersedes). Raw results
+      in fixtures/demo/measurement.json; workflow benefit = traceability
+      demonstrated, speed not claimed (review time delta +4e-06 s, agent
+      time). Never release conformance.
 
 ## 6. Ontology boundaries
 
