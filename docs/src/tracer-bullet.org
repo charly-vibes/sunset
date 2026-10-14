@@ -1,0 +1,61 @@
+#+TITLE: DSC 0.3 tracer bullet — walking skeleton (sunset-r68.1)
+#+DATE: 2026-10-14
+
+* What ran
+
+One automated test (tests/tracer/test_e2e_walk.py) walks the full minimal
+0.3 path end-to-end:
+
+1. /Parse + validate/: tests/tracer/fixture_minimal.json (one physical view,
+   one logical view, one page tree, one text content, one annotation, one
+   evidence link, one selector profile) validates clean under the 0.3
+   validator (dsc03/validator.py): ~{"reasons": [], "status": "valid"}~.
+2. /Profile resolve/: the declared selector profile is resolved via pinned
+   local resolution (dsc03/profiles.py) against the explicit registry under
+   tests/tracer/profiles/ — version + sha256 identity, no network fetch, no
+   latest-version fallback.
+3. /Evidence replay/: the single evidence link resolves and replays
+   (dsc03/evidence.py): the text-range anchor [0,5) (unicode-scalar-values,
+   half-open) reproduces the observation "Hello" from content c0.
+
+Demo run output (2026-10-14):
+
+#+begin_example
+$ python3 dsc03/validator.py tests/tracer/fixture_minimal.json
+{"reasons": [], "status": "valid"}
+$ python3 -m pytest tests/tracer/ -q
+19 passed in 0.21s
+$ python3 spec/document-model-specodelic-v3/validator.py test
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+#+end_example
+
+* What it proves
+
+- The 0.3 wire contract is implementable as a strict superset-in-shape of
+  the 0.2 top-level fields plus the five mandatory arrays (views, selectors,
+  interpretations, coverage, profiles).
+- Outcome states are typed: malformed field types yield invalid_shape
+  before reference lookup or graph traversal; malformed JSON yields
+  parse_error; the frozen 0.2 validator rejects 0.3 descriptors with its
+  0.2 vocabulary and is never upgraded in place.
+- Pinned profile identity works: digest identity beats the URI hint; a
+  registry change under a pin is detected (profile_digest_mismatch).
+- Evidence binding is replayable: content_ids + selector_ids resolve, and
+  the anchor reproduces the observation on the exact (unnormalized) value.
+
+* What it deliberately leaves out
+
+- PDF/EPUB adapters and real-carrier fixtures (sunset-r68 tasks 3.1).
+- Coverage inventories and scoped dispositions (tasks 2.2, 3.2, 3.3).
+- Cross-reader benchmark and adversarial conformance corpus (tasks 5.1-5.4,
+  the first-consumer demonstration milestone).
+- Migration from 0.2 descriptors (tasks 4.1, 4.2).
+- Ontology boundary projections (task 6.1, after the demonstration).
+- Transform/lineage replay beyond the single source link (sunset-r68.2 and
+  the evidence lineage checks in tasks 1.3).
+
+* State
+
+Epic sunset-r68.1 closed via tickets r68.1.2 (validator green), r68.1.3
+(pinned profiles), r68.1.4 (evidence replay), r68.3 (frozen-0.2 regression),
+r68.1.5 (this note). The frozen 0.2 executable remains untouched and green.

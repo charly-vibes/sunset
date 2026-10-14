@@ -46,3 +46,13 @@ conflicting details and add precise profile, Unicode, coverage, lineage and
 reader-comparison cases. The
 [first-consumer demonstration](../../openspec/changes/add-dsc-03/specs/document-conformance/spec.md#requirement-first-consumer-demonstration)
 is specified but unexecuted; adoption benefit remains unproven.
+
+## Tracer bullet (walking skeleton)
+
+The minimal 0.3 slice is implemented and green: descriptor → validate →
+pinned profile resolve → evidence replay, one automated test
+([tests/tracer/test_e2e_walk.py](../../tests/tracer/test_e2e_walk.py)).
+See [tracer-bullet.org](tracer-bullet.org) for the demo run, what it
+proves, and what it deliberately leaves out (adapters, coverage,
+benchmark, migration — tracked in beads `sunset-r68` follow-ups). The
+frozen 0.2 validator stays untouched (PASS 11 descriptor fixtures).
