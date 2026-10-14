@@ -72,7 +72,7 @@
       "kind": "selector",
       "uri": "profiles/selector-text-scalar.json",
       "version": "1",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "sha256": "1c42da3a3e18fcf1222dc67aa6389e6cce2fe04681bb13f8d97059edd3a1813c"
     }
   ],
   "vocabularies": [
