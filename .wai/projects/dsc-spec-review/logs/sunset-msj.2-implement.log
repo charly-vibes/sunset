@@ -1,0 +1,30 @@
+sunset-msj.2 complete. Both commits are in; nothing pushed (as instructed); `.beads` untouched.
+
+## What was done
+
+**RED** — `tests/docs/test_tutorial_example.py` (commit `7652f83`): gate test that extracts fenced ```json blocks from the tutorial page, requires exactly one tagged `dsc-tutorial-descriptor`, and asserts `validator.validate(validator.loads(block)) == []` via the real `dsc03` API (same `sys.path` trick as the tracer tests). Ran red: 4 failed / 5 passed. Committed first.
+
+**GREEN** — `docs/src/first-descriptor.md` (commit `9c33d47`):
+- Prereqs (Python 3 + clone, stdlib-only, no installs) → fixture walkthrough (`tests/tracer/fixture_minimal.json` linked, all top-level arrays explained with exact field names read from the fixture/validator) → copy-paste descriptor → validate → deliberate failure (`invalid_digest`) with fix.
+- Real API only: CLI `python3 -m dsc03.validator my-descriptor.json` → `{"reasons": [], "status": "valid"}`; every outcome shown was verified by actually running it, including the malformed-JSON `parse_error` path via `validator.run`.
+- Links back to `what-is-dsc.md`; forward links to `integrate.md` and `reference.md` (in progress). Tutorial voice, no digressions.
+
+**Single permitted extra change** — `tests/docs/test_docs_links.py`: `first-descriptor.md` removed from `EXPECTED_IN_PROGRESS` (its only permitted change), so it now resolves as a real link target.
+
+**Follow-up note (below threshold, no stop needed):** `what-is-dsc.md` still labels the tutorial link "(in progress)" in two places — I left it untouched per the brief's "prefer NOT touching" constraint; one-line prose fix recommended in a follow-up ticket.
+
+## Completion criteria — all four pass
+
+```
+1. python3 -B -m pytest tests/docs -q   → 9 passed, exit 0
+2. just spec-check                      → Totals: 7 passed, 0 failed (openspec strict);
+                                          153 passed, 14 subtests passed;
+                                          PASS 11 descriptor fixtures;
+                                          ALL GATES PASSED — exit 0
+3. test -f docs/src/first-descriptor.md → exit 0
+4. git log --oneline -2:
+   9c33d47 docs(docs): GREEN — tutorial 'your first descriptor' with CI-gated embedded example (sunset-msj.2)
+   7652f83 test(docs): RED gate for sunset-msj.2 — tutorial descriptor must validate via real dsc03 API
+```
+
+Side note: running the full gate rewrites `fixtures/demo/measurement.json` timings (nondeterministic jitter); I restored that file — it is not part of this ticket.
