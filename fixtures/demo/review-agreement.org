@@ -1,0 +1,60 @@
+#+title: Demo-issue reviewer layers (sunset-r68.13)
+#+date: <2026-10-14 Wed>
+
+* Setup
+
+Owner decision (2026-10-14): reviewers A and B for the first-consumer demo
+are the scripted reader personas used in the r68.11/r68.12 annotation
+exercise, deployed per the same disjoint-taxonomy protocol:
+
+- reader-A — "Dr. Elena Sacriste", careful academic: ONE Highlight quoting
+  the issue's central claim, ONE ≤180-char Text margin note ("ES:") on
+  document structure. Author tag = reader-A.
+- reader-B — "Ing. Rafa Quiroga", skeptical QA: ONE StrikeOut on the most
+  suspicious/malformed fragment, ONE FreeText risk note ("RQ:") predicting
+  extractor failure modes. Author tag = reader-B.
+
+*DEVIATION from the scaffold's "must not be the agent"* (recorded, same
+pattern as the r68.12 review-of-record): the reviewers are scripted personas
+executed by the agent. Consequences, stated honestly:
+
+- the reference set is agent-authored; a human reviewer pass can supersede it;
+- any *time* measurement in the demo's measurement sheet is agent-executed
+  time — it must never be reported as human reviewer time;
+- blindness holds w.r.t. extractor output: both layers were authored BEFORE
+  any pdftotext/PyMuPDF extraction output was produced for review purposes
+  (extractor runs happen only in the demo workflow steps 2-4).
+
+Both layers annotate the PRISTINE fixture
+=fixtures/carriers/resumen-periodical-excerpt.pdf=
+(sha256 4317fca9fe017f3cc3088c7188ea54432b9ab8875c44b36eea6a6bd769012162),
+which is left untouched; the layers are separate files under =fixtures/demo/=
+so the recorded digest stays valid.
+
+* Deployed layers
+
+| File                        | Page | Annotations                                    |
+|-----------------------------+------+------------------------------------------------|
+| reader-a-annotated.pdf      |    1 | Highlight (cover saldo block), Text "ES:" note |
+| reader-b-annotated.pdf      |    6 | StrikeOut (fragmented rotated footer), FreeText "RQ:" note |
+
+- reader-A highlight: "CIERRE ACTUAL 01-Dic-22 … SALDO ACTUAL $ 144.402,50"
+  on the cover (fixture p1) — the issue's central claim.
+- reader-A ES note (structure): resumen mensual, portada consolida saldos y
+  límites, tablas por columnas, cuotas continúan p.4→p.5, aviso escaneado
+  sin capa de texto al final.
+- reader-B strikeout: the letter-fragmented rotated footer ("Ba nc o Mo ck …")
+  on fixture p6 — the fixture's recorded extraction artifact, flagged by the
+  QA persona as anchor-corruption risk.
+- reader-B RQ note: fixture p6 is a scan with ~146 native chars (header only);
+  without OCR the notice content is lost; fragmented footer risks broken
+  anchors; coverage must be checked.
+
+* Region agreement
+
+- Region overlap: none (A annotated fixture p1, B fixture p6) — 0 common
+  regions, consistent with the disjoint taxonomies.
+- Both layers present on the same pristine base bytes (same sha256).
+- Disagreements retained, not resolved: B's strikeout region (p6) and A's
+  highlight region (p1) occupy disjoint, non-conflicting areas; no conflicting
+  reading of the same text exists between the two layers.

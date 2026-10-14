@@ -53,6 +53,9 @@ number (Sobre/Página), columnar content, multi-page flow.
 
 1. [HITL] Two independent human reviewers annotate the issue BEFORE seeing any
    extraction output; disagreements retained (not resolved).
+   DONE (2026-10-14): reviewer layers deployed under fixtures/demo/
+   (reader-a-annotated.pdf, reader-b-annotated.pdf) — agent-executed
+   personas per owner decision; see fixtures/demo/review-agreement.org.
 2. Run both extractors; adapt each output through dsc03.adapters into a 0.3
    descriptor snapshot (one adapter run per extractor, separate snapshots).
 3. Read both snapshots through reader_a/reader_b; assert canonical byte
@@ -97,6 +100,10 @@ number (Sobre/Página), columnar content, multi-page flow.
 
 1. RESOLVED (2026-10-14): owner supplied the carrier — BBVA resumen (86),
    pp 1,2,3,5,6,13, redacted = fixtures/carriers/resumen-periodical-excerpt.pdf.
-2. Who the two human reviewers are (they must not be the agent).
-3. Demo run scheduling: recommend a fresh session (/renew sunset) — this
-   scaffolding is the resume point.
+2. RESOLVED (2026-10-14): owner assigned reviewer A ("Dr. Elena Sacriste")
+   and reviewer B ("Ing. Rafa Quiroga") — the scripted reader personas,
+   deployed per fixtures/demo/review-agreement.org. DEVIATION recorded: they
+   are agent-executed, not humans; time measurements are agent time, and a
+   human reviewer pass can supersede the reference set.
+3. Demo run scheduling: this session (post-renew) continues the workflow —
+   extractor runs and measurement come next.
