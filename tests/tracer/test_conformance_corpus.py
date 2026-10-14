@@ -27,12 +27,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from dsc03 import canonical, conformance, corpus, evidence, projection, validator
 
-REPO = Path(__file__).resolve().parents[2]
-
 REQUIRED_CASES = {
     "columns", "page-continuation", "shared-pages", "ocr-native", "poetry",
-    "epub-links", "conflicting-interpretations", "coordinate-transforms",
-    "roundtrip", "omission", "replay", "exact-unicode",
+    "epub-links", "epub-footnotes", "conflicting-interpretations",
+    "coordinate-transforms", "roundtrip", "omission", "replay", "exact-unicode",
 }
 
 
@@ -208,6 +206,23 @@ def test_missing_pin_or_oracle_is_incomplete():
     b = _extractor("beta", "9", [_obs("b1", "x", ["anc"], ["v"])])
     assert projection.compare(a, b, None, {"required": []})["status"] == "incomplete"
     assert projection.compare(a, b, PIN, None)["status"] == "incomplete"
+
+
+def test_malformed_pin_is_incomplete_not_silent():
+    a = _extractor("alpha", "1", [_obs("a1", "x", ["anc"], ["v"])])
+    b = _extractor("beta", "9", [_obs("b1", "x", ["anc"], ["v"])])
+    for bad in ({"x": 1}, {k: "v" for k in ("projection_id", "version", "projection_sha256")}):
+        report = projection.compare(a, b, bad, {"required": []})
+        assert report["status"] == "incomplete"
+        assert report["reasons"] == ["invalid_projection_pin"]
+
+
+def test_required_observable_missing_from_both_sides_is_false_negative():
+    a = _extractor("alpha", "1", [_obs("a1", "other", ["anc"], ["v"])])
+    b = _extractor("beta", "9", [_obs("b1", "other", ["anc"], ["v"])])
+    report = projection.compare(a, b, PIN, {"required": ["page-text"], "forbidden": []})
+    assert report["false_negatives"] == ["page-text"]
+    assert report["pass"] is False
 
 
 def test_machinery_pass_still_cannot_claim_real_carrier_conformance():

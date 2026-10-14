@@ -17,9 +17,36 @@ INCOMPLETE = {"status": "incomplete", "reasons": ["missing_projection_or_oracle"
               "matches": 0, "false_positives": [], "false_negatives": [],
               "unresolved": [], "retained_alternatives": [], "pass": False}
 
+PIN_KEYS = ("projection_id", "version", "projection_sha256", "source_sha256")
+
 
 def _obs_anchors(o):
     return set(o.get("anchors") or [])
+
+
+def _incomplete(reason):
+    return {**INCOMPLETE, "reasons": [reason]}
+
+
+def _pin_ok(pin):
+    """A pin SHALL name identifier, version, projection digest and source digest."""
+    return isinstance(pin, dict) and all(
+        isinstance(pin.get(k), str) and bool(pin.get(k)) for k in PIN_KEYS
+    )
+
+
+def _attributed(extractor_a, extractor_b, a, b, anchors):
+    """One retained set: both sides' values kept attributed, no winner picked."""
+    return {
+        "observable": a["observable"],
+        "anchors": sorted(anchors),
+        "values": [
+            {"extractor_id": extractor_a.get("extractor_id"),
+             "id": a.get("id"), "value": a.get("values")},
+            {"extractor_id": extractor_b.get("extractor_id"),
+             "id": b.get("id"), "value": b.get("values")},
+        ],
+    }
 
 
 def compare(extractor_a, extractor_b, pin, oracle):
@@ -30,7 +57,9 @@ def compare(extractor_a, extractor_b, pin, oracle):
              "forbidden": [observable]}
     """
     if pin is None or oracle is None:
-        return {**INCOMPLETE}
+        return _incomplete("missing_projection_or_oracle")
+    if not _pin_ok(pin):
+        return _incomplete("invalid_projection_pin")
     obs_a = list(extractor_a.get("observations") or [])
     obs_b = list(extractor_b.get("observations") or [])
 
@@ -47,7 +76,7 @@ def compare(extractor_a, extractor_b, pin, oracle):
         ]
         if len(candidates) > 1:
             ambiguous.append(a["observable"])
-            continue
+            continue  # candidates stay unpaired; ambiguity is reported, not resolved
         if not candidates:
             unmatched_a.append(a)
             continue
@@ -65,16 +94,9 @@ def compare(extractor_a, extractor_b, pin, oracle):
             # value divergence under one anchor pairing: keep both attributed,
             # never silently pick a winner; the observable is unresolved
             divergent.append(a["observable"])
-            retained.append({
-                "observable": a["observable"],
-                "anchors": sorted(_obs_anchors(a) & _obs_anchors(b)),
-                "values": [
-                    {"extractor_id": extractor_a.get("extractor_id"),
-                     "id": a.get("id"), "value": a.get("values")},
-                    {"extractor_id": extractor_b.get("extractor_id"),
-                     "id": b.get("id"), "value": b.get("values")},
-                ],
-            })
+            retained.append(_attributed(
+                extractor_a, extractor_b, a, b,
+                _obs_anchors(a) & _obs_anchors(b)))
 
     # both sides hold observations on the same observable but no anchor pairing
     # exists: that is ambiguity (e.g. same text, different anchors), not FP/FN
@@ -92,16 +114,7 @@ def compare(extractor_a, extractor_b, pin, oracle):
         if o in b_by_obs:
             for a in av:
                 for b in b_by_obs[o]:
-                    retained.append({
-                        "observable": o,
-                        "anchors": [],
-                        "values": [
-                            {"extractor_id": extractor_a.get("extractor_id"),
-                             "id": a.get("id"), "value": a.get("values")},
-                            {"extractor_id": extractor_b.get("extractor_id"),
-                             "id": b.get("id"), "value": b.get("values")},
-                        ],
-                    })
+                    retained.append(_attributed(extractor_a, extractor_b, a, b, set()))
 
     false_positives = []
     false_negatives = []
@@ -117,11 +130,18 @@ def compare(extractor_a, extractor_b, pin, oracle):
     for o in b_by_obs:
         if o not in a_by_obs and o in required and o not in seen_fn:
             false_negatives.append(o)
+            seen_fn.add(o)
 
     allowed = set(oracle.get("allowed_unresolved") or [])
     forbidden = set(oracle.get("forbidden") or [])
     matched_obs = matches_done(pairs)
     unresolved_set = set(unresolved)
+    # a required observable absent from BOTH sides is the clearest false negative
+    for o in required:
+        if o not in matched_obs and o not in unresolved_set \
+                and o not in seen_fn:
+            false_negatives.append(o)
+            seen_fn.add(o)
     all_observables = (
         {a.get("observable") for a in obs_a} | {b.get("observable") for b in obs_b}
     )

@@ -21,8 +21,8 @@ CARRIERS = Path(__file__).resolve().parents[1] / "fixtures" / "carriers"
 
 REQUIRED = [
     "columns", "page-continuation", "shared-pages", "ocr-native", "poetry",
-    "epub-links", "conflicting-interpretations", "coordinate-transforms",
-    "roundtrip", "omission", "replay", "exact-unicode",
+    "epub-links", "epub-footnotes", "conflicting-interpretations",
+    "coordinate-transforms", "roundtrip", "omission", "replay", "exact-unicode",
 ]
 
 
@@ -92,8 +92,9 @@ def build(out_dir):
         {"id": "rel-1", "kind": "contains", "from": "r-root", "to": "r-colL"},
         {"id": "rel-2", "kind": "contains", "from": "r-root", "to": "r-colR"},
     ]
-    for col, cid in (("r-colL", "c-L"), ("r-colR", "c-R")):
-        _text(d, cid, "%s column text" % col)
+    for col, cid, text in (("r-colL", "c-L", "left column text"),
+                           ("r-colR", "c-R", "right column text")):
+        _text(d, cid, text)
         d["relations"].append({"id": "rel-hc-" + cid, "kind": "has-content", "from": col, "to": cid})
     d["interpretations"].append({
         "id": "i-col", "kind": "segmentation", "view_id": "v-phys",
@@ -221,6 +222,26 @@ def build(out_dir):
         "id": "rel-df", "kind": "derived-from", "from": "e-t", "to": "ev-c-raw",
     })
     cases["replay"] = {"descriptor": d, "transform_fns": {cfg_sha: strip_line_numbers}}
+
+    # -- EPUB footnotes (document-conformance lists footnotes as a required case) -------
+    d = _base("corpus-epub-footnotes")
+    d["source"] = {
+        "format": "application/epub+zip", "sha256": "6" * 64,
+        "locator": "corpus/epub-footnotes.epub",
+    }
+    d["regions"].append({"id": "r-res", "view_id": "v-phys", "kind": "resource"})
+    d["relations"].append({"id": "rel-res", "kind": "contains", "from": "r-root", "to": "r-res"})
+    d["evidence"].append({
+        "id": "ev-fn", "origin": "source", "source_ref": "sha256:%s#resource:OEBPS/chapter1.xhtml" % ("6" * 64),
+        "content_ids": [], "selector_ids": [],
+    })
+    d["annotations"].append({
+        "id": "a-fn", "target": "r-res", "term": "ex:footnote",
+        "value": "footnote observed on resource chapter1.xhtml",
+        "origin": "source", "status": "supported", "evidence": ["ev-fn"],
+        "view_id": "v-phys",
+    })
+    cases["epub-footnotes"] = {"descriptor": d}
 
     # -- EPUB links + omission: reuse the committed real carriers ------------------------
     out_dir.mkdir(parents=True, exist_ok=True)

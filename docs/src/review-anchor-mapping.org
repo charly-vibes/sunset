@@ -73,7 +73,27 @@ After reviewing, record the verdict in this file and flip the flag:
 
 ## Verdict
 
-- Reviewer:
-- Date:
-- Decision: (approved | findings)
-- Findings:
+- Reviewer: Rule-of-5 multi-pass review, executed by the coding agent at the
+  repo owner's explicit delegation ("do /rule-of-5-universal over them",
+  2026-10-15); findings verified through TypeSafe (Jev, confidence 0.97-1.0,
+  gate 0.8, measured FP rate 0/4).
+- Date: 2026-10-15
+- Decision: approved-with-fixes
+- Findings (all fixed in the same commit):
+  1. [CORR-001, verified 0.99] corpus lacked the spec-listed =epub-footnotes=
+     case (tasks.md 5.1 said "EPUB links"; the delta requirement says
+     "EPUB footnotes"). Both cases now exist and are gated.
+  2. [CORR-002, verified 0.97] =projection.compare= accepted any truthy pin;
+     now validates =projection_id/version/projection_sha256/source_sha256=
+     and a malformed pin is =incomplete= (=invalid_projection_pin=).
+  3. [CORR-003, verified 0.99] a required observable absent from BOTH
+     extractors produced no false negative; now reported as FN.
+  4. [CLAR-002, verified 1.0] corpus columns case leaked region ids into text
+     values; fixed to "left/right column text".
+  Also fixed unverified: retained-alternatives construction deduplicated
+  (=_attributed= helper), unused =REPO= in tests, FN =seen_fn= bookkeeping.
+- Flag status: =anchor_mapping_reviewed= remains =False=. This review was
+  agent-executed (same author as the machinery), so it does not satisfy the
+  spec's "independently reviewed" wording by itself; real-carrier conformance
+  stays incomplete and unclaimed. Flipping the flag to =True= is a one-line
+  suite change the owner can make personally, or explicitly authorize.

@@ -63,7 +63,9 @@ behavior-preserving refactor needs a separate ticket.
       continuation, shared pages, OCR/native, poetry, EPUB links, opposing orders,
       transforms, roundtrip, omission, replay and exact Unicode text).
       Implemented as dsc03/corpus.py (machinery-only builder + gate) with
-      carrier cases reusing the committed real fixtures (sunset-r68.12).
+      carrier cases reusing the committed real fixtures; covers BOTH the
+      tasks.md list (EPUB links) and the delta requirement's "EPUB footnotes"
+      as separate cases (sunset-r68.12).
 - [ ] 5.2 Test two independent readers for canonical-byte agreement on the SAME
       snapshot; separately compare extractor outputs through the pinned common
       projection, reviewed anchor mapping and oracle defined by document-conformance.
