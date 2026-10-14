@@ -93,6 +93,18 @@ behavior-preserving refactor needs a separate ticket.
 
 ## 6. Ontology boundaries
 
-- [ ] 6.1 After the first-consumer demonstration, start with boundary fixtures
+- [x] 6.1 After the first-consumer demonstration, start with boundary fixtures
       O-A01, O-A04 and O-A05 and implement the projection evaluator; profile
       resolution or schema validity alone must never imply semantic equivalence.
+      DONE (2026-10-15, sunset-r68.14): dsc03/boundaries.py evaluates declared
+      projections against O-A01 (out-of-core relations never coerced into
+      contains/precedes/realizes without a declared equivalence), O-A04
+      (exactly one loss disposition per inventory feature, justification for
+      lossy dispositions, semantic equivalence requires an entailment policy)
+      and O-A05 (roundtrip claimed only for a named subset and tested domain;
+      scoped claim honored while geometry explicitly fails; full-fidelity
+      badge rejected). Projections without provenance are not applied.
+      equivalence_claim(): profiles-resolved + schema-valid never ground an
+      equivalence claim without a declared criterion. Committed fixtures
+      (compliant + counterexample per check) under fixtures/boundaries/;
+      11 new tests (tests/tracer/test_ontology_boundaries.py).
