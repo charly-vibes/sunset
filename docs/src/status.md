@@ -10,6 +10,7 @@
 **sunset** is **experimental**.
 
 - Hosts the DSC (Document Structural Core) specification corpus.
+- Orientation: [What is DSC and why](what-is-dsc.md) — the docs entry point.
 - Executable truth: DSC 0.2 only — `spec/document-model-specodelic-v3/validator.py`
   (frozen at 0.2), `PASS 11 descriptor fixtures`.
 - DSC 0.3 machinery is implemented (`dsc03/` package, tests under
