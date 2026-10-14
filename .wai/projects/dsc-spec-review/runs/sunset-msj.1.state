@@ -1,0 +1,8 @@
+ticket: sunset-msj.1
+branch: main
+brief_path:
+steps: []
+step: claim @ 46c9c9987e900ede63688d423fc11d1da06e03ab
+step: gates @ 46c9c9987e900ede63688d423fc11d1da06e03ab
+step: brief @ c5fa70f8af3e9f549441d17f5f7b62f8907a578b
+step: verify @ f2300ba1e7f917144af9403f597da3484528a0f1

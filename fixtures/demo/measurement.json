@@ -48,8 +48,8 @@
  "functional_gates_passed": true,
  "review_tasks": {
   "R1": {
-   "time_dsc_s": 5e-06,
-   "time_native_s": 4e-06,
+   "time_dsc_s": 6e-06,
+   "time_native_s": 2e-06,
    "decision_dsc": "correct",
    "decision_native": "correct",
    "task": "Verify heading text of lead article (cover saldo block, fixture p1)"
@@ -62,7 +62,7 @@
    "task": "Trace a continuation sentence across pages (fixture p4->p5)"
   },
   "R3": {
-   "time_dsc_s": 6e-06,
+   "time_dsc_s": 7e-06,
    "time_native_s": 1e-06,
    "decision_dsc": "correct",
    "decision_native": "incorrect",
@@ -76,22 +76,22 @@
    "task": "Confirm a footnote maps to its anchor (fixture p4, '(*) Ver Legales')"
   },
   "R5": {
-   "time_dsc_s": 2e-06,
-   "time_native_s": 1e-06,
+   "time_dsc_s": 1e-06,
+   "time_native_s": 2e-06,
    "decision_dsc": "correct",
    "decision_native": "incorrect",
    "task": "Confirm the unsupported feature is declared, not hidden (coverage)"
   }
  },
- "review_time_delta_s": 5e-06,
+ "review_time_delta_s": 7e-06,
  "descriptor_bytes": {
   "snapshot-pdftotext": 47677,
   "snapshot-pymupdf": 22012
  },
  "peak_memory_kb": {
-  "pdftotext": 175412,
-  "pymupdf": 180788,
-  "ocr": 180788
+  "pdftotext": 175920,
+  "pymupdf": 181296,
+  "ocr": 181296
  },
  "memory_method": "ru_maxrss (KiB) via os.wait4 per child process (pdftotext, tesseract, pymupdf subprocess)",
  "reviewers_agent_executed": true,

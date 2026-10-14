@@ -1,0 +1,23 @@
+sunset-msj.1 executed per brief. Summary:
+
+**RED** — `tests/docs/test_docs_links.py` (new): asserts the page exists, every relative markdown link resolves to a repo file (fragments stripped, external links skipped), and the forward targets (`first-descriptor.md`, `reference.md`) are linked with "(in progress)" wording. Ran first: 4 failed as expected.
+
+**GREEN** — `docs/src/what-is-dsc.md` (new): explanation quadrant only —
+1. The problem DSC solves (views, competing orders, source-addressability, silent normalization, honest coverage), sourced from the bundle README/RESEARCH-DECISIONS and the add-dsc-03 proposal
+2. What a descriptor is, conceptually (views, selectors, evidence, coverage, profiles) — explicitly non-normative, pointing at `openspec/specs/document-core/spec.md`
+3. 0.2 (frozen validator, PASS 11) vs 0.3 (deployed from archived change, `dsc03/` + `tests/tracer/`) orientation, with the agent-executed deviation caveat → newcomers target 0.3
+4. What sunset is: a spec corpus, **not** a tool — links the scope ruling in `status.md#deviations-from-the-fleet-standardization-checklist`
+5. Forward path: tutorial and reference linked with "(in progress)" so the path stays stable
+
+Plus the one permitted line in `docs/src/status.md` linking the new page. No openspec/, `dsc03/`, tests/tracer, or bundle changes; nothing pushed; `.beads` untouched. No follow-up threshold triggers hit.
+
+**Completion criteria output:**
+
+1. `python3 -B -m pytest tests/docs -q` → `5 passed`, exit 0
+2. `just spec-check` → `ALL GATES PASSED` (149 tests + 14 subtests in the suite; frozen 0.2 validator `PASS 11 descriptor fixtures`), exit 0
+3. `test -f docs/src/what-is-dsc.md` → exit 0
+4. `git log --oneline -2`:
+   ```
+   f2300ba docs(explanation): 'What is DSC and why' orientation page (GREEN)
+   4765320 test(docs): link-integrity check for the what-is-dsc explanation page (RED)
+   ```
