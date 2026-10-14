@@ -1,6 +1,14 @@
 # First-consumer demonstration (sunset-r68.13, tasks.md 5.4)
 
-Status: *SCAFFOLDED — blocked on demo-issue carrier (HITL) and human reviewers*
+Status: *ISSUE SELECTED — blocked on human reviewers (HITL) before any extraction run*
+
+* Demo issue (owner decision 2026-10-14)
+
+=resumen-periodical-excerpt.pdf= (fixtures/carriers/, sha256 4317fca9…2162):
+pp 1,2,3,5,6,13 of a real monthly credit-card resumen (BBVA Visa Platinum,
+cierre 01-Dic-22, owner-provided; PII-redacted per fixtures/carriers/MANIFEST.org).
+A monthly statement is a periodical publication: recurring masthead, issue
+number (Sobre/Página), columnar content, multi-page flow.
 
 * Spec: document-conformance "First-consumer demonstration" delta.
   Historical-periodical review workflow: one real multi-page issue, TWO
@@ -9,16 +17,28 @@ Status: *SCAFFOLDED — blocked on demo-issue carrier (HITL) and human reviewers
 
 ## Required properties of the demo issue (user provides)
 
-- [ ] Real multi-page historical-periodical issue (public archive or owned)
-- [ ] Includes COLUMNS (multi-column layout)
-- [ ] Includes CONTINUATION (article spanning pages)
-- [ ] Includes NATIVE/OCR disagreement (native text layer present AND an OCR
-      reading that differs somewhere) — NOTE: every committed carrier fails
-      this: diario-de-poesia is image-only (0 native text chars on all 6
-      pages, verified 2026-10-15); the books are not periodicals.
-- [ ] Includes a deliberately unsupported or unexamined feature (e.g. audio
-      attachment, unexamined page region)
-- [ ] License/source/digest publishable
+- [X] Real multi-page historical-periodical issue (public archive or owned)
+      — owned; monthly resumen, 6-page excerpt, provenance in MANIFEST.org
+- [X] Includes COLUMNS (multi-column layout) — transaction tables
+      (FECHA/DESCRIPCIÓN/CUPÓN/PESOS/DÓLARES), transfers (FECHA/BANCO/…),
+      débito detail
+- [X] Includes CONTINUATION (article spanning pages) — "Plan V" financing
+      list: p5 ends "…cancelar en cuotas fijas su saldo financiable de $ … en:"
+      and p6 opens with the cuota rows (excerpt pages 4->5)
+- [X] Includes NATIVE/OCR disagreement (native text layer present AND an OCR
+      reading that differs somewhere) — native text layer on pp 1-5;
+      disagreement is surfaced at demo time by the pinned tesseract pass
+      (spa) over rendered pages vs the native layer, plus the scanned p13
+      (original page numbering) which is OCR-only (146 native chars: header
+      only). Owners of the two readings are different processes — genuine
+      disagreement, not manufactured.
+- [X] Includes a deliberately unsupported or unexamined feature (e.g. audio
+      attachment, unexamined page region) — the scanned p13 region is
+      unexamined by native extractors (129-146 chars on an 18-pp original);
+      also removed logo images leave no glyph traces
+- [X] License/source/digest publishable — owner-provided private document;
+      PII-redacted before commit; publish digest (4317fca9…2162) + provenance
+      description, NOT the original file. Same policy as the r68.11 carriers.
 
 ## Pinned configuration (recorded 2026-10-15)
 
@@ -75,8 +95,8 @@ Status: *SCAFFOLDED — blocked on demo-issue carrier (HITL) and human reviewers
 
 ## Open decisions for the owner
 
-1. Which issue to use (or approve hunting one in the public archives already
-   referenced by fixtures/carriers provenance).
+1. RESOLVED (2026-10-14): owner supplied the carrier — BBVA resumen (86),
+   pp 1,2,3,5,6,13, redacted = fixtures/carriers/resumen-periodical-excerpt.pdf.
 2. Who the two human reviewers are (they must not be the agent).
 3. Demo run scheduling: recommend a fresh session (/renew sunset) — this
    scaffolding is the resume point.

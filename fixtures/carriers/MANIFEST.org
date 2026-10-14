@@ -38,6 +38,8 @@ re-screened clean.
 | bank-transfer-redacted.pdf          |     1 |      3 |      0 | transfer receipt, all parties mocked     |
 | estado-deuda-abl-redacted.pdf       |     1 |      3 |      0 | gov debt constancia, address mocked      |
 | cta-cte-propietario-redacted.pdf    |     2 |      3 |      0 | account ledger, names/CUIT mocked        |
+| resumen-periodical-excerpt.pdf      |     6 |      0 |      1 | periodical demo issue: tables, p5->p6    |
+|                                     |       |        |        | continuation, scanned notice (p13 orig)  |
 | sunset-carrier-sample.epub          |     2 |  (cfi) |      - | synthetic EPUB 3: manifest/spine/nav/svg |
 | sunset-carrier-sample-annotations.json |  - |      3 |      - | CFI highlight/text sidecar for the EPUB  |
 
@@ -77,6 +79,18 @@ search-based Highlight needs a text layer.
   rasterized at 150dpi and rebuilt so original pixels are discarded. Lab
   VALUES kept (identity-free once mocked). Rasterization means this carrier
   has no text layer — glyphs coverage is genuinely omitted for it.
+- resumen-periodical-excerpt.pdf: pp 1,2,3,5,6,13 of resumenes
+  mica/bbva/pdf/Resumen (86).pdf (Visa Platinum resumen, cierre 01-Dic-22,
+  owner-provided from ~/para/areas/dev/gh/ak/finanzas/resumenes/). Selected as
+  the sunset-r68.13 demo issue. Redacted: all person names, street address,
+  employer/third-party names, merchant names (consumo rows), bank name
+  ("Banco BBVA Argentina S.A." -> "Banco Mock Argentina S.A."), and all
+  account/CBU/CUIT/card/reference digits (same-length X runs). Logo images
+  removed; kept: monetary amounts, dates, public product names, and the
+  p13 scanned fund notice (OCR-verified: no personal data). KNOWN ARTIFACT:
+  rotated footer replacement text extracts letter-fragmented ("Ba nc o Mo
+  ck ...") — recorded as-is, part of the fixture. sha256
+  4317fca9fe017f3cc3088c7188ea54432b9ab8875c44b36eea6a6bd769012162.
 - sunset-carrier-sample.epub: generated locally (own content, no third-party)
 
 * Layers deployed
