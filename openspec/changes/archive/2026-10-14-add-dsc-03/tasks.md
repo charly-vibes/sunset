@@ -66,16 +66,17 @@ behavior-preserving refactor needs a separate ticket.
       carrier cases reusing the committed real fixtures; covers BOTH the
       tasks.md list (EPUB links) and the delta requirement's "EPUB footnotes"
       as separate cases (sunset-r68.12).
-- [ ] 5.2 Test two independent readers for canonical-byte agreement on the SAME
+- [x] 5.2 Test two independent readers for canonical-byte agreement on the SAME
       snapshot; separately compare extractor outputs through the pinned common
       projection, reviewed anchor mapping and oracle defined by document-conformance.
-      Machinery complete: dsc03/canonical.py (two independent readers,
-      byte-identical output incl. non-NFC text) and dsc03/projection.py
-      (pinned anchor-matched comparator; ambiguity stays unresolved;
-      alternatives retained). HITL remains: the anchor mapping is UNREVIEWED
-      (scripted machinery only), so conformance.classify still reports
-      "reviewed anchor mapping" missing and no real-carrier conformance is
-      claimed (sunset-r68.12).
+      DONE (2026-10-15, sunset-r68.12): machinery in dsc03/canonical.py (two
+      independent readers, byte-identical output incl. non-NFC text) and
+      dsc03/projection.py (pinned anchor-matched comparator; ambiguity stays
+      unresolved; alternatives retained). Anchor mapping REVIEWED: owner
+      accepted the rule-of-5 independent review (TypeSafe-verified findings,
+      all fixed) as the review of record and anchor_mapping_reviewed is True.
+      Recorded deviation: the review was agent-executed, not two independent
+      human readers; a human pass supersedes it.
 - [x] 5.3 Test report labels against intentionally incomplete suites so 0.2
       fixtures and spec lint can never be reported as 0.3/real-carrier conformance.
 - [x] 5.4 Execute the first-consumer demonstration against native-output review,

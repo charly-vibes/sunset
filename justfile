@@ -5,11 +5,9 @@
 
 # Run all spec-corpus gates (OpenSpec strict validation + frozen 0.2 validator)
 spec-check:
-    @echo "==> openspec strict validation (deployed specs)"
+    @echo "==> openspec strict validation (deployed specs, incl. deployed 0.3)"
     openspec validate --specs --strict
-    @echo "==> openspec strict validation (change add-dsc-03)"
-    openspec validate add-dsc-03 --strict
-    @echo "==> isolated proposal composition + tracer suite (not 0.3 descriptor validation)"
+    @echo "==> tracer suite (0.3 machinery, not real-carrier conformance)"
     python3 -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"
     python3 spec/document-model-specodelic-v3/validator.py test

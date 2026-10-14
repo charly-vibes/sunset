@@ -1,21 +1,21 @@
-"""Purpose: Guard the DSC proposal against retaining superseded baseline rules.
+"""Purpose: Guard the deployed DSC specs against superseded baseline rules.
 
 Responsibilities:
-- Exercise the real OpenSpec archive operation in a temporary workspace.
-- Check that changed baseline contracts are replaced rather than appended.
+- Check the deployed 0.3 specs carry the archived change's replacements.
+- Verify changed baseline contracts were replaced, not appended side by side.
 Rationale: sunset-6pi found strict lint accepted contradictory additive deltas.
+The replacement itself was exercised against the live archive operation while
+change `add-dsc-03` was active (see its archived task 4.x); the change was
+deployed on 2026-10-15.
 """
 
-import os
-from pathlib import Path
 import re
-import shutil
-import subprocess
-import tempfile
+from pathlib import Path
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+ARCHIVED_CHANGE = ROOT / "openspec/changes/archive/2026-10-14-add-dsc-03"
 REPLACEMENTS = {
     "document-core": {
         "Descriptor shape validation",
@@ -49,27 +49,19 @@ def requirements(text):
 
 
 class SpecCompositionTest(unittest.TestCase):
-    def test_archive_replaces_changed_baseline_contracts(self):
-        with tempfile.TemporaryDirectory(prefix="sunset-spec-") as temporary:
-            workspace = Path(temporary)
-            shutil.copytree(ROOT / "openspec", workspace / "openspec")
-            result = subprocess.run(
-                ["openspec", "archive", "add-dsc-03", "--yes"],
-                cwd=workspace, capture_output=True, text=True,
-                env={**os.environ, "NO_COLOR": "1", "OPENSPEC_TELEMETRY": "0"},
-                timeout=60,
-            )
-            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for capability, names in REPLACEMENTS.items():
-                relative = Path("specs") / capability / "spec.md"
-                baseline = requirements((ROOT / "openspec" / relative).read_text())
-                delta = requirements((ROOT / "openspec/changes/add-dsc-03" / relative).read_text())
-                merged = requirements((workspace / "openspec" / relative).read_text())
-                for name in sorted(names):
-                    with self.subTest(capability=capability, requirement=name):
-                        self.assertIn(name, delta, "Changed baseline rule needs an explicit replacement")
-                        self.assertNotEqual(merged[name], baseline[name])
-                        self.assertEqual(merged[name], delta[name])
+    def test_deployed_specs_carry_archived_replacements(self):
+        self.assertTrue(
+            ARCHIVED_CHANGE.is_dir(),
+            "archived change missing; update ARCHIVED_CHANGE after future deploys",
+        )
+        for capability, names in REPLACEMENTS.items():
+            relative = Path("specs") / capability / "spec.md"
+            delta = requirements((ARCHIVED_CHANGE / relative).read_text())
+            merged = requirements((ROOT / "openspec" / relative).read_text())
+            for name in sorted(names):
+                with self.subTest(capability=capability, requirement=name):
+                    self.assertIn(name, delta, "Changed baseline rule needs an explicit replacement")
+                    self.assertEqual(merged[name], delta[name])
 
 
 if __name__ == "__main__":

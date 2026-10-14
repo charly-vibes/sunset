@@ -58,19 +58,24 @@ This project uses **bd** (beads) for issue tracking. Run `bd prime` for full wor
 ## What this repo is
 
 `sunset` hosts the **DSC (Document Structural Core) specification corpus**:
-an executable 0.2 baseline (validator + fixtures) and the 0.3 design proposal,
-with the research bundle preserved as received under
-`spec/document-model-specodelic-v3/` (except its `specs/`, relocated to
-`openspec/` — see below).
+an executable 0.2 baseline (validator + fixtures) and the implemented 0.3
+machinery (`dsc03/` package + tracer test suite), with the research bundle
+preserved as received under `spec/document-model-specodelic-v3/` (except its
+`specs/`, relocated to `openspec/` — see below).
 
 ## Spec layout (single source of truth)
 
 - Capability specs live ONLY under `openspec/` (OpenSpec standard:
-  `openspec/specs/<capability>/spec.md` = 0.2 deployed truth;
-  `openspec/changes/add-dsc-03/` = 0.3 design proposal). The research bundle's
+  `openspec/specs/<capability>/spec.md` = deployed truth, including the 0.3
+  updates deployed from the archived change
+  `openspec/changes/archive/2026-10-14-add-dsc-03/`). The research bundle's
   original `specs/` were converted there — never re-create a second copy.
-- Spec edits: `openspec validate --specs --strict` and
-  `openspec validate add-dsc-03 --strict` must pass.
+- Spec edits: `openspec validate --specs --strict` must pass
+  (7 capabilities).
+- The 0.3 executable machinery lives in `dsc03/` with tests under
+  `tests/tracer/` (gate: `just spec-check`). Note: the scripted machinery and
+  its reviews were agent-executed — recorded deviations; a human pass
+  supersedes.
 
 Rules when touching the bundle:
 
@@ -80,9 +85,10 @@ Rules when touching the bundle:
   `openspec/` to avoid duplication; originals are in git history.)
 - `validator.py` is **deliberately frozen at 0.2**. Never describe it as a 0.3
   validator; it must reject 0.3 descriptors.
-- 0.3 contract documents (`CONTRACT.md`, `ACCEPTANCE.md`,
-  `ONTOLOGY-BOUNDARIES.md`) are a **design proposal** — never claim
-  implementation status that doesn't exist.
+- The bundle's 0.3 contract documents (`CONTRACT.md`, `ACCEPTANCE.md`,
+  `ONTOLOGY-BOUNDARIES.md`) are preserved proposal inputs — the authoritative
+  0.3 requirements now live in the deployed openspec specs; never claim
+  conformance beyond what `dsc03/conformance.py` honestly labels.
 - Sanity check after any bundle change: `python3 spec/document-model-specodelic-v3/validator.py test`
   must still report `PASS 11 descriptor fixtures`.
 

@@ -8,8 +8,10 @@ explicit interpretation provenance, and honest extraction coverage.
 
 Current executable truth is the **DSC 0.2** baseline, implemented by
 `spec/document-model-specodelic-v3/validator.py` (reference validator, frozen
-at 0.2). The **DSC 0.3** contract is a design proposal tracked as the OpenSpec
-change `add-dsc-03` — never described as implemented.
+at 0.2). The **DSC 0.3** machinery is implemented in the `dsc03/` package
+(archived OpenSpec change `add-dsc-03`, deployed to the deployed specs
+2026-10-15); no real-carrier conformance is claimed, and agent-executed
+review deviations are recorded in `docs/src/status.md`.
 
 ## Tech Stack
 
@@ -21,8 +23,10 @@ change `add-dsc-03` — never described as implemented.
 
 ### Code Style
 - Requirements are normative (EARS: SHALL) with at least one `#### Scenario:` each.
-- Version scoping is explicit: deployed specs under `openspec/specs/` describe
-  the **0.2 baseline**; 0.3 rules live only in `openspec/changes/add-dsc-03/`.
+- Version scoping is explicit: deployed specs under `openspec/specs/` carry
+  both the **0.2 baseline** and the **deployed 0.3 updates** (from archived
+  change `openspec/changes/archive/2026-10-14-add-dsc-03/`); no other active
+  deltas exist.
 - The specodelic-format research bundle (`spec/document-model-specodelic-v3/`)
   is provenance for these specs; its `specs/` were converted to OpenSpec format
   and are NOT duplicated here.
@@ -30,13 +34,16 @@ change `add-dsc-03` — never described as implemented.
 ### Testing Strategy
 - `python3 spec/document-model-specodelic-v3/validator.py test` must keep
   reporting `PASS 11 descriptor fixtures`.
-- `openspec validate --specs --strict` and
-  `openspec validate add-dsc-03 --strict` must pass.
+- `openspec validate --specs --strict` must pass (7 capabilities).
 - Property traces (which fixture exercises which requirement) live in the
   scenario text, mirroring the bundle's Properties tables.
 - `python3 -B -m unittest discover -s tests -v` exercises actual OpenSpec
   composition in an isolated temporary workspace. Changed baseline rules
   must be replaced, not retained beside contradictory additions.
-- Active 0.3 capability deltas supersede conflicting details in the immutable
-  research draft; rationale is in `changes/add-dsc-03/design.md`. Specification
-  checks do not establish 0.3 descriptor or real-carrier conformance.
+- Full 0.3 machinery suite: `just spec-check` (pytest over `tests/tracer/`,
+  144 tests) plus the frozen-0.2 sanity check.
+- The deployed 0.3 specs supersede conflicting details in the immutable
+  research draft; rationale is in
+  `openspec/changes/archive/2026-10-14-add-dsc-03/design.md`. Specification
+  checks and the scripted 0.3 suite do not establish real-carrier
+  conformance; labels come only from `dsc03/conformance.py`.
