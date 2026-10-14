@@ -381,6 +381,7 @@ def validate(d):
 
     # -- evidence -------------------------------------------------------------------
     evidence_ids = set()
+    evidence_by_id = {}
     for e in d["evidence"]:
         if not ID_RE.fullmatch(e["id"]):
             err("invalid_id")
@@ -389,6 +390,7 @@ def validate(d):
             err("duplicate_id")
             continue
         evidence_ids.add(e["id"])
+        evidence_by_id[e["id"]] = e
         if e["origin"] not in ORIGINS:
             err("invalid_evidence")
         if not all(x in content_ids for x in e["content_ids"]) or not all(x in selector_ids for x in e["selector_ids"]):
@@ -417,6 +419,7 @@ def validate(d):
     parents = {}
     contains_edges = []
     precedes_by_interp = {}
+    df_children = {}  # evidence id -> set of declared parent evidence ids
     hc_in_view = set()  # (view_id, content_id) bound by has-content
     edges = set()
     ns_map = {"regions": region_ids, "contents": content_ids, "evidence": evidence_ids}
@@ -466,6 +469,10 @@ def validate(d):
                 continue
             contains_edges.append((a, b))
             parents[b] = parents.get(b, 0) + 1
+        elif kind == "derived-from":
+            if "evidence" in r:
+                err("invalid_shape")  # derived-from SHALL NOT carry evidence
+            df_children.setdefault(a, set()).add(b)
         elif kind == "realizes":
             va = view_kinds.get(view_of.get(a))
             vb = view_kinds.get(view_of.get(b))
@@ -511,6 +518,36 @@ def validate(d):
     for interp, es in precedes_by_interp.items():
         if has_cycle(es):
             err("order_cycle")
+    df_pairs = [(a, b) for a, bs in df_children.items() for b in bs]
+    if has_cycle(df_pairs):
+        err("lineage_cycle")
+
+    # -- evidence lineage: producer uniqueness + edge equality ----------------------
+    # document-evidence: each content participating in a transform has exactly one
+    # producing evidence record; for every input, the transform evidence has a
+    # derived-from edge to that input's producer; edges equal the input producers.
+    producers = {}
+    for eid, e in evidence_by_id.items():
+        for cid in e["content_ids"]:
+            producers.setdefault(cid, []).append(eid)
+    participating = set()
+    for e in evidence_by_id.values():
+        if "transform" in e:
+            participating |= set(e["transform"]["inputs"])
+            participating |= set(e["transform"]["outputs"])
+    for cid in participating:
+        if len(producers.get(cid, [])) != 1:
+            err("invalid_transform_binding")
+    for eid, e in evidence_by_id.items():
+        if "transform" not in e:
+            continue
+        required = {
+            producers[i][0]
+            for i in e["transform"]["inputs"]
+            if len(producers.get(i, [])) == 1
+        }
+        if df_children.get(eid, set()) != required:
+            err("invalid_transform_binding")
 
     # -- annotations ------------------------------------------------------------------
     for a in d["annotations"]:

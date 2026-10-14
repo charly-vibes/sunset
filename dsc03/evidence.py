@@ -12,17 +12,53 @@
 from dsc03 import profiles
 
 
-def replay(ev, descriptor, resolved_profiles):
+def replay(ev, descriptor, resolved_profiles, transform_fns=None, _visiting=None):
     """Replay one evidence record against its descriptor.
 
-    Returns (status, detail). Status is 'replayed' with resolved content ids and
-    per-selector observations, or a typed failure: 'dangling_reference' (bound id
-    does not resolve), 'unsupported_profile' (declared profile did not resolve),
-    or 'invalid_selector' (malformed/out-of-bounds locator under a known profile).
+    Source links (no transform): resolve bound ids and reproduce each selector
+    anchor's observation. Transform records: replay the inputs' producers, apply
+    the pinned transform callable (registry keyed by config_sha256) to the exact
+    input values, and require the result to equal the recorded output value —
+    mismatches are 'replay_mismatch'; a missing callable is 'unreplayable', never
+    guessed. Statuses: replayed / dangling_reference / unsupported_profile /
+    invalid_selector / unreplayable / replay_mismatch / lineage_cycle.
     """
+    transform_fns = transform_fns or {}
+    _visiting = set() if _visiting is None else _visiting
     contents_by_id = {c["id"]: c for c in descriptor["contents"]}
     selectors_by_id = {s["id"]: s for s in descriptor["selectors"]}
     detail = {"content_ids": list(ev.get("content_ids", [])), "observations": {}}
+    if "transform" in ev:
+        if ev["id"] in _visiting:
+            return "lineage_cycle", detail
+        _visiting.add(ev["id"])
+        t = ev["transform"]
+        fn = transform_fns.get(t["config_sha256"])
+        if fn is None:
+            return "unreplayable", detail
+        input_values = []
+        for cid in t["inputs"]:
+            if cid not in contents_by_id:
+                return "dangling_reference", detail
+            producer = next(
+                (x for x in descriptor["evidence"] if cid in x.get("content_ids", [])),
+                None,
+            )
+            if producer is None:
+                return "dangling_reference", detail
+            status_p, _ = replay(producer, descriptor, resolved_profiles, transform_fns, _visiting)
+            if status_p != "replayed":
+                return status_p, detail
+            input_values.append(contents_by_id[cid]["value"])
+        result = fn(input_values[0] if len(input_values) == 1 else input_values)
+        for cid in t["outputs"]:
+            if cid not in contents_by_id:
+                return "dangling_reference", detail
+            if result != contents_by_id[cid]["value"]:
+                return "replay_mismatch", detail
+            detail["observations"][cid] = result
+            detail.setdefault("chain", []).append(cid)
+        return "replayed", detail
     for cid in ev.get("content_ids", []):
         if cid not in contents_by_id:
             return "dangling_reference", detail
