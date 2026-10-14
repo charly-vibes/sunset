@@ -1,0 +1,10 @@
+{
+  "version": "1",
+  "source_format": "application/epub+zip",
+  "features": [
+    { "name": "epub:manifest", "scope_kind": "document" },
+    { "name": "epub:spine", "scope_kind": "document" },
+    { "name": "epub:navigation", "scope_kind": "document" },
+    { "name": "epub:resources", "scope_kind": "epub-resource" }
+  ]
+}

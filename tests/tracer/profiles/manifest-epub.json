@@ -1,0 +1,7 @@
+{
+  "version": "1",
+  "adapter_id": "demo-epub-adapter",
+  "adapter_version": "0.1",
+  "source_format": "application/epub+zip",
+  "features": ["epub:manifest", "epub:spine", "epub:navigation"]
+}

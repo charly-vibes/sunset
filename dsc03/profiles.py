@@ -11,7 +11,7 @@ import json
 import re
 from pathlib import Path
 
-IMPLEMENTED_KINDS = {"selector", "geometry"}
+IMPLEMENTED_KINDS = {"selector", "geometry", "carrier-inventory", "adapter-manifest"}
 OFFSET_UNITS = {"unicode-scalar-values", "utf-8-bytes"}  # grapheme-clusters: unimplemented
 ENDPOINTS = {"half-open", "closed"}
 HALF_OPEN_RE = re.compile(r"\[(\d+),(\d+)\)")
@@ -112,7 +112,7 @@ def resolve(decl, registry):
         return "unsupported_profile", None
     if decl["kind"] not in IMPLEMENTED_KINDS:
         return "unsupported_profile", None
-    if artifact.get("kind") != decl["kind"]:
+    if decl["kind"] in ("selector", "geometry") and artifact.get("kind") != decl["kind"]:
         return "unsupported_profile", None
     if decl["kind"] == "selector":
         if artifact.get("offset_unit") not in OFFSET_UNITS:
@@ -122,5 +122,9 @@ def resolve(decl, registry):
     if decl["kind"] == "geometry":
         frames = artifact.get("frames")
         if not (isinstance(frames, list) and frames and all(isinstance(f, dict) and f.get("name") for f in frames)):
+            return "unsupported_profile", None
+    if decl["kind"] in ("carrier-inventory", "adapter-manifest"):
+        # artifact grammar itself is verified by dsc03.coverage
+        if not all(isinstance(artifact.get(k), str) and artifact[k] for k in ("version", "source_format")):
             return "unsupported_profile", None
     return "resolved", artifact

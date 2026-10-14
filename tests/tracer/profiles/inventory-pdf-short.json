@@ -1,0 +1,10 @@
+{
+  "version": "1",
+  "source_format": "application/pdf",
+  "features": [
+    { "name": "pdf:glyphs", "scope_kind": "pdf-page" },
+    { "name": "pdf:images", "scope_kind": "pdf-page" },
+    { "name": "pdf:vectors", "scope_kind": "pdf-page" },
+    { "name": "pdf:annotations", "scope_kind": "pdf-page" }
+  ]
+}

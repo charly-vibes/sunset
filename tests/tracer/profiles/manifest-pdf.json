@@ -1,0 +1,7 @@
+{
+  "version": "1",
+  "adapter_id": "demo-adapter",
+  "adapter_version": "0.1",
+  "source_format": "application/pdf",
+  "features": ["pdf:glyphs", "pdf:images", "pdf:vectors", "pdf:annotations"]
+}

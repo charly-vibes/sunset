@@ -149,7 +149,9 @@ def type_phase(d):
             if not _shape_errors(errors, item, required, optional):
                 continue
             for f in str_fields:
-                if f in item and not _is_str(item[f]):
+                # type-level only: emptiness is a semantic condition (e.g. a
+                # coverage reason is nonempty except when status is preserved)
+                if f in item and not isinstance(item[f], str):
                     errors.add("invalid_shape")
             for f in list_fields:
                 if f in item:
@@ -296,6 +298,8 @@ def validate(d):
     for p in d["profiles"]:
         if p["kind"] not in PROFILE_KINDS:
             err("invalid_profile")
+        if not p["uri"] or not p["version"]:
+            err("invalid_profile")
         if not digest_ok(p["sha256"]):
             err("invalid_digest")
         if not ID_RE.fullmatch(p["id"]):
@@ -328,6 +332,8 @@ def validate(d):
             err("dangling_reference")
             continue
         view_of[r["id"]] = r["view_id"]
+        if not r["kind"]:
+            err("invalid_shape")
         if "geometry" in r:
             g = r["geometry"]
             pid = g["profile_id"]
@@ -366,6 +372,8 @@ def validate(d):
         selector_ids.add(sl["id"])
         if sl["kind"] not in SELECTOR_KINDS:
             err("invalid_selector")
+        if not sl["locator"]:
+            err("invalid_selector")
         if not digest_ok(sl["source_sha256"]):
             err("invalid_digest")
         if sl["profile_id"] not in profile_ids or profile_ids[sl["profile_id"]].get("kind") != "selector":
@@ -391,7 +399,7 @@ def validate(d):
             continue
         evidence_ids.add(e["id"])
         evidence_by_id[e["id"]] = e
-        if e["origin"] not in ORIGINS:
+        if e["origin"] not in ORIGINS or not e["source_ref"]:
             err("invalid_evidence")
         if not all(x in content_ids for x in e["content_ids"]) or not all(x in selector_ids for x in e["selector_ids"]):
             err("dangling_reference")
@@ -400,6 +408,8 @@ def validate(d):
         if "transform" in e:
             t = e["transform"]
             ins, outs = t["inputs"], t["outputs"]
+            if not t["id"] or not t["version"]:
+                err("invalid_transform")
             if not digest_ok(t["config_sha256"]):
                 err("invalid_transform")
             if not (t["dependencies"] and all(x for x in t["dependencies"])):
@@ -620,7 +630,7 @@ def validate(d):
             err("dangling_reference")
         scope = c["scope"]
         scope_ok = (
-            scope == "document"
+            scope in ("document", "*")  # "*" = enumeration cannot complete
             or PAGE_SCOPE_RE.fullmatch(scope)
             or scope.startswith("resource:")
         )
@@ -629,6 +639,8 @@ def validate(d):
         if c["status"] not in COVERAGE_STATUSES:
             err("invalid_coverage")
         if not c["reason"] and c["status"] != "preserved":
+            err("invalid_coverage")
+        if not c["adapter_id"] or not c["adapter_version"]:
             err("invalid_coverage")
         cfg = c["config_sha256"]
         if cfg != "unavailable" and not digest_ok(cfg):
