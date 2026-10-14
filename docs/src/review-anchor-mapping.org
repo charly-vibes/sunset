@@ -1,0 +1,79 @@
+# HITL review: adversarial-corpus anchor mapping (sunset-r68.12)
+
+Status: *AWAITING HUMAN REVIEW* — machinery-only until signed off below.
+
+* Purpose of this review: document-conformance requires the extractor-output
+  projection to match observations "by resolved source anchors or an
+  independently reviewed explicit mapping". The mapping below is
+  machine-authored (scripted machinery pass, authorized option b, 2026-10-15).
+  Until a human independently reviews it, =conformance.classify= reports
+  =reviewed anchor mapping= missing and no real-carrier conformance is claimed.
+* What you are NOT reviewing: extraction quality. The corpus descriptors are
+  machinery artifacts; two scripted extractors never ran. This review covers
+  the /comparison rules/, not their results.
+
+## What to review (4 files, ~25 min)
+
+1. =dsc03/corpus.py= (242 lines) — the 12 corpus cases.
+   - *Check:* each case actually exercises the adversarial situation its name
+     claims. The two easiest to fake are =shared-pages= (does one physical page
+     really back two logical articles?) and =ocr-native= (is the OCR text
+     really a plausible mis-read: "2l" vs "21"?).
+   - *Check:* =conflicting-interpretations= records two INCOMPATIBLE supported
+     hypotheses with no winner ("ambiguity can pass").
+   - *Check:* the two carrier-derived cases (=epub-links=, =omission=) point at
+     committed fixtures and the =omission= case really flips the last page's
+     glyph entry to =omitted= with a reason.
+2. =dsc03/projection.py= (157 lines) — the matching rules. This is the heart
+   of the review.
+   - *Rule 1 — anchor-only matching:* observations pair only when they share a
+     non-empty anchor set AND the same observable. Local ids (=a7= vs =b2=) and
+     text similarity NEVER cause a pairing.
+   - *Rule 2 — ambiguity stays unresolved:* >1 candidate pairing, or a pairing
+     whose values diverge, or same-observable/no-shared-anchor → =unresolved=
+     with BOTH sides attributed. No arbitrary winner.
+   - *Rule 3 — dropped-observation is not "unresolved":* if a required
+     observable is simply absent from one extractor, that is a false negative,
+     not an allowed unresolved alternative — even if the oracle lists the
+     observable in =allowed_unresolved=.
+   - *Rule 4 — pass rule:* pass iff every required observable is matched or
+     actually-unresolved, unresolved ⊆ oracle's allowed list, nothing
+     forbidden present.
+   - *Check:* would you accept these four rules as the "pinned common
+     projection and comparator"? Any rule you'd change is a finding.
+3. =dsc03/canonical.py= (75 lines) — the two readers.
+   - *Check:* reader_a (recursive sort-keys walk) and reader_b (top-level
+     section emitter) are genuinely different code paths, and the output
+     contract (ids, array order, exact non-NFC text) is honest.
+4. =tests/tracer/test_conformance_corpus.py= (250 lines) — the encoded
+   expectations.
+   - *Check:* each projection test asserts the behavior you'd expect from the
+     rules above; especially =test_label_similarity_never_matches_without_anchor=
+     and =test_discarding_an_expected_alternative_fails=.
+
+## Known limitations to weigh (please judge severity)
+
+- The anchors are synthetic strings (=sha256:#page:1= style), not resolved
+  against real source bytes; anchor /resolution/ against carrier digests is
+  future work, matching is by anchor equality only.
+- =dependencies= / =derived-from= semantics in the =replay= corpus case were
+  built to satisfy the validator's lineage rules — check they read honestly.
+- =allowed_unresolved= is a flat observable-name list; per-observation
+  granularity would be stricter.
+
+## How to sign off
+
+After reviewing, record the verdict in this file and flip the flag:
+
+1. Edit =## Verdict= below: approved / findings (list them).
+2. If approved: the next suite run may set =anchor_mapping_reviewed: True=
+   (one line in the conformance-suite call; grep =anchor_mapping_reviewed=).
+3. File/close =sunset-r68.12= accordingly (=bd close sunset-r68.12= once the
+   flag flip lands).
+
+## Verdict
+
+- Reviewer:
+- Date:
+- Decision: (approved | findings)
+- Findings:
