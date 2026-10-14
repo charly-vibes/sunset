@@ -25,10 +25,10 @@ PDF_PAGES = [f"page:{i}" for i in range(1, 11)]
 ALL_FEATURES = ("pdf:glyphs", "pdf:images", "pdf:vectors", "pdf:annotations")
 
 
-def decl(pid, uri, kind):
+def decl(pid, name, kind):
     return {
-        "id": pid, "kind": kind, "uri": uri, "version": "1",
-        "sha256": hashlib.sha256((PROFILES / uri).read_bytes()).hexdigest(),
+        "id": pid, "kind": kind, "uri": f"profiles/{name}", "version": "1",
+        "sha256": hashlib.sha256((PROFILES / name).read_bytes()).hexdigest(),
     }
 
 
@@ -75,7 +75,7 @@ def unknown(fmt, scope_kind):
 
 
 def resolve(d):
-    return {p["id"]: profiles.resolve(p, profiles.Registry(PROFILES)) for p in d["profiles"]}
+    return {p["id"]: profiles.resolve(p, profiles.Registry(PROFILES.parent)) for p in d["profiles"]}
 
 
 def verify(d, enum=enumerated):
@@ -105,30 +105,28 @@ def test_epub_minimums_pass():
 # -- manifest grammar ------------------------------------------------------------
 def test_manifest_feature_outside_inventory_is_invalid():
     d = pdf_descriptor([])
-    resolved = {p["id"]: profiles.resolve(p, profiles.Registry(PROFILES)) for p in d["profiles"]}
+    resolved = resolve(d)
     resolved["p-man"][1]["features"].append("pdf:not-in-inventory")
-    assert "invalid_coverage" in verify(d)["reasons"]
+    assert "invalid_coverage" in coverage.verify(d, resolved, enumerated)["reasons"]
 
 
 def test_manifest_version_must_match_declaration():
     d = pdf_descriptor([])
-    resolved = {p["id"]: profiles.resolve(p, profiles.Registry(PROFILES)) for p in d["profiles"]}
+    resolved = resolve(d)
     resolved["p-man"][1]["version"] = "2"
-    assert "invalid_coverage" in verify(d)["reasons"]
+    assert "invalid_coverage" in coverage.verify(d, resolved, enumerated)["reasons"]
 
 
 # -- descriptor-level coverage ------------------------------------------------------
 def test_unpaired_profile_declarations_are_invalid():
     d = pdf_descriptor([entry("pdf:glyphs", "page:1", "preserved")])
     d["profiles"] = [p for p in d["profiles"] if p["id"] != "p-man"]
-    resolved = {p["id"]: profiles.resolve(p, profiles.Registry(PROFILES)) for p in d["profiles"]}
-    assert "invalid_coverage" in coverage.verify(d, resolved, enumerated)["reasons"]
+    assert "invalid_coverage" in coverage.verify(d, resolve(d), enumerated)["reasons"]
 
 
 def test_no_adapter_run_is_unexamined():
     d = validator.load(TRACER)
-    resolved = {p["id"]: profiles.resolve(p, profiles.Registry(PROFILES)) for p in d["profiles"]}
-    report = coverage.verify(d, resolved, enumerated)
+    report = coverage.verify(d, resolve(d), enumerated)
     assert report["source_coverage"] == "unexamined"
     assert report["reasons"] == []
 
