@@ -40,8 +40,11 @@ behavior-preserving refactor needs a separate ticket.
 
 ## 3. Adapters and coverage
 
-- [ ] 3.1 Start with independently annotated real PDF/EPUB fixtures and implement
+- [x] 3.1 Start with independently annotated real PDF/EPUB fixtures and implement
       adapters that preserve source observations (synthetic descriptors do not count).
+      Implemented in dsc03/adapters.py against the committed carriers in
+      fixtures/carriers/ (sunset-r68.11); HITL two-reader agreement (5.1/5.2)
+      remains separate and does not gate this item.
 - [x] 3.2 Test one omitted page, partial-page loss, duplicates and unknown scope
       enumeration; implement scoped coverage and conservative summaries.
 - [x] 3.3 Test valid-schema/failed-coverage and supported/disputed cases; implement

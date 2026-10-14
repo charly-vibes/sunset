@@ -9,8 +9,8 @@ spec-check:
     openspec validate --specs --strict
     @echo "==> openspec strict validation (change add-dsc-03)"
     openspec validate add-dsc-03 --strict
-    @echo "==> isolated proposal composition (not 0.3 descriptor validation)"
-    python3 -B -m unittest discover -s tests -v
+    @echo "==> isolated proposal composition + tracer suite (not 0.3 descriptor validation)"
+    python3 -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"
     python3 spec/document-model-specodelic-v3/validator.py test
     @echo "ALL GATES PASSED"
