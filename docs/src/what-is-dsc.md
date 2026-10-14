@@ -7,7 +7,7 @@ was *not* captured. This page explains the problem DSC addresses, the shape
 of the model, which version of the spec applies to you, and what this
 repository (sunset) does and does not provide. It is explanation, not
 instruction: the tutorial is [your first descriptor](first-descriptor.md)
-(in progress) and the normative requirements live in
+and the normative requirements live in
 [the deployed capability specs](../../openspec/specs/).
 
 ## The problem DSC solves
@@ -112,7 +112,7 @@ descriptor → validate → profile resolve → evidence replay — is in the
 
 ## Where next
 
-- [Your first descriptor](first-descriptor.md) — the tutorial (in progress)
+- [Your first descriptor](first-descriptor.md) — the tutorial
 - [Reference](reference.md) — index of specs, machinery, and gates (in progress)
 - [Status](status.md) — current state, gates, and recorded deviations
 - The [deployed specs](../../openspec/specs/) — the normative source of truth
