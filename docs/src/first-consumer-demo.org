@@ -1,0 +1,82 @@
+# First-consumer demonstration (sunset-r68.13, tasks.md 5.4)
+
+Status: *SCAFFOLDED — blocked on demo-issue carrier (HITL) and human reviewers*
+
+* Spec: document-conformance "First-consumer demonstration" delta.
+  Historical-periodical review workflow: one real multi-page issue, TWO
+  extractors, DSC exchange, separate reviewing consumer. Narrower than full
+  PDF/EPUB conformance; never reported as release conformance.
+
+## Required properties of the demo issue (user provides)
+
+- [ ] Real multi-page historical-periodical issue (public archive or owned)
+- [ ] Includes COLUMNS (multi-column layout)
+- [ ] Includes CONTINUATION (article spanning pages)
+- [ ] Includes NATIVE/OCR disagreement (native text layer present AND an OCR
+      reading that differs somewhere) — NOTE: every committed carrier fails
+      this: diario-de-poesia is image-only (0 native text chars on all 6
+      pages, verified 2026-10-15); the books are not periodicals.
+- [ ] Includes a deliberately unsupported or unexamined feature (e.g. audio
+      attachment, unexamined page region)
+- [ ] License/source/digest publishable
+
+## Pinned configuration (recorded 2026-10-15)
+
+- Extractor A: pdftotext (poppler) — /usr/bin/pdftotext
+- Extractor B: PyMuPDF 1.28.2 (page.get_text)
+- Adapters: dsc03.adapters (sunset-carrier 0.1), inventory/manifest pinned
+- Comparator: dsc03.projection (pin: sunset-common-projection v1)
+- Readers: dsc03.canonical reader_a/reader_b (byte-identical output)
+- Labels: dsc03.conformance.classify
+
+## Workflow (once the issue exists)
+
+1. [HITL] Two independent human reviewers annotate the issue BEFORE seeing any
+   extraction output; disagreements retained (not resolved).
+2. Run both extractors; adapt each output through dsc03.adapters into a 0.3
+   descriptor snapshot (one adapter run per extractor, separate snapshots).
+3. Read both snapshots through reader_a/reader_b; assert canonical byte
+   agreement per snapshot.
+4. Compare extractor outputs via dsc03.projection against the reviewers'
+   expectations (oracle: required + allowed_unresolved + forbidden).
+5. Separate reviewing consumer: human reviewer performs the review task list
+   below twice — once on DSC output, once on native extractor output —
+   measuring time, correct decisions, descriptor bytes, peak memory.
+
+## Reviewer task list template (fill per issue)
+
+| # | Task | Source fragment | Decision |
+|---|------|-----------------|----------|
+| R1 | Verify heading text of lead article | page:N | correct/incorrect |
+| R2 | Trace a continuation sentence across pages | page:N->M | correct/incorrect |
+| R3 | Adjudicate a native/OCR disagreement | page:N | which reading |
+| R4 | Confirm a footnote maps to its anchor | page:N | correct/incorrect |
+| R5 | Confirm the unsupported feature is declared, not hidden | coverage | correct/incorrect |
+
+## Measurement sheet (must be published with raw results)
+
+- [ ] source/license/digest (sha256 of the issue file)
+- [ ] reviewer time per task, DSC vs native (stopwatch or screen recording)
+- [ ] correct decisions per task, both modes
+- [ ] descriptor bytes (canonical reader_b output) per snapshot
+- [ ] peak memory of each extractor run
+- [ ] pinned configs + output artifacts committed under fixtures/demo/
+- [ ] raw results (JSON) — no narrative smoothing
+
+## Publication gates (before any benefit claim)
+
+- Reference set (reviewers' annotations) exists BEFORE extractor evaluation
+- Nonempty set of resolvable observations + separately listed allowed
+  unresolved cases; zero incorrect anchors may be marked verified
+- All seeded disagreements and omissions survive export/import — dropping any
+  one is a functional failure
+- Review time INCREASED -> may claim traceability only, never speed
+- No demo/baseline -> workflow benefit stays "unproven" (dsc03.conformance)
+
+## Open decisions for the owner
+
+1. Which issue to use (or approve hunting one in the public archives already
+   referenced by fixtures/carriers provenance).
+2. Who the two human reviewers are (they must not be the agent).
+3. Demo run scheduling: recommend a fresh session (/renew sunset) — this
+   scaffolding is the resume point.
