@@ -1,0 +1,17 @@
+{
+  "kind": "geometry",
+  "version": "1",
+  "subunit": "integers-are-points",
+  "frames": [
+    {
+      "name": "page-1",
+      "unit": "pt",
+      "origin": "bottom-left",
+      "axes": "x-right-y-up",
+      "scale": [1, 1],
+      "rotation": 0,
+      "crop": null,
+      "source_scope": "page:1"
+    }
+  ]
+}

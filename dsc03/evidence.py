@@ -9,26 +9,7 @@
 #   "Typed profile-defined source selectors". Byte-unit profiles and transform
 #   replay arrive with later tickets (sunset-r68.2, sunset-r68 tasks 2.x/3.x).
 """Evidence replay: resolve the link, apply its anchors, report typed outcomes."""
-import re
-
-HALF_OPEN_RE = re.compile(r"\[(\d+),(\d+)\)")
-
-
-def _range(value, locator, artifact):
-    """Apply a text-range locator to the exact value under the pinned grammar."""
-    if artifact.get("endpoints") != "half-open":
-        return None  # closed endpoints are declared, not guessed
-    unit = artifact.get("offset_unit")
-    if unit != "unicode-scalar-values":
-        return None  # byte/grapheme units are declared by other profiles
-    m = HALF_OPEN_RE.fullmatch(locator)
-    if m is None:
-        return None
-    start, end = int(m.group(1)), int(m.group(2))
-    n = len(value)  # Python str length == number of Unicode scalar values
-    if not (0 <= start <= end <= n):
-        return None
-    return value[start:end]
+from dsc03 import profiles
 
 
 def replay(ev, descriptor, resolved_profiles):
@@ -58,8 +39,8 @@ def replay(ev, descriptor, resolved_profiles):
         if sel["kind"] != "text-range":
             return "invalid_selector", detail  # only text-range replay is implemented
         value = contents_by_id[target]["value"]
-        obs = _range(value, sel["locator"], artifact)
-        if obs is None:
+        status_r, obs = profiles.apply_text_range(value, sel["locator"], artifact)
+        if status_r != "selected":
             return "invalid_selector", detail
         detail["observations"][sid] = obs
     return "replayed", detail

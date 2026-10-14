@@ -1,0 +1,8 @@
+{
+  "kind": "selector",
+  "version": "1",
+  "selector_kinds": ["text-range"],
+  "offset_unit": "unicode-scalar-values",
+  "endpoints": "closed",
+  "unicode_version": "15.1.0"
+}
