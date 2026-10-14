@@ -41,6 +41,11 @@ def classify(suite):
             missing.append("two independent readers")
         if not suite.get("extractor_comparison"):
             missing.append("declared extractor comparison")
+        elif not suite.get("anchor_mapping_reviewed"):
+            # document-conformance: the projection matches by resolved anchors
+            # or an INDEPENDENTLY REVIEWED explicit mapping — an unreviewed
+            # (machinery-only) mapping can never support conformance claims
+            missing.append("reviewed anchor mapping")
     elif contract or suite.get("adversarial_corpus"):
         missing.append("real PDF/EPUB carrier fixtures")
 

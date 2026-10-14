@@ -74,9 +74,21 @@ def test_full_conformance_requires_everything():
         "v02_fixtures": True, "v03_schema": True, "v03_profiles": True,
         "v03_coverage": True, "migration": True, "adversarial_corpus": True,
         "real_carriers": True, "independent_readers": 2, "extractor_comparison": True,
+        "anchor_mapping_reviewed": True,
     })
     assert r["status"] == "complete"
     assert r["real_carrier_conformance"] is True
+
+
+def test_unreviewed_anchor_mapping_blocks_full_conformance():
+    base = {
+        "v02_fixtures": True, "v03_schema": True, "v03_profiles": True,
+        "v03_coverage": True, "adversarial_corpus": True,
+        "real_carriers": True, "independent_readers": 2, "extractor_comparison": True,
+    }
+    r = conformance.classify(base)
+    assert r["status"] == "incomplete"
+    assert "reviewed anchor mapping" in r["missing"]
 
 
 def test_workflow_benefit_unproven_without_demo_and_baseline():

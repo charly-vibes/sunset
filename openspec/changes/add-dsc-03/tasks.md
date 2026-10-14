@@ -59,12 +59,21 @@ behavior-preserving refactor needs a separate ticket.
 
 ## 5. Conformance
 
-- [ ] 5.1 Build the adversarial corpus from independent expectations (columns,
+- [x] 5.1 Build the adversarial corpus from independent expectations (columns,
       continuation, shared pages, OCR/native, poetry, EPUB links, opposing orders,
       transforms, roundtrip, omission, replay and exact Unicode text).
+      Implemented as dsc03/corpus.py (machinery-only builder + gate) with
+      carrier cases reusing the committed real fixtures (sunset-r68.12).
 - [ ] 5.2 Test two independent readers for canonical-byte agreement on the SAME
       snapshot; separately compare extractor outputs through the pinned common
       projection, reviewed anchor mapping and oracle defined by document-conformance.
+      Machinery complete: dsc03/canonical.py (two independent readers,
+      byte-identical output incl. non-NFC text) and dsc03/projection.py
+      (pinned anchor-matched comparator; ambiguity stays unresolved;
+      alternatives retained). HITL remains: the anchor mapping is UNREVIEWED
+      (scripted machinery only), so conformance.classify still reports
+      "reviewed anchor mapping" missing and no real-carrier conformance is
+      claimed (sunset-r68.12).
 - [x] 5.3 Test report labels against intentionally incomplete suites so 0.2
       fixtures and spec lint can never be reported as 0.3/real-carrier conformance.
 - [ ] 5.4 Execute the first-consumer demonstration against native-output review,
