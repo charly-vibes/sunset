@@ -48,48 +48,48 @@ This is a proposed normative design, not a claim of existing implementation. Int
 ### Requirement: Typed carrier coordinates
 The system SHALL interpret geometry only within declared compatible frames or transforms.
 
-#### Scenario: Typed carrier coordinates fixture
-- **GIVEN** Given two coordinates on different PDF pages without a transform
+#### Scenario: Cross-page comparison without transform
+- **GIVEN** two coordinates on different PDF pages without a transform
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given two coordinates on different PDF pages without a transform, their above/below comparison is unknown, not false.
+- **THEN** the above/below comparison returns unknown rather than false.
 
 ### Requirement: Reflow-safe EPUB identity
 The system SHALL distinguish stable EPUB spine selectors from temporary viewport geometry.
 
-#### Scenario: Reflow-safe EPUB identity fixture
-- **GIVEN** Given the same chapter at two font sizes
+#### Scenario: EPUB anchor stable across font sizes
+- **GIVEN** the same chapter at two font sizes
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given the same chapter at two font sizes, anchor identity is preserved while rendered positions may differ.
+- **THEN** anchor identity is preserved while rendered positions may differ.
 
 ### Requirement: Mixed evidence
 The system SHALL permit native and OCR observations on one PDF page without forcing either to supersede the other.
 
-#### Scenario: Mixed evidence fixture
-- **GIVEN** Given a hybrid PDF
+#### Scenario: Hybrid PDF keeps provenance separate
+- **GIVEN** a hybrid PDF
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given a hybrid PDF, independent observations retain their source provenance.
+- **THEN** the independent native and OCR observations both retain their source provenance.
 
 ## Requirements
 ### Requirement: Typed carrier coordinates
 The system SHALL interpret geometry only within declared compatible frames or transforms.
 
-#### Scenario: Typed carrier coordinates fixture
-- **GIVEN** Given two coordinates on different PDF pages without a transform
+#### Scenario: Cross-page comparison without transform
+- **GIVEN** two coordinates on different PDF pages without a transform
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given two coordinates on different PDF pages without a transform, their above/below comparison is unknown, not false.
+- **THEN** the above/below comparison returns unknown rather than false.
 
 ### Requirement: Reflow-safe EPUB identity
 The system SHALL distinguish stable EPUB spine selectors from temporary viewport geometry.
 
-#### Scenario: Reflow-safe EPUB identity fixture
-- **GIVEN** Given the same chapter at two font sizes
+#### Scenario: EPUB anchor stable across font sizes
+- **GIVEN** the same chapter at two font sizes
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given the same chapter at two font sizes, anchor identity is preserved while rendered positions may differ.
+- **THEN** anchor identity is preserved while rendered positions may differ.
 
 ### Requirement: Mixed evidence
 The system SHALL permit native and OCR observations on one PDF page without forcing either to supersede the other.
 
-#### Scenario: Mixed evidence fixture
-- **GIVEN** Given a hybrid PDF
+#### Scenario: Hybrid PDF keeps provenance separate
+- **GIVEN** a hybrid PDF
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given a hybrid PDF, independent observations retain their source provenance.
+- **THEN** the independent native and OCR observations both retain their source provenance.

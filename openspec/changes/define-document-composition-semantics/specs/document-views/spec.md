@@ -47,48 +47,48 @@ This is a proposed normative design, not a claim of existing implementation. Int
 ### Requirement: Multiple named structural views
 The system SHALL preserve overlapping physical and logical hierarchies over the same regions.
 
-#### Scenario: Multiple named structural views fixture
-- **GIVEN** Given an article spanning two pages
+#### Scenario: Article spanning two pages keeps both memberships
+- **GIVEN** an article spanning two pages
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given an article spanning two pages, its two page memberships and one logical article membership remain accessible.
+- **THEN** both page memberships and the single logical article membership remain accessible.
 
 ### Requirement: Partial reading order
 The system SHALL model reading order without assuming a unique total sequence.
 
-#### Scenario: Partial reading order fixture
-- **GIVEN** Given two independent columns
+#### Scenario: Incomparable columns are valid
+- **GIVEN** two independent columns
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given two independent columns, the validator accepts incomparability and rejects a declared cycle.
+- **THEN** the validator accepts the columns as incomparable and rejects any declared cycle.
 
 ### Requirement: Scoped projection and refinement
 The system SHALL report removed edges and superseded links when a view is projected or refined.
 
-#### Scenario: Scoped projection and refinement fixture
-- **GIVEN** Given a cross-page continuation omitted from a one-page projection
+#### Scenario: Excluded continuation is reported by projection
+- **GIVEN** a cross-page continuation omitted from a one-page projection
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given a cross-page continuation omitted from a one-page projection, the result reports the excluded link rather than claiming full fidelity.
+- **THEN** the projection result reports the excluded link instead of claiming full fidelity.
 
 ## Requirements
 ### Requirement: Multiple named structural views
 The system SHALL preserve overlapping physical and logical hierarchies over the same regions.
 
-#### Scenario: Multiple named structural views fixture
-- **GIVEN** Given an article spanning two pages
+#### Scenario: Article spanning two pages keeps both memberships
+- **GIVEN** an article spanning two pages
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given an article spanning two pages, its two page memberships and one logical article membership remain accessible.
+- **THEN** both page memberships and the single logical article membership remain accessible.
 
 ### Requirement: Partial reading order
 The system SHALL model reading order without assuming a unique total sequence.
 
-#### Scenario: Partial reading order fixture
-- **GIVEN** Given two independent columns
+#### Scenario: Incomparable columns are valid
+- **GIVEN** two independent columns
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given two independent columns, the validator accepts incomparability and rejects a declared cycle.
+- **THEN** the validator accepts the columns as incomparable and rejects any declared cycle.
 
 ### Requirement: Scoped projection and refinement
 The system SHALL report removed edges and superseded links when a view is projected or refined.
 
-#### Scenario: Scoped projection and refinement fixture
-- **GIVEN** Given a cross-page continuation omitted from a one-page projection
+#### Scenario: Excluded continuation is reported by projection
+- **GIVEN** a cross-page continuation omitted from a one-page projection
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given a cross-page continuation omitted from a one-page projection, the result reports the excluded link rather than claiming full fidelity.
+- **THEN** the projection result reports the excluded link instead of claiming full fidelity.

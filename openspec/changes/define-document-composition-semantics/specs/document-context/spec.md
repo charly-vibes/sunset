@@ -47,48 +47,48 @@ This is a proposed normative design, not a claim of existing implementation. Int
 ### Requirement: Scoped interpretation
 The system SHALL expose inherited context separately from directly observed source claims.
 
-#### Scenario: Scoped interpretation fixture
-- **GIVEN** Given a poem in a magazine with issue date
+#### Scenario: Poem issue date stays publication context
+- **GIVEN** a poem in a magazine with issue date
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given a poem in a magazine with issue date, the issue date remains publication context and not the date described by the poem.
+- **THEN** the issue date remains publication context and is not treated as the date described by the poem.
 
 ### Requirement: Evidence is not truth
 The system SHALL preserve attributed conflicting claims and uncertainty without silently electing a winner.
 
-#### Scenario: Evidence is not truth fixture
-- **GIVEN** Given disagreeing OCR and manual transcription
+#### Scenario: Disputed transcription stays attributed
+- **GIVEN** disagreeing OCR and manual transcription
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given disagreeing OCR and manual transcription, both stay available with sources and status.
+- **THEN** both transcriptions remain available with their sources and status, and neither silently wins.
 
 ### Requirement: Deterministic semantic rules
 The system SHALL evaluate versioned rules on pinned inputs and return stable claim sets or typed errors.
 
-#### Scenario: Deterministic semantic rules fixture
-- **GIVEN** Given the same source
+#### Scenario: Repeated evaluation yields identical claims
+- **GIVEN** the same source evaluated twice under the same scope and rule version
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given the same source, scope and rule version twice, outputs match under canonical equality.
+- **THEN** the two runs produce outputs that match under canonical equality.
 
 ## Requirements
 ### Requirement: Scoped interpretation
 The system SHALL expose inherited context separately from directly observed source claims.
 
-#### Scenario: Scoped interpretation fixture
-- **GIVEN** Given a poem in a magazine with issue date
+#### Scenario: Poem issue date stays publication context
+- **GIVEN** a poem in a magazine with issue date
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given a poem in a magazine with issue date, the issue date remains publication context and not the date described by the poem.
+- **THEN** the issue date remains publication context and is not treated as the date described by the poem.
 
 ### Requirement: Evidence is not truth
 The system SHALL preserve attributed conflicting claims and uncertainty without silently electing a winner.
 
-#### Scenario: Evidence is not truth fixture
-- **GIVEN** Given disagreeing OCR and manual transcription
+#### Scenario: Disputed transcription stays attributed
+- **GIVEN** disagreeing OCR and manual transcription
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given disagreeing OCR and manual transcription, both stay available with sources and status.
+- **THEN** both transcriptions remain available with their sources and status, and neither silently wins.
 
 ### Requirement: Deterministic semantic rules
 The system SHALL evaluate versioned rules on pinned inputs and return stable claim sets or typed errors.
 
-#### Scenario: Deterministic semantic rules fixture
-- **GIVEN** Given the same source
+#### Scenario: Repeated evaluation yields identical claims
+- **GIVEN** the same source evaluated twice under the same scope and rule version
 - **WHEN** the corresponding deterministic rule is evaluated
-- **THEN** Given the same source, scope and rule version twice, outputs match under canonical equality.
+- **THEN** the two runs produce outputs that match under canonical equality.
