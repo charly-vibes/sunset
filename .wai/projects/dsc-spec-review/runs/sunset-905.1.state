@@ -2,6 +2,10 @@ ticket: sunset-905.1
 branch: main
 brief_path: .wai/projects/dsc-spec-review/briefs/sunset-905-1-composition-slice-1.md
 steps:
+  - step: stop
+    sha: ca2d599
+  - step: ship
+    sha: ca2d599
   - step: verify
     sha: 74fedd2
   - step: spawn
@@ -12,6 +16,7 @@ steps:
     sha: 22068c4
   - step: claim
     sha: 22068c4
+completed: true
 notes: >
   Epic sunset-9pf run 2 (composition slice 1). Claimed at HEAD 22068c4bbe84a0e3118a8c74773fe9c0be525f72.
   Depends on closed sunset-7hs (substrate mapping + harness in place).
