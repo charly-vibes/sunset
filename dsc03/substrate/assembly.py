@@ -80,6 +80,20 @@ def _refused(rule, smallest, **detail):
             "detail": detail}
 
 
+def _merge_vocabularies(a, b):
+    """Namespace-aligned vocabulary merge; refusal on version mismatch."""
+    ns_a = {v["namespace"]: v["version"] for v in a["vocabularies"]}
+    ns_b = {v["namespace"]: v["version"] for v in b["vocabularies"]}
+    for ns in sorted(set(ns_a) & set(ns_b)):
+        if ns_a[ns] != ns_b[ns]:
+            return None, _refused("namespace_mismatch", [ns],
+                                  version_a=ns_a[ns], version_b=ns_b[ns])
+    merged = copy.deepcopy(a["vocabularies"])
+    merged += [copy.deepcopy(v) for v in b["vocabularies"]
+               if v["namespace"] not in ns_a]
+    return merged, None
+
+
 def _merge_by_key(a_items, b_items, key_of, rule, section):
     """Left-first merge: identical records dedupe to a single identity,
     conflicting records refuse with the smallest witness (the key)."""
@@ -144,19 +158,13 @@ def _compose_nonempty(a, b):
                         source_b=b["source"]["sha256"])
 
     # 2. Namespace alignment: same namespace under different versions refuses.
-    ns_a = {v["namespace"]: v["version"] for v in a["vocabularies"]}
-    ns_b = {v["namespace"]: v["version"] for v in b["vocabularies"]}
-    for ns in sorted(set(ns_a) & set(ns_b)):
-        if ns_a[ns] != ns_b[ns]:
-            return _refused("namespace_mismatch", [ns],
-                            version_a=ns_a[ns], version_b=ns_b[ns])
+    vocabs, refusal = _merge_vocabularies(a, b)
+    if refusal:
+        return refusal
 
     # 3. Section merge: shared ID with identical record → single identity.
-    out = {"version": a["version"], "id": a["id"], "source": copy.deepcopy(a["source"])}
-    out["vocabularies"] = copy.deepcopy(a["vocabularies"])
-    for v in b["vocabularies"]:
-        if v["namespace"] not in ns_a:
-            out["vocabularies"].append(copy.deepcopy(v))
+    out = {"version": a["version"], "id": a["id"],
+           "source": copy.deepcopy(a["source"]), "vocabularies": vocabs}
     for section in _BY_ID:
         merged, refusal = _merge_by_key(a[section], b[section],
                                         lambda i: i["id"],
