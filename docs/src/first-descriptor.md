@@ -152,7 +152,7 @@ character back and you are valid again. Malformed JSON is typed too:
 
 ## Where next
 
-- [Adapting real carriers](integrate.md) (in progress) — turn real PDF/EPUB
+- [Adapting real carriers](integrate.md) — turn real PDF/EPUB
   extractions into descriptors like this one.
 - [Reference](reference.md) (in progress) — index of specs, machinery, and
   gates.
