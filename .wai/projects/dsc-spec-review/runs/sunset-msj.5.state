@@ -1,0 +1,9 @@
+ticket: sunset-msj.5
+branch: main
+brief_path:
+steps: []
+step: claim @ 64cad70f47821ab3d2384197ccbb6faf9751010c
+step: gates @ 64cad70f47821ab3d2384197ccbb6faf9751010c
+step: spawn @ d42d07c9db57e54a11a1937fa02bac8d732145aa
+step: verify+ship @ 5fba633b6e46514871848fad601728aa3da7e7d2
+step: stop @ 5fba633b6e46514871848fad601728aa3da7e7d2; run complete

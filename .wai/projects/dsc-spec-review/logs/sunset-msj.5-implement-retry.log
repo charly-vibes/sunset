@@ -1,0 +1,25 @@
+Done — sunset-msj.5 implemented to brief, TDD red→green, nothing pushed, no `.beads` staged.
+
+## What shipped
+
+**RED** — `14346c1` `test(docs): RED llms.txt link-resolution gate (sunset-msj.5)`
+- New `test_llms_txt_links_resolve` in `tests/docs/test_docs_links.py`: parses markdown-style links in `llms.txt`, resolves relative targets against the repo root, skips external links; existing assertions untouched. Verified failing before GREEN (`1 failed, 9 passed`).
+
+**GREEN** — `5fba633` `docs(ai): llms.txt + agent integration brief — GREEN (sunset-msj.5)`
+- **`llms.txt`** (repo root): H1 + blockquote value prop + `## Start here / Guides / Reference / Normative specs / Status and limits` with one-line summaries; links all 7 `openspec/specs/*/spec.md` plus the four finished pages. Carries the mandatory one-line scope-ruling note (documentation discovery, not the tool-registry `llms.txt` ruled out in sunset-408, per status.md).
+- **`docs/src/for-agents.md`**: integration contract — descriptor shape (links document-core spec + `fixture_minimal.json`), exact API names verified in source (`validator.load/validate/run`, `report.assess`, `profiles.Registry/resolve`, `conformance.classify`), typed outcome lists and typed-errors-never-exceptions (verified `run("/dev/null")` → `parse_error:...`), four independent report keys with `skipped`≠failure semantics, conformance boundary (may/may-never claims, scripted-machinery limit, human pass supersedes, links status.md), canonical example **linked, not duplicated** from the tutorial's tagged block, and the fresh-clone-verified transcript. Version scope stated: "DSC 0.3 deployed specs, 2026-10-15".
+
+## Verification evidence
+- API names checked against `dsc03/validator.py`, `dsc03/report.py`, `dsc03/conformance.py` source before writing the contract section — no contradictions found.
+- Fresh clone (`/tmp/fresh-sunset`, HEAD at RED): tagged block written verbatim → `{"reasons": [], "status": "valid"}`; truncated digest → `{"reasons": ["invalid_digest"], "status": "invalid"}`; classify shape `{claims, missing, real_carrier_conformance, status, workflow_benefit}` confirmed. All 13 relative links in `for-agents.md` resolve.
+
+## Completion criteria output
+
+1. `python3 -B -m pytest tests/docs -q` → `10 passed in 0.12s`, **exit 0**
+2. `just spec-check` → 7 specs strict-valid, `154 passed, 14 subtests passed`, `PASS 11 descriptor fixtures`, **ALL GATES PASSED**
+3. `test -f llms.txt && test -f docs/src/for-agents.md` → **exit 0**
+4. `git log --oneline -2` → `5fba633 docs(ai): llms.txt + agent integration brief — GREEN (sunset-msj.5)` / `14346c1 test(docs): RED llms.txt link-resolution gate (sunset-msj.5)`
+
+## Notes for the orchestrator
+- Pre-existing dirty state untouched, uncommitted: `fixtures/demo/measurement.json` (timing/memory number drift from a prior gate run) and `.wai/` run artifacts — none staged or committed.
+- Not pushed, per brief.
