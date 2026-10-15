@@ -1,0 +1,15 @@
+ticket: sunset-9pf.1
+branch: main
+brief_path: .wai/projects/dsc-spec-review/briefs/sunset-9pf-1-medium-findings.md
+steps:
+  - step: brief
+    sha: 0d02252
+  - step: gates
+    sha: 0d02252
+  - step: claim
+    sha: 0d02252
+completed: false
+notes: >
+  Epic sunset-9pf run 4 (apply remaining rule-of-5 MEDIUM findings CLAR-001/002,
+  EDGE-002, EDGE-004 to the three change specs). Depends on closed 7hs + 905.1 +
+  905.2 (substrate harness + assembly + views/space/context committed).
