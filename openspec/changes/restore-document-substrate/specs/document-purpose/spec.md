@@ -38,6 +38,11 @@ Restore the general document-description substrate objective. This is a normativ
 | test_fixtures | contract_mapped | fixtures_tested | `native PDF and EPUB and scanned and non-periodical fixture oracles have recorded results` [[document.purpose.carrier_neutral]] [[document.purpose.scoped_evidence_and_loss]] |
 | prove_exchange | fixtures_tested | independent_conformance_demonstrated | `two independent readers agree within the declared observable scope and report all losses` [[document.purpose.independent_exchange]] |
 | state_limit | fixtures_tested | scope_limited | `an unsupported or disputed case is recorded and no generality claim is issued` [[document.purpose.purpose_consumer_separation]] |
+| refuse_mapping | purpose_declared | scope_limited | `no defensible mapping from required document roles to current DSC contracts exists; the limitation is recorded and no contract conformance is claimed` [[document.purpose.three_distinctions]] |
+| refuse_fixtures | contract_mapped | scope_limited | `a fixture oracle cannot be executed or its recorded result is disputed; the carrier gap is recorded and no preservation claim is issued` [[document.purpose.carrier_neutral]] [[document.purpose.scoped_evidence_and_loss]] |
+| retest | scope_limited | purpose_declared | `new evidence or an explicit owner ruling invalidates the recorded limitation; the case re-enters the pipeline from declaration` [[document.purpose.scoped_evidence_and_loss]] |
+
+Refusal transitions (`refuse_mapping`, `refuse_fixtures`) give every failed step of the declared path a classified route into `scope_limited`, so a mapping or fixture failure can never strand the model without an outcome (rule-of-5 EDGE-002). `scope_limited` is deliberately not terminal: `retest` states the escalation semantics — only new evidence or an explicit owner ruling reopens a recorded limitation, and the case restarts from `purpose_declared` so previously recorded results are re-established rather than assumed (rule-of-5 EDGE-004).
 
 ## Properties
 

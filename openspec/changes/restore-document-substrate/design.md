@@ -63,3 +63,16 @@ Rollback: remove new purpose/law delta and tests if the normative intent is reje
 - Which laws can be enforced by Specodelic's kernel versus external conformance: determine by `spk explain`, never infer from prose.
 - What canonical observational equivalence policy is appropriate for PDF/EPUB editions: define per fixture, not globally.
 - What minimum information about native PDF vector/annotation resources belongs to the default profile: coverage-driven decision.
+
+## 8. Rule-of-5 review residue
+
+The 2026-10-15 rule-of-5 pass closed its CRITICAL/HIGH findings in 9fecdf5; the
+remaining MEDIUM findings are resolved here (sunset-9pf.1):
+
+- EDGE-002: the purpose state model gained `refuse_mapping` and
+  `refuse_fixtures` transitions so every failure of the declared path
+  (`map_contract`, `test_fixtures`) has a classified route into
+  `scope_limited` instead of stranding the model without an outcome.
+- EDGE-004: `scope_limited` is explicitly non-terminal — the `retest`
+  transition declares escalation semantics (new evidence or an owner ruling
+  reopens the limitation, restarting from `purpose_declared`).
