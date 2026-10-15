@@ -16,6 +16,7 @@
 #   dsc03.validator + dsc03.canonical (two independent readers).
 """Law checks: typed edges, composition laws, non-invention, factorization."""
 import copy
+import hashlib
 
 CORE_RELATIONS = {"contains", "precedes", "realizes", "has-content", "derived-from"}
 EXPECTED_CORE_RULES = {
@@ -37,15 +38,11 @@ def typed_check(desc):
     Parse/shape failures are classified too: this function never raises.
     """
     try:
-        reasons = validator_validate(desc)
+        from dsc03 import validator
+        reasons = validator.validate(desc)
     except Exception as e:  # noqa: BLE001 — classified, by contract
         return "rejected", [f"parse_error:{e}"]
     return ("accepted", []) if not reasons else ("rejected", reasons)
-
-
-def validator_validate(desc):
-    from dsc03 import validator
-    return validator.validate(desc)
 
 
 # -- synthetic validated instances -------------------------------------------------
@@ -97,7 +94,7 @@ def sign_instances():
     }
     a["profiles"] = [{"id": "p-geo", "kind": "geometry", "uri": "geometry.json",
                       "version": "1",
-                      "sha256": "0" * 64}]
+                      "sha256": hashlib.sha256(b"geometry").hexdigest()}]
     b = copy.deepcopy(a)
     b["id"] = "ledger-layout-b"
     b["regions"][0]["geometry"]["x"] = 100

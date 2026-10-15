@@ -24,12 +24,13 @@ import io
 import json
 import subprocess
 import tempfile
+import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 
 import pymupdf
 
-from dsc03 import adapters, coverage, evidence, profiles, report, validator
+from dsc03 import adapters, evidence, profiles, report, validator
 
 OCR_LANG = "spa"
 OCR_DPI = 200
@@ -249,7 +250,6 @@ def classify_epub_links(data):
         for name in z.namelist():
             if not name.endswith(".xhtml"):
                 continue
-            import xml.etree.ElementTree as ET
             root = ET.fromstring(z.read(name))
             for a in root.iter("{http://www.w3.org/1999/xhtml}a"):
                 href = a.get("href")
@@ -561,10 +561,11 @@ def financial_oracle(carrier_path, out_dir):
     reasons = validator.validate(desc)
     _check(res, "schema_valid", not reasons, str(reasons))
 
-    kinds = {r["kind"] for r in desc["relations"]}
-    _check(res, "no_financial_primitive_in_core", kinds <= laws_core(), str(sorted(kinds)))
-
     from dsc03.substrate import laws
+    kinds = {r["kind"] for r in desc["relations"]}
+    _check(res, "no_financial_primitive_in_core", kinds <= laws.CORE_RELATIONS,
+           str(sorted(kinds)))
+
     children = {}
     for rel in desc["relations"]:
         if rel["kind"] == "contains" and rel["from"] == "r-log":
@@ -583,8 +584,3 @@ def financial_oracle(carrier_path, out_dir):
 
     res["reports"] = run_reports(desc, out_dir, data)
     return res
-
-
-def laws_core():
-    from dsc03.substrate import laws
-    return laws.CORE_RELATIONS

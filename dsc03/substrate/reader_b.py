@@ -261,15 +261,13 @@ def agreement(desc_a, desc_b):
         presence_b = {p: bool(_page_text_ids(desc_b, p)) for p in pb}
         out["text_presence"] = ("agree" if presence_a == presence_b else "differ")
         exact_a = {p: " ".join(
-            (desc_a_id_value(desc_a, cid) for cid in sorted(_page_text_ids(desc_a, p))))
+            (content_value(desc_a, cid) for cid in sorted(_page_text_ids(desc_a, p))))
             for p in pa}
         exact_b = {p: " ".join(
-            (desc_a_id_value(desc_b, cid) for cid in sorted(_page_text_ids(desc_b, p))))
+            (content_value(desc_b, cid) for cid in sorted(_page_text_ids(desc_b, p))))
             for p in pb}
         out["text_exact"] = "agree" if exact_a == exact_b else "differ"
     else:
-        vals_a = {c["id"]: c["value"] for c in desc_a["contents"]}
-        vals_b = {c["id"]: c["value"] for c in desc_b["contents"]}
         pairs = [
             ("manifest_items",
              [c for c in desc_a["contents"] if "manifest" in c["id"]],
@@ -292,7 +290,7 @@ def agreement(desc_a, desc_b):
     return out
 
 
-def desc_a_id_value(desc, cid):
+def content_value(desc, cid):
     return next(c["value"] for c in desc["contents"] if c["id"] == cid)
 
 
