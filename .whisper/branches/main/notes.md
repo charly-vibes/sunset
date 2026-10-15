@@ -79,3 +79,9 @@
   - Follow-up to the msj-complete entry above: everything already committed (812638d), pushed (origin/main up to date), sunset-msj.6 + sunset-msj epic closed, gates green (openspec strict, 154 tests, frozen 0.2 PASS 11). turu recall entry c3f668e7… has the full detail.
   - User offered the choice: continue sunset-9pf epic (sunset-7hs substrate gates or sunset-9pf.1 MEDIUM findings first) or end the session (wai close + /clear).
   - **Next:** on resume via /renew sunset — claim sunset-7hs (dependency order: substrate first) unless the owner redirects.
+- 2026-10-15T20:18:18Z [id:5cd8da54a94deb2028e264fd9ab5270729696057668b0d991efb0a94db8f8378] ### 2026-10-15 — runs 1-3 complete, pushed; HITL pending
+  - sunset-9pf epic: sunset-7hs (substrate gates), sunset-905.1 (composition slice 1), sunset-905.2 (slice 2) all closed via wai epic-orchestrator runs 1-3 (claim→gates→brief→spawn→verify→ship→STOP each). Gates green throughout: 221 tests + 18 subtests, frozen 0.2 PASS 11, openspec strict, spk lint. Zero DSC core wire changes.
+  - Pushed 20 commits 812638d..56884a2 to origin/main (owner-authorized). Working tree clean.
+  - Findings on record (owner rulings pending): wire gaps from design-decisions artifacts (empty part, supersession field, view roots, two-reader contract shape); subprocess timeout hardening; measurement.json churn.
+  - HITL left pending by owner: sunset-905.3 two human readers; human pass over dsc03/substrate/ machinery (agent-executed, REVIEW_REQUIRED verdicts — human supersedes).
+  - **Next:** afk candidate is sunset-xx7.1 (Lens slice 1, P2) or sunset-9pf.1 (P2); resume via /renew sunset.
