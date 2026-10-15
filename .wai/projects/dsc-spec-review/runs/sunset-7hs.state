@@ -2,6 +2,10 @@ ticket: sunset-7hs
 branch: main
 brief_path: .wai/projects/dsc-spec-review/briefs/sunset-7hs-substrate-gates.md
 steps:
+  - step: stop
+    sha: 6e42ea6
+  - step: ship
+    sha: 6e42ea6
   - step: verify
     sha: 7569442
   - step: spawn
@@ -12,6 +16,7 @@ steps:
     sha: 812638d0de75c0c946eb5f269fff7d685953fedd
   - step: claim
     sha: 812638d0de75c0c946eb5f269fff7d685953fedd
+completed: true
 notes: >
   Epic sunset-9pf run 1. Claimed at HEAD 812638d0de75c0c946eb5f269fff7d685953fedd.
   restore-document-substrate tasks 1/12 pre-ticked (integration grounding record).
