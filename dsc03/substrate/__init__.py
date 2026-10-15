@@ -1,10 +1,13 @@
 # Purpose: Substrate gate harness package for restore-document-substrate
 #   (sunset-7hs, Stage B consumer harness).
 # Responsibilities: Host the carrier oracles (oracles.py), the categorical law
-#   checks and typed transformation algebra (laws.py) and the second
-#   independent reading path (reader_b.py); tests live separately under
-#   tests/substrate/. Machinery-only: no real-carrier or human-review
-#   conformance claims are made anywhere in this package.
+#   checks and typed transformation algebra (laws.py), the second
+#   independent reading path (reader_b.py), the assembly composition
+#   (assembly.py), and the views/space/context law modules of the
+#   composition slices (views.py, space.py, context.py — sunset-905.2);
+#   tests live separately under tests/substrate/. Machinery-only: no
+#   real-carrier or human-review conformance claims are made anywhere in
+#   this package.
 # Rationale: restore-document-substrate design Stage B calls for a separate
 #   consumer harness maintaining the existing first-consumer tests; placing
 #   the modules under dsc03 keeps the deployed-machinery imports (validator,
