@@ -1,0 +1,30 @@
+sunset-9pf.1 complete. All four rule-of-5 MEDIUM findings resolved, committed in two atomics.
+
+## What was done
+
+**CLAR-001/002 — composition-semantics scenarios** (commits `775c53f`)
+- `openspec/changes/define-document-composition-semantics/specs/{document-assembly,document-context,document-views,document-space}/spec.md`
+- Every flagged THEN rewritten to assert only the observable outcome (no GIVEN restatement); GIVEN lines drop the duplicated `Given` prefix; all 12 scenarios (3 per file × ADDED + Requirements copies, kept in sync) got descriptive names, e.g. `Typed partial assembly fixture` → `Continuation across magazine pages`, `Deterministic semantic rules fixture` → `Repeated evaluation yields identical claims`. No requirement meaning changed; anchors untouched.
+
+**EDGE-002/004 — purpose state model** (commit `2142121`)
+- `openspec/changes/restore-document-substrate/specs/document-purpose/spec.md`: added `refuse_mapping` (purpose_declared → scope_limited) and `refuse_fixtures` (contract_mapped → scope_limited) so every failed step of the declared path has a classified outcome, plus `retest` (scope_limited → purpose_declared) declaring escalation semantics: only new evidence or an explicit owner ruling reopens a recorded limitation. Rationale paragraph added in the file's style.
+- `openspec/changes/restore-document-substrate/design.md`: new "## 8. Rule-of-5 review residue" section recording that this closes EDGE-002/EDGE-004.
+
+## Verifier evidence (fresh command output)
+
+| Gate | Result |
+|---|---|
+| `spk lint openspec/changes` | `{"ok":true,...,"issues":[]}` — exit 0 |
+| `openspec validate --changes --strict` | `3 passed, 0 failed` — exit 0 |
+| `openspec validate --specs --strict` | `7 passed, 0 failed` — exit 0 (unchanged) |
+| `grep -rn "THEN.*Given" .../composition-semantics/specs/` | no matches (exit 1) |
+| `git diff openspec/specs spec/document-model-specodelic-v3` | 0 lines — empty |
+| `python3 -B -m pytest tests -q` | `221 passed, 18 subtests passed in 174.12s` — unchanged |
+
+## Notes
+
+- **tasks.md untouched** — none of the listed tasks were completed by this findings-hygiene work, per the brief.
+- `add-document-structural-debugger/` not modified (no finding targeted it).
+- All three changes remain **proposed**; nothing deployed/archived.
+- Working tree still carries pre-existing unrelated modifications (`.wai/`, `.whisper/`, `fixtures/demo/measurement.json`) that I did not stage; `.beads/` never staged.
+- No requirement meaning changed anywhere, so the follow-up threshold was never triggered — no deferred items.
