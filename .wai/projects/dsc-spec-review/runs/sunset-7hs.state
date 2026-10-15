@@ -2,6 +2,10 @@ ticket: sunset-7hs
 branch: main
 brief_path: .wai/projects/dsc-spec-review/briefs/sunset-7hs-substrate-gates.md
 steps:
+  - step: verify
+    sha: 7569442
+  - step: spawn
+    sha: b0ce990
   - step: brief
     sha: 812638d0de75c0c946eb5f269fff7d685953fedd
   - step: gates
