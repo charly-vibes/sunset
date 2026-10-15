@@ -113,6 +113,6 @@ descriptor → validate → profile resolve → evidence replay — is in the
 ## Where next
 
 - [Your first descriptor](first-descriptor.md) — the tutorial
-- [Reference](reference.md) — index of specs, machinery, and gates (in progress)
+- [Reference](reference.md) — index of specs, machinery, and gates
 - [Status](status.md) — current state, gates, and recorded deviations
 - The [deployed specs](../../openspec/specs/) — the normative source of truth

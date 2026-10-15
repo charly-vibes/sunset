@@ -23,7 +23,11 @@
   reviewer personas, reader annotations and review times in the
   [first-consumer demonstration](tracer-bullet.org) are agent-executed; the
   anchor-mapping review of record was agent-executed rule-of-5
-  (TypeSafe-verified), accepted by the owner in sunset-r68.12.
+  (TypeSafe-verified), accepted by the owner in sunset-r68.12; the
+  documentation-suite review of record (sunset-msj.6) was likewise
+  agent-executed — every runnable claim reproduces verbatim, links resolve,
+  and the fixture catalog matches disk — with the same standing caveat:
+  a human pass supersedes.
 - Active openspec deltas include the review corrections; the preserved
   research draft is historical input where its details differ.
 - Three proposed (not deployed) openspec changes are integrated as of
@@ -60,7 +64,9 @@ Other recorded deviations:
 - No CI workflow files (`just ci` arrives with an implementation; the spec
   gates run via `just spec-check` for now)
 - No `book.toml`/theme or book pages
-- No `llms.txt` / `llm.txt`
+- No tool-registry `llm.txt`; [`llms.txt`](../../llms.txt) exists but serves
+  documentation discovery only — it is not the tool-registration form the
+  checklist assumes (same scope ruling as above)
 - Not registered in ddl's registry, capability matrix, or dogfood matrix
 - The research bundle's `specs/` were relocated to `openspec/` (single source
   of truth) — the recorded exception to "preserved as received" in the root

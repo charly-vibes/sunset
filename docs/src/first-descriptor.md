@@ -154,7 +154,6 @@ character back and you are valid again. Malformed JSON is typed too:
 
 - [Adapting real carriers](integrate.md) — turn real PDF/EPUB
   extractions into descriptors like this one.
-- [Reference](reference.md) (in progress) — index of specs, machinery, and
-  gates.
+- [Reference](reference.md) — index of specs, machinery, and gates.
 - The normative source of truth lives in
   [the deployed capability specs](../../openspec/specs/).

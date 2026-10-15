@@ -26,7 +26,9 @@ def test_explanation_page_exists() -> None:
 # forward path stays stable.
 # sunset-msj.2 shipped the tutorial, so first-descriptor.md left this set and
 # is now resolved as a real target by test_all_markdown_links_resolve.
-EXPECTED_IN_PROGRESS = {"reference.md"}
+# sunset-msj.4 shipped the reference index, so reference.md left this set too
+# and is now resolved as a real target by test_all_markdown_links_resolve.
+EXPECTED_IN_PROGRESS: set[str] = set()
 
 
 def _link_targets(md_text: str) -> list[str]:

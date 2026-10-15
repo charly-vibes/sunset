@@ -6,7 +6,7 @@ This page gives you the four recipes for the next steps: turn real extractions
 into descriptors, run the conformance suite against yourself, read the outcome
 reports, and claim only what you can honestly claim. For what DSC is and why,
 read [what-is-dsc.md](what-is-dsc.md); for the full machinery index, see
-[reference.md](reference.md) (in progress).
+[reference.md](reference.md).
 
 Run every command and script from the repository root of a fresh clone.
 
