@@ -26,6 +26,18 @@
   (TypeSafe-verified), accepted by the owner in sunset-r68.12.
 - Active openspec deltas include the review corrections; the preserved
   research draft is historical input where its details differ.
+- Three proposed (not deployed) openspec changes are integrated as of
+  2026-10-15, grounded and strictly validated against this checkout
+  (`spk lint` 0 issues each; provenance in each change's `proposal.md`):
+  [`restore-document-substrate`](../../openspec/changes/restore-document-substrate/proposal.md)
+  (general purpose + categorical laws, additive),
+  [`define-document-composition-semantics`](../../openspec/changes/define-document-composition-semantics/proposal.md)
+  (assembly/views/space/context laws, additive, depends on the former) and
+  [`add-document-structural-debugger`](../../openspec/changes/add-document-structural-debugger/proposal.md)
+  (read-only Sunset Lens debugger, optional consumer). No wire changes and no
+  implementation are claimed; the proposals' conformance fixtures and
+  second-reader gates are unexecuted and tracked in beads
+  (sunset-7hs, sunset-905, sunset-xx7).
 - The baseline's [known validation limitations](baseline-limitations.md)
   remain visible. The proposal composition regression checks specification
   replacement only, not 0.3 behavior.
