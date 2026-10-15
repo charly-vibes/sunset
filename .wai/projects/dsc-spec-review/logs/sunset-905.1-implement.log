@@ -1,0 +1,29 @@
+##sunset-905.1 — complete ✅
+
+**Red→green→refactor commits** (all gates green after each):
+```
+42e5717 test(substrate): RED — assembly law fixtures for document-assembly delta (sunset-905.1)
+5e1294c feat(substrate): assembly compose with classified refusals + assembly design decisions (sunset-905.1)
+74fedd2 refactor(substrate): tidy assembly — extract _merge_vocabularies, no behavior change (sunset-905.1)
+```
+
+### Artifacts
+| File | Content |
+|---|---|
+| `dsc03/substrate/assembly.py` (new) | Consumer-side `compose(A,B)` — deterministic partial assembly with classified refusals, `empty_part()` identity, `canonically_equal()` (both `dsc03.canonical` readers). **Placement justified** in module header + design doc D-Placement: deployed kernel has no composition checker (law 5 stays *partial*); harness-side beside the existing `Mapping` algebra avoids implying conformance |
+| `tests/substrate/test_assembly_laws.py` (new) | 9 fixtures → all 6 named Properties (`compatible_pair`, `duplicate_conflict`, `left_right_identity`, `associate_three`, `no_invented_order`, `shared_id_merges`) + 3 decision backstops (`same_id_conflicting_claims`, `namespace_mismatch`, `source_mismatch`) |
+| `.../define-document-composition-semantics/design-decisions-assembly.md` (new) | D1 canonical equality (two-reader bytes; left-biased assembled id; empty part = assembly-layer element — wire can't represent emptiness, recorded expressivity note, **no wire delta**); D2 collision table (refuse-with-smallest-witness default; merge only under identical-claims precondition, justified against `assembly_compatible`/`boundaries_preserved`); D3 parts resolve against the union; D4 refusal propagation |
+| `.../tasks.md` | Ticked only tasks 4 & 5 (both fully completed by this slice); others untouched |
+
+### Verification (fresh, post-refactor)
+- `python3 -B -m pytest tests -q` → **202 passed** (193 baseline + 9 new), 18 subtests
+- `just spec-check` → **ALL GATES PASSED** (openspec strict 7/7, `spk lint` `"issues":[]`, frozen validator `PASS 11 descriptor fixtures`)
+- `git diff openspec/specs spec/document-model-specodelic-v3` → **empty** (0 bytes)
+- No subprocess calls anywhere in the new code (synthetic-only, per sunset-7hs finding)
+- `bd show sunset-905.1` → still `IN_PROGRESS` (left for lead to close, per ticket)
+
+### Notes for the lead
+- **Follow-up threshold not triggered** — no law needed a wire delta.
+- `fixtures/demo/measurement.json` shows timing churn from perf tests re-running during `pytest tests`; not staged (pre-existing regeneration behavior, unrelated to this slice).
+- `.beads/` and lead-owned `.wai/` artifacts untouched; nothing pushed (conservative profile — this session made local commits only; suggest lead verify + close `sunset-905.1`, then `wai close` / `/clear`).
+- Unblocks **sunset-905.2** (views/space/context) and **905.3**.
