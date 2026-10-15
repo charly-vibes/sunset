@@ -2,6 +2,8 @@ ticket: sunset-9pf.1
 branch: main
 brief_path: .wai/projects/dsc-spec-review/briefs/sunset-9pf-1-medium-findings.md
 steps:
+  - step: spawn
+    sha: 01dfb51
   - step: brief
     sha: 0d02252
   - step: gates
