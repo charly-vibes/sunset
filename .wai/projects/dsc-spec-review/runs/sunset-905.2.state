@@ -2,6 +2,10 @@ ticket: sunset-905.2
 branch: main
 brief_path: .wai/projects/dsc-spec-review/briefs/sunset-905-2-composition-slice-2.md
 steps:
+  - step: verify
+    sha: 4101b90
+  - step: spawn
+    sha: 7603f86
   - step: brief
     sha: 2222428
   - step: gates
