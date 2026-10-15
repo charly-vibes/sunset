@@ -35,7 +35,7 @@ statement: "WHEN multiple compatible DSC representations or mappings are compare
 | compare | scope_checked | compared | all required observations resolved or typed non-evaluable outcomes emitted [[document.debugger.comparison.typed_outcome]] [[document.debugger.comparison.loss_visibility]] |
 | export | compared | exported | witness plus source/descriptor hashes and replay instructions recorded [[document.debugger.comparison.counterexample_replay]] |
 | reject_scope | inputs_received | unsupported | incompatible endpoints or missing comparator classified [[document.debugger.comparison.no_edition_guess]] |
-| reject_evaluation | scope_checked | unsupported | mapping or comparator unsupported with no equivalence claim [[document.debugger.comparison.composition_checks]] [[document.debugger.comparison.independent_agreement]] |
+| reject_evaluation | scope_checked | unsupported | mapping or comparator unsupported with no equivalence claim [[document.debugger.comparison.composition_checks]] |
 
 ## Properties
 
@@ -43,7 +43,7 @@ statement: "WHEN multiple compatible DSC representations or mappings are compare
 |---|---|---|---|---|
 | scope_required | unit | [[document.debugger.comparison.scoped_comparison]] | `missing_comparator_or_scope()` | `comparison returns unsupported not equivalent` |
 | typed_differences | unit | [[document.debugger.comparison.typed_outcome]] | `different_vs_unexamined_fixture()` | `outcomes do not collapse to same status` |
-| compositional_examples | unit | [[document.debugger.comparison.composition_checks]] | `identity_and_three_compatible_transformations()` | `left identity: same observable; right identity: same observable; associativity: same observable and loss/error scope` |
+| compositional_examples | law | [[document.debugger.comparison.composition_checks]] | `identity_and_three_compatible_transformations()` | `**identity:** compose(identity,m) and compose(m,identity) preserve declared observables; **associativity:** three compatible mappings agree on observables and loss/error scope across bracketings` |
 | edition_counterexample | unit | [[document.debugger.comparison.no_edition_guess]] | `same_title_different_edition_pair()` | `no automatic equivalence inferred` |
 | replay_roundtrip | unit | [[document.debugger.comparison.counterexample_replay]] | `wrong_order_minimal_witness()` | `replayed diagnostic equals exported rule and witness when replayable` |
 | no_loss_as_success | unit | [[document.debugger.comparison.loss_visibility]] | `drop_column_position_and_unknown_coverage()` | `preservation not certified and limitation remains visible` |

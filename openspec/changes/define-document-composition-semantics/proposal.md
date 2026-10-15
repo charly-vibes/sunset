@@ -51,3 +51,24 @@ Pinned Sunset HEAD commit UNKNOWN. Whether current DSC 0.3 schema already expose
 - **Not done:** executable fixtures, law witnesses, real PDF/EPUB runs,
   second-reader comparison and Lens exposure remain open (see `tasks.md`).
   The mathematical laws remain design requirements until externally executed.
+
+## Rule-of-5 review record (2026-10-15, TypeSafe-verified)
+
+A universal rule-of-5 pass over the integrated set (substrate + composition +
+debugger) found and fixed four verified trace/scope defects in this bundle
+(Jev 1.13.0: verified 0.87–0.99, 0% measured false-positive rate):
+
+- `document.assembly` Properties `derives_from` column was systematically
+  off-by-one; all four cells corrected, plus a merge-path witness
+  (`shared_id_merges`) for `boundaries_preserved`.
+- `document.space` rows 41–43 and `document.context` rows 42–43 mis-traces
+  corrected; `deterministic_replay` (integration-time coverage stopgap)
+  consolidated away in favour of corrected `same_pinned_input`, with
+  `no_union_on_assembly` and `roundtrip_transform` added for honest coverage.
+- `assembly_associative` constraint gained the design's domain qualifier
+  ("whose combined constraints do not depend on assembly grouping").
+- Cross-file typed guard citations added (assembly→`schema_instance`,
+  views→`relational_spans`, space→`conditional_equivalence`,
+  context→`non_invention`); `document.debugger.comparison`
+  `compositional_examples` normalized to `kind=law` with machine-findable
+  law-case labels; `reject_evaluation` guard citation narrowed.

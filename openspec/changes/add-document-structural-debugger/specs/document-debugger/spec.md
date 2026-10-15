@@ -33,7 +33,7 @@ statement: "WHEN a reader inspects a DSC description with a source document, THE
 |---|---|---|---|
 | load | unloaded | loaded | input references parse and source/descriptor hashes recorded [[document.debugger.read_only]] |
 | inspect | loaded | inspecting | selected view and locator domain declared [[document.debugger.carrier_locators]] [[document.debugger.scoped_structure]] |
-| select_diagnostic | inspecting | diagnostic_selected | diagnostic has a stable code and scoped source or graph witness [[document.debugger.typed_diagnostics]] [[document.debugger.bidirectional_navigation]] |
+| select_diagnostic | inspecting | diagnostic_selected | diagnostic has a stable code and scoped source or graph witness [[document.debugger.typed_diagnostics]] [[document.debugger.bidirectional_navigation]] [[document.purpose.scoped_evidence_and_loss]] |
 | unsupported_source | loaded | unsupported | source carrier or locator unsupported with classified reason [[document.debugger.typed_diagnostics]] |
 | return_to_inspection | diagnostic_selected | inspecting | inspection state retained [[document.debugger.accessibility]] |
 

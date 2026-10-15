@@ -30,7 +30,7 @@ This is a proposed normative design, not a claim of existing implementation. Int
 | id | from | to | guard |
 |---|---|---|---|
 | index | view_declared | view_checked | `view identifiers and endpoints resolve` [[document.views.named_view_membership]] |
-| accept | view_checked | view_valid | `hierarchy and order graphs satisfy stated laws` [[document.views.containment_acyclic]] [[document.views.partial_order]] |
+| accept | view_checked | view_valid | `hierarchy and order graphs satisfy stated laws` [[document.views.containment_acyclic]] [[document.views.partial_order]] [[document.categorical.model.relational_spans]] |
 | reject | view_checked | view_invalid | `cycle or illegal endpoint yields counterexample` [[document.views.containment_acyclic]] [[document.views.refinement_explicit]] |
 
 ## Properties

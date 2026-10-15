@@ -7,6 +7,8 @@
 spec-check:
     @echo "==> openspec strict validation (deployed specs, incl. deployed 0.3)"
     openspec validate --specs --strict
+    @echo "==> spk lint (Specodelic layer of openspec/changes, incl. archive)"
+    spk lint openspec/changes
     @echo "==> tracer suite (0.3 machinery, not real-carrier conformance)"
     python3 -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"

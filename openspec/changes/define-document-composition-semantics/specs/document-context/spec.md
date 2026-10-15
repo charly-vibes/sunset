@@ -30,7 +30,7 @@ This is a proposed normative design, not a claim of existing implementation. Int
 | id | from | to | guard |
 |---|---|---|---|
 | resolve | claims_ready | context_resolved | `bindings and rule versions exist` [[document.context.context_scoped]] |
-| interpret | context_resolved | claims_checked | `rules evaluate with attributed evidence` [[document.context.claims_attributed]] [[document.context.no_truth_laundering]] |
+| interpret | context_resolved | claims_checked | `rules evaluate with attributed evidence` [[document.context.claims_attributed]] [[document.context.no_truth_laundering]] [[document.categorical.model.non_invention]] |
 | dispute | context_resolved | claims_disputed | `conflicting scope bindings cannot be resolved under policy` [[document.context.shadow_conflict]] [[document.context.no_generic_meaning_union]] |
 
 ## Properties
@@ -39,9 +39,9 @@ This is a proposed normative design, not a claim of existing implementation. Int
 | publication_date | unit | [[document.context.claims_attributed]] | `issue_date_child_article()` | `context available as issue metadata; not narrated date` |
 | quoted_author | unit | [[document.context.context_scoped]] | `article_author_and_quote()` | `author not automatically assigned to quote` |
 | context_dispute | unit | [[document.context.shadow_conflict]] | `two_views_conflicting_date()` | `disagreement retained unless precedence declared` |
-| same_pinned_input | unit | [[document.context.no_truth_laundering]] | `same_observations_rules_twice()` | `canonical results equivalent` |
-| uncertain_ocr | unit | [[document.context.no_generic_meaning_union]] | `text_with_disputed_transcription()` | `claim retains uncertainty and evidence` |
-| deterministic_replay | unit | [[document.context.deterministic_interpretation]] | `pinned_input_replayed()` | `repeated evaluation yields canonically equal claims or the same classified unknown/conflict outcome` |
+| same_pinned_input | unit | [[document.context.deterministic_interpretation]] | `same_observations_rules_twice()` | `canonical results equivalent` |
+| uncertain_ocr | unit | [[document.context.no_truth_laundering]] | `text_with_disputed_transcription()` | `claim retains uncertainty and evidence` |
+| no_union_on_assembly | unit | [[document.context.no_generic_meaning_union]] | `two_views_composed_meanings()` | `composed claims do not union semantic truth; composed meaning requires a pinned domain rule` |
 
 ## ADDED Requirements
 ### Requirement: Scoped interpretation

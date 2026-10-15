@@ -30,7 +30,7 @@ This is a proposed normative design, not a claim of existing implementation. Int
 | id | from | to | guard |
 |---|---|---|---|
 | locate | source_declared | located | `typed locator resolves in declared frame` [[document.space.carrier_coordinate_frames]] |
-| compare | located | spatial_evaluated | `frames compatible or transformed` [[document.space.frame_compatibility]] [[document.space.geometry_transform]] |
+| compare | located | spatial_evaluated | `frames compatible or transformed` [[document.space.frame_compatibility]] [[document.space.geometry_transform]] [[document.categorical.model.conditional_equivalence]] |
 | unknown | located | spatial_unknown | `incomparable or absent frames` [[document.space.frame_compatibility]] [[document.space.epub_stable_identity]] |
 
 ## Properties
@@ -38,9 +38,10 @@ This is a proposed normative design, not a claim of existing implementation. Int
 |---|---|---|---|---|
 | pdf_rotation | unit | [[document.space.carrier_coordinate_frames]] | `page_box_rotation_90()` | `normalized source locus matches expected transformed geometry` |
 | cross_page_unknown | unit | [[document.space.frame_compatibility]] | `two_regions_on_different_pages()` | `above returns unknown` |
-| epub_reflow | unit | [[document.space.geometry_transform]] | `same_epub_section_two_viewports()` | `stable selector unchanged while XY may differ` |
-| native_ocr_coexist | unit | [[document.space.epub_stable_identity]] | `hybrid_pdf_page()` | `native and OCR observations coexist without forced equality` |
-| spatial_not_order | unit | [[document.space.mixed_observations]] | `overlapping_figure_caption()` | `no precedes inferred` |
+| epub_reflow | unit | [[document.space.epub_stable_identity]] | `same_epub_section_two_viewports()` | `stable selector unchanged while XY may differ` |
+| native_ocr_coexist | unit | [[document.space.mixed_observations]] | `hybrid_pdf_page()` | `native and OCR observations coexist without forced equality` |
+| spatial_not_order | unit | [[document.space.spatial_order_separation]] | `overlapping_figure_caption()` | `no precedes inferred` |
+| roundtrip_transform | unit | [[document.space.geometry_transform]] | `rotated_page_forward_back()` | `forward then inverse transform returns the original source locus within the declared numeric tolerance` |
 | no_spatial_reading_order | unit | [[document.space.spatial_order_separation]] | `two_column_layout_fixture()` | `above/left-of/overlap never emit a precedes or contains edge` |
 
 ## ADDED Requirements
