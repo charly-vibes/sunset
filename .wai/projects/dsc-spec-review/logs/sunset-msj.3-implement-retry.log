@@ -1,0 +1,22 @@
+Ticket sunset-msj.3 complete. Nothing pushed; `.beads` untouched.
+
+## What was done
+
+**Read first** (per brief): the brief, `dsc03/adapters.py`, `dsc03/report.py`, `dsc03/conformance.py`, `dsc03/profiles.py`, `tests/tracer/*` purpose headers, `fixtures/carriers/MANIFEST.org` (PII screening note respected), existing docs pages.
+
+**Created** — `docs/src/integrate.md` (only file changed; `test_docs_links.py` needed no change):
+1. **Adapt a real carrier** — `describe_pdf`/`describe_epub` recipe: pymupdf prerequisite, what inputs mean (`page_texts` extractor-snapshot provenance, `desc_suffix`), artifacts + pinned profile declarations (kind/version/sha256), what "preserving source observations" means (per-page regions + evidence, annotation bindings, byte-derived enumeration, `approximated` vs `preserved`), MANIFEST.org screening note linked, committed fixtures only.
+2. **Run the conformance suite** — `python3 -B -m pytest tests/tracer -q` plus a file→capability-area table grounded in each test's Purpose header, and what a passing run does *not* entitle.
+3. **Read the four reports** — `report.assess` + `profiles.resolve` with a registry rooted at `out_dir` and a byte-reading enumerator; four report kinds, skip-vs-fail semantics, digest-corruption failure walkthrough.
+4. **Classify honestly** — full suite-key list from the docstring, tracer-suite→`incomplete` and full-suite→`real-carrier conformance` demos, scoped-label rules, status.md deviations link; tracer-bullet.org / first-consumer-demo.org as background only.
+
+**Verification**: every code block and console transcript was executed from the repo root against committed fixtures before writing — including the printed hash prefixes (initially guessed, corrected to actual values `3b2425e5faeb373b` / `334cb4581cbefe61` / `88b829b3443275b3`).
+
+## Completion criteria output
+
+1. `python3 -B -m pytest tests/docs -q` → `9 passed in 0.12s`, **exit 0**
+2. `just spec-check` → openspec strict ✓ (7 specs), `153 passed, 14 subtests passed`, `PASS 11 descriptor fixtures`, **`ALL GATES PASSED`**
+3. `test -f docs/src/integrate.md` → **exit 0**
+4. `git log --oneline -1` → `8e7e19d docs(docs): how-tos — integrate an implementation with DSC (sunset-msj.3)`
+
+**Note for the orchestrator**: `docs/src/first-descriptor.md` still marks `integrate.md` as "(in progress)" — updating it wasn't in my exact-files list, so it's left for a follow-up. Remaining dirty files in the worktree are the orchestrator loop's own artifacts.
