@@ -67,6 +67,31 @@ def test_all_markdown_links_resolve() -> None:
     assert not broken, f"broken relative link targets: {broken}"
 
 
+LLMS_TXT = REPO_ROOT / "llms.txt"
+
+
+def test_llms_txt_links_resolve() -> None:
+    """Every relative markdown link in llms.txt resolves to a repo file.
+
+    llms.txt sits at the repository root, so link targets are resolved
+    against the repo root (not docs/src/). External http(s) links are
+    skipped, as in the docs link checks above. Fails until llms.txt is
+    written (sunset-msj.5 green phase).
+    """
+    assert LLMS_TXT.is_file(), f"missing llms.txt: {LLMS_TXT}"
+    broken = []
+    for raw in _link_targets(LLMS_TXT.read_text(encoding="utf-8")):
+        if raw.startswith(("http://", "https://", "mailto:")):
+            continue
+        target = _file_part(raw)
+        if not target:
+            continue
+        resolved = (REPO_ROOT / target).resolve()
+        if not resolved.exists():
+            broken.append(raw)
+    assert not broken, f"broken relative link targets in llms.txt: {broken}"
+
+
 @pytest.mark.parametrize(
     "target",
     ["first-descriptor.md", "reference.md"],
