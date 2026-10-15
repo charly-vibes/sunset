@@ -4,6 +4,8 @@ brief_path: .wai/projects/dsc-spec-review/briefs/sunset-9pf-1-medium-findings.md
 steps:
   - step: verify
     sha: 2142121
+  - step: stop
+    sha: ca058d9
   - step: ship
     sha: 2142121
   - step: spawn
