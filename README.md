@@ -13,8 +13,12 @@
 > **Why:** exchange document observations without losing where they came from,
 > how they changed, where interpretations disagree, or what extraction omitted.
 > sunset hosts the **DSC (Document Structural Core)** specification corpus:
-> an executable 0.2 descriptor baseline and a proposed 0.3 interchange contract.
-> **Status:** [experimental](docs/src/status.md) · 0.3 unimplemented · [Bundle](spec/document-model-specodelic-v3/README.md)
+> a deterministic, carrier-independent **document-structure interchange
+> substrate** with explicit evidence, scoped loss and honest partiality —
+> native PDF, EPUB, scanned PDF and structured carriers are first-class;
+> extraction reconciliation (historical periodicals) is the **first
+> consumer**, not the definition.
+> **Status:** [experimental](docs/src/status.md) · 0.3 machinery implemented, substrate gates in progress · [Conformance matrix](docs/src/conformance-matrix.md) · [Bundle](spec/document-model-specodelic-v3/README.md)
 
 `sunset` is the home of the **DSC specification corpus** in the
 [charly-vibes](https://github.com/charly-vibes) tool fleet: an executable
@@ -36,7 +40,32 @@ The [first-consumer acceptance gate](openspec/changes/add-dsc-03/specs/document-
 requires one real issue, two extractors and a reviewing consumer, with source
 traceability, disagreement/loss retention, review effort and representation
 overhead measured against native extractor outputs. Passing that narrow demo
-will not establish full 0.3 conformance.
+does **not** establish full 0.3 or substrate conformance.
+
+## Purpose, consumers, non-goals
+
+**Normative purpose.** DSC is a deterministic, extensible
+structural-description substrate: source observation, logical structure and
+semantic interpretation stay separately addressable; evidence and loss are
+always scoped; domain extensions never redefine core meaning.
+
+**Consumers.** Extraction-review workflows are one consumer. Others the
+substrate must serve equally: any tool that needs deterministic,
+carrier-independent document structure with provenance (indexers, comparators,
+debuggers, archival pipelines).
+
+**Current capabilities (honest).** The deployed 0.3 machinery validates
+0.3 descriptors, resolves pinned profiles, replays evidence transforms,
+verifies scoped coverage, and adapts real PDF/EPUB carriers
+([conformance matrix](docs/src/conformance-matrix.md)). The substrate gates
+(restoring-document-substrate) run deterministic per-carrier oracles and
+categorical law checks over committed screened fixtures — machinery-level
+evidence only. **Real-carrier conformance and cross-tool interchange
+conformance are NOT claimed.**
+
+**Non-goals.** No universal ontology; no lossless conversion promise; no OCR
+engine, PDF/EPUB parser product, CLI, or categorical runtime; PDF and EPUB
+representations are not assumed isomorphic; evidence never implies truth.
 
 ## What's in the bundle
 
@@ -66,6 +95,9 @@ lineage. Capability requirements remain solely in OpenSpec.
 ```bash
 python3 spec/document-model-specodelic-v3/validator.py test
 # → PASS 11 descriptor fixtures (0.2 only — this is not PDF/EPUB extraction)
+python3 -B -m pytest tests -q          # 0.3 machinery + substrate gates
+just spec-check                        # all gates: openspec strict, spk lint,
+                                       # full suite, frozen 0.2 validator
 ```
 
 Do not invoke it on 0.3 descriptors and call them valid; it correctly rejects
@@ -82,12 +114,17 @@ validate 0.3 descriptors or execute its acceptance scenarios.
 
 ## Roadmap
 
-The 0.3 validator, selector profiles, manifest grammar, migrated fixtures,
-PDF/EPUB adapters, and cross-reader benchmark are all unimplemented. If
-sunset grows an implementation, it follows the
-[dulce-de-leche onboarding checklist](https://github.com/charly-vibes/dulce-de-leche/blob/main/docs/standardization.md):
-three CI workflow files, `book.toml` + theme, five book pages, `llms.txt`,
-`versions.ddl.toml`, a ddl registry row, and a dogfood-matrix entry.
+Implemented: the 0.3 validator, selector profiles, manifest grammar, migrated
+fixtures, PDF/EPUB adapters, cross-reader benchmark and conformance labels
+(`dsc03/`), plus the substrate gate harness (`dsc03/substrate/`,
+`tests/substrate/`). Open: deploying the three grounded changes
+(substrate → composition semantics → Lens debugger); wiring the substrate
+purpose/categorical-model deltas into the deployed specs once their gate
+evidence is reviewed. Everything still follows the
+[dulce-de-leche onboarding checklist](https://github.com/charly-vibes/dulce-de-leche/blob/main/docs/standardization.md)
+for any shipped-tool step: three CI workflow files, `book.toml` + theme, five
+book pages, `llms.txt`, `versions.ddl.toml`, a ddl registry row, and a
+dogfood-matrix entry.
 
 ## Fleet
 

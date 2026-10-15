@@ -19,6 +19,23 @@
   [`openspec/changes/archive/2026-10-14-add-dsc-03/`](../../openspec/changes/archive/2026-10-14-add-dsc-03/proposal.md)
   (now 7 deployed capabilities). No real-carrier conformance is claimed:
   `dsc03/conformance.py` labels remain honest and scoped.
+- **Substrate gates (sunset-7hs, 2026-10-15):** the
+  [restore-document-substrate](../../openspec/changes/restore-document-substrate/proposal.md)
+  implementable tasks are executed: the six conceptual roles and nine design
+  §4 laws are mapped onto deployed 0.3 entities with a
+  satisfied/partial/missing table ([mapping.md](../../openspec/changes/restore-document-substrate/mapping.md));
+  deterministic oracles (native PDF without OCR, EPUB spine/navigation,
+  scanned-with-derived-OCR, hybrid coexistence, financial domain
+  independence) and law checks with negative counterexamples run in the
+  separate consumer harness `tests/substrate/` (machinery
+  `dsc03/substrate/`); a second independent scripted reading path is measured
+  ([conformance matrix](conformance-matrix.md) — machinery-level,
+  agent-executed, NOT human review). Purpose/consumers/non-goals are now
+  stated normatively in the [README](../../README.md#purpose-consumers-non-goals)
+  without upgrading any conformance-claim language. No wire changes; the
+  substrate spec deltas remain undeployed pending review; recorded
+  expressivity findings live in mapping.md § "Unresolved expressivity
+  findings".
 - Recorded deviations across the 0.3 work (each human pass supersedes):
   reviewer personas, reader annotations and review times in the
   [first-consumer demonstration](tracer-bullet.org) are agent-executed; the
@@ -34,7 +51,8 @@
   2026-10-15, grounded and strictly validated against this checkout
   (`spk lint` 0 issues each; provenance in each change's `proposal.md`):
   [`restore-document-substrate`](../../openspec/changes/restore-document-substrate/proposal.md)
-  (general purpose + categorical laws, additive),
+  (general purpose + categorical laws, additive) — **implemented at the gate
+  level 2026-10-15 (sunset-7hs), see the substrate-gates bullet above**;
   [`define-document-composition-semantics`](../../openspec/changes/define-document-composition-semantics/proposal.md)
   (assembly/views/space/context laws, additive, depends on the former) and
   [`add-document-structural-debugger`](../../openspec/changes/add-document-structural-debugger/proposal.md)
