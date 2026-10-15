@@ -1,0 +1,63 @@
+# Sunset — DSC (Document Structural Core) specification corpus
+
+> Machine-first index for agentic consumers: implement DSC, validate
+> descriptors, and run the conformance suite against your implementation.
+
+Scope note: this file serves documentation discovery, not tool
+registration — it is not the tool-registry `llms.txt` ruled out of scope
+in the dulce-de-leche checklist (scope ruling closing `sunset-408`,
+recorded in [status.md](docs/src/status.md)).
+
+## Start here
+
+- [for-agents.md](docs/src/for-agents.md) — agent integration brief:
+  descriptor contract, validation API surface, four reports, conformance
+  boundary (applies to DSC 0.3 deployed specs, 2026-10-15).
+- [what-is-dsc.md](docs/src/what-is-dsc.md) — explanation: what DSC is,
+  why it separates views/regions/claims, and which version applies to you.
+
+## Guides
+
+- [first-descriptor.md](docs/src/first-descriptor.md) — tutorial: build
+  and validate your first 0.3 descriptor with the shipped reference
+  validator, including the canonical tagged example descriptor.
+- [integrate.md](docs/src/integrate.md) — how-tos: adapt real PDF/EPUB
+  carriers into descriptors, run the conformance suite, read the four
+  reports, and classify honestly.
+
+## Reference
+
+- [reference.md](docs/src/reference.md) — lookup index: the seven
+  capability specs, the `dsc03` module surface, conformance label
+  taxonomy, and fixture catalog.
+
+## Normative specs (deployed 0.3 truth, seven capabilities)
+
+- [document-core](openspec/specs/document-core/spec.md) — typed descriptor
+  wire contract, canonical form, complete typed error reasons.
+- [document-structure](openspec/specs/document-structure/spec.md) —
+  physical vs logical views, `contains`/`realizes`/`precedes` edge
+  semantics.
+- [document-semantics](openspec/specs/document-semantics/spec.md) — typed
+  namespaced claims, versioned vocabularies, scoped cross-edition
+  comparison.
+- [document-evidence](openspec/specs/document-evidence/spec.md) — claim
+  origins, `asserted_without_evidence`, coexisting disputed claims,
+  transformation lineage DAG.
+- [document-adapters](openspec/specs/document-adapters/spec.md) — preserve
+  source-native observations without OCR; structured JSON is the mandatory
+  baseline adapter.
+- [document-conformance](openspec/specs/document-conformance/spec.md) —
+  per-instance outcomes kept separate from suite readiness and lint.
+- [document-ontology-boundaries](openspec/specs/document-ontology-boundaries/spec.md) —
+  out-of-core semantics represented without silent coercion; projection
+  evaluator in `dsc03/boundaries.py`.
+
+## Status and limits
+
+- [status.md](docs/src/status.md) — corpus status: 0.2 executable truth vs
+  deployed 0.3 specs, recorded deviations (each human pass supersedes),
+  and the sunset-408 scope ruling.
+- [baseline-limitations.md](docs/src/baseline-limitations.md) — known
+  validation limits of the frozen 0.2 validator and what passing its
+  checks establishes (and does not).
