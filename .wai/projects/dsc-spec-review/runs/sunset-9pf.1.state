@@ -2,6 +2,8 @@ ticket: sunset-9pf.1
 branch: main
 brief_path: .wai/projects/dsc-spec-review/briefs/sunset-9pf-1-medium-findings.md
 steps:
+  - step: verify
+    sha: 2142121
   - step: spawn
     sha: 01dfb51
   - step: brief
@@ -10,6 +12,7 @@ steps:
     sha: 0d02252
   - step: claim
     sha: 0d02252
+notes_append: verify REVIEW_REQUIRED lead-side
 completed: false
 notes: >
   Epic sunset-9pf run 4 (apply remaining rule-of-5 MEDIUM findings CLAR-001/002,
