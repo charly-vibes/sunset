@@ -4,3 +4,7 @@ brief_path:
 steps: []
 step: claim @ 950cfdbb1f5fc4a43f114dddb06524242d6f58a4
 step: gates @ 950cfdbb1f5fc4a43f114dddb06524242d6f58a4
+step: brief @ 8135929062ab361f699605225093c9c19c5e33f6
+step: spawn @ 8135929062ab361f699605225093c9c19c5e33f6
+step: verify+ship @ bb93a1f4215366452e4459a990d26e705adef126
+step: stop @ bb93a1f4215366452e4459a990d26e705adef126; run complete
