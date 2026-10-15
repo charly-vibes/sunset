@@ -22,9 +22,8 @@
 #   frame laws machinery-side under dsc03/substrate/ — no wire change.
 """Space laws: typed frames, unknown predicates, reflow identity, coexist."""
 import copy
-import hashlib
 
-from dsc03.substrate.laws import typed_check
+from dsc03.substrate.laws import synthetic_sha, typed_check
 
 
 class Transform:
@@ -132,7 +131,7 @@ def geometry_fixture():
         "version": "0.3",
         "id": "space-layout",
         "source": {"format": "application/pdf",
-                   "sha256": sha("space-layout-source"),
+                   "sha256": synthetic_sha("space-layout-source"),
                    "locator": "urn:sub:layout"},
         "views": [
             {"id": "v-phys", "kind": "physical", "root": "r-page"},
@@ -177,7 +176,7 @@ def geometry_fixture():
         "coverage": [],
         "profiles": [{"id": "p-geo", "kind": "geometry",
                       "uri": "geometry.json", "version": "1",
-                      "sha256": sha("space-geometry")}],
+                      "sha256": synthetic_sha("space-geometry")}],
     }
 
 
@@ -214,7 +213,7 @@ def epub_fixture():
         "version": "0.3",
         "id": "space-epub",
         "source": {"format": "application/epub+zip",
-                   "sha256": sha("space-epub-source"),
+                   "sha256": synthetic_sha("space-epub-source"),
                    "locator": "urn:sub:epub"},
         "views": [
             {"id": "v-carrier", "kind": "carrier", "root": "r-ch3"},
@@ -234,14 +233,14 @@ def epub_fixture():
                       "content_ids": ["c-ch3"], "selector_ids": ["sel-ch3"]}],
         "vocabularies": [{"namespace": "mag", "version": "1"}],
         "selectors": [{"id": "sel-ch3", "kind": "epub-fragment",
-                       "profile_id": "p-sel", "source_sha256": sha("space-epub-source"),
+                       "profile_id": "p-sel", "source_sha256": synthetic_sha("space-epub-source"),
                        "target": "c-ch3",
                        "locator": "urn:sub:epub#ch3/frag-42"}],
         "interpretations": [],
         "coverage": [],
         "profiles": [{"id": "p-sel", "kind": "selector",
                       "uri": "selectors.json", "version": "1",
-                      "sha256": sha("space-selectors")}],
+                      "sha256": synthetic_sha("space-selectors")}],
     }
 
 
@@ -296,7 +295,7 @@ def hybrid_page_fixture():
          "source_ref": "urn:sub:layout#page:1",
          "content_ids": ["c-ocr"], "selector_ids": [],
          "transform": {"id": "ocr", "version": "1",
-                       "config_sha256": sha("space-ocr-config"),
+                       "config_sha256": synthetic_sha("space-ocr-config"),
                        "dependencies": ["ocr-engine-sim"],
                        "inputs": ["c-img"], "outputs": ["c-ocr"]}},
     ]
@@ -332,6 +331,3 @@ def mixed_observations_report(desc):
             "forced_equality": forced}
 
 
-def sha(label):
-    """Honest synthetic digest: sha256 of the named synthetic payload."""
-    return hashlib.sha256(label.encode()).hexdigest()

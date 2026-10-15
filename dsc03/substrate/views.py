@@ -23,7 +23,7 @@
 """Views laws: overlap, cycles with witnesses, order, projection, refinement."""
 import copy
 
-from dsc03.substrate.laws import typed_check
+from dsc03.substrate.laws import synthetic_sha, typed_check
 
 
 def magazine_fixture():
@@ -40,7 +40,7 @@ def magazine_fixture():
         "version": "0.3",
         "id": "views-magazine",
         "source": {"format": "application/pdf",
-                   "sha256": sha("views-magazine-source"),
+                   "sha256": synthetic_sha("views-magazine-source"),
                    "locator": "urn:sub:magazine"},
         "views": [
             {"id": "v-phys", "kind": "physical", "root": "r-doc"},
@@ -97,10 +97,10 @@ def magazine_fixture():
         "profiles": [
             {"id": "p-inv", "kind": "carrier-inventory",
              "uri": "inventory.json", "version": "1",
-             "sha256": sha("views-inventory")},
+             "sha256": synthetic_sha("views-inventory")},
             {"id": "p-man", "kind": "adapter-manifest",
              "uri": "manifest.json", "version": "1",
-             "sha256": sha("views-manifest")},
+             "sha256": synthetic_sha("views-manifest")},
         ],
     }
 
@@ -141,14 +141,11 @@ def order_fixture():
         {"id": "rel-real1", "kind": "realizes", "from": "r-col-1",
          "to": "r-art"},
     ]
-    desc["evidence"] = [desc["evidence"][0], desc["evidence"][1]]
+    desc["evidence"] = [e for e in desc["evidence"]
+                        if e["id"] in ("e1", "e2")]
     return desc
 
 
-def sha(label):
-    """Honest synthetic digest: sha256 of the named synthetic payload."""
-    import hashlib
-    return hashlib.sha256(label.encode()).hexdigest()
 
 
 def content_bindings(desc):

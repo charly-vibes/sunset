@@ -26,9 +26,8 @@
 #   reuses directly) — no wire change, no conformance claim.
 """Context laws: attributed claims, inheritance, disputes, replay, no union."""
 import copy
-import hashlib
 
-from dsc03.substrate.laws import typed_check
+from dsc03.substrate.laws import synthetic_sha, typed_check
 
 # Terms that describe the PUBLICATION (issue metadata), not the narrated
 # content; anything else observed on a content-bearing region is narrated.
@@ -49,7 +48,7 @@ def issue_fixture():
         "version": "0.3",
         "id": "ctx-issue",
         "source": {"format": "application/pdf",
-                   "sha256": sha("ctx-issue-source"),
+                   "sha256": synthetic_sha("ctx-issue-source"),
                    "locator": "urn:sub:magazine"},
         "views": [{"id": "v-log", "kind": "logical", "root": "r-issue"}],
         "regions": [
@@ -175,7 +174,7 @@ def uncertain_fixture():
          "source_ref": "urn:sub:magazine#page:4",
          "content_ids": ["c-poem-text"], "selector_ids": [],
          "transform": {"id": "transcribe", "version": "1",
-                       "config_sha256": sha("ctx-transcribe-config"),
+                       "config_sha256": synthetic_sha("ctx-transcribe-config"),
                        "dependencies": ["ocr-sim"],
                        "inputs": ["c-scan-img"], "outputs": ["c-poem-text"]}},
         {"id": "e-man2", "origin": "source",
@@ -188,9 +187,6 @@ def uncertain_fixture():
     return desc
 
 
-def sha(label):
-    """Honest synthetic digest: sha256 of the named synthetic payload."""
-    return hashlib.sha256(label.encode()).hexdigest()
 
 
 def _annotation(a):
@@ -336,7 +332,7 @@ def two_claim_parts():
             "version": "0.3",
             "id": f"ctx-part-{n}",
             "source": {"format": "application/pdf",
-                       "sha256": sha("ctx-parts-source"),
+                       "sha256": synthetic_sha("ctx-parts-source"),
                        "locator": "urn:sub:magazine"},
             "views": [{"id": f"v-ctx-{n}", "kind": "logical",
                        "root": f"r-issue-{n}"}],

@@ -9,7 +9,9 @@
 #   factorization counterexample and its verdicts, (4) the non-invention
 #   scanner flagging derived observations rebound as source evidence, and
 #   (5) equivalence_status refusing cross-carrier equivalence without a
-#   declared alignment scope. All instances are validated descriptors;
+#   declared alignment scope, plus (6) synthetic_sha — the shared honest
+#   synthetic-digest helper used by the fixture builders. All instances are
+#   validated descriptors;
 #   failures are classified, never exceptions escaping to callers.
 # Rationale: design §4 laws and document-categorical-model deltas; identity
 #   uniqueness and canonical-serialization stability are delegated to
@@ -43,6 +45,15 @@ def typed_check(desc):
     except Exception as e:  # noqa: BLE001 — classified, by contract
         return "rejected", [f"parse_error:{e}"]
     return ("accepted", []) if not reasons else ("rejected", reasons)
+
+
+def synthetic_sha(label):
+    """Honest synthetic digest: sha256 of the named synthetic payload.
+
+    Fixture digests are never fabricated constants: they name the synthetic
+    payload they digest, so provenance stays checkable (sunset-7hs tidy).
+    """
+    return hashlib.sha256(label.encode()).hexdigest()
 
 
 # -- synthetic validated instances -------------------------------------------------
