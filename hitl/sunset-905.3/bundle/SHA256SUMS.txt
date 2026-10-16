@@ -4,3 +4,4 @@ f16bedf5d986b0e5a025e56ee6f0498a417a56dbaaa7d27e19a9369b3dc89831  sunset-carrier
 8658b5861138a584217eee503fbc305cafb9a107479136dd3ec09e2117cf4e61  sunset-carrier-sample-annotations.json
 18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2  bank-statement-ca-excerpt.pdf
 8658b5861138a584217eee503fbc305cafb9a107479136dd3ec09e2117cf4e61  carriers/sunset-carrier-sample-annotations.json
+sunset-carrier-sample-annotations.json bundled under carriers/ (see fixtures/carriers/sunset-carrier-sample-annotations.json in the sunset repo for its pinned sha)
