@@ -1,0 +1,67 @@
+{
+  "reader": "SET-TO-reader-a-or-reader-b",
+  "carrier": "carrier-stem-without-extension",
+  "elapsed_minutes": null,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": null,
+      "summary": ""
+    }
+  ],
+  "structure": [
+    {
+      "label": "",
+      "evidence": "page N, quote or location",
+      "order_rank": 1,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "continuation|reference",
+      "from": "page N + fragment",
+      "to": "page M + fragment",
+      "evidence": ""
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0|90|180|270|unknown",
+      "columns": "single|two|multi|unknown",
+      "reading_order_ambiguous": null
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date|publisher_or_source|author_or_attribution|quoted_material",
+      "value": "",
+      "evidence": "page N + fragment",
+      "status": "observed|observed_absent|unknown",
+      "note": "e.g. date-of-carrier vs date-described-in-content"
+    }
+  ],
+  "annotations": [
+    {
+      "type": "Highlight|Text|StrikeOut|FreeText|Underline|Square|Ink|other",
+      "page": 1,
+      "marked_text": "",
+      "note_text": ""
+    }
+  ],
+  "losses": [
+    {
+      "what": "",
+      "why_unrepresentable": ""
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "",
+      "alternatives": [],
+      "reason": ""
+    }
+  ],
+  "notes": ""
+}
