@@ -1,0 +1,130 @@
+{
+  "reader": "reader-grok",
+  "carrier": "sunset-carrier-sample",
+  "elapsed_minutes": 8,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": false,
+      "summary": "Chapter 1: Sample Observations (spine item c1 / chapter1.xhtml)"
+    },
+    {
+      "index": 2,
+      "image_only": false,
+      "summary": "Chapter 2: More Observations (spine item c2 / chapter2.xhtml)"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Navigation / Table of Contents",
+      "evidence": "nav.xhtml <nav epub:type=\"toc\"> lists two chapters",
+      "order_rank": 0,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter 1: Sample Observations",
+      "evidence": "chapter1.xhtml <h1>Chapter 1: Sample Observations</h1>; spine first itemref",
+      "order_rank": 1,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter 2: More Observations",
+      "evidence": "chapter2.xhtml <h1>Chapter 2: More Observations</h1>; spine second itemref",
+      "order_rank": 2,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "reference",
+      "from": "nav.xhtml TOC links",
+      "to": "chapter1.xhtml and chapter2.xhtml",
+      "evidence": "nav.xhtml <a href=\"chapter1.xhtml\"> and <a href=\"chapter2.xhtml\">"
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 2,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "2026-10-14 (dcterms:modified in package)",
+      "evidence": "content.opf <meta property=\"dcterms:modified\">2026-10-14T00:00:00Z</meta>",
+      "status": "observed",
+      "note": "metadata date, not a printed date inside chapter text"
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "Sunset fixture generator (creator)",
+      "evidence": "content.opf <creator>Sunset fixture generator</creator>; title 'Sunset Carrier Sample'",
+      "status": "observed",
+      "note": ""
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "Sunset fixture generator",
+      "evidence": "content.opf <creator>",
+      "status": "observed",
+      "note": "synthetic fixture; no human author claimed"
+    },
+    {
+      "kind": "quoted_material",
+      "value": "none",
+      "evidence": "chapter text is original synthetic prose, no attributed quotations",
+      "status": "observed_absent",
+      "note": ""
+    }
+  ],
+  "annotations": [
+    {
+      "type": "Highlight",
+      "page": 1,
+      "marked_text": "This synthetic chapter exists to exercise EPUB adapter features",
+      "note_text": "reader-mock: manifest/spine/nav feature sentence"
+    },
+    {
+      "type": "Text",
+      "page": 1,
+      "marked_text": "Documents must declare their observations, not prove completeness.",
+      "note_text": "reader-mock: key requirement line"
+    },
+    {
+      "type": "Highlight",
+      "page": 2,
+      "marked_text": "Coverage is scoped, independent, and conservative.",
+      "note_text": "reader-mock: coverage principle"
+    }
+  ],
+  "losses": [
+    {
+      "what": "Reflow behaviour under different viewport widths",
+      "why_unrepresentable": "EPUB is reflowable; exact line breaks and pagination change with reader window size and font settings — a fixed structural record cannot capture every possible rendering"
+    },
+    {
+      "what": "placeholder.svg visual appearance",
+      "why_unrepresentable": "SVG resource exists in the package but is not referenced from the chapter bodies observed; any rendering is viewer-dependent"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "whether the supplied annotations JSON is part of the carrier or an external companion",
+      "alternatives": [
+        "embedded annotation layer",
+        "sidecar file shipped with the bundle"
+      ],
+      "reason": "The annotations file is present in the carriers/ directory alongside the epub; the epub package itself does not contain an annotations document in the OPF manifest"
+    }
+  ],
+  "notes": "EPUB 3 package. Spine order is chapter1 then chapter2. Both chapters contain nearly identical synthetic paragraphs. Text reflows. Navigation document provides the TOC. Identifier: urn:uuid:sunset-carrier-sample-0001. Language: en. The three annotations listed are those already present in the companion sunset-carrier-sample-annotations.json shipped with the bundle."
+}

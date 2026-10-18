@@ -1,0 +1,241 @@
+{
+  "reader": "reader-grok",
+  "carrier": "agentic-patterns-excerpt",
+  "elapsed_minutes": 12,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": false,
+      "summary": "Title page + Contents start: 'Agentic Patterns' subtitle 'Design Patterns and Best Practices for Building Agentic Systems'; TOC for Chapters Foundations and Core Agentic Patterns"
+    },
+    {
+      "index": 2,
+      "image_only": false,
+      "summary": "Contents continued: Chapters Tools, Orchestration & Control Flow, RAG, Context & Memory (start)"
+    },
+    {
+      "index": 3,
+      "image_only": false,
+      "summary": "Contents continued: Context & Memory finish, MCP, Agent2Agent (A2A), Skills/Sub-Agents & Tasks, Evals start"
+    },
+    {
+      "index": 4,
+      "image_only": false,
+      "summary": "Contents finish: Evals, Data Sources & Connectors, User Interface, Execution Infrastructure, The Complete Agent, Advanced Agents"
+    },
+    {
+      "index": 5,
+      "image_only": false,
+      "summary": "References list (entries 2–30), page number 350 at bottom"
+    },
+    {
+      "index": 6,
+      "image_only": false,
+      "summary": "References continued (entries ~12–36), page number 399 at bottom"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Title",
+      "evidence": "page 1, centred 'Agentic Patterns' + subtitle",
+      "order_rank": 1,
+      "order_alternatives": []
+    },
+    {
+      "label": "Contents / Table of Contents",
+      "evidence": "pages 1–4, hierarchical chapter and section listings with page numbers",
+      "order_rank": 2,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Foundations",
+      "evidence": "page 1 TOC entry starting at page 8",
+      "order_rank": 3,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Core Agentic Patterns",
+      "evidence": "page 1 TOC entry starting at page 46",
+      "order_rank": 4,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Tools",
+      "evidence": "page 2 TOC entry starting at page 89",
+      "order_rank": 5,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Orchestration & Control Flow",
+      "evidence": "page 2 TOC entry starting at page 120",
+      "order_rank": 6,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: RAG (Retrieval-Augmented Generation)",
+      "evidence": "page 2 TOC entry starting at page 139",
+      "order_rank": 7,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Context & Memory",
+      "evidence": "page 2–3 TOC entry starting at page 177",
+      "order_rank": 8,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Model Context Protocol (MCP)",
+      "evidence": "page 3 TOC entry starting at page 194",
+      "order_rank": 9,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Agent2Agent Protocol (A2A)",
+      "evidence": "page 3 TOC entry starting at page 214",
+      "order_rank": 10,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Skills, Sub-Agents & Tasks",
+      "evidence": "page 3 TOC entry starting at page 254",
+      "order_rank": 11,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Evals",
+      "evidence": "page 3–4 TOC entry starting at page 271",
+      "order_rank": 12,
+      "order_alternatives": []
+    },
+    {
+      "label": "Data Sources & Connectors",
+      "evidence": "page 4 TOC entry starting at page 295",
+      "order_rank": 13,
+      "order_alternatives": []
+    },
+    {
+      "label": "User Interface",
+      "evidence": "page 4 TOC entry starting at page 319",
+      "order_rank": 14,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Execution Infrastructure",
+      "evidence": "page 4 TOC entry starting at page 352",
+      "order_rank": 15,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: The Complete Agent",
+      "evidence": "page 4 TOC entry starting at page 370",
+      "order_rank": 16,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter: Advanced Agents",
+      "evidence": "page 4 TOC entry starting at page 382",
+      "order_rank": 17,
+      "order_alternatives": []
+    },
+    {
+      "label": "References",
+      "evidence": "pages 5–6, numbered bibliographic entries with URLs",
+      "order_rank": 18,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "reference",
+      "from": "TOC page numbers (e.g. 'Chapter: Foundations' → 8)",
+      "to": "body pages that are not present in this 6-page excerpt",
+      "evidence": "pages 1–4 TOC; excerpt only supplies TOC + two reference pages"
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 2,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 3,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 4,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 5,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 6,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "unknown (no date printed on the supplied pages)",
+      "evidence": "pages 1–6 contain no year or date on title or TOC",
+      "status": "observed_absent",
+      "note": "some reference entries cite 2024–2026 works, but that is content, not carrier publication date"
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "unknown",
+      "evidence": "no publisher imprint visible on these pages",
+      "status": "observed_absent",
+      "note": ""
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "unknown (title only; no author name on title or TOC pages)",
+      "evidence": "page 1 title block",
+      "status": "observed_absent",
+      "note": ""
+    },
+    {
+      "kind": "quoted_material",
+      "value": "none observed as quotations of third parties on the TOC/reference pages",
+      "evidence": "pages 1–6",
+      "status": "observed_absent",
+      "note": ""
+    }
+  ],
+  "annotations": [],
+  "losses": [
+    {
+      "what": "Body content of all chapters listed in the TOC",
+      "why_unrepresentable": "This carrier is only a 6-page excerpt (TOC + two reference leaves); the actual chapter text is absent"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "whether pages 5–6 are continuous with the TOC or from a different part of the book",
+      "alternatives": [
+        "end-matter references belonging to a later chapter",
+        "standalone bibliography"
+      ],
+      "reason": "Page numbers jump (TOC ends ~382, then 350 and 399 appear); layout is consistent with book end-matter but exact placement is not labelled"
+    }
+  ],
+  "notes": "Native born-digital PDF; text is fully selectable. All pages upright, single-column reading order. Producer metadata visible to tools names 'sunset carrier sampler (pikepdf)' but that is not printed on the pages themselves."
+}

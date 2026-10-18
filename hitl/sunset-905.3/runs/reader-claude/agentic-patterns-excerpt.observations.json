@@ -1,0 +1,240 @@
+{
+  "reader": "reader-claude",
+  "carrier": "agentic-patterns-excerpt",
+  "elapsed_minutes": null,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": "unknown",
+      "summary": "title 'Agentic Patterns' + highlighted subtitle; 'Contents' begins: Disclaimer, Chapter: Foundations, Chapter: Core Agentic Patterns; footer folio 1; sticky note top-left"
+    },
+    {
+      "index": 2,
+      "image_only": "unknown",
+      "summary": "contents continued: Tools, Orchestration & Control Flow, RAG, start of Context & Memory; folio 2"
+    },
+    {
+      "index": 3,
+      "image_only": "unknown",
+      "summary": "contents continued: rest of Context & Memory, Model Context Protocol (MCP), Agent2Agent Protocol (A2A), Skills/Sub-Agents & Tasks, start of Evals; folio 3"
+    },
+    {
+      "index": 4,
+      "image_only": "unknown",
+      "summary": "contents continued: rest of Evals, Data Sources & Connectors, User Interface, Execution Infrastructure, The Complete Agent, heading 'Chapter: Advanced Agents 382' at the bottom with no entries beneath it; folio 4"
+    },
+    {
+      "index": 5,
+      "image_only": "unknown",
+      "summary": "numbered reference list, entries 2-30 (Chainlit docs, AG-UI, Pydantic, FastMCP, MCP spec, A2A, npm); folio 350"
+    },
+    {
+      "index": 6,
+      "image_only": "unknown",
+      "summary": "numbered reference list; first line is the tail of a URL cut off at the top ('...g/abs/2309.11495'), then entries 13-36 (arXiv, NIST, GDPR, Presidio...); folio 399"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Agentic Patterns (title)",
+      "evidence": "page 1, top: 'Agentic Patterns'",
+      "order_rank": 1,
+      "order_alternatives": []
+    },
+    {
+      "label": "Subtitle: Design Patterns and Best Practices for Building Agentic Systems",
+      "evidence": "page 1, highlighted line under the title",
+      "order_rank": 2,
+      "order_alternatives": []
+    },
+    {
+      "label": "Contents",
+      "evidence": "page 1, bold heading above the dotted-leader list",
+      "order_rank": 3,
+      "order_alternatives": []
+    },
+    {
+      "label": "Contents entries by chapter (Disclaimer, Foundations, Core Agentic Patterns, Tools, Orchestration & Control Flow, RAG, Context & Memory, MCP, A2A, Skills/Sub-Agents & Tasks, Evals, Data Sources & Connectors, User Interface, Execution Infrastructure, The Complete Agent, Advanced Agents)",
+      "evidence": "pages 1-4: bold 'Chapter: ...' lines with printed page numbers 7 to 382",
+      "order_rank": 4,
+      "order_alternatives": []
+    },
+    {
+      "label": "Reference list (entries 2-30)",
+      "evidence": "page 5, folio 350",
+      "order_rank": 5,
+      "order_alternatives": [
+        "a page of a different chapter's reference list than page 6's"
+      ]
+    },
+    {
+      "label": "Reference list (entries 13-36, preceded by a cut-off fragment)",
+      "evidence": "page 6, folio 399",
+      "order_rank": 6,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "continuation",
+      "from": "page 2, bottom: 'Chapter: Context & Memory 177 / Introduction 177'",
+      "to": "page 3, top: 'Historical Perspective 177 ...' continuing the same chapter",
+      "evidence": "chapter list runs across the page break with no new chapter heading"
+    },
+    {
+      "kind": "continuation",
+      "from": "page 3, bottom: 'Chapter: Evals 271 ... Hands-On: Basic Evals 280'",
+      "to": "page 4, top: 'Hands-On: Pydantic Evals Framework 282 ...'",
+      "evidence": "same chapter list continues"
+    },
+    {
+      "kind": "continuation",
+      "from": "page 1, bottom: Core Agentic Patterns list ending 'References 86'",
+      "to": "page 2, top: 'Chapter: Tools 89'",
+      "evidence": "next chapter in the contents sequence"
+    },
+    {
+      "kind": "reference",
+      "from": "pages 1-4: the dotted-leader contents entries",
+      "to": "the sections they name (printed page numbers 7-382); none of those pages are in the excerpt",
+      "evidence": "entries appear clickable in a viewer; the targets are absent from the excerpt, so I could not follow them"
+    },
+    {
+      "kind": "reference",
+      "from": "pages 5-6: reference entries ending in URLs",
+      "to": "external web addresses (e.g. docs.chainlit.io, arxiv.org)",
+      "evidence": "entries with printed URLs; I did not follow any of them"
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 2,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 3,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 4,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 5,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 6,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "unknown",
+      "evidence": "no date visible on any of the 6 pages (reference entries carry dates like 2025, but those are the cited works' dates)",
+      "status": "observed_absent",
+      "note": "dates inside the content (citations, e.g. 2025) are described-in-content, not the carrier's date"
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "unknown",
+      "evidence": "no publisher or imprint on any page",
+      "status": "observed_absent",
+      "note": "the first page's text says 'Agentic Patterns' only"
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "unknown",
+      "evidence": "no author name on page 1",
+      "status": "observed_absent",
+      "note": ""
+    },
+    {
+      "kind": "quoted_material",
+      "value": "none quoted; works cited",
+      "evidence": "pages 5-6: numbered citations, e.g. 'Chainlit. Chat Life Cycle. Chainlit Documentation, 2025.'",
+      "status": "observed",
+      "note": "citations attribute works to others (Chainlit, AG-UI Protocol Contributors, Pydantic Inc., etc.) but no quotation is reproduced"
+    }
+  ],
+  "annotations": [
+    {
+      "type": "Text",
+      "page": 1,
+      "marked_text": "(sticky-note icon, top-left)",
+      "note_text": "ES: Front/back matter only: four dotted-leader TOC pages then two reference-list pages; printed folios 1-4, 350, 399. No chapter body present. [author label shown: reader-A]"
+    },
+    {
+      "type": "Highlight",
+      "page": 1,
+      "marked_text": "Design Patterns and Best Practices for Building Agentic Systems",
+      "note_text": ""
+    }
+  ],
+  "losses": [
+    {
+      "what": "dotted leaders and right-aligned page numbers",
+      "why_unrepresentable": "leader dots are visual connectors; a structural record keeps label and number but not the visual link or alignment"
+    },
+    {
+      "what": "bold vs regular weight distinguishing chapter lines from section lines",
+      "why_unrepresentable": "typographic hierarchy is how I perceived nesting; a flat structure record loses it unless re-encoded as depth"
+    },
+    {
+      "what": "clickable link behaviour",
+      "why_unrepresentable": "link targets are interactive; static observation records only that entries are visually link-like"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "page_inventory[*].image_only",
+      "alternatives": [
+        true,
+        false
+      ],
+      "reason": "judged by crisp typeset appearance; I did not test selecting text"
+    },
+    {
+      "field": "relations: continuation between pages 5 and 6",
+      "alternatives": [
+        "page 6 continues page 5's list",
+        "page 6 is a different list (numbering goes 30 then 13)"
+      ],
+      "reason": "numbering does not run on (page 5 ends at 30; page 6 shows 13-36 after a URL fragment) and folios jump 350 to 399, so I did not assert a continuation"
+    },
+    {
+      "field": "page 4: 'Chapter: Advanced Agents 382'",
+      "alternatives": [
+        "chapter heading with entries cut off by the excerpt",
+        "chapter with no sub-entries"
+      ],
+      "reason": "heading is the last line on the page with nothing beneath it"
+    },
+    {
+      "field": "page 6 first line",
+      "alternatives": [
+        "tail of the URL of the last entry on a preceding page",
+        "separate fragment"
+      ],
+      "reason": "text starts mid-URL at the top edge"
+    }
+  ],
+  "notes": "Printed folios (1, 2, 3, 4, 350, 399) differ from viewer indices (1-6). The excerpt is front matter plus two scattered reference pages; no chapter text is present."
+}

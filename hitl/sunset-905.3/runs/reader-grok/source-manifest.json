@@ -1,0 +1,22 @@
+[
+ {
+  "name": "diario-de-poesia-excerpt.observations.json",
+  "size": 6974,
+  "sha256": "765a94b1b5785791"
+ },
+ {
+  "name": "agentic-patterns-excerpt.observations.json",
+  "size": 7308,
+  "sha256": "c769dad495218ca1"
+ },
+ {
+  "name": "sunset-carrier-sample.observations.json",
+  "size": 4499,
+  "sha256": "41d3fecc3a717c4b"
+ },
+ {
+  "name": "bank-statement-ca-excerpt.observations.json",
+  "size": 2920,
+  "sha256": "4344e8bba539c880"
+ }
+]

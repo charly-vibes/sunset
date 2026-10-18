@@ -1,0 +1,176 @@
+{
+  "reader": "reader-claude",
+  "carrier": "sunset-carrier-sample",
+  "elapsed_minutes": null,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": false,
+      "summary": "spine item 1: chapter1.xhtml, 'Chapter 1: Sample Observations', three short paragraphs"
+    },
+    {
+      "index": 2,
+      "image_only": false,
+      "summary": "spine item 2: chapter2.xhtml, 'Chapter 2: More Observations', three paragraphs, same text as ch.1 except 'second' in the first one"
+    },
+    {
+      "index": 3,
+      "image_only": false,
+      "summary": "nav.xhtml 'Contents' (not in the spine; reached via the contents/nav): two links"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Contents (navigation document)",
+      "evidence": "nav.xhtml: <h1>Contents</h1> with an ordered list",
+      "order_rank": 1,
+      "order_alternatives": [
+        "after the chapters, because it is not in the spine"
+      ]
+    },
+    {
+      "label": "Chapter 1: Sample Observations",
+      "evidence": "chapter1.xhtml <h1>; spine position 1; nav entry 1",
+      "order_rank": 2,
+      "order_alternatives": []
+    },
+    {
+      "label": "Chapter 2: More Observations",
+      "evidence": "chapter2.xhtml <h1>; spine position 2; nav entry 2",
+      "order_rank": 3,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "reference",
+      "from": "nav.xhtml entry 'Chapter 1: Sample Observations'",
+      "to": "chapter1.xhtml",
+      "evidence": "link href=chapter1.xhtml"
+    },
+    {
+      "kind": "reference",
+      "from": "nav.xhtml entry 'Chapter 2: More Observations'",
+      "to": "chapter2.xhtml",
+      "evidence": "link href=chapter2.xhtml"
+    },
+    {
+      "kind": "continuation",
+      "from": "chapter1.xhtml, end",
+      "to": "chapter2.xhtml, start",
+      "evidence": "spine order only; no sentence flows across the boundary, so this is sequence rather than a traced continuation"
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "unknown",
+      "columns": "unknown",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 2,
+      "rotation": "unknown",
+      "columns": "unknown",
+      "reading_order_ambiguous": false
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "unknown",
+      "evidence": "package metadata has only a 'dcterms:modified' value 2026-10-14T00:00:00Z; no publication date in the content",
+      "status": "observed_absent",
+      "note": "the modified stamp is package-metadata, not a publication date; I record it here as an alternative rather than the date"
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "unknown",
+      "evidence": "no publisher element in content.opf",
+      "status": "observed_absent",
+      "note": "identifier: urn:uuid:sunset-carrier-sample-0001"
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "Sunset fixture generator",
+      "evidence": "content.opf: <creator>Sunset fixture generator</creator>; ch.1 text says all content 'was authored for the sunset carrier fixtures'",
+      "status": "observed",
+      "note": "metadata creator"
+    },
+    {
+      "kind": "quoted_material",
+      "value": "none",
+      "evidence": "no quotation attributed to others",
+      "status": "observed_absent",
+      "note": ""
+    }
+  ],
+  "annotations": [
+    {
+      "type": "Highlight",
+      "page": 1,
+      "marked_text": "This synthetic chapter exists to exercise EPUB adapter features",
+      "note_text": "reader-mock: manifest/spine/nav feature sentence (sidecar file sunset-carrier-sample-annotations.json, id a1; CFI points at ch1)"
+    },
+    {
+      "type": "Text",
+      "page": 1,
+      "marked_text": "Documents must declare their observations, not prove completeness.",
+      "note_text": "reader-mock: key requirement line (sidecar id a2)"
+    },
+    {
+      "type": "Highlight",
+      "page": 2,
+      "marked_text": "Coverage is scoped, independent, and conservative.",
+      "note_text": "reader-mock: coverage principle (sidecar id a3; CFI points at ch2)"
+    }
+  ],
+  "losses": [
+    {
+      "what": "placeholder.svg (100x100 dark square with the word 'fixture')",
+      "why_unrepresentable": "declared in the package manifest but referenced by no chapter, nav or stylesheet, so a reader never sees it; a structural record can list it but not say where it appears"
+    },
+    {
+      "what": "reflow behaviour on window resize",
+      "why_unrepresentable": "I read the chapter files directly, not in a reflowing viewer; layout response cannot be recorded here"
+    },
+    {
+      "what": "styling (style.css sets body font-family: serif)",
+      "why_unrepresentable": "presentation only; font rendering depends on the viewer"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "annotations",
+      "alternatives": [
+        "annotations live in the carrier",
+        "annotations are a sidecar not shipped inside the EPUB"
+      ],
+      "reason": "the highlights come from a separate JSON file; the EPUB itself holds none. Its CFIs name [ch1]/[ch2], but the package ids are c1/c2 and itemrefs carry no id, so the targets do not resolve literally"
+    },
+    {
+      "field": "annotation a1 location",
+      "alternatives": [
+        "chapter 1 first paragraph",
+        "chapter 2 first paragraph"
+      ],
+      "reason": "chapter 2 has a near-identical sentence ('This second synthetic chapter...'); only chapter 1's contains the quoted wording"
+    },
+    {
+      "field": "annotation a3 location",
+      "alternatives": [
+        "chapter 1 last paragraph",
+        "chapter 2 last paragraph"
+      ],
+      "reason": "'Coverage is scoped...' appears in both chapters; the CFI points at ch2"
+    },
+    {
+      "field": "space",
+      "alternatives": [
+        "unknown"
+      ],
+      "reason": "no viewer used; reflowable layout has no fixed rotation or columns"
+    }
+  ],
+  "notes": "Oddities seen: chapter2.xhtml's <title> says 'Chapter 1' while its heading says 'Chapter 2'; both chapter files use id='p2' for the second paragraph (separate documents, not a clash within one file); nav.xhtml is in the manifest with the nav property but not in the spine. I read the XHTML source rather than using an EPUB viewer."
+}

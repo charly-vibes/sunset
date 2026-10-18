@@ -1,0 +1,198 @@
+{
+  "reader": "reader-grok",
+  "carrier": "diario-de-poesia-excerpt",
+  "elapsed_minutes": 22,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": true,
+      "summary": "Front cover of Diario de Poesía, Segunda Edición, Invierno de 1986; masthead, lead quote from E.E. Cummings continuing to p.2, photos of Juan L. Ortiz and group with Ginsberg, article teasers"
+    },
+    {
+      "index": 2,
+      "image_only": true,
+      "summary": "Sumario (table of contents) left column; Editorial centre; Alta Marea column and masthead/credits right; facsimile of old book page"
+    },
+    {
+      "index": 3,
+      "image_only": true,
+      "summary": "Reportaje: Ginsberg, treinta años después by Francis X. Clines; multi-column article with large photo of Ginsberg at desk"
+    },
+    {
+      "index": 4,
+      "image_only": true,
+      "summary": "Continuation of Ginsberg reportaje; additional photos and columns"
+    },
+    {
+      "index": 5,
+      "image_only": true,
+      "summary": "Further interior page of the magazine (poetry/dossier content)"
+    },
+    {
+      "index": 6,
+      "image_only": true,
+      "summary": "Further interior page of the magazine"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Cover / Primera plana",
+      "evidence": "page 1, full page masthead 'DIARIO DE POESÍA' + 'SEGUNDA EDICIÓN' + 'Invierno de 1986'",
+      "order_rank": 1,
+      "order_alternatives": []
+    },
+    {
+      "label": "Sumario",
+      "evidence": "page 2, left column headed 'Sumario' listing articles with page numbers",
+      "order_rank": 2,
+      "order_alternatives": []
+    },
+    {
+      "label": "Editorial",
+      "evidence": "page 2, centre column headed 'Editorial' signed 'El Director'",
+      "order_rank": 3,
+      "order_alternatives": []
+    },
+    {
+      "label": "Alta Marea (column)",
+      "evidence": "page 2, right column headed 'Alta Marea' with byline 'la columna de Elvio E. Gandolfo'",
+      "order_rank": 4,
+      "order_alternatives": []
+    },
+    {
+      "label": "Reportaje: Ginsberg, treinta años después",
+      "evidence": "page 3, large headline 'Ginsberg, treinta años después' by Francis X. Clines",
+      "order_rank": 5,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "continuation",
+      "from": "page 1, lead quote ends '(Sigue en pág. 2).'",
+      "to": "page 2, Editorial begins '(viene de la primera plana)'",
+      "evidence": "explicit continuation markers on both pages"
+    },
+    {
+      "kind": "continuation",
+      "from": "page 1, 'Concursos' box ends '(sigue en pág. 34)'",
+      "to": "page not present in this excerpt",
+      "evidence": "page 1 right column"
+    },
+    {
+      "kind": "reference",
+      "from": "page 1, 'Entre las páginas 11 y 23, se extiende un dossier dedicado al gran poeta entrerriano Juan L. Ortiz'",
+      "to": "pages 11-23 (not in excerpt)",
+      "evidence": "page 1 lower-left caption under Juan L. Ortiz photo"
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    },
+    {
+      "index": 2,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    },
+    {
+      "index": 3,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 4,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 5,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    },
+    {
+      "index": 6,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "Invierno de 1986 (Segunda Edición); Año 1 · Número 1 · Junio 1986 also appears on p.2 masthead",
+      "evidence": "page 1 top-right banner; page 2 lower-right masthead block",
+      "status": "observed",
+      "note": "carrier shows both 'Invierno de 1986' on cover and 'Junio 1986' on interior masthead; both are dates printed on the carrier itself"
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "DIARIO DE POESIA es una publicación de Juegos & Co. S.R.L., Uruguay 252, 3º 14 (1015) Buenos Aires",
+      "evidence": "page 2 lower-left imprint block",
+      "status": "observed",
+      "note": ""
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "Director: Daniel Samoilovich; Director de Arte: Juan Pablo Renzi; Consejo de Redacción listed",
+      "evidence": "page 2 lower-right credits",
+      "status": "observed",
+      "note": ""
+    },
+    {
+      "kind": "quoted_material",
+      "value": "E.E. Cummings quote on cover: '¿Usted le pegaría a una mujer con un niño? —No, le pegaría con un ladrillo.'",
+      "evidence": "page 1 lead paragraph",
+      "status": "observed",
+      "note": "attributed to E.E. Cummings by the magazine"
+    },
+    {
+      "kind": "quoted_material",
+      "value": "Allen Ginsberg material and photo caption naming P. Orlovsky, L. Ferlinghetti, W. Burroughs, G. Corso, C. Holmes, A. Ginsberg, C. Solomon, R. Frank",
+      "evidence": "page 1 lower-right photo caption",
+      "status": "observed",
+      "note": ""
+    }
+  ],
+  "annotations": [],
+  "losses": [
+    {
+      "what": "Photographic content and visual layout of the scanned magazine pages",
+      "why_unrepresentable": "Images (portraits, group photo, facsimile of old book page) convey visual information that has no faithful text equivalent; layout, type hierarchy, and column flow are visual"
+    },
+    {
+      "what": "Scan quality / skew / paper texture",
+      "why_unrepresentable": "The pages are photographic scans of physical paper; any structural record loses the analog character of the original print"
+    },
+    {
+      "what": "Full reading of multi-column continuations beyond the 6-page excerpt",
+      "why_unrepresentable": "Explicit '(sigue en pág. N)' markers point outside the supplied excerpt"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "page_inventory summary for pages 4-6",
+      "alternatives": [
+        "more precise article titles if OCR were used",
+        "purely visual description only"
+      ],
+      "reason": "Pages are image-only; detailed article identification beyond headline visibility is limited without magnification or OCR, which is disallowed"
+    },
+    {
+      "field": "exact page count of original magazine",
+      "alternatives": [
+        "at least 37 (from 'sigue en pág. 37')",
+        "unknown full extent"
+      ],
+      "reason": "Excerpt is only 6 pages; internal references imply a longer original"
+    }
+  ],
+  "notes": "All pages are image-only (no selectable text layer). Footer on every page: 'Archivo Histórico de Revistas Argentinas | www.ahira.com.ar'. Reading order on multi-column pages is left-to-right / top-to-bottom with interruptions by photos and boxes."
+}

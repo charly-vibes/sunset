@@ -42,6 +42,12 @@
   during sunset-905.3 gate runs). Fixed by `dsc03.demo.run_pinned`
   (file-backed stdout, WNOHANG polling, hung child killed after timeout);
   regression tests in `test_first_consumer_demo.py::TestPinnedRunner`.
+- The sunset-905.3 two-human-readers gate remains open: the reader-grok /
+  reader-claude sheet sets returned via cotorreo were ingested as a labeled
+  agent-executed agreement run (owner ruling b, 2026-10-18) — see
+  `hitl/sunset-905.3/agreement-matrix-agent-run.md` (55 observables: 27
+  AGREE, 14 COMPATIBLE, 8 UNKNOWN, 6 DISAGREE retained; a human pass
+  supersedes).
 - Recorded deviations across the 0.3 work (each human pass supersedes):
   reviewer personas, reader annotations and review times in the
   [first-consumer demonstration](tracer-bullet.org) are agent-executed; the

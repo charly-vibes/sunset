@@ -1,0 +1,126 @@
+{
+  "reader": "reader-claude",
+  "carrier": "bank-statement-ca-excerpt",
+  "elapsed_minutes": null,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": "unknown",
+      "summary": "mostly blank letter page; three short lines of text at upper left, one highlighted; a sticky-note icon in the top-left corner"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Resumen Banco Mock al 21/09/2017",
+      "evidence": "page 1, first text line; 'Banco Mock' is in small superscript between 'Resumen' and 'al 21/09/2017'",
+      "order_rank": 1,
+      "order_alternatives": []
+    },
+    {
+      "label": "Caja de Ahorro ARS",
+      "evidence": "page 1, second text line",
+      "order_rank": 2,
+      "order_alternatives": []
+    },
+    {
+      "label": "SALDO ANTERIOR 1.234,56",
+      "evidence": "page 1, third text line (yellow highlight)",
+      "order_rank": 3,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "single",
+      "reading_order_ambiguous": false
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "21/09/2017 (day/month/year reading; 21 cannot be a month)",
+      "evidence": "page 1: 'Resumen Banco Mock al 21/09/2017'",
+      "status": "observed",
+      "note": "'al' = 'as of': this reads as the statement cut-off/as-of date. An issue date is not shown. Alternatives: statement as-of date vs issue date; I could not tell which."
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "Banco Mock",
+      "evidence": "page 1: small superscript 'Banco Mock' after 'Resumen'",
+      "status": "observed",
+      "note": "name looks like a placeholder, so it may be a fictional bank"
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "unknown",
+      "evidence": "no author/holder/account-number text anywhere on the page",
+      "status": "observed_absent",
+      "note": "no account holder name or account number visible; only the account-type label 'Caja de Ahorro ARS'"
+    },
+    {
+      "kind": "quoted_material",
+      "value": "none",
+      "evidence": "nothing quoted from another party",
+      "status": "observed_absent",
+      "note": ""
+    }
+  ],
+  "annotations": [
+    {
+      "type": "Text",
+      "page": 1,
+      "marked_text": "(sticky-note icon, top-left corner, not attached to text)",
+      "note_text": "ES: One-page 'Resumen' sheet: sparse 78-character text layer over a graphic layout; mocked balance rendered as decorative type. [author label shown: reader-A]"
+    },
+    {
+      "type": "Highlight",
+      "page": 1,
+      "marked_text": "SALDO ANTERIOR 1.234,56",
+      "note_text": ""
+    }
+  ],
+  "losses": [
+    {
+      "what": "table rows / totals",
+      "why_unrepresentable": "none are visible; the page shows no table and no totals, so there is nothing to record (observed absent, not lost)"
+    },
+    {
+      "what": "decorative type / graphic layout of the balance line",
+      "why_unrepresentable": "typeface size and the highlight's yellow colour carry visual emphasis that a structural record would not keep"
+    },
+    {
+      "what": "large blank area (about 85% of the page)",
+      "why_unrepresentable": "empty space may be meaningful layout or may be missing content; a structural record cannot say which"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "context.publication_date",
+      "alternatives": [
+        "statement as-of date",
+        "issue date"
+      ],
+      "reason": "'al' signals as-of; no separate issue date shown"
+    },
+    {
+      "field": "page_inventory[1].image_only",
+      "alternatives": [
+        true,
+        false
+      ],
+      "reason": "I judged by rendered appearance only and did not try selecting text; the sticky note's text claims a text layer, but that is another reader's claim, not mine"
+    },
+    {
+      "field": "currency of 1.234,56",
+      "alternatives": [
+        "ARS",
+        "unspecified"
+      ],
+      "reason": "'ARS' appears on the line above (account label); the amount itself carries no currency symbol. Decimal comma and dot thousands separator observed"
+    }
+  ],
+  "notes": "Very sparse page. The sticky note's wording was visible to me before I wrote this sheet (see notes.md on independence)."
+}

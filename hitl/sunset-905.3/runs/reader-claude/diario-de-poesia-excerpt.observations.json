@@ -1,0 +1,288 @@
+{
+  "reader": "reader-claude",
+  "carrier": "diario-de-poesia-excerpt",
+  "elapsed_minutes": null,
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": "unknown",
+      "summary": "newspaper front page: 'DIARIO DE POESÍA' masthead, 'Segunda Edición' banner, lead blurb, several articles and photos; sticky note and a red box annotation"
+    },
+    {
+      "index": 2,
+      "image_only": "unknown",
+      "summary": "'2/SUMARIO': contents list, 'Editorial', 'Alta Marea' column, colophon/staff box, facsimile drawing"
+    },
+    {
+      "index": 3,
+      "image_only": "unknown",
+      "summary": "'REPORTAJE/3': large headline 'Ginsberg, treinta años después', multi-column interview text with photos"
+    },
+    {
+      "index": 4,
+      "image_only": "unknown",
+      "summary": "'4/POESIA NORTEAMERICANA': Allen Ginsberg, translated by Eduardo Stupía, poem 'Sudario Blanco'"
+    },
+    {
+      "index": 5,
+      "image_only": "unknown",
+      "summary": "'18/DOSSIER JUANELE': two Yannis Ritsos poems, translated by Juan L. Ortiz, headed 'La sonata del claro de luna'"
+    },
+    {
+      "index": 6,
+      "image_only": "unknown",
+      "summary": "'AGENDA/35': article 'Sin riesgo no hay ganancia' plus bibliographic listings in columns; large vertical letters on the right edge"
+    }
+  ],
+  "structure": [
+    {
+      "label": "Masthead 'Diario de Poesía' + 'Periódico trimestral. Invierno de 1986' + 'Segunda edición' banner",
+      "evidence": "page 1, top",
+      "order_rank": 1,
+      "order_alternatives": []
+    },
+    {
+      "label": "Lead blurb on E. E. Cummings, continued on p. 2",
+      "evidence": "page 1: quote beginning '¿Usted le pegaría a una mujer con un niño?'",
+      "order_rank": 2,
+      "order_alternatives": []
+    },
+    {
+      "label": "Page 1 front-page items: Juan Ele dossier note; 'Las memorias de Kikí de Montparnasse'; 'GELMAN: ANTICIPO DE SU PRÓXIMO LIBRO'; 'Concursos'; 'Allen Ginsberg 1986: nuevos poemas y viejos amores en el Lower East End'",
+      "evidence": "page 1, below the blurb, lay-out of columns",
+      "order_rank": 3,
+      "order_alternatives": [
+        "order by column, left to right",
+        "order by visual prominence (photo and Ginsberg headline first)"
+      ]
+    },
+    {
+      "label": "Sumario (contents)",
+      "evidence": "page 2, upper left",
+      "order_rank": 4,
+      "order_alternatives": []
+    },
+    {
+      "label": "Editorial",
+      "evidence": "page 2, second column, beginning '(viene de la primera plana)'",
+      "order_rank": 5,
+      "order_alternatives": []
+    },
+    {
+      "label": "Alta Marea (column by Elvio E. Gandolfo)",
+      "evidence": "page 2, upper right",
+      "order_rank": 6,
+      "order_alternatives": []
+    },
+    {
+      "label": "Colophon / masthead box (Director Daniel Samoilovich, etc.)",
+      "evidence": "page 2, lower right",
+      "order_rank": 7,
+      "order_alternatives": []
+    },
+    {
+      "label": "Ginsberg, treinta años después (reportaje)",
+      "evidence": "page 3 headline",
+      "order_rank": 8,
+      "order_alternatives": []
+    },
+    {
+      "label": "Sudario Blanco (poem, Allen Ginsberg, trad. Eduardo Stupía)",
+      "evidence": "page 4 headline and byline",
+      "order_rank": 9,
+      "order_alternatives": []
+    },
+    {
+      "label": "La sonata del claro de luna (Yannis Ritsos, trad. Juan L. Ortiz)",
+      "evidence": "page 5 headline",
+      "order_rank": 10,
+      "order_alternatives": []
+    },
+    {
+      "label": "Sin riesgo no hay ganancia",
+      "evidence": "page 6 headline; the Sumario p.2 credits it to Tamara Kamenszain, p.35",
+      "order_rank": 11,
+      "order_alternatives": []
+    }
+  ],
+  "relations": [
+    {
+      "kind": "continuation",
+      "from": "page 1: '...en una de sus inconferen-(Sigue en pág. 2)'",
+      "to": "page 2, Editorial: '(viene de la primera plana)' then 'cias, y agrega: ...'",
+      "evidence": "the word 'inconferen-' + 'cias' splits across the pages; both markers match"
+    },
+    {
+      "kind": "reference",
+      "from": "page 1, bottom of the 'Concursos' column and the lead blurb: '(sigue en pág. 37)' and '(sigue en pág. 34)'",
+      "to": "pages 37 and 34, not in the excerpt",
+      "evidence": "printed pointers; targets absent"
+    },
+    {
+      "kind": "reference",
+      "from": "page 1, Juan Ele note: 'Entre las páginas 11 y 23 se extiende un dossier dedicado al gran poeta entrerriano Juan L. Ortiz...'",
+      "to": "pages 11-23, not in the excerpt (page 5 here is printed 18)",
+      "evidence": "printed page range; page 5 of the excerpt (printed 18) falls within it"
+    },
+    {
+      "kind": "reference",
+      "from": "page 2, Sumario: 'Ginsberg, treinta años después ... 3' and 'Sudario Blanco ... 4' and 'Sonata del claro de luna ... 18' and 'Sin riesgo no hay ganancia ... 35'",
+      "to": "printed pages 3, 4, 18, 35 = excerpt pages 3, 4, 5, 6",
+      "evidence": "printed page headers match the Sumario entries"
+    }
+  ],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    },
+    {
+      "index": 2,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    },
+    {
+      "index": 3,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    },
+    {
+      "index": 4,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 5,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": false
+    },
+    {
+      "index": 6,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": true
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "Invierno de 1986",
+      "evidence": "page 1 masthead: 'Periódico trimestral. Invierno de 1986'",
+      "status": "observed",
+      "note": "carrier date. Page 2 colophon box also reads 'Año 1 - Número 1 - Junio 1986', which conflicts with the cover's 'Invierno de 1986' and 'Segunda edición'; I record both. Dates inside content (e.g. 'Hasta el 15 de septiembre de 1986', 'de agosto', 'el 15 de noviembre') are event deadlines, not publication dates."
+    },
+    {
+      "kind": "publisher_or_source",
+      "value": "Juegos & Co. S.R.L. (publisher); Archivo Histórico de Revistas Argentinas (digitization source)",
+      "evidence": "page 2 imprint: 'DIARIO DE POESIA es una publicación de Juegos & Co. S.R.L., Uruguay 252...'; footer of every page: 'Archivo Histórico de Revistas Argentinas | www.ahira.com.ar'",
+      "status": "observed",
+      "note": "two different roles: original publisher vs the archive that added the watermark footer"
+    },
+    {
+      "kind": "author_or_attribution",
+      "value": "Director: Daniel Samoilovich; Director de Arte: Juan Pablo Renzi; per-article authors listed in the Sumario",
+      "evidence": "page 2 colophon box; Sumario list",
+      "status": "observed",
+      "note": ""
+    },
+    {
+      "kind": "quoted_material",
+      "value": "E. E. Cummings, quoted by the author of the cover blurb (author not named on the cover)",
+      "evidence": "page 1: '\"¿Usted le pegaría a una mujer con un niño?...\" Según E.E. Cummings...'; and '\"Soy afecto a esa precisión que crea movimiento\", dice en una de sus inconferen-'",
+      "status": "observed",
+      "note": "who quotes: unnamed; the blurb continues on p. 2 (editorial)"
+    },
+    {
+      "kind": "quoted_material",
+      "value": "Ginsberg's poem 'Sudario Blanco' and Ritsos poems, presented as translations",
+      "evidence": "page 4 byline 'Allen Ginsberg - Traducción Eduardo Stupía'; page 5 'Dos poemas de Yannis Ritsos en traducción de Juan L. Ortiz'",
+      "status": "observed",
+      "note": "poet vs translator are different attributions"
+    }
+  ],
+  "annotations": [
+    {
+      "type": "Text",
+      "page": 1,
+      "marked_text": "(sticky-note icon, top-left)",
+      "note_text": "ES: Image-only scan (6 pp, no text layer): 1986 newspaper-format literary periodical front page; dense multi-column layout mixing photos and type. [author label shown: reader-A]"
+    },
+    {
+      "type": "Square",
+      "page": 1,
+      "marked_text": "red rectangle over part of the 'Allen Ginsberg 1986: nuevos poemas y viejos amores en el Lower East End' headline and the top of the group photo below it",
+      "note_text": "ES: information-dense region of image-only page 1 [author label shown: reader-A]"
+    }
+  ],
+  "losses": [
+    {
+      "what": "photographs (portraits, group photo captioned 'De izq. a der.: P. Orlovsky, L. Ferlinghetti, W. Burroughs, G. Corso, C. Holmes, A. Ginsberg, C. Solomon y, sentado, R. Frank.', a 1920s-style nude portrait)",
+      "why_unrepresentable": "image content has no text equivalent; the caption can be kept but not who is actually pictured"
+    },
+    {
+      "what": "masthead lettering and large display type",
+      "why_unrepresentable": "typography (big blocky 'POESÍA', drop caps, 'SEGUNDA EDICIÓN' diagonal banner) carries identity and emphasis"
+    },
+    {
+      "what": "scan quality, grey background, show-through of the reverse side on page 1/2",
+      "why_unrepresentable": "scan artefact; shows up as visual noise only"
+    },
+    {
+      "what": "archive watermark footer on every page",
+      "why_unrepresentable": "added by the digitizer, not part of the original; a structural record cannot tell original from overlay without a note"
+    },
+    {
+      "what": "text in small columns beyond my reading resolution (agenda listings on p.6, body of p.3-5)",
+      "why_unrepresentable": "I did not read these in full; only headlines/bylines were recorded"
+    }
+  ],
+  "uncertainties": [
+    {
+      "field": "page_inventory[*].image_only",
+      "alternatives": [
+        true,
+        false
+      ],
+      "reason": "appearance is a grey halftone newspaper scan with show-through; I did not test selecting text; the sticky note says there is no text layer, but that is another reader's claim"
+    },
+    {
+      "field": "context.publication_date",
+      "alternatives": [
+        "Invierno de 1986 (cover)",
+        "Junio 1986 (page 2 colophon: Año 1 Número 1)"
+      ],
+      "reason": "two date statements disagree; 'Segunda edición' on the cover adds a possible reprint date"
+    },
+    {
+      "field": "page 5 header number",
+      "alternatives": [
+        "18",
+        "16"
+      ],
+      "reason": "digit reads 18 at my resolution and matches Sumario 'Sonata del claro de luna ... 18'"
+    },
+    {
+      "field": "space[*].reading_order_ambiguous",
+      "alternatives": [
+        true,
+        false
+      ],
+      "reason": "pages 4 and 5 are columnar text under a single heading, so I set False; pages 1, 2, 3, 6 mix photos, boxes and callouts"
+    },
+    {
+      "field": "structure order on page 1",
+      "alternatives": [
+        "column order",
+        "prominence order"
+      ],
+      "reason": "front-page layout has no single reading path"
+    }
+  ],
+  "notes": "Excerpt pages are non-contiguous in the original issue: printed 1, 2, 3, 4, 18, 35. All six pages are portrait, no rotation. I read headlines, bylines and the Sumario carefully; body text mostly skimmed."
+}
