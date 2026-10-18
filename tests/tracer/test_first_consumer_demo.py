@@ -11,6 +11,7 @@
 # Rationale: add-dsc-03 document-conformance "First-consumer demonstration".
 """First-consumer demo (sunset-r68.13): extractors, snapshots, projection, measurement."""
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -151,3 +152,21 @@ class TestConformanceLabels(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPinnedRunner(unittest.TestCase):
+    """The pinned-subprocess runner must not deadlock on output larger than
+    the pipe buffer (wait4-before-read), and must kill hung children."""
+
+    def test_output_larger_than_pipe_buffer_completes(self):
+        # ~300 KB of stdout: deadlocks a Popen(PIPE)+wait4-before-read runner
+        out, peak = demo.run_pinned(
+            ["python3", "-c", "import sys; sys.stdout.write('x' * 300000)"],
+            timeout=60,
+        )
+        self.assertEqual(len(out), 300000)
+        self.assertGreater(peak, 0)
+
+    def test_hung_child_is_killed_after_timeout(self):
+        with self.assertRaises(subprocess.TimeoutExpired):
+            demo.run_pinned(["sleep", "60"], timeout=2)

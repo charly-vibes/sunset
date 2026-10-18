@@ -36,6 +36,12 @@
   substrate spec deltas remain undeployed pending review; recorded
   expressivity findings live in mapping.md § "Unresolved expressivity
   findings".
+- The first-consumer demo's pinned extractors originally reaped children
+  via `os.wait4` before draining stdout — a pipe-buffer deadlock that hung
+  the suite once page output exceeded the buffer (surfaced 2026-10-18
+  during sunset-905.3 gate runs). Fixed by `dsc03.demo.run_pinned`
+  (file-backed stdout, WNOHANG polling, hung child killed after timeout);
+  regression tests in `test_first_consumer_demo.py::TestPinnedRunner`.
 - Recorded deviations across the 0.3 work (each human pass supersedes):
   reviewer personas, reader annotations and review times in the
   [first-consumer demonstration](tracer-bullet.org) are agent-executed; the

@@ -79,16 +79,46 @@ def _wait4(popen):
     return ru.ru_maxrss
 
 
+PINNED_CHILD_TIMEOUT_S = 120
+
+
+def run_pinned(cmd, timeout=PINNED_CHILD_TIMEOUT_S):
+    """Run a pinned child command safely and measure its peak RSS (KiB).
+
+    stdout goes to a temp file, never a pipe: reaping via os.wait4 before
+    draining a pipe deadlocks once the child's output exceeds the pipe
+    buffer (the child blocks writing, the parent blocks in wait4). A child
+    that outlives `timeout` is killed and subprocess.TimeoutExpired raised
+    so a hung extractor can never stall the suite.
+    """
+    fd, out_path = tempfile.mkstemp(suffix=".out")
+    os.close(fd)
+    try:
+        with open(out_path, "wb") as out_f:
+            p = subprocess.Popen(cmd, stdout=out_f, stderr=subprocess.DEVNULL)
+            deadline = time.monotonic() + timeout
+            while True:
+                pid, status, ru = os.wait4(p.pid, os.WNOHANG)
+                if pid:
+                    p.returncode = os.waitstatus_to_exitcode(status)
+                    with open(out_path, "rb") as r_f:
+                        return r_f.read().decode("utf-8", "replace"), ru.ru_maxrss
+                if time.monotonic() > deadline:
+                    p.kill()
+                    _wait4(p)
+                    raise subprocess.TimeoutExpired(cmd, timeout)
+                time.sleep(0.05)
+    finally:
+        os.unlink(out_path)
+
+
 def _pdftotext_pages(data_path):
     pages, peaks = {}, []
     for i in PAGES:
-        p = subprocess.Popen(
+        out, peak = run_pinned(
             [PDFTOTEXT_BIN, *PDFTOTEXT_ARGS, "-f", str(i), "-l", str(i),
-             str(data_path), "-"],
-            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        peak = _wait4(p)
-        pages[i] = p.stdout.read().decode("utf-8", "replace")
-        p.stdout.close()
+             str(data_path), "-"])
+        pages[i] = out
         peaks.append(peak)
     return pages, max(peaks)
 
@@ -103,12 +133,9 @@ def _ocr_pages(data_path):
                 tf.write(png)
                 tmp = tf.name
             try:
-                p = subprocess.Popen(
-                    ["tesseract", tmp, "stdout", "-l", OCR_LANG],
-                    stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-                peak = _wait4(p)
-                pages[i] = p.stdout.read().decode("utf-8", "replace")
-                p.stdout.close()
+                out, peak = run_pinned(
+                    ["tesseract", tmp, "stdout", "-l", OCR_LANG])
+                pages[i] = out
                 peaks.append(peak)
             finally:
                 os.unlink(tmp)
@@ -123,11 +150,8 @@ def _pymupdf_pages(data_path):
         f"doc = pymupdf.open({data_path!r})\n"
         "print(json.dumps({i+1: p.get_text() for i, p in enumerate(doc)}))\n"
     )
-    p = subprocess.Popen(["python3", "-c", code],
-                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    peak = _wait4(p)
-    pages = {int(k): v for k, v in json.loads(p.stdout.read().decode()).items()}
-    p.stdout.close()
+    out, peak = run_pinned(["python3", "-c", code])
+    pages = {int(k): v for k, v in json.loads(out).items()}
     return pages, peak
 
 
