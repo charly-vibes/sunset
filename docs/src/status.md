@@ -48,6 +48,29 @@
   `hitl/sunset-905.3/agreement-matrix-agent-run.md` (55 observables: 27
   AGREE, 14 COMPATIBLE, 8 UNKNOWN, 6 DISAGREE retained; a human pass
   supersedes).
+- **openspec 1.x compatibility (sunset-rtl, 2026-10-19):** all 7 deployed
+  specs now pass `openspec validate --specs --strict` under both the
+  ratified pin @fission-ai/openspec@0.19.0 and @fission-ai/openspec@1.14.2
+  (`just spec-1x`). To satisfy 1.x's 500-character requirement-text limit,
+  ten overlong deployed requirements were **editorially split** into
+  multiple requirements (normative prose partitioned verbatim, sentence
+  order preserved; `tests/test_spec_composition.py` now guards the splits
+  by asserting each part set reproduces the archived body's prose verbatim).
+  Recorded micro-deviations in the split prose (human pass supersedes):
+  "Features absent from the source may be preserved" → "SHALL be preserved"
+  (document-adapters, Absence and unavailability honesty) and "yield" →
+  "SHALL yield" ×3 (document-evidence, Selector outcome codes) — modality
+  strengthened, meaning unchanged. A few scenarios were restated as
+  witnesses for newly standalone requirements. **Residual gap:** the three
+  active change deltas cannot pass 1.x strict delta validation while they
+  carry the spk dual-format layer (the `## Requirements` mirror registers
+  as orphaned requirements and the Constraints/Model/Properties tables as
+  uncarried content; 1.x has no suppression config, and `spk lint` plus
+  `archive-companion`'s fail-closed verbatim deploy both require that exact
+  shape at `specs/<cap>/spec.md`). This is an upstream spk ↔ openspec-1.x
+  conflict, not a corpus defect; `openspec@0.19.0` remains the ratified
+  gate binary and validates all 10 items. Tracked upstream
+  (charly-vibes/specodelic) via the sunset-rtl beads ticket.
 - Recorded deviations across the 0.3 work (each human pass supersedes):
   reviewer personas, reader annotations and review times in the
   [first-consumer demonstration](tracer-bullet.org) are agent-executed; the

@@ -12,18 +12,21 @@ marked disputed; transformation lineage is a DAG.
 
 All claim targets and supplied evidence references SHALL resolve even when a
 claim is `asserted_without_evidence`. That status permits an empty evidence
-array; it does not permit a dangling target or reference. Each 0.3 evidence
-object SHALL retain `id`, `origin`, `source_ref`, optional `transform`, and
-add mandatory `content_ids` and `selector_ids` arrays of unique typed ids.
-`content_ids` identifies observations produced by this evidence record;
-`selector_ids` identifies supporting source or content anchors. An empty
-binding asserts no content or anchor support. Opaque `source_ref` alone SHALL
-NOT be treated as a verified source anchor.
+array; it does not permit a dangling target or reference.
 
 #### Scenario: Unsupported claim still has a target
 
 - **WHEN** an annotation with `asserted_without_evidence` names a missing target
 - **THEN** it is invalid with `dangling_reference`
+
+### Requirement: Evidence object bindings
+
+Each 0.3 evidence object SHALL retain `id`, `origin`, `source_ref`, optional
+`transform`, and add mandatory `content_ids` and `selector_ids` arrays of
+unique typed ids. `content_ids` identifies observations produced by this
+evidence record; `selector_ids` identifies supporting source or content
+anchors. An empty binding asserts no content or anchor support. Opaque
+`source_ref` alone SHALL NOT be treated as a verified source anchor.
 
 #### Scenario: Source observation binding
 
@@ -50,19 +53,21 @@ evidence record's `content_ids` as a set. Transformer id/version are nonempty;
 config_sha256 is 64 lowercase hex; dependencies are nonempty pinned identifier
 strings. Missing replay material cannot be labeled reproducible.
 
-Each content participating in a transform SHALL have exactly one producing
-evidence record; other support may be attached via annotations. For every
-input, the transform evidence SHALL have a `derived-from` edge to that input's
-producer (child to parent). These edges SHALL equal the set of input producers,
-and SHALL be acyclic. Both content bindings and evidence edges are required;
-an opaque locator or matching string is not a substitute.
-
 #### Scenario: Native to corrected to normalized
 
 - **GIVEN** source evidence `e0` produces `c0`
 - **WHEN** `e1` transforms `c0` into `c1` and `e2` transforms `c1` into `c2`
 - **THEN** inputs/outputs identify those exact content ids and lineage contains
   `e1 -> e0` and `e2 -> e1`; all three values remain available
+
+### Requirement: Transform lineage edges
+
+Each content participating in a transform SHALL have exactly one producing
+evidence record; other support may be attached via annotations. For every
+input, the transform evidence SHALL have a `derived-from` edge to that input's
+producer (child to parent). These edges SHALL equal the set of input producers,
+and SHALL be acyclic. Both content bindings and evidence edges are required;
+an opaque locator or matching string is not a substitute.
 
 #### Scenario: Broken content lineage
 
@@ -131,23 +136,44 @@ Selectors SHALL have exactly `id`, `kind`, `profile_id`, `source_sha256`,
 `target`, `locator`. Kind is `pdf-area|pdf-object|pdf-text-range|epub-resource|
 epub-fragment|text-range|external`; target references a region or content;
 locator is nonempty. The declared selector profile SHALL define allowed kinds,
-locator grammar, dereferencing and failure rules. An internal selector's
-source_sha256 SHALL equal the descriptor source digest; an external selector
-SHALL pin the external resource's digest, never trust its URI alone.
+locator grammar, dereferencing and failure rules.
+
+#### Scenario: Selector profile bounds the kind
+
+- **WHEN** a selector uses a kind outside those its declared profile allows
+- **THEN** selector validation fails under the profile's declared rules
+
+### Requirement: Selector source digest pinning
+
+An internal selector's source_sha256 SHALL equal the descriptor source digest;
+an external selector SHALL pin the external resource's digest, never trust its
+URI alone.
+
+#### Scenario: External selector without a pinned digest
+
+- **WHEN** an `external` selector trusts its URI without pinning the external
+  resource's digest
+- **THEN** the selector is invalid
+
+### Requirement: Profile-defined text ranges
 
 A `text-range` target SHALL be text content. Its profile SHALL declare offset
 unit (UTF-8 bytes, Unicode scalar values, or grapheme clusters), half-open or
 closed endpoints, and the applicable Unicode segmentation version. Offsets
 SHALL index the exact target value without normalization. Range boundaries
-SHALL be in bounds and respect the declared units. With a resolved profile,
-malformed locators/ranges yield `invalid_selector`; missing profile references
-yield `dangling_reference`; unavailable declared profiles yield
-`unsupported_profile` at resolution, not invented interpretation.
+SHALL be in bounds and respect the declared units.
 
 #### Scenario: Different offset units
 
 - **WHEN** a scalar-index profile selects half-open range `[1,2)` in `AéB`
 - **THEN** it selects `é`; a byte-index profile must use `[1,3)` for that character
+
+### Requirement: Selector outcome codes
+
+With a resolved profile, malformed locators/ranges SHALL yield
+`invalid_selector`; missing profile references SHALL yield
+`dangling_reference`; unavailable declared profiles SHALL yield
+`unsupported_profile` at resolution, not invented interpretation.
 
 #### Scenario: Malformed locator under known profile
 

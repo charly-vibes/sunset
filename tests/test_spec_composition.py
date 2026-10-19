@@ -36,6 +36,39 @@ REPLACEMENTS = {
     "document-semantics": {"Typed annotation claims"},
 }
 
+# Editorial splits (sunset-rtl, openspec 1.x 500-char requirement-text limit):
+# the archived requirement was split into these deployed parts, in document
+# order, with the normative prose partitioned verbatim and sentence order
+# preserved. The union must still equal the archived body, so a contradictory
+# replacement or a lost rule still fails the guard.
+SPLITS = {
+    "document-core": {
+        "Descriptor shape validation": [
+            "Descriptor shape validation", "Text encoding and wire scope",
+        ],
+        "Validation outcome states": [
+            "Validation outcome states", "Resource exhaustion is typed",
+        ],
+    },
+    "document-conformance": {
+        "Reader independence": [
+            "Reader independence", "Pinned projection and comparator",
+            "Anchored matching without silent resolution",
+            "Comparator reporting completeness",
+            "Pinned rerun divergence is explained",
+        ],
+    },
+    "document-evidence": {
+        "Evidence link resolution": [
+            "Evidence link resolution", "Evidence object bindings",
+        ],
+        "Replay material for derived observations": [
+            "Replay material for derived observations",
+            "Transform lineage edges",
+        ],
+    },
+}
+
 
 def requirements(text):
     """Read requirement bodies without depending on whitespace formatting."""
@@ -48,6 +81,19 @@ def requirements(text):
     }
 
 
+def prose(body):
+    """Normative text of a requirement body: everything before its first
+    scenario, collapsed to single whitespace."""
+    lines = []
+    for line in body.splitlines():
+        if line.startswith("#### "):
+            break
+        stripped = line.strip()
+        if stripped:
+            lines.append(stripped)
+    return " ".join(" ".join(lines).split())
+
+
 class SpecCompositionTest(unittest.TestCase):
     def test_deployed_specs_carry_archived_replacements(self):
         self.assertTrue(
@@ -58,10 +104,25 @@ class SpecCompositionTest(unittest.TestCase):
             relative = Path("specs") / capability / "spec.md"
             delta = requirements((ARCHIVED_CHANGE / relative).read_text())
             merged = requirements((ROOT / "openspec" / relative).read_text())
+            splits = SPLITS.get(capability, {})
             for name in sorted(names):
                 with self.subTest(capability=capability, requirement=name):
                     self.assertIn(name, delta, "Changed baseline rule needs an explicit replacement")
-                    self.assertEqual(merged[name], delta[name])
+                    if name in splits:
+                        parts = splits[name]
+                        missing = [p for p in parts if p not in merged]
+                        self.assertFalse(
+                            missing,
+                            "Split part missing from deployed spec: %s" % missing,
+                        )
+                        self.assertEqual(
+                            " ".join(prose(merged[p]) for p in parts),
+                            prose(delta[name]),
+                            "Deployed split parts must reproduce the archived "
+                            "requirement prose verbatim and in order",
+                        )
+                    else:
+                        self.assertEqual(merged[name], delta[name])
 
 
 if __name__ == "__main__":

@@ -47,10 +47,10 @@ def test_canonicalization_is_deterministic_and_lossless_shape():
 
 
 def test_agreement_record_written_and_labeled():
-    """(c) The agreement record exists, is agent-executed-labeled, and states
-    the owner gate stays open."""
+    """(c) The agreement record exists, is agent-executed-labeled, and records
+    the owner ruling (agreement gate PASSED and CLOSED, 2026-10-19)."""
     text = AGREEMENT_ORG.read_text(encoding="utf-8")
     assert "AGENT-EXECUTED" in text
     assert "z-ai/glm-5.3-flash" in text
     assert "subagent:sunset-xx7.4b:impl" in text
-    assert "OWNER GATE ON AGREEMENT RESULTS REMAINS OPEN" in text
+    assert "OWNER RULING 2026-10-19: gate PASSED and CLOSED" in text

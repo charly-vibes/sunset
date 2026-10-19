@@ -15,11 +15,7 @@ The 0.3 validator SHALL require exactly the 0.2 top-level fields plus five
 mandatory arrays: `views`, `selectors`, `interpretations`, `coverage`, and
 `profiles`, with `version` equal to `"0.3"`. Unknown properties, nulls,
 booleans, floats, duplicate JSON keys and invalid Unicode scalar sequences
-SHALL be invalid. Object keys and identifiers SHALL be ASCII; other strings
-SHALL be NFC except `contents[].value` when `kind` is `text`. This exception
-preserves exact source code points without implicit normalization. Changes to
-nested shapes are specified by the structure, evidence, semantics and adapter
-deltas; all other 0.2 fields remain unchanged. These are breaking wire changes.
+SHALL be invalid.
 
 #### Scenario: Version dispatch
 
@@ -31,6 +27,14 @@ deltas; all other 0.2 fields remain unchanged. These are breaking wire changes.
 
 - **WHEN** an otherwise valid descriptor includes an unknown property
 - **THEN** it is invalid with `invalid_shape`
+
+### Requirement: Text encoding and wire scope
+
+Object keys and identifiers SHALL be ASCII; other strings SHALL be NFC except
+`contents[].value` when `kind` is `text`. This exception preserves exact source
+code points without implicit normalization. Changes to nested shapes are
+specified by the structure, evidence, semantics and adapter deltas; all other
+0.2 fields remain unchanged. These are breaking wire changes.
 
 #### Scenario: Decomposed original text
 
@@ -142,9 +146,7 @@ deduplicated reason codes, separately from profile resolution, source coverage
 and interpretive assessment. Malformed field types SHALL yield `invalid_shape`
 before reference lookup or graph traversal; malformed JSON SHALL yield
 `parse_error`. A known well-typed but missing reference yields
-`dangling_reference`. Resource exhaustion SHALL be reported as an incomplete
-validation attempt with `resource_limit`, never as a valid descriptor.
-Implementations SHALL document input size, nesting and graph limits.
+`dangling_reference`.
 
 #### Scenario: Array-valued relation endpoint
 
@@ -156,6 +158,19 @@ Implementations SHALL document input size, nesting and graph limits.
 - **WHEN** an id, relation kind, annotation target, or evidence reference is
   an object or array where a string is required
 - **THEN** validation returns `invalid_shape` without a host-language traceback
+
+### Requirement: Resource exhaustion is typed
+
+Resource exhaustion SHALL be reported as an incomplete validation attempt with
+`resource_limit`, never as a valid descriptor. Implementations SHALL document
+input size, nesting and graph limits.
+
+#### Scenario: Exceeded input limit
+
+- **WHEN** a descriptor exceeds the documented input size, nesting or graph
+  limit
+- **THEN** validation is reported as an incomplete attempt with
+  `resource_limit`, never as a valid descriptor
 
 ### Requirement: Version-scoped conformance fixtures
 
@@ -175,10 +190,20 @@ original files SHALL remain 0.2 fixtures and SHALL NOT be relabeled as valid
 Each `profiles[]` object SHALL have exactly `id`, `kind`, `uri`, `version`,
 `sha256`. Kind SHALL be `selector|geometry|carrier-inventory|adapter-manifest|
 alignment`. URI and version are nonempty strings; sha256 is 64 lowercase hex
-over exact artifact bytes. The URI is a lookup hint, not identity. Readers
-SHALL resolve the declared version and digest from an explicitly supplied
-local registry; no network fetch or latest-version fallback is implicit.
-Selector and geometry objects SHALL bind through `profile_id`.
+over exact artifact bytes. Selector and geometry objects SHALL bind through
+`profile_id`.
+
+#### Scenario: Malformed profile declaration
+
+- **WHEN** a `profiles[]` object carries an unknown kind, an empty uri or
+  version, or a sha256 that is not 64 lowercase hex
+- **THEN** the descriptor is invalid
+
+### Requirement: Local registry resolution
+
+The URI is a lookup hint, not identity. Readers SHALL resolve the declared
+version and digest from an explicitly supplied local registry; no network fetch
+or latest-version fallback is implicit.
 
 #### Scenario: Version pin survives registry changes
 
