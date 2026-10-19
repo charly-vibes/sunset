@@ -66,6 +66,10 @@ def classify_locator(locator: str):
     identity), or None for unclassifiable input; reason is "" exactly when
     the scheme is usable as a persistent source anchor.
     """
+    # sunset-xx7.4 (additive): non-string locators are classified input, not
+    # crashes — return the same (None, reason) shape as unknown schemes.
+    if not isinstance(locator, str):
+        return None, f"non-string locator: {type(locator).__name__}"
     text = locator.strip()
     if text.startswith("viewport"):
         return "viewport", "viewport coordinates are transient and never persistent identity"
@@ -189,7 +193,9 @@ def _build_locus(locator: str, scheme: str):
 
 def locator_support(index, selector) -> tuple:
     """(supported, reason) for one selector's locator as a persistent anchor."""
-    scheme, reason = classify_locator(selector["locator"])
+    # sunset-xx7.4 (additive): a selector with no locator key is malformed
+    # input, classified like any other unclassifiable locator (never a crash).
+    scheme, reason = classify_locator(selector.get("locator"))
     if scheme == "viewport":
         return False, reason
     if scheme is None:
@@ -267,11 +273,15 @@ def resolve(index, target_id: str) -> Selection:
             evidence_ids=evidence,
             reason="; ".join(unsupported_reasons),
         )
+    # sunset-xx7.4 (additive): when some selectors were malformed alongside
+    # usable ones, the classified reasons are surfaced on the resolved
+    # selection too — the malformed selectors are never silently dropped.
     return Selection(
         target_id=target_id,
         status="resolved",
         loci=tuple(loci),
         evidence_ids=evidence,
+        reason="; ".join(unsupported_reasons),
     )
 
 

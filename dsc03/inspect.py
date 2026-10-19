@@ -169,10 +169,22 @@ def load_descriptor(path) -> dict:
 def build_index(descriptor: dict) -> InspectionIndex:
     """Index a loaded descriptor by id for O(1)-ish lookup. Read-only."""
     idx = InspectionIndex(descriptor=descriptor)
+    # sunset-xx7.4 (additive): tolerate malformed shapes so inspect() can emit
+    # the classified dsc03.invalid_shape diagnostic instead of crashing —
+    # missing sections index as empty, non-dict/id-less items are skipped and
+    # left to the validator's invalid_shape classification (never silent pass).
     for key in ("views", "regions", "contents", "relations", "evidence",
                 "annotations", "selectors", "interpretations"):
-        setattr(idx, key, {item["id"]: item for item in descriptor[key]})
-    idx.coverage = tuple(descriptor["coverage"])
+        items = descriptor.get(key) or []
+        setattr(idx, key, {
+            item["id"]: item for item in items
+            if isinstance(item, dict) and "id" in item
+        })
+    idx.coverage = tuple(
+        c for c in (descriptor.get("coverage") or [])
+        if isinstance(c, dict) and "feature" in c and "scope" in c
+        and "status" in c
+    )
     return idx
 
 
@@ -196,7 +208,9 @@ def _minimal_witness(index: InspectionIndex, reason: str) -> str | None:
                 x not in selector_ids for x in e["selector_ids"]
             ):
                 return e["id"]
-    return index.descriptor["id"]
+    # sunset-xx7.4 (additive): malformed descriptors may lack an id entirely;
+    # witness is then None (no witness exists in the document — never invented).
+    return index.descriptor.get("id")
 
 
 def diagnose(index: InspectionIndex, validator_reasons) -> tuple:
