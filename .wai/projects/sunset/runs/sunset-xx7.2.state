@@ -3,3 +3,9 @@ branch: main
 brief: .wai/projects/sunset/briefs/sunset-xx7.2.md
 steps:
 - claim @ 162edf7
+- gates @ 2828a93
+- brief @ 2828a93
+- spawn @ 2828a93
+- verify @ 8dd5256
+- ship @ 8dd5256
+- stop (xx7.2 boundary)

@@ -3,8 +3,8 @@
 - [ ] 0.1 Pin Sunset revision and enumerate deployed DSC capabilities, schema/profile/selector formats and existing diagnostics; record exact SHA and compatibility matrix.
 - [ ] 0.2 Validate dual-format specification deltas with target `spk lint`, `openspec validate` and repo gates; record commands and outputs. Do not silently assume archived dual-format tables survive.
 - [x] 1.1 Implement read-only descriptor loader and validated inspection index; no implicit OCR or network. (sunset-xx7.1: dsc03/inspect.py; typed diagnostics model incl. agent-executed pass — human pass supersedes)
-- [ ] 1.2 Implement PDF fixed-coordinate, scan-image, EPUB locator adapters and explicit mixed-mode observations; preserve intrinsic vs display coordinates.
-- [ ] 1.3 Implement synchronized source/structure/evidence selection including missing/ambiguous selector states and scoped alternative reading orders.
+- [x] 1.2 Implement PDF fixed-coordinate, scan-image, EPUB locator adapters and explicit mixed-mode observations; preserve intrinsic vs display coordinates. (sunset-xx7.2: dsc03/locators.py)
+- [x] 1.3 Implement synchronized source/structure/evidence selection including missing/ambiguous selector states and scoped alternative reading orders. (sunset-xx7.2: dsc03/locators.py)
 - [ ] 1.4 Implement diagnostic model with typed results and exact source/witness links; include keyboard/a11y behavior.
 - [ ] 2.1 Implement versioned, scoped observable comparators and non-equivalence witness reporting.
 - [ ] 2.2 Add composition/identity/associativity fixture probes and unsupported-domain reporting; no categorical runtime.
