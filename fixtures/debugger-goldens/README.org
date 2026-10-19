@@ -18,12 +18,27 @@ no timestamps). Regenerate with:
 |                                         | (private-redaction oracle)                |                                    |
 
 The carrier golden embeds the real source sha256 recorded by the adapter from
-the actual carrier bytes; it is fully replayable.
+the actual carrier bytes; it is fully replayable. Its two sides come from
+=generate_goldens.py= :: =_payloads_from_carrier()=: the =full= side is the
+adapter output as-is; the =flat= side carries a deliberate, commented mutation
+(remove spatial column info — financial-sign-loss oracle), which is why its
+=sign_column_positions= count differs on the identical source text.
+
+* Hash conventions
+
+- golden-01 :: =descriptor_sha256= and =source_sha256= are real sha256
+  digests (payload serialized with =json.dumps(payload, sort_keys=True)=;
+  source = the carrier PDF bytes).
+- golden-02, golden-03 :: the =descriptor_sha256=/=source_sha256=/
+  =input_hashes= values (=aaaa…=, =bbbb…=, =cccc…=, =dddd…=, =eeee…=,
+  =ffff…=) are PLACEHOLDER marker strings, not digests of the payloads.
+  They are self-evidently synthetic; do not read them as payload bindings.
 
 * Redaction states
 
-- golden-01, golden-02 :: =replayable=true;; full payloads + sha256 input
-  hashes present; export -> reload -> re-compare is byte-deterministic.
+- golden-01, golden-02 :: =replayable=true;; full payloads + input hash
+  fields present (golden-01 real digests; golden-02 placeholders — see Hash
+  conventions); export -> reload -> re-compare is byte-deterministic.
 - golden-03 :: =replayable=false;; secret source bytes omitted
   (=redaction.omitted= = left/right payload); replay raises
   =compare.NotReplayable=. No fabricated reproducible source.
@@ -35,5 +50,7 @@ the actual carrier bytes; it is fully replayable.
 - Loss, unresolved evidence and unexamined coverage are never converted into
   =equivalent=/pass by normalization (loss_visibility).
 - =independent_agreement= (dual readers) is slice 4 / HITL — not claimed here.
+- Outcome classes are not defined term-by-term in this README; the normative
+  definitions live in the change spec =openspec/changes/add-document-structural-debugger/=.
 - The specifying fixtures README remains the spec artifact under
   =openspec/changes/add-document-structural-debugger/fixtures/README.md=.
