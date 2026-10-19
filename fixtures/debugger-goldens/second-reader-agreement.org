@@ -1,0 +1,24 @@
+#+title: Second-reader agreement — sunset-xx7.4 Part B (AGENT-EXECUTED)
+
+* Provenance
+- Agent/model :: z-ai/glm-5.3-flash via pi (non-interactive)
+- Date :: 2026-10-15
+- Session :: subagent:sunset-xx7.4b:impl
+- Method :: public-API recompute (dsc03.compare scoped_compare + export_counterexample from stored golden INPUTS) vs stored goldens;
+  canonicalization = sorted keys, indent 1, no timestamps;
+  provenance section excluded from comparison scope (generator metadata).
+- Independence :: second reader written from the public API only, independent of tests/tracer/test_debugger_a11y.py and tests/tracer/test_compare.py (not read).
+
+* Results
+- Agree :: 2
+- Disagree :: 0
+- Not replayable (classified, excluded from agreement counts) :: 1
+
+** golden-01-carrier-text-compare.json — agree
+** golden-02-wrong-order-counterexample.json — agree
+** golden-03-private-redaction.json — not_replayable
+  - Note :: inputs redacted in stored golden (redaction.omitted); recomputation skipped
+
+* Owner gate
+- OWNER GATE ON AGREEMENT RESULTS REMAINS OPEN — human pass supersedes.
+- This record is machine-vs-stored-golden agreement by an agent-executed second reader; it is NOT a claim of human-equivalent independent agreement.
