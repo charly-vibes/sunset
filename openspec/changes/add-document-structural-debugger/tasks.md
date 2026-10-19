@@ -6,9 +6,9 @@
 - [x] 1.2 Implement PDF fixed-coordinate, scan-image, EPUB locator adapters and explicit mixed-mode observations; preserve intrinsic vs display coordinates. (sunset-xx7.2: dsc03/locators.py)
 - [x] 1.3 Implement synchronized source/structure/evidence selection including missing/ambiguous selector states and scoped alternative reading orders. (sunset-xx7.2: dsc03/locators.py)
 - [ ] 1.4 Implement diagnostic model with typed results and exact source/witness links; include keyboard/a11y behavior.
-- [ ] 2.1 Implement versioned, scoped observable comparators and non-equivalence witness reporting.
-- [ ] 2.2 Add composition/identity/associativity fixture probes and unsupported-domain reporting; no categorical runtime.
-- [ ] 2.3 Export deterministic minimized counterexamples and replay fixtures, with privacy/rights and redaction states.
+- [x] 2.1 Implement versioned, scoped observable comparators and non-equivalence witness reporting. (sunset-xx7.3: dsc03/compare.py)
+- [x] 2.2 Add composition/identity/associativity fixture probes and unsupported-domain reporting; no categorical runtime. (sunset-xx7.3: probe_identity/probe_associativity)
+- [x] 2.3 Export deterministic minimized counterexamples and replay fixtures, with privacy/rights and redaction states. (sunset-xx7.3: export_counterexample, fixtures/debugger-goldens/)
 - [ ] 3.1 Add goldens for native PDF, EPUB, Ahira scan, hybrid PDF and non-periodical financial statement (the user-supplied issue is a useful baseline, not an automatic public redistributable fixture).
 - [ ] 3.2 Add negative fixtures: wrong order, cycle, dangling target, selector ambiguity, unsupported span, edition mismatch, conflicting evidence, incomplete coverage.
 - [ ] 3.3 Run viewer interaction, accessibility, keyboard, offline, rotation, EPUB reflow, performance and malformed-input tests.

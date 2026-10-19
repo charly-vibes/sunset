@@ -3,3 +3,9 @@ branch: main
 brief: .wai/projects/sunset/briefs/sunset-xx7.3.md
 steps:
 - claim @ 7a4cd89
+- gates @ 7a4cd89
+- brief @ b423c15
+- spawn @ b423c15 (retry2 after wedged/retry history)
+- verify @ 136d99a
+- ship @ 136d99a
+- stop (xx7.3 boundary)
