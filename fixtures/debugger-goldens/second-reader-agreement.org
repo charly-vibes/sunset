@@ -2,7 +2,7 @@
 
 * Provenance
 - Agent/model :: z-ai/glm-5.3-flash via pi (non-interactive)
-- Date :: 2026-10-19
+- Date :: 2026-10-15
 - Session :: subagent:sunset-xx7.4b:impl
 - Method :: public-API recompute (dsc03.compare scoped_compare + export_counterexample from stored golden INPUTS) vs stored goldens;
   canonicalization = sorted keys, indent 1, no timestamps;
@@ -20,5 +20,16 @@
   - Note :: inputs redacted in stored golden (redaction.omitted); recomputation skipped
 
 * Owner gate
-- OWNER GATE ON AGREEMENT RESULTS REMAINS OPEN — human pass supersedes.
-- This record is machine-vs-stored-golden agreement by an agent-executed second reader; it is NOT a claim of human-equivalent independent agreement.
+- OWNER RULING 2026-10-19: gate PASSED and CLOSED. Independent human-equivalent
+  adjudication (Claude via catitas topic sunset-xx74-agreement-gate, transcript
+  in cotorreo raw/sunset-xx74-agreement-gate/claude/) confirmed all outcome
+  claims: independent derivation 2 agree / 0 disagree / 1 not_replayable,
+  matching this record. Its two HOLD findings (golden-01 right-side mutation
+  provenance; golden-02/golden-03 placeholder hash disclosure) were resolved by
+  README fixes (commit a17be04: "docs(goldens): surface mutation provenance +
+  placeholder hash conventions"). Full checklist:
+  hitl/sunset-xx7.4/owner-gate-checklist-2026-10-19.org (checks 1-6 ALL PASS).
+- This record is machine-vs-stored-golden agreement by an agent-executed second reader; it is NOT a claim of human-equivalent independent agreement. That
+  residual caveat is now covered by the independent adjudication recorded
+  above; the repo-wide standing deviation (agent-built machinery, human pass
+  supersedes) remains tracked via sunset-905.3 and the deviations list.
