@@ -5,3 +5,6 @@ steps: []
 steps:
 - claim @ 4f7771a
 - gates @ 4f7771a
+- verify @ d6edc1b
+- ship @ d6edc1b
+- stop (xx7.1 boundary)
