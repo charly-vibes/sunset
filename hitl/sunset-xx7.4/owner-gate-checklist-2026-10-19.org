@@ -1,0 +1,120 @@
+#+title: Owner gate checklist — sunset-xx7.4 second-reader agreement
+#+date: 2026-10-19
+#+filetags: :sunset:hitl:xx7.4:
+
+* Context
+
+Subject ticket: sunset-xx7.4 (P3, in_progress, lane:hitl) — Lens slice 4
+a11y + second-implementation agreement. The agreement record under
+adjudication is =fixtures/debugger-goldens/second-reader-agreement.org=
+(AGENT-EXECUTED second reader, 2 agree / 0 disagree / 1 not_replayable).
+
+Executor split: the adjudicator chats (catitas providers) have NO access
+to this machine. They work read-only against the public repo:
+
+- Repo: https://github.com/charly-vibes/sunset (raw files via
+  raw.githubusercontent.com/charly-vibes/sunset/main/…)
+- Pin: branch =main=, tip commit recorded in the dispatch prompt
+  (hitl/sunset-xx7.4/… as of 2026-10-19, after push of the 17
+  cf76f9d..6312502 commits).
+
+Local-owner-only checks (need a shell) are marked LOCAL. Remote-chat
+checks are marked REMOTE. The catitas prompt (topic
+=sunset-xx74-agreement-gate=) contains the REMOTE set, fully
+self-contained, pointing at raw file URLs.
+
+* CHECK 1 — Reproducibility re-run [LOCAL]
+
+: python3 -B -m dsc03.second_reader
+
+Pass: 2 agree / 0 disagree / 1 not_replayable. Any discrepancy diff
+must be recorded before proceeding.
+
+- Result ::
+
+* CHECK 2 — golden-01 hash binding [LOCAL with hash tooling; REMOTE may attempt via analysis tool, else UNKNOWN]
+
+Verify in fixtures/debugger-goldens/golden-01-carrier-text-compare.json:
+1. sha256(fixtures/carriers/accounting-made-simple-excerpt.pdf)
+   = e0764d0267e90fb8e4a433d93b863d6ff876331a0b591042322bbcdeb0335b1d
+   = "source_sha256" on both sides. (Already verified locally 2026-10-19.)
+2. Each side's "descriptor_sha256" = sha256 of
+   json.dumps(payload, sort_keys=True).encode() (verified locally
+   2026-10-19: both match).
+Remote re-verification is optional (byte-fidelity risk); LOCAL result
+stands as recorded.
+
+- Result ::
+
+* CHECK 3 — golden-02 hand adjudication [REMOTE — the core human pass]
+
+Claude reads the golden + README oracle contract (raw URLs in the
+dispatch prompt) and answers:
+1. Does the stored expected witness flag exactly the flipped reading
+   edge (left r-a->r-b vs right r-b->r-a) — no more, no less?
+2. Is the outcome class right for a text/order difference
+   ("different", not equivalent, not unexamined)?
+3. Are placeholder hashes (aaaa…/bbbb…/cccc…) acceptable for a
+   declared-synthetic fixture, given export_counterexample treats a
+   declared descriptor_sha256 as authoritative (falls back to
+   _sha(payload) only when empty)? Yes/no + one sentence.
+
+Pass: 1 exact, 2 "different", 3 yes — or a reasoned no that we act on.
+
+- Result ::
+
+* CHECK 4 — golden-03 redaction honesty [REMOTE]
+
+1. inputs left/right are truly empty objects (redaction.omitted), not
+   partially present.
+2. Declares replayable=false and redaction_state
+   "redacted; source bytes withheld; replayable=false".
+3. Confirm the second-reader record classifies it not_replayable and
+   excludes it from agreement counts.
+4. No real PII or secret bytes embedded anywhere in the file.
+
+Pass: 4 yes.
+
+- Result ::
+
+* CHECK 5 — Independence pass [REMOTE — reasoning-only variant]
+
+Claude must NOT read dsc03/second_reader.py, dsc03/compare.py,
+tests/tracer/test_compare.py, tests/tracer/test_debugger_a11y.py, or
+second-reader-agreement.org. Given ONLY the README oracle contract +
+the golden inputs, Claude derives its OWN expected outcomes
+(different/equivalent/disputed/unsupported/unexamined + which fields
+the witness should contain) and compares against each golden's stored
+"witness". Report per golden: AGREE / DISAGREE (both sides recorded,
+no winner election) / NOT-REPLAYABLE.
+
+Pass: verdicts match 2 agree / 0 disagree / 1 not_replayable.
+On DISAGREE: finding filed, gate stays OPEN.
+
+- Result ::
+
+* CHECK 6 — Gates green [LOCAL — before closing anything]
+
+: just spec-check
+
+Pass: 266 tests + 18 subtests, frozen 0.2 PASS 11, openspec strict green.
+
+- Result ::
+
+* Closing sequence (after CHECK 1-6 pass, or failures resolved)
+
+1. Record owner ruling in fixtures/debugger-goldens/second-reader-agreement.org
+   (flip "Owner gate": accepted-by-owner + date + checks run).
+2. bd close sunset-xx7.4 --reason "owner agreement gate passed, ruling recorded".
+3. Assess epic sunset-xx7 children; close if complete.
+4. bd export -o .beads/issues.jsonl && git add -f .beads/issues.jsonl && git commit.
+5. SEPARATE decision (never bundle): push authorization for any new commits.
+6. Still-open HITL after this: sunset-905.3 two human readers (6 DISAGREE
+   rows from the agent-run matrix need a human ruling).
+
+* Provenance
+
+- Checklist created: 2026-10-19, pi session (renew sunset).
+- Remote dispatch: catitas topic sunset-xx74-agreement-gate (prompt.md
+  in ~/para/areas/dev/gh/ak/catitas/catitas/topics/), triggered from
+  that repo, not this one.
