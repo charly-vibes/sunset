@@ -2,7 +2,7 @@
 
 * Provenance
 - Agent/model :: z-ai/glm-5.3-flash via pi (non-interactive)
-- Date :: 2026-10-15
+- Date :: 2026-10-19
 - Session :: subagent:sunset-xx7.4b:impl
 - Method :: public-API recompute (dsc03.compare scoped_compare + export_counterexample from stored golden INPUTS) vs stored goldens;
   canonicalization = sorted keys, indent 1, no timestamps;

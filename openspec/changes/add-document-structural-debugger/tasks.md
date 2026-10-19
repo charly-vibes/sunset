@@ -11,8 +11,8 @@
 - [x] 2.3 Export deterministic minimized counterexamples and replay fixtures, with privacy/rights and redaction states. (sunset-xx7.3: export_counterexample, fixtures/debugger-goldens/)
 - [ ] 3.1 Add goldens for native PDF, EPUB, Ahira scan, hybrid PDF and non-periodical financial statement (the user-supplied issue is a useful baseline, not an automatic public redistributable fixture).
 - [ ] 3.2 Add negative fixtures: wrong order, cycle, dangling target, selector ambiguity, unsupported span, edition mismatch, conflicting evidence, incomplete coverage.
-- [ ] 3.3 Run viewer interaction, accessibility, keyboard, offline, rotation, EPUB reflow, performance and malformed-input tests.
-- [ ] 3.4 Re-run with independent implementation and compare canonical diagnostics on pinned fixtures.
+- [x] 3.3 Run viewer interaction, accessibility, keyboard, offline, rotation, EPUB reflow, performance and malformed-input tests. (sunset-xx7.4a: test_debugger_a11y.py; performance = measured wall-time only, no win claims)
+- [x] 3.4 Re-run with independent implementation and compare canonical diagnostics on pinned fixtures. (sunset-xx7.4b: agent-executed second reader, labeled AGENT-EXECUTED in fixtures/debugger-goldens/second-reader-agreement.org — 2 agree / 0 disagree / 1 not_replayable; OWNER GATE REMAINS OPEN, human pass supersedes)
 - [ ] 4.1 Document usage, provenance, model limits and required adapters; demo direct annotation-to-source evidence and exported replayable wrong-reading-order witness.
 - [ ] 4.2 Demonstrate source descriptor unchanged byte-for-byte after inspection; no DSC core wire modifications.
 

@@ -3,3 +3,10 @@ branch: main
 brief: .wai/projects/sunset/briefs/sunset-xx7.4.md
 steps:
 - claim @ c9b6d98
+- gates @ c9b6d98
+- brief @ 86d5f68
+- spawn A @ 86d5f68 -> ff5fca6
+- verify A @ ff5fca6
+- spawn B @ ff5fca6 -> 96f8cd7
+- verify B @ 96f8cd7 (incl. orchestrator date fix re-run)
+- stop (xx7.4 deliverable shipped; owner gate OPEN — ticket NOT closed)
