@@ -1,0 +1,7 @@
+ticket: sunset-xx7.1
+branch: main
+brief: .wai/projects/sunset/briefs/sunset-xx7.1.md
+steps: []
+steps:
+- claim @ 4f7771a
+- gates @ 4f7771a
