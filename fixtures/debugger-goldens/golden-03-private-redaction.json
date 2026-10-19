@@ -1,0 +1,49 @@
+{
+ "inputs": {
+  "left": {},
+  "right": {}
+ },
+ "provenance": {
+  "fixture": "private-redaction oracle (fixtures README)",
+  "generator": "fixtures/debugger-goldens/generate_goldens.py",
+  "redaction_state": "redacted; source bytes withheld; replayable=false"
+ },
+ "witness": {
+  "comparator": {
+   "id": "dbg.text-flatten",
+   "version": "1.0.0"
+  },
+  "endpoint_types": [
+   "descriptor",
+   "descriptor"
+  ],
+  "expected": {
+   "page:1": 0
+  },
+  "input_hashes": {
+   "left": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+   "right": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "message": "cannot certify sign preservation from flattened text",
+  "observable_scope": [
+   "flattened_text",
+   "sign_column_positions"
+  ],
+  "observed": {
+   "page:1": 4
+  },
+  "outcome": "different",
+  "redaction": {
+   "limitation": "source bytes withheld; rerun requires local access to the original sources",
+   "omitted": [
+    "left.payload",
+    "right.payload"
+   ]
+  },
+  "replay_limitations": [
+   "source bytes omitted (redacted)"
+  ],
+  "replayable": false,
+  "rule_id": "dbg.compare.sign.loss"
+ }
+}

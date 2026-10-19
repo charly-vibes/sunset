@@ -1,0 +1,39 @@
+#+title: Debugger goldens — sunset-xx7.3 (slice 3: scoped comparators)
+
+* Provenance
+
+All goldens are deterministic JSON (sorted keys, indent 1, trailing newline,
+no timestamps). Regenerate with:
+
+: python3 fixtures/debugger-goldens/generate_goldens.py
+
+| golden                                  | source                                    | outcome rule                       |
+|-----------------------------------------+-------------------------------------------+------------------------------------|
+| golden-01-carrier-text-compare.json     | real committed carrier                    | dbg.compare.sign.loss              |
+|                                         | =fixtures/carriers/accounting-made-simple-excerpt.pdf= |                       |
+|                                         | via =dsc03.adapters.describe_pdf= (sunset-carrier 0.1) |                       |
+| golden-02-wrong-order-counterexample.json | in-module negative fixture              | dbg.compare.text.different         |
+|                                         | (ahira-wrong-order oracle)                |                                    |
+| golden-03-private-redaction.json        | in-module negative fixture, redacted      | dbg.compare.sign.loss              |
+|                                         | (private-redaction oracle)                |                                    |
+
+The carrier golden embeds the real source sha256 recorded by the adapter from
+the actual carrier bytes; it is fully replayable.
+
+* Redaction states
+
+- golden-01, golden-02 :: =replayable=true;; full payloads + sha256 input
+  hashes present; export -> reload -> re-compare is byte-deterministic.
+- golden-03 :: =replayable=false;; secret source bytes omitted
+  (=redaction.omitted= = left/right payload); replay raises
+  =compare.NotReplayable=. No fabricated reproducible source.
+
+* Notes
+
+- Comparison outcomes are =equivalent/different/disputed/unsupported/unexamined=
+  (distinct from, but lossless-adjacent to, slice-1 diagnostic categories).
+- Loss, unresolved evidence and unexamined coverage are never converted into
+  =equivalent=/pass by normalization (loss_visibility).
+- =independent_agreement= (dual readers) is slice 4 / HITL — not claimed here.
+- The specifying fixtures README remains the spec artifact under
+  =openspec/changes/add-document-structural-debugger/fixtures/README.md=.

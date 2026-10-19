@@ -1,0 +1,61 @@
+{
+ "inputs": {
+  "left": {
+   "descriptor_sha256": "09618fcfc5908193d780893b338c97d9a7556a0ac689c445852b3677295bf766",
+   "endpoint_type": "descriptor",
+   "payload": {
+    "flattened_text": "Note: This text is intended to be a high-level introduction to accounting/bookkeeping. The author will\nmake his best effort to keep the information current and accurate; however, given the ever-changing\nnature of industry regulations, no guarantee can be made as to the accuracy of the information\ncontained within.\nTable of Contents\n \n1. Accounting Equation\nAlways true, no exceptions\nOwners\u2019 Equity is just a plug\nMy asset is your liability\n2. Balance Sheet\nIt\u2019s a snapshot\nAssets\nLiabilities\nEquity\nCurrent assets and liabilities vs. long-term assets and liabilities\nTwo-period balance sheets\n3. Income Statement\nShows period of time rather than point in time\nGross Profit & Cost of Goods Sold\nOperating Income vs. Net Income\n4. Statement of Retained Earnings\nBridge between financial statements\nDividends are not an expense!\nRetained Earnings: Not the same as cash\n5. Cash Flow Statement\nAs opposed to income statement\nCash flow from operating activities\nCash flow from investing activities\nCash flow from financing activities\n6. Financial Ratios\nLiquidity ratios\nProfitability ratios\nFinancial leverage ratios\nAsset turnover ratios\nPart Two Generally Accepted Accounting Principles (GAAP)\n7. What is GAAP?\nWho has to follow GAAP?\n8. Debits and Credits\nDouble-entry system\nThe general ledger\nT-accounts\nThe trial balance\n9. Cash vs. Accrual\nCash method\nAccrual method\nPrepaid expenses\nUnearned revenue\n10. Other GAAP Concepts & Assumptions\nHistorical cost\nMateriality\nMoney unit assumption\nEntity assumption\nMatching principle\n11. Depreciation of Fixed Assets\nStraight-line depreciation\nAccumulated Depreciation\nSalvage value\nGain or loss on sale\nOther depreciation methods\nExpensing immaterial purchases\n12. Amortization of Intangible Assets\nWhat are intangible assets?\nStraight-line amortization\nLegal life vs. expected useful life\n13. Inventory & CoGS\nPerpetual method\nPeriodic method\nCalculating Cost of Goods Sold\nFIFO vs. LIFO\nAverage cost method\nConclusion: The Humble Little Journal Entry\nAsset Turnover Ratios\n \nAsset turnover ratios seek to show how efficiently a company uses its assets. The two most commonly\nused turnover ratios are inventory turnover and accounts receivables turnover.\n \nThe calculation of inventory turnover shows how many times a company\u2019s inventory is sold and\nreplaced over the course of a period. The \u201caverage inventory\u201d part of the equation is the average\nInventory balance over the period, calculated as follows:\n \n \nInventory period shows how long, on average, inventory is on hand before it is sold.\n \n \nA higher inventory turnover (and thus, a lower inventory period) shows that the company\u2019s inventory\nis selling quickly and is indicative that management is doing a good job of stocking products that are\nin demand.\nA company\u2019s receivables turnover (calculated as credit sales over a period divided by average\nAccounts Receivable over the period) shows how quickly the company is collecting upon its\nAccounts Receivable.\n \n \nAverage collection period is exactly what it sounds like: the average length of time that a receivable\nfrom a customer is outstanding prior to collection.\nEnd Notes\n \n \n1 Sample accounting problems for each chapter of this book are available at: www.obliviousinvestor.com/example-accounting-\nproblems. I suggest taking advantage of them if you feel that your understanding of a topic could use some help.\n2 \nJust \na \nreminder: \nSample \naccounting \nproblems \nfor \neach \nchapter \nof \nthis \nbook \nare \navailable \nat:\nwww.obliviousinvestor.com/example-accounting-problems.\n3 In accounting, negative numbers are indicated using parentheses.\n4 If a company doesn\u2019t sell all of its inventory over the course of the period, the Cost of Goods Sold calculation becomes a little\nmore involved. We\u2019ll be covering such calculations in Chapter 13.",
+    "sign_column_positions": {
+     "page:1": 0
+    }
+   },
+   "source_sha256": "e0764d0267e90fb8e4a433d93b863d6ff876331a0b591042322bbcdeb0335b1d"
+  },
+  "right": {
+   "descriptor_sha256": "626c6029212898ef8f4ce2226b6c954db1d16eb0f69a955aa2b7cf913a1fdc7c",
+   "endpoint_type": "descriptor",
+   "payload": {
+    "flattened_text": "Note: This text is intended to be a high-level introduction to accounting/bookkeeping. The author will\nmake his best effort to keep the information current and accurate; however, given the ever-changing\nnature of industry regulations, no guarantee can be made as to the accuracy of the information\ncontained within.\nTable of Contents\n \n1. Accounting Equation\nAlways true, no exceptions\nOwners\u2019 Equity is just a plug\nMy asset is your liability\n2. Balance Sheet\nIt\u2019s a snapshot\nAssets\nLiabilities\nEquity\nCurrent assets and liabilities vs. long-term assets and liabilities\nTwo-period balance sheets\n3. Income Statement\nShows period of time rather than point in time\nGross Profit & Cost of Goods Sold\nOperating Income vs. Net Income\n4. Statement of Retained Earnings\nBridge between financial statements\nDividends are not an expense!\nRetained Earnings: Not the same as cash\n5. Cash Flow Statement\nAs opposed to income statement\nCash flow from operating activities\nCash flow from investing activities\nCash flow from financing activities\n6. Financial Ratios\nLiquidity ratios\nProfitability ratios\nFinancial leverage ratios\nAsset turnover ratios\nPart Two Generally Accepted Accounting Principles (GAAP)\n7. What is GAAP?\nWho has to follow GAAP?\n8. Debits and Credits\nDouble-entry system\nThe general ledger\nT-accounts\nThe trial balance\n9. Cash vs. Accrual\nCash method\nAccrual method\nPrepaid expenses\nUnearned revenue\n10. Other GAAP Concepts & Assumptions\nHistorical cost\nMateriality\nMoney unit assumption\nEntity assumption\nMatching principle\n11. Depreciation of Fixed Assets\nStraight-line depreciation\nAccumulated Depreciation\nSalvage value\nGain or loss on sale\nOther depreciation methods\nExpensing immaterial purchases\n12. Amortization of Intangible Assets\nWhat are intangible assets?\nStraight-line amortization\nLegal life vs. expected useful life\n13. Inventory & CoGS\nPerpetual method\nPeriodic method\nCalculating Cost of Goods Sold\nFIFO vs. LIFO\nAverage cost method\nConclusion: The Humble Little Journal Entry\nAsset Turnover Ratios\n \nAsset turnover ratios seek to show how efficiently a company uses its assets. The two most commonly\nused turnover ratios are inventory turnover and accounts receivables turnover.\n \nThe calculation of inventory turnover shows how many times a company\u2019s inventory is sold and\nreplaced over the course of a period. The \u201caverage inventory\u201d part of the equation is the average\nInventory balance over the period, calculated as follows:\n \n \nInventory period shows how long, on average, inventory is on hand before it is sold.\n \n \nA higher inventory turnover (and thus, a lower inventory period) shows that the company\u2019s inventory\nis selling quickly and is indicative that management is doing a good job of stocking products that are\nin demand.\nA company\u2019s receivables turnover (calculated as credit sales over a period divided by average\nAccounts Receivable over the period) shows how quickly the company is collecting upon its\nAccounts Receivable.\n \n \nAverage collection period is exactly what it sounds like: the average length of time that a receivable\nfrom a customer is outstanding prior to collection.\nEnd Notes\n \n \n1 Sample accounting problems for each chapter of this book are available at: www.obliviousinvestor.com/example-accounting-\nproblems. I suggest taking advantage of them if you feel that your understanding of a topic could use some help.\n2 \nJust \na \nreminder: \nSample \naccounting \nproblems \nfor \neach \nchapter \nof \nthis \nbook \nare \navailable \nat:\nwww.obliviousinvestor.com/example-accounting-problems.\n3 In accounting, negative numbers are indicated using parentheses.\n4 If a company doesn\u2019t sell all of its inventory over the course of the period, the Cost of Goods Sold calculation becomes a little\nmore involved. We\u2019ll be covering such calculations in Chapter 13.",
+    "sign_column_positions": {
+     "page:1": 2
+    }
+   },
+   "source_sha256": "e0764d0267e90fb8e4a433d93b863d6ff876331a0b591042322bbcdeb0335b1d"
+  }
+ },
+ "provenance": {
+  "adapter": "sunset-carrier",
+  "adapter_version": "0.1",
+  "carrier": "accounting-made-simple-excerpt.pdf",
+  "generator": "fixtures/debugger-goldens/generate_goldens.py",
+  "source_sha256": "e0764d0267e90fb8e4a433d93b863d6ff876331a0b591042322bbcdeb0335b1d"
+ },
+ "witness": {
+  "comparator": {
+   "id": "dbg.text-flatten",
+   "version": "1.0.0"
+  },
+  "endpoint_types": [
+   "descriptor",
+   "descriptor"
+  ],
+  "expected": {
+   "page:1": 0
+  },
+  "input_hashes": {
+   "left": "09618fcfc5908193d780893b338c97d9a7556a0ac689c445852b3677295bf766",
+   "right": "626c6029212898ef8f4ce2226b6c954db1d16eb0f69a955aa2b7cf913a1fdc7c"
+  },
+  "message": "cannot certify sign preservation from flattened text",
+  "observable_scope": [
+   "flattened_text",
+   "sign_column_positions"
+  ],
+  "observed": {
+   "page:1": 2
+  },
+  "outcome": "different",
+  "replayable": true,
+  "rule_id": "dbg.compare.sign.loss"
+ }
+}

@@ -1,0 +1,55 @@
+{
+ "inputs": {
+  "left": {
+   "descriptor_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "endpoint_type": "descriptor",
+   "payload": {
+    "reading_edges": [
+     "r-a->r-b"
+    ]
+   },
+   "source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "right": {
+   "descriptor_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+   "endpoint_type": "descriptor",
+   "payload": {
+    "reading_edges": [
+     "r-b->r-a"
+    ]
+   },
+   "source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+ },
+ "provenance": {
+  "fixture": "ahira-wrong-order oracle (fixtures README)",
+  "generator": "fixtures/debugger-goldens/generate_goldens.py"
+ },
+ "witness": {
+  "comparator": {
+   "id": "dbg.text-flatten",
+   "version": "1.0.0"
+  },
+  "endpoint_types": [
+   "descriptor",
+   "descriptor"
+  ],
+  "expected": [
+   "r-a->r-b"
+  ],
+  "input_hashes": {
+   "left": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "right": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "message": "scoped observable 'reading_edges' differs",
+  "observable_scope": [
+   "reading_edges"
+  ],
+  "observed": [
+   "r-b->r-a"
+  ],
+  "outcome": "different",
+  "replayable": true,
+  "rule_id": "dbg.compare.text.different"
+ }
+}
