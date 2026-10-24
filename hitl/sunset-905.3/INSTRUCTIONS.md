@@ -1,6 +1,16 @@
 # How to fill an observation sheet
 
-One sheet per carrier. Copy `templates/observations-template.json` to
+**Easiest path:** open `templates/observations-spa.html` in a browser — it
+works fully offline (just a file, no server, no network), and it is a guided
+wizard: every screen explains what to do and offers exactly one next step
+(reader id → carrier → nine recording sections → review & download → progress
+across the four carriers → zip-and-return instructions). The carrier itself is
+shown at the top of the page in a built-in viewer (button **Show carrier**;
+PDFs render natively in the browser — the built-in viewer counts as a normal
+viewer; EPUB must be opened in an EPUB reader, as browsers cannot render it).
+The field guide below is exactly what the wizard asks, section by section.
+
+Manual path: copy `templates/observations-template.json` to
 `<reader-id>/<carrier-stem>.observations.json` and fill every field. Read the
 carrier in a normal PDF/EPUB viewer. The four carriers:
 

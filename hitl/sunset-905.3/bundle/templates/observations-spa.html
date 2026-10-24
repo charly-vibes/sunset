@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunset 905.3 — independent reader observation sheet</title>
+<style>
+:root { --ink:#1c2430; --mut:#5b6472; --line:#d8dde4; --bg:#f5f6f8; --card:#fff; --acc:#0b62c4; --acc2:#eef3fa; --warn:#a34400; --ok:#1a7f37; }
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.5 system-ui, sans-serif; color:var(--ink); background:var(--bg); }
+.topbar { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid var(--line); padding:10px 18px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+.topbar .t { font-weight:700; font-size:15px; }
+.topbar .where { color:var(--mut); font-size:13px; }
+.topbar .spacer { flex:1; }
+.viewer { display:none; padding:10px 18px 0; }
+.viewer.open { display:block; }
+.viewer .vhead { display:flex; gap:10px; align-items:center; margin-bottom:6px; flex-wrap:wrap; }
+.viewer .vfile { font-weight:600; font-size:13.5px; }
+.viewerbox { height:52vh; border:1px solid var(--line); border-radius:8px; overflow:auto; background:#fff; }
+.viewerbox object, .viewerbox iframe, .viewerbox embed { width:100%; height:100%; border:0; display:block; }
+.vfail { padding:14px 16px; font-size:14px; }
+.vnote { background:#fdf6e3; border:1px solid #e3d5a8; border-radius:8px; padding:10px 14px; font-size:13.5px; margin:8px 0 0; }
+.chip { display:inline-flex; gap:6px; align-items:center; border:1px solid var(--line); border-radius:14px; padding:3px 10px; font-size:13px; background:#fff; }
+.chip .clock { font-variant-numeric:tabular-nums; font-weight:600; }
+main { max-width:860px; margin:0 auto; padding:18px 18px 90px; }
+.screen { display:none; }
+.screen.active { display:block; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin-bottom:14px; }
+h1 { font-size:21px; margin:0 0 10px; }
+h2 { font-size:16px; margin:0 0 10px; }
+p { margin:0 0 10px; }
+.mut { color:var(--mut); }
+.small { font-size:13px; }
+.hintbox { background:var(--acc2); border:1px solid #c7d7ee; border-radius:8px; padding:10px 14px; margin:0 0 14px; font-size:14px; }
+.hintbox b { color:var(--acc); }
+ol.big { padding-left:22px; }
+ol.big li { margin-bottom:8px; }
+button { font:14px system-ui, sans-serif; padding:8px 14px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; color:var(--ink); }
+button:hover { border-color:var(--acc); }
+button.primary { background:var(--acc); border-color:var(--acc); color:#fff; font-weight:600; }
+button.ghost { border-color:transparent; background:transparent; color:var(--acc); }
+button.unk { padding:3px 8px; font-size:11.5px; color:var(--mut); }
+button.mini { padding:3px 8px; font-size:12px; }
+.ctarow { display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap; }
+.ctarow .spacer { flex:1; }
+.field { display:flex; flex-direction:column; gap:3px; min-width:180px; }
+.field label { font-size:12.5px; color:var(--mut); }
+select, input[type=text], input[type=number], textarea {
+  font:14px/1.4 system-ui, sans-serif; padding:7px 9px; border:1px solid var(--line);
+  border-radius:6px; background:#fff; color:var(--ink); max-width:100%;
+}
+textarea { width:100%; }
+.fcell { display:flex; gap:4px; align-items:center; }
+.fcell input, .fcell select { flex:1; min-width:0; }
+.obrow { border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:8px; background:#fafbfc; }
+.obrow .rowflex { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; }
+.obrow .num { width:52px; min-width:52px; }
+.obrow .grow { flex:1; min-width:200px; }
+.obrow .tools { margin-left:auto; display:flex; gap:4px; align-items:center; white-space:nowrap; }
+.skipbox { border:1px dashed var(--line); border-radius:8px; padding:8px 12px; margin:10px 0 4px; font-size:13.5px; color:var(--mut); }
+ul.warn { margin:8px 0 0; padding-left:20px; color:var(--warn); font-size:13.5px; }
+ul.warn:empty { display:none; }
+.jsonout { font-family:ui-monospace, monospace; font-size:12.5px; height:220px; white-space:pre; margin-top:10px; }
+.pills { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+.pill { border:1px solid var(--line); border-radius:16px; padding:4px 12px; font-size:13px; background:#fff; }
+.pill.done { border-color:var(--ok); color:var(--ok); background:#f0f9f1; }
+.pill.cur { border-color:var(--acc); color:var(--acc); background:var(--acc2); }
+.checkmark { color:var(--ok); font-weight:700; }
+.example { font-family:ui-monospace, monospace; font-size:12px; background:#f6f8fa; border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin:6px 0 0; overflow-x:auto; white-space:pre; }
+.raglerow { display:flex; gap:8px; margin-top:6px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="t">Reader observation sheet</span>
+  <span class="where" id="where">Welcome</span>
+  <span class="spacer"></span>
+  <span class="chip" id="timerChip" style="display:none">
+    <span class="clock" id="clock">00:00</span>
+    <button class="mini" id="tStart">Start</button>
+    <button class="mini" id="tStop">Pause</button>
+  </span>
+  <button class="mini" id="viewBtn" style="display:none">Show carrier ▾</button>
+</div>
+
+<div class="viewer" id="viewerCard">
+  <div class="vhead">
+    <span class="vfile" id="viewerFile"></span>
+    <span class="spacer"></span>
+    <a id="newTabLink" target="_blank" rel="noopener" style="display:none; font-size:13px">Open in new tab ↗</a>
+    <span class="mut small">This is the carrier you are recording. Scroll / page through it here.</span>
+  </div>
+  <div class="viewerbox" id="viewerBox"></div>
+  <p class="mut small" id="viewerFallback" style="display:none; margin-top:6px"></p>
+</div>
+
+<main>
+
+<!-- ============ STEP 0: WELCOME ============ -->
+<section class="screen" id="s-welcome">
+  <div class="card">
+    <h1>Before you start</h1>
+    <p>You are one of <b>two independent human readers</b>. Your job: look at a few
+    documents (<i>carriers</i>) the way a human reads them, and record what you see.
+    Your observations are the <b>reference set</b> — later they are compared with the
+    other reader's, and <b>disagreements are kept, not resolved</b>.</p>
+    <p class="mut">This form works completely offline. Nothing is sent anywhere; your
+    work stays in this browser until you download the files yourself.</p>
+  </div>
+  <div class="card">
+    <h2>What you will do (4 steps)</h2>
+    <ol class="big">
+      <li><b>Tell the form who you are</b> — your reader id (the owner gave it to you: <b>reader-a</b> or <b>reader-b</b>).</li>
+      <li><b>Per carrier (4 of them):</b> open the carrier file in a normal viewer next to this window, then fill this form while reading. A stopwatch times you per carrier.</li>
+      <li><b>Download one JSON file per carrier</b> — the form does it for you at the end of each carrier.</li>
+      <li><b>Zip everything and send it back</b> — a folder named after your reader id, with the 4 JSON files plus a short <code>notes.md</code>. Do not commit to the sunset repo yourself.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>Five rules</h2>
+    <p>1. <b>Work separately.</b> Never look at the other reader's sheet or discuss the carriers until both of you have submitted.</p>
+    <p>2. <b>No extraction tooling.</b> Open the carrier in a normal viewer and read. Do not run pdftotext, PyMuPDF, OCR, or any analysis tooling — your eyes and a normal PDF/EPUB viewer only. The built-in viewer in this form counts as a normal viewer.</p>
+    <p>3. <b>"unknown" is an answer.</b> Where you cannot determine something, choose unknown — that is a valid, classified result, never a failure.</p>
+    <p>4. <b>No smoothing.</b> If two readings seem possible (a table that could be two sections, a date that could be issue or publication date), record <b>both</b> as alternatives; do not resolve between readings yourself.</p>
+    <p>5. <b>Stopwatch:</b> record your minutes per carrier — reviewer effort is part of the measurement.</p>
+  </div>
+  <div class="card">
+    <h2>Ready?</h2>
+    <p class="mut small">Takes roughly 10–20 minutes per carrier, depending on the document.</p>
+    <div class="ctarow">
+      <button class="primary" id="welcomeStart">Start →</button>
+      <span class="mut small">Next: choose your reader id and the first carrier.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP 1: SETUP ============ -->
+<section class="screen" id="s-setup">
+  <div class="card">
+    <h1 id="setupTitle">New carrier</h1>
+    <p class="mut small">You don't need to hunt for files: while recording, the carrier
+    itself can be shown at the top of this page (button <b>Show carrier</b>). If your
+    browser refuses to display it, open the file from the <code>carriers/</code> folder
+    in your normal viewer.</p>
+    <div class="rowflex" style="display:flex; gap:12px; flex-wrap:wrap">
+      <div class="field">
+        <label for="readerSel">1. Your reader id</label>
+        <select id="readerSel">
+          <option value="">— choose —</option>
+          <option value="reader-a">reader-a</option>
+          <option value="reader-b">reader-b</option>
+          <option value="other">other…</option>
+        </select>
+      </div>
+      <div class="field" id="readerOtherWrap" style="display:none">
+        <label for="readerOther">Other reader id</label>
+        <input type="text" id="readerOther" placeholder="your reader id">
+      </div>
+    </div>
+    <div class="rowflex" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px">
+      <div class="field" style="min-width:340px">
+        <label for="carrierSel">2. Which carrier are you working on?</label>
+        <select id="carrierSel">
+          <option value="">— choose —</option>
+          <option value="diario-de-poesia-excerpt">diario-de-poesia-excerpt — scanned magazine (image-only pages)</option>
+          <option value="agentic-patterns-excerpt">agentic-patterns-excerpt — native PDF (born-digital text)</option>
+          <option value="sunset-carrier-sample">sunset-carrier-sample — reflowable EPUB</option>
+          <option value="bank-statement-ca-excerpt">bank-statement-ca-excerpt — financial statement</option>
+          <option value="other">other…</option>
+        </select>
+      </div>
+      <div class="field" id="carrierOtherWrap" style="display:none">
+        <label for="carrierOther">Other carrier stem</label>
+        <input type="text" id="carrierOther" placeholder="carrier-stem-without-extension">
+      </div>
+    </div>
+    <div class="hintbox" id="carrierFocus" style="display:none; margin-top:14px"></div>
+    <div class="ctarow">
+      <button class="ghost" id="backWelcome">← Back</button>
+      <span class="spacer"></span>
+      <button class="primary" id="startReading">Open the carrier & start reading →</button>
+    </div>
+    <p class="mut small" id="setupResume" style="display:none; margin-top:8px"></p>
+  </div>
+</section>
+
+<!-- ============ STEPS 2..9: ONE SECTION EACH (rendered into #panel) ============ -->
+<section class="screen" id="s-section">
+  <div class="card">
+    <h1 id="secTitle"></h1>
+    <div id="secGuidance"></div>
+    <div id="panel"></div>
+    <div class="skipbox" id="skipbox">
+      <label><input type="checkbox" id="skipChk"> Nothing to record in this section</label>
+      <span class="mut" id="skipNote"></span>
+    </div>
+    <div class="ctarow">
+      <button id="secBack">← Back</button>
+      <span class="spacer"></span>
+      <button class="primary" id="secNext">Next →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP 10: FINISH (notes + build + download) ============ -->
+<section class="screen" id="s-finish">
+  <div class="card">
+    <h1>Review & download — <span id="finishCarrier"></span></h1>
+    <p class="mut small">Everything you recorded for this carrier is below. Build the JSON,
+    check the warnings (they are hints, not blockers), then download the file.</p>
+    <h2>Notes (free text)</h2>
+    <textarea id="notes" rows="3" placeholder="Anything the sections had no place for — e.g. why an empty section really is empty"></textarea>
+    <div class="ctarow">
+      <button id="finBack">← Back</button>
+      <span class="spacer"></span>
+      <button class="primary" id="gen">Build JSON</button>
+      <button id="dl" disabled>Download file</button>
+      <button id="cp" disabled>Copy JSON</button>
+    </div>
+    <ul class="warn" id="warnings"></ul>
+    <textarea class="jsonout" id="out" readonly placeholder="Press “Build JSON”"></textarea>
+    <p class="mut small">File will be named <code><carrier>.observations.json</code>.</p>
+    <div class="ctarow">
+      <span class="spacer"></span>
+      <button class="primary" id="doneCarrier" disabled>✔ Mark carrier done · Next carrier →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP 11: DONE / PROGRESS ============ -->
+<section class="screen" id="s-done">
+  <div class="card">
+    <h1>Carrier progress</h1>
+    <p class="mut small">Do each carrier in one sitting if you can. Your draft is saved in
+    this browser, so you can also come back later.</p>
+    <div class="pills" id="progressPills"></div>
+    <div id="pendingList"></div>
+  </div>
+  <div class="card">
+    <h2>When all 4 carriers are done</h2>
+    <ol class="big">
+      <li>Make a folder named after your reader id (e.g. <code>reader-a/</code>).</li>
+      <li>Put the 4 downloaded <code><carrier>.observations.json</code> files inside.</li>
+      <li>Add a short <code>notes.md</code> — anything the form had no place for.</li>
+      <li><b>Zip the folder and send it back to the owner.</b> Do not commit to the sunset repo yourself.</li>
+    </ol>
+    <div class="ctarow">
+      <button class="ghost" id="doneBack">← Back to a carrier</button>
+      <span class="spacer"></span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+"use strict";
+
+var CARRIERS = ["diario-de-poesia-excerpt", "agentic-patterns-excerpt",
+  "sunset-carrier-sample", "bank-statement-ca-excerpt"];
+var CARRIER_FILES = {
+  "diario-de-poesia-excerpt": "carriers/diario-de-poesia-excerpt.pdf",
+  "agentic-patterns-excerpt": "carriers/agentic-patterns-excerpt.pdf",
+  "sunset-carrier-sample": "carriers/sunset-carrier-sample.epub",
+  "bank-statement-ca-excerpt": "carriers/bank-statement-ca-excerpt.pdf"
+};
+var CARRIER_FOCUS = {
+  "diario-de-poesia-excerpt": "This is a scanned magazine: the pages may have <b>no selectable text</b>. Note what a viewer shows vs what can be selected or copied. Watch for continuation notices (“Sigue en pág. …”) pointing at pages that are not in the excerpt.",
+  "agentic-patterns-excerpt": "This is a born-digital PDF: text is selectable, there are links and headings. Watch the table of contents and how it continues across page breaks.",
+  "sunset-carrier-sample": "This is a reflowable EPUB: watch the chapter structure, how text reflows if you resize the window, and internal links.",
+  "bank-statement-ca-excerpt": "This is a financial statement: watch table rows, totals, and what identifies the document (dates, account labels)."
+};
+
+var SECTION_ORDER = ["page_inventory","structure","relations","space","context","annotations","losses","uncertainties"];
+var SECTION_TITLES = {
+  page_inventory: "Pages you can see",
+  structure: "The document's parts",
+  relations: "How parts connect",
+  space: "Physical layout",
+  context: "The document's own context",
+  annotations: "Marks already in the carrier",
+  losses: "What could get lost",
+  uncertainties: "Where you were unsure"
+};
+
+function blank() {
+  return {
+    reader: "", carrier: "",
+    elapsed_minutes: null,
+    page_inventory: [],
+    structure: [],
+    relations: [],
+    space: [],
+    context: [],
+    annotations: [],
+    losses: [],
+    uncertainties: [],
+    notes: ""
+  };
+}
+
+var state = blank();
+var skipped = {};   // section -> true when "nothing to record" checked
+var step = 0;       // 0 welcome, 1 setup, 2..9 sections, 10 finish, 11 done
+var timerSeconds = 0;
+var timerId = null;
+
+/* ---------- field specs (unchanged shape = observations-template.json) ---------- */
+var SPECS = {
+  page_inventory: [
+    { key:"index", label:"Page index (1-based, as shown by the viewer)", type:"num-int", auto:true },
+    { key:"image_only", label:"image_only — is this page image-only (nothing selectable)?", type:"bool" },
+    { key:"summary", label:"Summary (one line)", type:"text", unk:true, grow:true }
+  ],
+  structure: [
+    { key:"label", label:"Label (part as you see it)", type:"text", unk:true, grow:true },
+    { key:"evidence", label:"Evidence (page N + quote/location)", type:"text", unk:true, grow:true },
+    { key:"order_rank", label:"Order rank (1, 2, … or unknown)", type:"rank", num:true },
+    { key:"order_alternatives", label:"Alternative ranks (comma-separated) if two orderings seem defensible", type:"ranklist", grow:true }
+  ],
+  relations: [
+    { key:"kind", label:"Kind", type:"enum", options:["continuation","reference"] },
+    { key:"from", label:"From (page N + fragment)", type:"text", unk:true, grow:true },
+    { key:"to", label:"To (page M + fragment)", type:"text", unk:true, grow:true },
+    { key:"evidence", label:"Evidence", type:"text", unk:true, grow:true }
+  ],
+  space: [
+    { key:"index", label:"Page index", type:"num-int", auto:true },
+    { key:"rotation", label:"Rotation (does it display sideways or upside-down?)", type:"enum", options:["0","90","180","270","unknown"] },
+    { key:"columns", label:"Columns", type:"enum", options:["single","two","multi","unknown"] },
+    { key:"reading_order_ambiguous", label:"Reading order ambiguous?", type:"bool" }
+  ],
+  context: [
+    { key:"kind", label:"Kind", type:"enum", options:["publication_date","publisher_or_source","author_or_attribution","quoted_material"] },
+    { key:"value", label:"Value (or unknown)", type:"text", unk:true, grow:true },
+    { key:"evidence", label:"Evidence (page N + fragment; needed unless unknown)", type:"text", unk:true, grow:true },
+    { key:"status", label:"Status", type:"enum", options:["observed","observed_absent","unknown"] },
+    { key:"note", label:"Note (e.g. date-of-carrier vs date-described-in-content)", type:"text", unk:true, grow:true }
+  ],
+  annotations: [
+    { key:"type", label:"Type", type:"enum", options:["Highlight","Text","StrikeOut","FreeText","Underline","Square","Ink","other"] },
+    { key:"page", label:"Page", type:"num-int" },
+    { key:"marked_text", label:"Text it marks", type:"text", unk:true, grow:true },
+    { key:"note_text", label:"Annotation text", type:"text", unk:true, grow:true }
+  ],
+  losses: [
+    { key:"what", label:"What could not be preserved", type:"text", unk:true, grow:true },
+    { key:"why_unrepresentable", label:"Why unrepresentable", type:"text", unk:true, grow:true }
+  ],
+  uncertainties: [
+    { key:"field", label:"Field you were unsure about", type:"text", unk:true },
+    { key:"alternatives", label:"Alternatives you considered (comma-separated)", type:"list", grow:true },
+    { key:"reason", label:"Reason (one line)", type:"text", unk:true, grow:true }
+  ]
+};
+
+/* ---------- embedded guidance, one block per section ---------- */
+var GUIDANCE = {
+  page_inventory: [
+    "One entry per <b>page / slide / spine item</b> you can perceive, in viewer order.",
+    "<b>image_only</b> = the page is image-only: <i>nothing selectable</i> — try selecting text with your mouse; if nothing can be selected/copied, it is image-only. A scanned magazine usually is; a born-digital PDF usually is not.",
+    "Summary = one line: what the page shows. “Looks like a table of contents” is fine as a summary — do not infer beyond what you see."
+  ],
+  structure: [
+    "The document's <b>parts as a reader sees them</b>: headings, sections, articles, table titles, chapters.",
+    "Each entry needs <b>evidence</b> — the page and a quote or location you could point another human to.",
+    "<b>Order rank</b> = its position in reading order (1, 2, …). If two orderings seem defensible, put the other ranking in <b>order_alternatives</b> — never silently pick one."
+  ],
+  relations: [
+    "<b>continuation: a sentence or flow</b> that continues from page N to page M — quote the fragment on both pages in from/to.",
+    "<b>reference:</b> a link, footnote anchor, or internal cross-reference — from where it points, to where.",
+    "Do not infer: assert a continuation only if you actually traced it."
+  ],
+  space: [
+    "Physical-layout facts you can state without measuring, one entry per page.",
+    "<b>rotation:</b> does the page display sideways or upside-down in the viewer? (0 = normal).",
+    "<b>columns:</b> single / two / multi — and note whether one column interrupts the other in the summary of your page entries.",
+    "<b>Reading order ambiguous</b> = the layout makes it genuinely unclear what to read first."
+  ],
+  context: [
+    "Claims about the document's own context, each with evidence.",
+    "Four kinds: <b>publication_date</b>, <b>publisher_or_source</b>, <b>author_or_attribution</b>, <b>quoted_material</b> (a quotation inside the document attributed to someone else — record who is quoted and who quotes).",
+    "Status: <b>observed</b> = you read it; <b>observed_absent</b> = you looked and it is not there; <b>unknown</b> = you could not determine it.",
+    "Careful: a date printed on the carrier is different from a date <i>described inside</i> the content — use the Note field to say which is which."
+  ],
+  annotations: [
+    "Marks <b>already visible in the carrier</b>: highlights, sticky notes, strikethroughs, drawn boxes — type, page, and the text they mark.",
+    "These are part of the carrier as shipped. Do not add your own annotations, and do not use annotation tools — only record what you see.",
+    "No marks visible? Tick “Nothing to record” below — an empty list records “none observed”, and that is a real observation."
+  ],
+  losses: [
+    "Anything a structural record <b>could not preserve</b>: image content, typography, layout nuances, visual impressions.",
+    "Examples: “the scan is skewed”, “the table's shading carries meaning”, “the cover image sets the mood — image content with no text equivalent”.",
+    "One entry per loss. If you truly lost nothing, tick “Nothing to record”."
+  ],
+  uncertainties: [
+    "Every entry you were unsure about, in one place: the <b>field</b>, the <b>alternatives</b> you considered, and a one-line <b>reason</b>.",
+    "Recording uncertainty here is a strength, not a weakness — the agreement matrix classifies it explicitly."
+  ]
+};
+
+/* ---------- helpers ---------- */
+function el(tag, attrs, kids) {
+  var node = document.createElement(tag);
+  if (attrs) Object.keys(attrs).forEach(function(k){
+    if (k === "text") node.textContent = attrs[k];
+    else node.setAttribute(k, attrs[k]);
+  });
+  (kids || []).forEach(function(c){ node.appendChild(c); });
+  return node;
+}
+function $(id){ return document.getElementById(id); }
+function unkBtn(input) {
+  var b = el("button", { type:"button", class:"unk", title:"Fill with unknown" });
+  b.textContent = "unknown";
+  b.addEventListener("click", function(){
+    input.value = "unknown";
+    input.dispatchEvent(new Event("input", { bubbles:true }));
+  });
+  return b;
+}
+function currentReader() {
+  if ($("readerSel").value === "other") return $("readerOther").value.trim();
+  return $("readerSel").value;
+}
+function currentCarrier() {
+  if ($("carrierSel").value === "other") return $("carrierOther").value.trim();
+  return $("carrierSel").value;
+}
+
+/* ---------- field rendering (unchanged logic) ---------- */
+function fieldCell(spec, obj, onChange) {
+  var wrap = el("div", { class:"field" + (spec.grow ? " grow" : "") });
+  wrap.appendChild(el("label", { text:spec.label }));
+  var input;
+  if (spec.type === "bool") {
+    input = el("select");
+    [["", "unknown (leave null)"], ["true", "true"], ["false", "false"]].forEach(function(o){
+      var op = el("option", { value:o[0] }); op.textContent = o[1];
+      input.appendChild(op);
+    });
+    input.value = obj[spec.key] === null || obj[spec.key] === undefined ? "" : String(obj[spec.key]);
+    input.addEventListener("change", function(){ onChange(spec.key, input.value === "" ? null : input.value === "true"); });
+  } else if (spec.type === "enum") {
+    input = el("select");
+    input.appendChild(el("option", { value:"", text:"— choose —" }));
+    spec.options.forEach(function(o){ input.appendChild(el("option", { value:o, text:o })); });
+    input.value = obj[spec.key] || "";
+    input.addEventListener("change", function(){ onChange(spec.key, input.value); });
+  } else {
+    input = el("input", { type:"text" });
+    input.value = obj[spec.key] === null || obj[spec.key] === undefined ? "" : String(obj[spec.key]);
+    if (spec.num) input.setAttribute("inputmode", "numeric");
+    input.addEventListener("input", function(){
+      var v = input.value;
+      if (spec.type === "num-int") {
+        var n = parseInt(v, 10);
+        onChange(spec.key, isNaN(n) ? null : n);
+      } else if (spec.type === "rank") {
+        onChange(spec.key, v === "" ? null : (v === "unknown" ? "unknown" : (isNaN(parseInt(v,10)) ? v : parseInt(v,10))));
+      } else if (spec.type === "ranklist" || spec.type === "list") {
+        onChange(spec.key, v.split(",").map(function(s){ return s.trim(); }).filter(function(s){ return s !== ""; }));
+      } else {
+        onChange(spec.key, v);
+      }
+    });
+  }
+  var cell = el("div", { class:"fcell" });
+  cell.appendChild(input);
+  if (spec.unk) cell.appendChild(unkBtn(input));
+  wrap.appendChild(cell);
+  return wrap;
+}
+
+function restoreIndices(sec) {
+  state[sec].forEach(function(o, i){ o.index = i + 1; });
+}
+
+function renderSection(sec) {
+  var panel = $("panel");
+  panel.textContent = "";
+  var skippedNow = !!skipped[sec];
+  $("skipChk").checked = skippedNow;
+  $("skipNote").textContent = skippedNow ? " — recorded as empty (a deliberate observation)" : "";
+  panel.style.display = skippedNow ? "none" : "";
+  if (skippedNow) return;
+  state[sec].forEach(function(obj, i) {
+    var row = el("div", { class:"obrow" });
+    var flex = el("div", { class:"rowflex" });
+    SPECS[sec].forEach(function(spec) {
+      var cell;
+      if (spec.auto) {
+        cell = el("div", { class:"field num" });
+        cell.appendChild(el("label", { text:spec.label }));
+        cell.appendChild(el("div", { class:"fcell" }, [ el("input", { type:"text", value:String(i+1), disabled:"disabled" }) ]));
+      } else {
+        cell = fieldCell(spec, obj, function(k, v){ obj[k] = v; save(); });
+      }
+      flex.appendChild(cell);
+    });
+    var tools = el("div", { class:"tools" });
+    function move(d) {
+      var arr = state[sec];
+      var j = i + d;
+      if (j < 0 || j >= arr.length) return;
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      if (sec === "page_inventory" || sec === "space") restoreIndices(sec);
+      save(); renderSection(sec);
+    }
+    tools.appendChild(el("button", { class:"mini", title:"Move up", text:"↑" })).addEventListener("click", function(){ move(-1); });
+    tools.appendChild(el("button", { class:"mini", title:"Move down", text:"↓" })).addEventListener("click", function(){ move(1); });
+    tools.appendChild(el("button", { class:"mini", title:"Remove", text:"✕" })).addEventListener("click", function(){
+      state[sec].splice(i, 1);
+      if (sec === "page_inventory" || sec === "space") restoreIndices(sec);
+      save(); renderSection(sec);
+    });
+    flex.appendChild(tools);
+    row.appendChild(flex);
+    panel.appendChild(row);
+  });
+  var add = el("button", { class:"primary", text:"+ Add another entry" });
+  add.addEventListener("click", function() {
+    var item = {};
+    SPECS[sec].forEach(function(spec){
+      if (spec.auto) { item[spec.key] = state[sec].length + 1; return; }
+      item[spec.key] = (spec.type === "bool") ? null : (spec.type === "enum" ? "" :
+        (spec.type === "ranklist" || spec.type === "list") ? [] : (spec.type === "rank" ? null : ""));
+    });
+    state[sec].push(item);
+    save(); renderSection(sec);
+  });
+  panel.appendChild(add);
+  var firstEntryHint = el("p", { class:"mut small", text: state[sec].length ? "" : "No entries yet — press “+ Add another entry” to record the first one." });
+  panel.appendChild(firstEntryHint);
+}
+
+/* ---------- persistence ---------- */
+function draftKey() { return "sunset9053." + currentReader() + "." + currentCarrier(); }
+function save() {
+  try { localStorage.setItem(draftKey(), JSON.stringify(state)); } catch (e) {}
+  try { localStorage.setItem(draftKey() + ".skipped", JSON.stringify(skipped)); } catch (e) {}
+  try { localStorage.setItem("sunset9053.last", JSON.stringify({ reader: currentReader(), carrier: currentCarrier() })); } catch (e) {}
+}
+function loadDraft() {
+  var raw = null;
+  try { raw = localStorage.getItem(draftKey()); } catch (e) {}
+  var sk = null;
+  try { sk = localStorage.getItem(draftKey() + ".skipped"); } catch (e) {}
+  skipped = {};
+  if (sk) { try { skipped = JSON.parse(sk) || {}; } catch (e) {} }
+  if (raw) {
+    try {
+      var d = JSON.parse(raw);
+      state = blank();
+      Object.keys(state).forEach(function(k){ if (d[k] !== undefined) state[k] = d[k]; });
+    } catch (e) { state = blank(); }
+  } else {
+    state = blank();
+  }
+}
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem("sunset9053.progress." + currentReader()) || "[]") || []; }
+  catch (e) { return []; }
+}
+function saveProgress(list) {
+  try { localStorage.setItem("sunset9053.progress." + currentReader(), JSON.stringify(list)); } catch (e) {}
+}
+
+/* ---------- timer ---------- */
+function tick() {
+  timerSeconds++;
+  var m = String(Math.floor(timerSeconds / 60)).padStart(2, "0");
+  var s = String(timerSeconds % 60).padStart(2, "0");
+  $("clock").textContent = m + ":" + s;
+}
+function timerStart() { if (!timerId) timerId = setInterval(tick, 1000); }
+function timerStop() { clearInterval(timerId); timerId = null; }
+function elapsedMinutes() {
+  if (timerSeconds > 0) return Math.round(timerSeconds / 60);
+  return null;
+}
+
+/* ---------- generation (unchanged logic) ---------- */
+function buildJson() {
+  return {
+    reader: state.reader,
+    carrier: state.carrier,
+    elapsed_minutes: elapsedMinutes(),
+    page_inventory: state.page_inventory,
+    structure: state.structure,
+    relations: state.relations,
+    space: state.space,
+    context: state.context,
+    annotations: state.annotations,
+    losses: state.losses,
+    uncertainties: state.uncertainties,
+    notes: state.notes
+  };
+}
+function collectWarnings(d) {
+  var w = [];
+  if (!d.reader) w.push("Reader id is not set — go back to setup.");
+  if (!d.carrier) w.push("Carrier is not set — go back to setup.");
+  if (d.elapsed_minutes === null) w.push("Elapsed minutes not recorded — timing is part of the measurement.");
+  if (!d.page_inventory.length) w.push("No pages recorded — did you record every page you can perceive?");
+  d.page_inventory.forEach(function(p, i){
+    if (!p.summary && p.summary !== "unknown") w.push("Page " + (i+1) + " has no summary.");
+    if (p.image_only === null) w.push("Page " + (i+1) + ": image_only left unknown — fine, but only if you truly could not determine it.");
+  });
+  if (!d.structure.length) w.push("No parts recorded — if the carrier has no discernible structure, say why in Notes.");
+  d.context.forEach(function(c, i){
+    if (c.status === "observed") {
+      if (!c.value) w.push("Context entry " + (i+1) + " is observed but has no value.");
+      if (!c.evidence) w.push("Context entry " + (i+1) + " is observed but has no evidence — every non-unknown value needs evidence you could point another human to.");
+    }
+  });
+  if (!d.losses.length) w.push("No losses recorded — confirm nothing was lost or unrepresentable; if so, say so in Notes.");
+  if (!d.annotations.length) w.push("No annotations recorded — that means “none observed”. Confirm that is what you saw.");
+  return w;
+}
+function download() {
+  var d = buildJson();
+  $("doneCarrier").disabled = false;
+  try {
+    var blob = new Blob([JSON.stringify(d, null, 2)], { type:"application/json" });
+    var a = el("a", { href: URL.createObjectURL(blob), download: d.carrier + ".observations.json" });
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  } catch (e) {
+    $("warnings").appendChild(el("li", { text:"Download failed in this browser — use “Copy JSON” and save the text as " + d.carrier + ".observations.json manually." }));
+  }
+}
+function copyOut() {
+  var t = $("out");
+  t.focus(); t.select();
+  try { document.execCommand("copy"); } catch (e) { /* let the user copy manually */ }
+}
+
+/* ---------- embedded carrier viewer ---------- */
+var viewerOpen = false;
+function renderViewer() {
+  var c = currentCarrier() || state.carrier;
+  var file = CARRIER_FILES[c];
+  var box = $("viewerBox");
+  box.textContent = "";
+  $("viewerFallback").style.display = "none";
+  $("newTabLink").style.display = "none";
+  if (!file) { $("viewerFile").textContent = "(unknown carrier)"; return; }
+  $("viewerFile").textContent = file + "  (in the bundle's carriers/ folder)";
+  var src = "../carriers/" + file.split("/").pop();
+  if (/\.epub$/.test(file)) {
+    $("newTabLink").style.display = "none";
+    box.appendChild(el("div", { class:"vnote", text:"EPUB cannot be rendered by browsers natively — open this file in your EPUB reader (Apple Books, Calibre, Thorium…). The file sits next to this page in the carriers/ folder." }));
+    return;
+  }
+  var tab = $("newTabLink");
+  tab.style.display = "";
+  tab.href = src;
+  tab.textContent = "Open in new tab ↗";
+  var obj = el("object", { type:"application/pdf", data: src });
+  obj.appendChild(el("p", { class:"vfail", text:"If the carrier does not display in this box (some browsers block local PDF embedding), use “Open in new tab ↗” above, or double-click " + file + " in the bundle's carriers/ folder. Selecting/copying text here works exactly like in a standalone viewer — use it to judge image_only." }));
+  box.appendChild(obj);
+  $("viewerFallback").style.display = "";
+  $("viewerFallback").textContent = "If the carrier does not display above: use “Open in new tab ↗” (always allowed), or double-click " + file + " in the bundle's carriers/ folder. Last resort: serve the folder from your own machine — open a terminal in the bundle folder and run: python3 -m http.server — then reopen this form at http://localhost:8000/templates/observations-spa.html";
+}
+
+/* ---------- wizard navigation ---------- */
+function screenId(s) {
+  if (s === 0) return "s-welcome";
+  if (s === 1) return "s-setup";
+  if (s === 10) return "s-finish";
+  if (s === 11) return "s-done";
+  return "s-section";
+}
+function showStep(s) {
+  step = s;
+  ["s-welcome","s-setup","s-section","s-finish","s-done"].forEach(function(id){
+    $(id).classList.remove("active");
+  });
+  $(screenId(s)).classList.add("active");
+  var where = "Welcome";
+  if (s === 1) where = "Setup";
+  else if (s >= 2 && s <= 9) {
+    var sec = SECTION_ORDER[s - 2];
+    where = "Step " + (s - 1) + " of 9 — " + SECTION_TITLES[sec];
+  } else if (s === 10) where = "Review & download";
+  else if (s === 11) where = "Progress";
+  if (state.carrier && s >= 1 && s <= 10) {
+    var idx = CARRIERS.indexOf(state.carrier);
+    where += " — carrier " + (idx + 1) + " of 4";
+  }
+  $("where").textContent = where;
+  $("timerChip").style.display = (s >= 2 && s <= 10) ? "" : "none";
+  $("viewBtn").style.display = (s >= 2 && s <= 10) ? "" : "none";
+  if (viewerOpen && (s >= 2 && s <= 10)) renderViewer();
+  if (s >= 2 && s <= 9) {
+    var sec2 = SECTION_ORDER[s - 2];
+    $("secTitle").textContent = SECTION_TITLES[sec2];
+    var g = $("secGuidance");
+    g.textContent = "";
+    var box = el("div", { class:"hintbox" });
+    GUIDANCE[sec2].forEach(function(line){
+      var p = el("p", { style:"margin:0 0 4px" });
+      p.innerHTML = line;
+      box.appendChild(p);
+    });
+    g.appendChild(box);
+    renderSection(sec2);
+  }
+  if (s === 10) {
+    $("finishCarrier").textContent = state.carrier || "(carrier not set)";
+    $("notes").value = state.notes;
+    $("warnings").textContent = "";
+    $("out").value = "";
+    $("dl").disabled = true; $("cp").disabled = true; $("doneCarrier").disabled = true;
+  }
+  if (s === 11) renderProgress();
+  window.scrollTo(0, 0);
+}
+function renderProgress() {
+  var done = loadProgress();
+  var pills = $("progressPills");
+  pills.textContent = "";
+  CARRIERS.forEach(function(c, i) {
+    var cls = "pill" + (done.indexOf(c) >= 0 ? " done" : "");
+    pills.appendChild(el("span", { class:cls, text:(i+1) + ". " + c + (done.indexOf(c) >= 0 ? " ✔" : " pending") }));
+  });
+  var list = $("pendingList");
+  list.textContent = "";
+  CARRIERS.forEach(function(c, i) {
+    if (done.indexOf(c) >= 0) return;
+    var row = el("div", { class:"ctarow" });
+    row.appendChild(el("span", { text:"Carrier " + (i+1) + " of 4 — " + c }));
+    row.appendChild(el("span", { class:"spacer" }));
+    var b = el("button", { class:"primary", text:"Work on this →" });
+    b.addEventListener("click", function() {
+      $("carrierSel").value = c;
+      setupChanged();
+      showStep(1);
+    });
+    row.appendChild(b);
+    list.appendChild(row);
+  });
+  if (!list.children.length) {
+    list.appendChild(el("p", { class:"checkmark", text:"All 4 carriers done — follow the final steps below. ✔" }));
+  }
+}
+
+/* ---------- setup screen ---------- */
+function setupChanged() {
+  $("readerOtherWrap").style.display = $("readerSel").value === "other" ? "" : "none";
+  $("carrierOtherWrap").style.display = $("carrierSel").value === "other" ? "" : "none";
+  state.reader = currentReader();
+  state.carrier = currentCarrier();
+  loadDraft();
+  var focus = $("carrierFocus");
+  var c = currentCarrier();
+  if (c && CARRIER_FOCUS[c]) {
+    focus.style.display = "";
+    focus.innerHTML = "<b>When you read this carrier, pay attention to:</b><br>" + CARRIER_FOCUS[c];
+  } else {
+    focus.style.display = "none";
+  }
+  var hasDraft = !!(state.page_inventory.length || state.structure.length || state.context.length || state.notes);
+  var resume = $("setupResume");
+  if (hasDraft) {
+    resume.style.display = "";
+    resume.textContent = "You have an unfinished draft for this carrier in this browser — it will be restored. Timer restarts at 0 (re-time this sitting if you prefer).";
+  } else {
+    resume.style.display = "none";
+  }
+  $("setupTitle").textContent = "Carrier " + ((CARRIERS.indexOf(c) + 1) || "?") + " of 4";
+}
+
+/* ---------- wiring ---------- */
+function init() {
+  $("welcomeStart").addEventListener("click", function(){ showStep(1); });
+  $("backWelcome").addEventListener("click", function(){ showStep(0); });
+  $("readerSel").addEventListener("change", setupChanged);
+  $("readerOther").addEventListener("input", setupChanged);
+  $("carrierSel").addEventListener("change", setupChanged);
+  $("carrierOther").addEventListener("input", setupChanged);
+  $("startReading").addEventListener("click", function(){
+    state.reader = currentReader(); state.carrier = currentCarrier();
+    if (!state.reader || !state.carrier) return;
+    timerSeconds = 0; $("clock").textContent = "00:00";
+    timerStart();
+    save();
+    if (!viewerOpen) { viewerOpen = true; $("viewerCard").classList.add("open"); $("viewBtn").textContent = "Hide carrier ▴"; }
+    renderViewer();
+    showStep(2);
+  });
+  $("viewBtn").addEventListener("click", function(){
+    viewerOpen = !viewerOpen;
+    $("viewerCard").classList.toggle("open", viewerOpen);
+    $("viewBtn").textContent = viewerOpen ? "Hide carrier ▴" : "Show carrier ▾";
+    if (viewerOpen) renderViewer();
+  });
+  $("tStart").addEventListener("click", timerStart);
+  $("tStop").addEventListener("click", timerStop);
+  $("secBack").addEventListener("click", function(){ showStep(step - 1); });
+  $("secNext").addEventListener("click", function(){ showStep(step + 1); });
+  $("finBack").addEventListener("click", function(){ showStep(9); });
+  $("notes").addEventListener("input", function(){ state.notes = $("notes").value; save(); });
+  $("gen").addEventListener("click", function(){
+    state.reader = currentReader(); state.carrier = currentCarrier(); save();
+    var d = buildJson();
+    $("warnings").textContent = "";
+    collectWarnings(d).forEach(function(msg){ $("warnings").appendChild(el("li", { text:msg })); });
+    $("out").value = JSON.stringify(d, null, 2);
+    $("dl").disabled = false; $("cp").disabled = false;
+  });
+  $("dl").addEventListener("click", download);
+  $("cp").addEventListener("click", copyOut);
+  $("doneCarrier").addEventListener("click", function(){
+    var done = loadProgress();
+    if (done.indexOf(state.carrier) < 0) done.push(state.carrier);
+    saveProgress(done);
+    timerStop();
+    showStep(11);
+  });
+  $("doneBack").addEventListener("click", function(){ showStep(1); });
+  $("skipChk").addEventListener("change", function(){
+    var sec = SECTION_ORDER[step - 2];
+    if ($("skipChk").checked) {
+      if (state[sec].length && !confirm("Clear the entries already recorded in this section?")) {
+        $("skipChk").checked = false;
+        return;
+      }
+      skipped[sec] = true;
+      state[sec] = [];
+    } else {
+      delete skipped[sec];
+    }
+    save(); renderSection(sec);
+  });
+  var last = null;
+  try { last = JSON.parse(localStorage.getItem("sunset9053.last") || "null"); } catch (e) {}
+  if (last) {
+    if (last.reader === "reader-a" || last.reader === "reader-b") $("readerSel").value = last.reader;
+    else if (last.reader) { $("readerSel").value = "other"; $("readerOther").value = last.reader; }
+    if (CARRIERS.indexOf(last.carrier) >= 0) $("carrierSel").value = last.carrier;
+    else if (last.carrier) { $("carrierSel").value = "other"; $("carrierOther").value = last.carrier; }
+    setupChanged();
+  }
+  showStep(0);
+}
+init();
+</script>
+</body>
+</html>

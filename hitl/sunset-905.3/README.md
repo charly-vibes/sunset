@@ -43,15 +43,38 @@ are retained and classified — never resolved by picking a winner.
 |------|---------|
 | `INSTRUCTIONS.md` | How to fill the observation sheets, field by field |
 | `carriers/` | The four carriers (pristine copies, sha256 in `SHA256SUMS.txt`) |
-| `templates/observations-template.json` | Copy one per carrier, rename, fill |
+| `templates/observations-spa.html` | **Easiest path:** open this file in a browser (works offline, `file://`); guided wizard that shows the carrier itself in a built-in viewer, times each carrier, and downloads the filled JSON |
+| `templates/observations-template.json` | Copy one per carrier, rename, fill (fallback if you prefer editing JSON by hand) |
 | `templates/agreement-matrix-template.md` | For the orchestrator, not the readers |
 
 ## How to return your work
+
+Using the SPA: it is a guided wizard — every screen tells you what to do next.
+Start → choose your reader id and carrier → open the carrier in a normal viewer
+alongside the form → follow the nine steps (one section each) → review,
+**Build JSON**, **Download file** → “Mark carrier done”. Repeat for all four
+carriers (the progress screen tracks it), then zip and send back as below.
+The SPA lists soft warnings, not blockers.
 
 Rename each filled sheet to `<reader-id>/<carrier-stem>.observations.json`
 (e.g. `reader-a/diario-de-poesia-excerpt.observations.json`), zip your folder
 including a `notes.md` with anything the sheets had no place for, and send it
 back to the sunset owner. Do **not** commit to the sunset repo yourself.
+
+The SPA is fully offline and self-contained (no network access, no server);
+your draft is kept in your browser's local storage until you download it.
+The independence contract is unchanged: the SPA only shapes your own
+observations; it never sees the other reader's work.
+
+### If a carrier does not display in the built-in viewer
+
+Three ways in, in order: the built-in viewer → **Open in new tab ↗** (always
+allowed, even over `file://`) → double-click the file in `carriers/`. Last
+resort, serve the bundle from your own machine: open a terminal in the
+unzipped bundle folder and run `python3 -m http.server`, then reopen the form
+at `http://localhost:8000/templates/observations-spa.html` — everything
+(embedding, drafts) then works with browser defaults. This is still fully
+offline: nothing leaves your machine.
 
 ## Reader identities
 
