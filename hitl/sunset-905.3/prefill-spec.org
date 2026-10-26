@@ -1,0 +1,136 @@
+# sunset-ejy — Pre-fill observation sections from drawn regions (SPEC)
+
+Status: APPROVED (owner decisions resolved 2026-10-26, see §9)
+Ticket: sunset-ejy (P3) · Baseline that motivated this:
+`runs/reader-a/diario-de-poesia-excerpt.observations.json` (2026-10-26)
+
+## 1. Problem
+
+The first human session shows where the time actually goes: the annotator
+made `structure` cheap (56 regions in 13 minutes), but the reader left
+`labels` and `order_rank` empty everywhere and skipped `space` entirely.
+The remaining friction is typing metadata the tool could mostly infer, and
+re-entering facts the tool already knows (page count, page frames).
+
+## 2. Governing constraint — the independence contract
+
+The two-human-readers gate needs each reader's sheet to be *that reader's*
+observation, not the tool's interpretation. Rule:
+
+> **Pre-fill only what is deterministic bookkeeping of facts the reader
+> already expressed. Never pre-fill an interpretation the reader has not
+> made.**
+
+Concretely: mechanical inferences over the reader's own drawn regions are
+allowed (they are scaffolding the reader confirms or erases). Any claim
+about the *document* (a continuation, a publication date, a column reading)
+is never machine-suggested. This keeps the reference set human-grounded:
+both readers are shaped by the same dumb bookkeeping, not by a smart
+model's opinion of the carrier.
+
+## 3. Hierarchical reading order (owner decision 1)
+
+`order_rank` becomes a **hierarchical path string** derived from the
+reader's own arrangement: `"1"`, `"1.1"`, `"1.1.2"`, `"2"`, …
+
+- The region rows gain depth: **→ indents** (become a child of the nearest
+  preceding shallower row), **← outdents**. Outline semantics: depth-based
+  tree, no parent ids; enforce `depth ≤ prev.depth + 1` on indent, `≥ 0` on
+  outdent. ↑/↓ move within the whole list as today.
+- Rank derivation is a pure function of (list order, depths): walk the list
+  keeping a counter stack; each entry's path is its 1-based sibling index
+  appended to its parent's path. Hand-set ranks are never overwritten
+  (derivation only fills rows whose rank is null).
+- **The box tag shows the rank**: `"1.1.2 · title · portada"` — recomputed
+  on every render, so the canvas always reflects the current ordering.
+- Containment becomes explicit in the structure itself: `"1.1"` is contained
+  in `"1"`. The `relations` section is NOT extended with a derived
+  `contains` kind (schema stays `continuation|reference`); downstream
+  consumers reconstruct containment from the paths. Continuations and
+  references remain hand-traced by the reader (§2 rule).
+- Template: `order_rank` example changes to a string path;
+  `order_alternatives` stays (alternative paths, comma-separated).
+
+## 4. Per-section behavior
+
+| Section | Pre-fill | Basis | Interaction |
+|---|---|---|---|
+| `page_inventory` | Scaffold entries (index 1..N) from the rendered document's real page count | `annPdf.numPages` (already known) | Reader fills `image_only` + `summary`. No summary pre-fill. |
+| `structure.labels` | Never machine-filled | — | Reader types (or leaves empty; `type` already conveys the part). |
+| `structure.order_rank` | On *Build JSON*: derive hierarchical path strings from list position + depth for rows the reader left unranked | The reader's own ↑/↓/→/← arrangement — deterministic bookkeeping of their expressed order | Rank shown live in the box tag; values appear in the JSON review; hand-set ranks are never overwritten. |
+| `space` | One entry per inventoried page with `index`; `columns` **suggested** (badge “suggested”), `rotation` left untouched, `reading_order_ambiguous` left null | x-gap clustering of that page's drawn regions (algorithm below) — mechanical, but a layout reading, so it is *suggested*, never silently recorded | Reader confirms the suggestion (one click) or edits. If a page has no regions, no entry is created. |
+| `relations` | **Never pre-filled.** No candidate generation at all (opt-in or otherwise) | — | The reader traces continuations/references themselves. |
+| `context`, `annotations`, `losses`, `uncertainties`, `notes` | Never pre-filled | — | Pure observation; the tool has no honest basis. |
+
+Suggested-but-unconfirmed values MUST NOT be written into the sheet state
+until the reader accepts them. Accepted suggestions are recorded as
+**reviewed and accepted** (owner decision 3): an additive sheet-level
+`prefill_provenance` object marks what was tool-derived and human-accepted,
+e.g. `{"columns": "reviewed_accepted", "order_ranks":
+"derived_from_arrangement"}` — absent keys mean fully manual. The
+observation fields themselves stay clean; only this provenance object is
+added (ingest schema is additive-safe).
+
+## 5. Columns inference (the only real algorithm)
+
+Input: page *p*'s drawn regions of type in {text, title, heading, list,
+table} with `bbox.relative = "page"` (≥ 3 regions required, else no
+suggestion).
+
+1. Compute each region's horizontal band [x, x+w].
+2. Greedy 1D merge: sort by x; merge bands whose gap to the accumulated
+   cluster < 0.06 page-widths (a column gutter is typically > 10%).
+3. Let k = number of surviving clusters that each contain ≥ 2 regions.
+4. Suggest: k ≤ 1 → `single`; k = 2 → `two`; k ≥ 3 → `multi`.
+
+Failure modes and dispositions: regions spanning the full width (w > 0.9)
+are headers/footers-by-geometry — still counted (they *are* full-width
+evidence for `single`); scan skew makes gutters fuzzy → the threshold is
+conservative and the reader confirms anyway; pages mixing full-width and
+columnar content → suggestion may be wrong — that is acceptable, it is a
+suggestion with a visible badge and one-click edit.
+
+## 6. UX shape
+
+- Where the reader would otherwise add an entry, a single line appears:
+  “⟂ 6 pages known — add page entries” / “◫ suggest columns from your
+  regions: two (edit or keep)”.
+- Accepted pre-fills become ordinary entries (fully editable, deletable);
+  rejected suggestions simply never touch the draft.
+- `order_rank` derivation happens at Build JSON and is displayed as part of
+  the review screen, so the reader sees exactly what will be recorded.
+
+## 7. Acceptance
+
+- Contract tests (`tests/tracer/test_reader_spa.py`): suggestion affordances
+  exist; relations/context/annotations have no suggestion code path; sheet
+  schema unchanged (template JSON untouched); suggested values do not enter
+  state before acceptance.
+- Behavioral (jsdom, stubbed pdf.js): drawing 3+ columnar text regions on a
+  page yields the `two`/`multi` suggestion; accepting creates an editable
+  `space` entry and records `prefill_provenance.columns =
+  "reviewed_accepted"`; rejecting leaves state untouched; Build JSON derives
+  hierarchical paths (flat list → "1","2",…; indent → "1.1","1.1.2") and
+  keeps hand-set ranks; box tags render the live rank path.
+- Contract tests additionally pin: no suggestion code path for
+  relations/context/annotations; `prefill_provenance` additive only.
+- Gates: full tracer suite + `just spec-check` unchanged-green.
+
+## 8. Non-goals
+
+- No schema change, no cross-carrier inference, no network, no OCR/text
+  extraction (regions only — the tool never looks “inside” the page image
+  beyond what the reader drew).
+- No relations candidates (see §2), no label generation.
+
+## 9. Owner decisions (resolved 2026-10-26)
+
+1. **order_rank derivation — APPROVED**, extended by the owner: hierarchical
+   ranks (`N`, `N.1`, `N.1.2`) via row indent/outdent, with the rank shown
+   in the box tag; containment derived from the hierarchy (no new relation
+   kind).
+2. **columns suggestion — APPROVED** (ship it).
+3. **provenance — APPROVED, as “reviewed and accepted”**: accepted
+   pre-fills are distinguished in the sheet via the additive
+   `prefill_provenance` object (not indistinguishable, revising the
+   earlier recommendation).
