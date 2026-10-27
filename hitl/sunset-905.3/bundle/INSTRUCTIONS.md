@@ -28,9 +28,21 @@ carrier in a normal PDF/EPUB viewer. The four carriers:
   the `index` (1-based as shown by the viewer), whether it is
   `image_only` (nothing selectable) or `text`, and a ≤1-line `summary`.
 - `structure` — the document's parts as a reader sees them: headings,
-  sections, articles, table titles. Each entry: `label`, `evidence`
-  (page + quote), and `order_rank` for its position in reading order. If
-  two orderings seem defensible, record both in `order_alternatives`.
+  sections, articles, table titles. On PDF carriers the SPA **renders the
+  pages itself** (vendored pdf.js, still fully offline): pages fit to width
+  or page, with working Zoom and real page counts — so rectangles you draw
+  map exactly to page coordinates. The page frame calibrates itself
+  automatically (the canvas is the page); press *Draw regions*, drag a
+  rectangle around each part, pick its type (text, title, image, table…),
+  and step through pages with *Prev/Next*. Each rectangle becomes an entry
+  with `label`, `type`, `page`, `bbox` (page-relative drawn region — that
+  is the evidence), and `order_rank` for reading order (the ↑/↓ arrows).
+  If your browser blocks reading the local PDF (normal over `file://` in
+  Chrome), press *Load the PDF file…* once and pick the carrier — or
+  serve the bundle with `python3 -m http.server`. If two orderings seem
+  defensible, record both in `order_alternatives`. On the EPUB (or "other"
+  carriers) record parts by hand: `label`, `evidence` (page + quote),
+  `page`, and `order_rank`.
 - `relations` — cross-part relations you can observe:
   - `continuation`: a sentence/flow that continues from page N to page M
     (quote both fragments, `from`/`to`).

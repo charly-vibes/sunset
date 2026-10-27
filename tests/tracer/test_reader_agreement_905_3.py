@@ -120,3 +120,49 @@ def test_agreement_matrix_classifies_without_winner_election():
             f"row without legend class: {row}")
     # no silent winner election: a ruling column exists but is not auto-filled
     assert "Owner ruling" in text
+
+
+# ---------------------------------------------------------------------------
+# 2026-10-26 update: first real HUMAN baseline (owner-executed, reader-a)
+# ---------------------------------------------------------------------------
+
+def test_reader_a_human_baseline_present_and_schema_valid():
+    """The owner completed the interactive annotator session for
+    diario-de-poesia-excerpt: the first human-executed sheet. It is a
+    single-human baseline — it does NOT satisfy the two-readers gate, but it
+    supersedes the agent-executed sets for this carrier where they conflict."""
+    base = RUNS / "reader-a"
+    sheet_path = base / "diario-de-poesia-excerpt.observations.json"
+    assert sheet_path.is_file(), "human baseline sheet missing"
+    sheet = json.loads(sheet_path.read_text())
+    missing = REQUIRED_SHEET_KEYS - set(sheet)
+    assert not missing, f"missing keys {missing}"
+    assert sheet["reader"] == "reader-a"
+    assert sheet["carrier"] == "diario-de-poesia-excerpt"
+    assert sheet["elapsed_minutes"] == 13
+    # six image-only pages inventoried
+    assert [p["index"] for p in sheet["page_inventory"]] == [1, 2, 3, 4, 5, 6]
+    assert all(p["image_only"] is True for p in sheet["page_inventory"])
+    # 56 drawn page-relative regions, all within the page
+    assert len(sheet["structure"]) == 56
+    for s in sheet["structure"]:
+        assert s["bbox"]["relative"] == "page"
+        for k in ("x", "y", "w", "h"):
+            assert 0 <= s["bbox"][k] <= 1.0001, (s["label"], k, s["bbox"][k])
+        assert s["bbox"]["x"] + s["bbox"]["w"] <= 1.0001
+        assert s["bbox"]["y"] + s["bbox"]["h"] <= 1.0001
+        assert 1 <= s["page"] <= 6
+        assert s["type"] in {"text", "title", "heading", "image", "table",
+                             "caption", "header", "footer", "list", "other"}
+    # structure-layer-only baseline: other sections deliberately empty
+    for key in ("relations", "space", "context", "annotations", "losses",
+                "uncertainties"):
+        assert sheet[key] == [], f"{key} should be empty in this baseline"
+
+
+def test_reader_a_human_baseline_provenance_recorded():
+    prov = (RUNS / "PROVENANCE.md").read_text()
+    assert "first real HUMAN baseline" in prov
+    assert "single-human baseline" in prov
+    assert "NOT the two-independent-readers gate" in prov
+    assert "60e0bd437953d19a7d1b14e9c5cd18c5f9fc41835cbd08ae8fceb01888fc313c" in prov

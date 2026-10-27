@@ -2,6 +2,16 @@
   "reader": "SET-TO-reader-a-or-reader-b",
   "carrier": "carrier-stem-without-extension",
   "elapsed_minutes": null,
+  "page_frames": {
+    "1": {
+      "x": 0.0,
+      "y": 0.0,
+      "w": 0.0,
+      "h": 0.0,
+      "viewport_w": 0,
+      "viewport_h": 0
+    }
+  },
   "page_inventory": [
     {
       "index": 1,
@@ -12,7 +22,18 @@
   "structure": [
     {
       "label": "",
-      "evidence": "page N, quote or location",
+      "type": "text|title|heading|image|table|caption|header|footer|list|other (drawn regions only; empty string when recorded by hand)",
+      "page": 1,
+      "bbox": {
+        "relative": "page|overlay (page = relative to the page frame; overlay = legacy, relative to the whole display box)",
+        "x": 0.0,
+        "y": 0.0,
+        "w": 0.0,
+        "h": 0.0,
+        "viewport_w": 0,
+        "viewport_h": 0
+      },
+      "evidence": "page N, quote or location (drawn regions: the rectangle IS the evidence; quote optional)",
       "order_rank": 1,
       "order_alternatives": []
     }

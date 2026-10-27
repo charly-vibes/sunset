@@ -51,3 +51,25 @@ in its notes).
 Gate checklist consequence: the two items "sha256 recorded" and "sheets
 received" are met for this agent run; the human-gate items (independent
 human readers, owner rulings on DISAGREE rows) remain **open**.
+
+---
+
+## Update (2026-10-26): first real HUMAN baseline — reader-a
+
+The owner completed the interactive annotator session for
+`diario-de-poesia-excerpt` and returned
+`runs/reader-a/diario-de-poesia-excerpt.observations.json` — the first
+**human-executed** sheet (all prior sets in this directory are
+agent-executed and labeled as such).
+
+- Content: 6 pages inventoried (all image-only), 56 drawn page-relative
+  regions (28 text / 12 image / 10 heading / 3 title / 2 header / 1 footer),
+  elapsed 13 minutes.
+- `relations`, `space`, `context`, `annotations`, `losses`,
+  `uncertainties`, `notes` are empty — a single-human baseline covering the
+  structure layer only.
+- **Status: single-human baseline, NOT the two-independent-readers gate.**
+  It supersedes the agent-executed sheets for this carrier where they
+  conflict (human pass supersedes, per recorded-deviations policy) and
+  serves as the reference set until reader-b returns.
+- sha256: `60e0bd437953d19a7d1b14e9c5cd18c5f9fc41835cbd08ae8fceb01888fc313c`

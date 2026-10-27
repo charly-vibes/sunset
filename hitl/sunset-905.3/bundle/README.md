@@ -43,11 +43,16 @@ are retained and classified — never resolved by picking a winner.
 |------|---------|
 | `INSTRUCTIONS.md` | How to fill the observation sheets, field by field |
 | `carriers/` | The four carriers (pristine copies, sha256 in `SHA256SUMS.txt`) |
-| `templates/observations-spa.html` | **Easiest path:** open this file in a browser (works offline, `file://`); guided wizard that shows the carrier itself in a built-in viewer, times each carrier, and downloads the filled JSON |
+| `templates/observations-spa.html` | **Easiest path:** open this file in a browser (works offline, `file://`); guided wizard that renders PDF pages itself (vendored pdf.js, offline) with fit/zoom under your control, lets you draw rectangles around the document's parts (type them as text/title/image/table…), times each carrier, and downloads the filled JSON |
 | `templates/observations-template.json` | Copy one per carrier, rename, fill (fallback if you prefer editing JSON by hand) |
 | `templates/agreement-matrix-template.md` | For the orchestrator, not the readers |
 
 ## How to return your work
+
+“Resume a saved session” loads a previously downloaded
+    `<carrier>.observations.json` — your recorded sections, drawn
+    rectangles, page frames, and elapsed time come back, and you continue where
+    you stopped (works across browsers and machines).
 
 Using the SPA: it is a guided wizard — every screen tells you what to do next.
 Start → choose your reader id and carrier → open the carrier in a normal viewer

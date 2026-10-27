@@ -12,7 +12,17 @@
   "structure": [
     {
       "label": "",
-      "evidence": "page N, quote or location",
+      "type": "text|title|heading|image|table|caption|header|footer|list|other (drawn regions only; empty string when recorded by hand)",
+      "page": 1,
+      "bbox": {
+        "x": 0.0,
+        "y": 0.0,
+        "w": 0.0,
+        "h": 0.0,
+        "viewport_w": 0,
+        "viewport_h": 0
+      },
+      "evidence": "page N, quote or location (drawn regions: the rectangle IS the evidence; quote optional)",
       "order_rank": 1,
       "order_alternatives": []
     }
