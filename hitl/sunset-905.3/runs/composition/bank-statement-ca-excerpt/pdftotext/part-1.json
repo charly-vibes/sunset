@@ -1,0 +1,85 @@
+{
+  "version": "0.3",
+  "id": "reader-b-bank-statement-ca-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2",
+    "locator": "fixtures/carriers/bank-statement-ca-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "vb-main",
+      "kind": "physical",
+      "root": "rb-root"
+    },
+    {
+      "id": "vb-log",
+      "kind": "logical",
+      "root": "rb-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "rb-root",
+      "view_id": "vb-main",
+      "kind": "document"
+    },
+    {
+      "id": "rb-log",
+      "view_id": "vb-log",
+      "kind": "article"
+    }
+  ],
+  "contents": [],
+  "relations": [],
+  "annotations": [],
+  "evidence": [],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded files",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "pb-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory-b.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "pb-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest-b.json",
+      "version": "1",
+      "sha256": "7fb3b33f19deaea756b39a06cc77bc54aaac3e6926c34982f99492d0bb3dacba"
+    }
+  ]
+}

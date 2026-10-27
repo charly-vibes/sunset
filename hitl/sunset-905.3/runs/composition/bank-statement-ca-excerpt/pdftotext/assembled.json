@@ -1,0 +1,166 @@
+{
+  "status": "assembled",
+  "descriptor": {
+    "version": "0.3",
+    "id": "reader-b-bank-statement-ca-excerpt",
+    "source": {
+      "format": "application/pdf",
+      "sha256": "18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2",
+      "locator": "fixtures/carriers/bank-statement-ca-excerpt.pdf"
+    },
+    "vocabularies": [
+      {
+        "namespace": "ex",
+        "version": "1"
+      }
+    ],
+    "views": [
+      {
+        "id": "vb-main",
+        "kind": "physical",
+        "root": "rb-root"
+      },
+      {
+        "id": "vb-log",
+        "kind": "logical",
+        "root": "rb-log"
+      }
+    ],
+    "regions": [
+      {
+        "id": "rb-root",
+        "view_id": "vb-main",
+        "kind": "document"
+      },
+      {
+        "id": "rb-log",
+        "view_id": "vb-log",
+        "kind": "article"
+      },
+      {
+        "id": "rbp1",
+        "view_id": "vb-main",
+        "kind": "page"
+      }
+    ],
+    "contents": [
+      {
+        "id": "rbtxt1",
+        "kind": "text",
+        "value": "Resumen Banco Mock al 21/09/2017\nCaja de Ahorro ARS\nSALDO ANTERIOR 1.234,56"
+      }
+    ],
+    "relations": [
+      {
+        "id": "relb-rc1",
+        "kind": "contains",
+        "from": "rb-root",
+        "to": "rbp1"
+      },
+      {
+        "id": "relb-hc1",
+        "kind": "has-content",
+        "from": "rbp1",
+        "to": "rbtxt1"
+      }
+    ],
+    "annotations": [],
+    "evidence": [
+      {
+        "id": "evb-txt1",
+        "origin": "source",
+        "source_ref": "sha256:18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2#page:1",
+        "content_ids": [
+          "rbtxt1"
+        ],
+        "selector_ids": []
+      }
+    ],
+    "selectors": [],
+    "interpretations": [],
+    "profiles": [
+      {
+        "id": "pb-inv",
+        "kind": "carrier-inventory",
+        "uri": "inventory-b.json",
+        "version": "1",
+        "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+      },
+      {
+        "id": "pb-man",
+        "kind": "adapter-manifest",
+        "uri": "manifest-b.json",
+        "version": "1",
+        "sha256": "7fb3b33f19deaea756b39a06cc77bc54aaac3e6926c34982f99492d0bb3dacba"
+      }
+    ],
+    "coverage": [
+      {
+        "inventory_id": "pb-inv",
+        "manifest_id": "pb-man",
+        "feature": "pdf:glyphs",
+        "scope": "document",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-reader-b",
+        "adapter_version": "0.1",
+        "config_sha256": "unavailable"
+      },
+      {
+        "inventory_id": "pb-inv",
+        "manifest_id": "pb-man",
+        "feature": "pdf:attachments",
+        "scope": "document",
+        "status": "unexamined",
+        "reason": "reader B does not examine embedded files",
+        "adapter_id": "sunset-reader-b",
+        "adapter_version": "0.1",
+        "config_sha256": "unavailable"
+      },
+      {
+        "inventory_id": "pb-inv",
+        "manifest_id": "pb-man",
+        "feature": "pdf:images",
+        "scope": "page:1",
+        "status": "unexamined",
+        "reason": "reader B does not examine embedded images",
+        "adapter_id": "sunset-reader-b",
+        "adapter_version": "0.1",
+        "config_sha256": "unavailable"
+      },
+      {
+        "inventory_id": "pb-inv",
+        "manifest_id": "pb-man",
+        "feature": "pdf:vectors",
+        "scope": "page:1",
+        "status": "unexamined",
+        "reason": "reader B does not examine vector graphics",
+        "adapter_id": "sunset-reader-b",
+        "adapter_version": "0.1",
+        "config_sha256": "unavailable"
+      },
+      {
+        "inventory_id": "pb-inv",
+        "manifest_id": "pb-man",
+        "feature": "pdf:annotations",
+        "scope": "page:1",
+        "status": "unexamined",
+        "reason": "reader B does not examine source annotations",
+        "adapter_id": "sunset-reader-b",
+        "adapter_version": "0.1",
+        "config_sha256": "unavailable"
+      },
+      {
+        "inventory_id": "pb-inv",
+        "manifest_id": "pb-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:1",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-reader-b",
+        "adapter_version": "0.1",
+        "config_sha256": "unavailable"
+      }
+    ]
+  }
+}

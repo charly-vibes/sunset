@@ -1,0 +1,518 @@
+{
+  "reader": "reader-a",
+  "carrier": "agentic-patterns-excerpt",
+  "elapsed_minutes": 4,
+  "page_frames": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    },
+    "2": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 618,
+      "viewport_h": 800
+    },
+    "3": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 618,
+      "viewport_h": 800
+    },
+    "4": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 618,
+      "viewport_h": 800
+    },
+    "5": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 618,
+      "viewport_h": 800
+    },
+    "6": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 618,
+      "viewport_h": 800
+    }
+  },
+  "page_inventory": [],
+  "structure": [
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1857,
+        "y": 0.1256,
+        "w": 0.6234,
+        "h": 0.0732,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "1",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0864,
+        "y": 0.2619,
+        "w": 0.8265,
+        "h": 0.6572,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "2",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0888,
+        "y": 0.2656,
+        "w": 0.818,
+        "h": 0.0581,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "3",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0852,
+        "y": 0.3256,
+        "w": 0.8192,
+        "h": 0.2231,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "4",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0937,
+        "y": 0.5534,
+        "w": 0.807,
+        "h": 0.3572,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "5",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0876,
+        "y": 0.0809,
+        "w": 0.8216,
+        "h": 0.8334,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "6",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.09,
+        "y": 0.0856,
+        "w": 0.8058,
+        "h": 0.3009,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "7",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0876,
+        "y": 0.3894,
+        "w": 0.807,
+        "h": 0.2231,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "8",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0985,
+        "y": 0.6181,
+        "w": 0.7998,
+        "h": 0.2466,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "9",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.101,
+        "y": 0.8694,
+        "w": 0.7973,
+        "h": 0.0347,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "10",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1083,
+        "y": 0.0838,
+        "w": 0.7913,
+        "h": 0.8409,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "11",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1167,
+        "y": 0.0903,
+        "w": 0.7731,
+        "h": 0.1237,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "12",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1167,
+        "y": 0.2216,
+        "w": 0.7731,
+        "h": 0.1753,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "13",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1119,
+        "y": 0.3997,
+        "w": 0.7816,
+        "h": 0.1603,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "14",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1119,
+        "y": 0.5647,
+        "w": 0.7816,
+        "h": 0.2212,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "15",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1107,
+        "y": 0.7878,
+        "w": 0.7816,
+        "h": 0.1312,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "16",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1265,
+        "y": 0.0809,
+        "w": 0.7755,
+        "h": 0.84,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "17",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1362,
+        "y": 0.0875,
+        "w": 0.7549,
+        "h": 0.0694,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "18",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1131,
+        "y": 0.1644,
+        "w": 0.7767,
+        "h": 0.1856,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "19",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.101,
+        "y": 0.3594,
+        "w": 0.7925,
+        "h": 0.2175,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "20",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.107,
+        "y": 0.5825,
+        "w": 0.7828,
+        "h": 0.1462,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "21",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1046,
+        "y": 0.7325,
+        "w": 0.7816,
+        "h": 0.1537,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "22",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1107,
+        "y": 0.8984,
+        "w": 0.7888,
+        "h": 0.0169,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "23",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1058,
+        "y": 0.0828,
+        "w": 0.801,
+        "h": 0.8213,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "24",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1143,
+        "y": 0.0762,
+        "w": 0.7937,
+        "h": 0.7856,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "25",
+      "order_alternatives": []
+    }
+  ],
+  "relations": [],
+  "space": [],
+  "context": [],
+  "annotations": [],
+  "losses": [],
+  "uncertainties": [],
+  "notes": "",
+  "prefill_provenance": {
+    "order_ranks": "derived_from_arrangement"
+  }
+}

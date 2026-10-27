@@ -1,0 +1,1602 @@
+{
+  "reader": "reader-b",
+  "carrier": "diario-de-poesia-excerpt",
+  "elapsed_minutes": 16,
+  "page_frames": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 757,
+      "viewport_h": 1044
+    },
+    "2": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 484,
+      "viewport_h": 668
+    },
+    "3": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 484,
+      "viewport_h": 668
+    },
+    "4": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 484,
+      "viewport_h": 668
+    },
+    "5": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 484,
+      "viewport_h": 668
+    },
+    "6": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 387,
+      "viewport_h": 534
+    }
+  },
+  "page_inventory": [
+    {
+      "index": 1,
+      "image_only": true,
+      "summary": "portada"
+    },
+    {
+      "index": 2,
+      "image_only": true,
+      "summary": ""
+    },
+    {
+      "index": 3,
+      "image_only": true,
+      "summary": ""
+    },
+    {
+      "index": 4,
+      "image_only": true,
+      "summary": ""
+    },
+    {
+      "index": 5,
+      "image_only": true,
+      "summary": ""
+    },
+    {
+      "index": 6,
+      "image_only": true,
+      "summary": ""
+    }
+  ],
+  "structure": [
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0264,
+        "y": 0.0677,
+        "w": 0.9736,
+        "h": 0.153,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "1",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0373,
+        "y": 0.2265,
+        "w": 0.9174,
+        "h": 0.1056,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "2",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0561,
+        "y": 0.3369,
+        "w": 0.1724,
+        "h": 0.0596,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "3",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0631,
+        "y": 0.4003,
+        "w": 0.1674,
+        "h": 0.2364,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "4",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0631,
+        "y": 0.641,
+        "w": 0.1754,
+        "h": 0.1932,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "5",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0353,
+        "y": 0.7983,
+        "w": 0.1882,
+        "h": 0.1803,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "6",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2384,
+        "y": 0.342,
+        "w": 0.3676,
+        "h": 0.4095,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "7",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2464,
+        "y": 0.7553,
+        "w": 0.1734,
+        "h": 0.069,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "8",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2533,
+        "y": 0.8272,
+        "w": 0.1635,
+        "h": 0.1408,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "9",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4287,
+        "y": 0.7539,
+        "w": 0.1575,
+        "h": 0.1142,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "10",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4247,
+        "y": 0.8703,
+        "w": 0.1684,
+        "h": 0.0424,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "11",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4217,
+        "y": 0.9148,
+        "w": 0.1724,
+        "h": 0.051,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "12",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.612,
+        "y": 0.3378,
+        "w": 0.1615,
+        "h": 0.2328,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "13",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.606,
+        "y": 0.575,
+        "w": 0.1625,
+        "h": 0.1422,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "14",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7814,
+        "y": 0.3332,
+        "w": 0.1694,
+        "h": 0.0388,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "15",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7805,
+        "y": 0.3687,
+        "w": 0.1643,
+        "h": 0.3481,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "16",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6054,
+        "y": 0.7235,
+        "w": 0.3409,
+        "h": 0.0696,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "17",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6023,
+        "y": 0.7965,
+        "w": 0.3564,
+        "h": 0.1538,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "18",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0506,
+        "y": 0.0241,
+        "w": 0.8709,
+        "h": 0.0292,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "19",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0351,
+        "y": 0.0566,
+        "w": 0.1798,
+        "h": 0.0326,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "20",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2288,
+        "y": 0.0566,
+        "w": 0.1333,
+        "h": 0.0314,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "21",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5651,
+        "y": 0.0589,
+        "w": 0.186,
+        "h": 0.0348,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "22",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0475,
+        "y": 0.0925,
+        "w": 0.1658,
+        "h": 0.5591,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "23",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0398,
+        "y": 0.6674,
+        "w": 0.1674,
+        "h": 0.1302,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "24",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0367,
+        "y": 0.8066,
+        "w": 0.1767,
+        "h": 0.0763,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "25",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0413,
+        "y": 0.8863,
+        "w": 0.1689,
+        "h": 0.064,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "26",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2211,
+        "y": 0.0937,
+        "w": 0.1736,
+        "h": 0.7848,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "27",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3993,
+        "y": 0.0566,
+        "w": 0.1767,
+        "h": 0.1695,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "28",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3977,
+        "y": 0.2273,
+        "w": 0.1736,
+        "h": 0.1336,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "29",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3993,
+        "y": 0.7527,
+        "w": 0.1689,
+        "h": 0.1044,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "30",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3962,
+        "y": 0.8571,
+        "w": 0.1705,
+        "h": 0.0988,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "31",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5713,
+        "y": 0.7505,
+        "w": 0.1736,
+        "h": 0.2043,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "32",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5759,
+        "y": 0.0948,
+        "w": 0.1736,
+        "h": 0.1336,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "33",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.579,
+        "y": 0.2324,
+        "w": 0.1736,
+        "h": 0.1291,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "34",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3993,
+        "y": 0.366,
+        "w": 0.3564,
+        "h": 0.3806,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "35",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7526,
+        "y": 0.055,
+        "w": 0.1829,
+        "h": 0.0651,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "36",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.751,
+        "y": 0.1235,
+        "w": 0.1767,
+        "h": 0.1504,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "37",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7572,
+        "y": 0.2728,
+        "w": 0.1751,
+        "h": 0.3301,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "38",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7541,
+        "y": 0.601,
+        "w": 0.1798,
+        "h": 0.0674,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "39",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7588,
+        "y": 0.674,
+        "w": 0.1705,
+        "h": 0.2863,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "40",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0506,
+        "y": 0.0273,
+        "w": 0.9127,
+        "h": 0.0427,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "41",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0816,
+        "y": 0.0733,
+        "w": 0.8554,
+        "h": 0.0371,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "42",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.077,
+        "y": 0.1148,
+        "w": 0.3487,
+        "h": 0.0865,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "43",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0801,
+        "y": 0.2105,
+        "w": 0.1596,
+        "h": 0.5872,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "44",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0739,
+        "y": 0.7986,
+        "w": 0.172,
+        "h": 0.1662,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "45",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2505,
+        "y": 0.2035,
+        "w": 0.1658,
+        "h": 0.1808,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "46",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4272,
+        "y": 0.1171,
+        "w": 0.1658,
+        "h": 0.265,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "47",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6007,
+        "y": 0.1227,
+        "w": 0.1782,
+        "h": 0.2616,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "48",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7805,
+        "y": 0.1193,
+        "w": 0.1705,
+        "h": 0.2302,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "49",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7836,
+        "y": 0.3484,
+        "w": 0.1519,
+        "h": 0.0483,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "50",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.782,
+        "y": 0.4023,
+        "w": 0.1658,
+        "h": 0.2021,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "51",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7789,
+        "y": 0.6122,
+        "w": 0.172,
+        "h": 0.3615,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "52",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2366,
+        "y": 0.3888,
+        "w": 0.5362,
+        "h": 0.3896,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "53",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2459,
+        "y": 0.784,
+        "w": 0.1612,
+        "h": 0.1853,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "54",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.407,
+        "y": 0.7795,
+        "w": 0.189,
+        "h": 0.1897,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "55",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5914,
+        "y": 0.7818,
+        "w": 0.1736,
+        "h": 0.1875,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "56",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0661,
+        "y": 0.0217,
+        "w": 0.9034,
+        "h": 0.0427,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "57",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.297,
+        "y": 0.0789,
+        "w": 0.4199,
+        "h": 0.0516,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "58",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0677,
+        "y": 0.133,
+        "w": 0.4463,
+        "h": 0.7197,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "59",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5201,
+        "y": 0.1388,
+        "w": 0.4385,
+        "h": 0.7163,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "60",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0661,
+        "y": 0.9289,
+        "w": 0.6989,
+        "h": 0.0191,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "61",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0429,
+        "y": 0.0173,
+        "w": 0.8957,
+        "h": 0.0438,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "62",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2335,
+        "y": 0.0768,
+        "w": 0.5222,
+        "h": 0.0662,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "63",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0698,
+        "y": 0.1442,
+        "w": 0.281,
+        "h": 0.8006,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "64",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3566,
+        "y": 0.1484,
+        "w": 0.2829,
+        "h": 0.8006,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "65",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6492,
+        "y": 0.1527,
+        "w": 0.2984,
+        "h": 0.8006,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "66",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0698,
+        "y": 0.022,
+        "w": 0.8934,
+        "h": 0.0478,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "67",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.062,
+        "y": 0.0726,
+        "w": 0.1822,
+        "h": 0.9031,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "68",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2674,
+        "y": 0.0852,
+        "w": 0.3178,
+        "h": 0.059,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "69",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2616,
+        "y": 0.147,
+        "w": 0.1647,
+        "h": 0.4242,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "70",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4244,
+        "y": 0.1442,
+        "w": 0.1705,
+        "h": 0.4284,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "71",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2539,
+        "y": 0.5909,
+        "w": 0.1667,
+        "h": 0.3961,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "72",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4205,
+        "y": 0.5909,
+        "w": 0.1744,
+        "h": 0.3862,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "73",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.593,
+        "y": 0.0656,
+        "w": 0.1802,
+        "h": 0.4213,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "74",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6008,
+        "y": 0.4888,
+        "w": 0.1744,
+        "h": 0.1348,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "75",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5988,
+        "y": 0.625,
+        "w": 0.1764,
+        "h": 0.3497,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "76",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7791,
+        "y": 0.0744,
+        "w": 0.1686,
+        "h": 0.2781,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "77",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7771,
+        "y": 0.3539,
+        "w": 0.1822,
+        "h": 0.1264,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "78",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7771,
+        "y": 0.4803,
+        "w": 0.1822,
+        "h": 0.125,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "79",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7713,
+        "y": 0.611,
+        "w": 0.1899,
+        "h": 0.139,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "80",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "text",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7713,
+        "y": 0.75,
+        "w": 0.1744,
+        "h": 0.2317,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "81",
+      "order_alternatives": []
+    }
+  ],
+  "relations": [],
+  "space": [
+    {
+      "index": 1,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": null
+    },
+    {
+      "index": 2,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": null
+    },
+    {
+      "index": 3,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": null
+    },
+    {
+      "index": 4,
+      "rotation": "0",
+      "columns": "two",
+      "reading_order_ambiguous": null
+    },
+    {
+      "index": 5,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": null
+    },
+    {
+      "index": 6,
+      "rotation": "0",
+      "columns": "multi",
+      "reading_order_ambiguous": null
+    }
+  ],
+  "context": [
+    {
+      "kind": "publication_date",
+      "value": "invierno 1986",
+      "evidence": "1",
+      "status": "observed",
+      "note": "periodico trimestral"
+    }
+  ],
+  "annotations": [],
+  "losses": [],
+  "uncertainties": [],
+  "notes": "",
+  "prefill_provenance": {
+    "order_ranks": "derived_from_arrangement"
+  }
+}

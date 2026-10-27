@@ -1,0 +1,79 @@
+#+title: Diario returned-sheet comparison — sunset-905.3
+#+date: 2026-10-27
+
+* Scope and status
+This is an agent-prepared comparison of the returned reader-a and reader-b
+Diario sheets, not a general conformance claim. Reader-a is the owner-confirmed
+human baseline. Owner confirmed reader-b is a second independent human (2026-10-27).
+No winner is elected. Original submissions are preserved byte-for-byte under
+runs/reader-a and runs/reader-b; their digests are in runs/PROVENANCE.md.
+
+* Comparison method
+Compare explicit recorded values, page inventories, and per-page region counts.
+Empty arrays mean no entries recorded, not observed absence. Null ranks and
+ambiguity fields mean unknown. Bounding boxes use normalized page coordinates;
+viewport pixel sizes are rendering metadata, not conflicting document geometry.
+No positional array pairing or automatic region identity is inferred: the
+readers segmented pages differently and supplied no labels. Counts alone do
+not establish compatible segmentation or a contradiction.
+
+* Agreement matrix
+| Observable | reader-a | reader-b | Class | Owner ruling |
+|------------+----------+----------+-------+--------------|
+| Inventoried page indices | 1–6 | 1–6 | AGREE | — |
+| Image-only flag | true on all 6 | true on all 6 | AGREE | — |
+| Page 1 regions | 18 | 18 | UNKNOWN | Identity correspondence unreviewed |
+| Page 2 regions | 12 | 22 | UNKNOWN | Segmentation correspondence unreviewed |
+| Page 3 regions | 8 | 16 | UNKNOWN | Segmentation correspondence unreviewed |
+| Page 4 regions | 4 | 5 | UNKNOWN | Segmentation correspondence unreviewed |
+| Page 5 regions | 4 | 5 | UNKNOWN | Segmentation correspondence unreviewed |
+| Page 6 regions | 10 | 15 | UNKNOWN | Segmentation correspondence unreviewed |
+| Region types | 28 text, 12 image, 10 heading, 3 title, 2 header, 1 footer | 81 text | UNKNOWN | Owner chose regions-first input; B types not used as human classifications |
+| Reading order | all 56 ranks null | ranks 1–81, derived_from_arrangement | UNKNOWN | Derived ranks are not independent human order judgments |
+| Hierarchy | no depth recorded | depth 0 throughout | UNKNOWN | Missing A depth is not a flat-hierarchy assertion |
+| Space rotation | no entries | 0 on all 6 pages | UNKNOWN | — |
+| Columns | no entries | multi on 1,2,3,5,6; two on 4 | UNKNOWN | — |
+| Reading-order ambiguity | no entries | null on all 6 pages | UNKNOWN | — |
+| Publication date | no entries | invierno 1986, observed, evidence page 1 | UNKNOWN | — |
+| Relations | no entries | no entries | UNKNOWN | Not evidence of absence |
+| Annotations | no entries | no entries | UNKNOWN | Not evidence of absence |
+| Losses | no entries | no entries | UNKNOWN | No losses reported; completeness unverified |
+| Uncertainties | no entries | no entries | UNKNOWN | Not evidence of certainty |
+
+Roll-up: 19 observables, 2 AGREE, 17 UNKNOWN, 0 COMPATIBLE, 0 LOSS,
+0 DISAGREE. UNKNOWN includes unmatched segmentation and unconfirmed type
+intent; zero DISAGREE does not establish agreement on structure.
+Elapsed effort: A 13 minutes, B 16 minutes. Timings are recorded values,
+not quality or conformance scores. All 137 regions survive in the source sheets.
+
+* Remaining owner gates
+- SATISFIED for Diario: owner confirms reader-b is a second independent human.
+- Owner decision (2026-10-27): use the human regions and infer types separately;
+  no manual classification of every box required for the inference experiment.
+- Review segmentation/type differences with both sheets available after submission.
+- Obtain human sheet pairs for native PDF, reflowable EPUB, and bank statement.
+- Review the six retained DISAGREE rows in agreement-matrix-agent-run.md;
+  this partial Diario comparison does not adjudicate them.
+- Run composition conformance on the complete carrier/reference set and obtain
+  the owner gate before closing sunset-905.3 or its parents.
+
+* Quality ledger
+Changed: preserved reader-b submission, added digest/provenance and this scoped
+comparison, and pinned the returned evidence with an ingestion regression.
+Verified: regression failed for missing ingest, then 7 targeted tests passed;
+full suite 297 passed plus 18 subtests; frozen 0.2 PASS 11; OpenSpec strict
+10/10; spk lint no issues; git diff --check clean. The final pinned OpenSpec
+1.14.2 command initially failed on read-only npm cache, then passed 10/10
+with npm_config_cache=/tmp/sunset-905-3-npm-cache (no repository config change).
+Review: agent self-review of sheet counts, digests, derived-order provenance,
+and unknown-versus-absent semantics. Owner confirmed human independence.
+Risks/next: B types excluded as human classification evidence; other carrier human pairs and final
+owner gate remain outstanding. No conformance claim or ticket closure.
+
+* Machine inference supplement (2026-10-27)
+Owner authorized inferring types from the regions to reduce marking effort.
+See inferences/diario-de-poesia-excerpt-reader-b.types.org and its JSON sidecar.
+All 81 boxes are retained; 63 clear and 18 tentative visual suggestions. These
+are agent inferences, not human-reviewed labels, and do not change the
+human-only agreement counts above. The all-text B field is not used as
+asserted human classification evidence for this experiment.

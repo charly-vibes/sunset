@@ -1,0 +1,46 @@
+{
+  "reader": "reader-a",
+  "carrier": "bank-statement-ca-excerpt",
+  "elapsed_minutes": 1,
+  "page_frames": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    }
+  },
+  "page_inventory": [],
+  "structure": [
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0933,
+        "y": 0.0698,
+        "w": 0.2888,
+        "h": 0.0672,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "1",
+      "order_alternatives": []
+    }
+  ],
+  "relations": [],
+  "space": [],
+  "context": [],
+  "annotations": [],
+  "losses": [],
+  "uncertainties": [],
+  "notes": "",
+  "prefill_provenance": {
+    "order_ranks": "derived_from_arrangement"
+  }
+}

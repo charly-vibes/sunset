@@ -1,4 +1,4 @@
-"""Contract tests for the sunset-905.3 agent-executed reader-sheet ingest.
+"""Contract tests for the sunset-905.3 reader-sheet ingests.
 
 Owner ruling (b, 2026-10-18): the reader-grok and reader-claude sheet sets
 returned via cotorreo are ingested as a labeled AGENT-EXECUTED agreement run.
@@ -8,7 +8,8 @@ They do NOT satisfy the two-human-reader gate; a human pass supersedes them
 - both reader sheet sets exist with exactly the four carrier sheets,
 - every sheet validates against the observations template schema,
 - a provenance file records the agent-executed ruling and both reader ids,
-- an agreement matrix classifies observables without electing a winner.
+- an agreement matrix classifies observables without electing a winner,
+- returned human evidence is preserved without treating derived order as judgment.
 """
 
 import json
@@ -166,3 +167,87 @@ def test_reader_a_human_baseline_provenance_recorded():
     assert "single-human baseline" in prov
     assert "NOT the two-independent-readers gate" in prov
     assert "60e0bd437953d19a7d1b14e9c5cd18c5f9fc41835cbd08ae8fceb01888fc313c" in prov
+
+
+def test_reader_b_diario_submission_preserved_with_derived_order_caveat():
+    """Pin the returned evidence without interpreting default types or ranks."""
+    import hashlib
+
+    path = RUNS / 'reader-b' / 'diario-de-poesia-excerpt.observations.json'
+    assert path.is_file()
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == (
+        '8624a3518ae6d5edbcfe13c311dc3e21f245b4ad739a0464c1ccf33a0005bece'
+    )
+    sheet = json.loads(path.read_text())
+    assert not (REQUIRED_SHEET_KEYS - sheet.keys())
+    assert sheet['reader'] == 'reader-b'
+    assert sheet['carrier'] == 'diario-de-poesia-excerpt'
+    assert [p['index'] for p in sheet['page_inventory']] == list(range(1, 7))
+    assert len(sheet['structure']) == 81
+    assert sheet['prefill_provenance']['order_ranks'] == 'derived_from_arrangement'
+    for region in sheet['structure']:
+        box = region['bbox']
+        assert box['relative'] == 'page'
+        assert 1 <= region['page'] <= 6
+        assert all(0 <= box[k] <= 1.0001 for k in ('x', 'y', 'w', 'h'))
+        assert box['x'] + box['w'] <= 1.0001
+        assert box['y'] + box['h'] <= 1.0001
+
+
+def test_inferred_types_preserve_human_regions_and_machine_attribution():
+    """Machine types supplement the raw submission without rewriting testimony."""
+    import hashlib
+
+    source = RUNS / 'reader-b' / 'diario-de-poesia-excerpt.observations.json'
+    inferred = json.loads((RUNS.parent / 'inferences' /
+                           'diario-de-poesia-excerpt-reader-b.types.json').read_text())
+    sheet = json.loads(source.read_text())
+    assert inferred['source_sha256'] == hashlib.sha256(source.read_bytes()).hexdigest()
+    carrier = RUNS.parent / 'bundle' / 'carriers' / (sheet['carrier'] + '.pdf')
+    assert inferred['carrier_sha256'] == hashlib.sha256(carrier.read_bytes()).hexdigest()
+    assert inferred['status'] == 'agent_inferred_not_human_reviewed'
+    assert inferred['human_type_labels_used'] is False
+    assert inferred['independent_reader'] is False
+    predictions = inferred['regions']
+    assert [r['source_index'] for r in predictions] == list(range(81))
+    allowed = {'text', 'title', 'heading', 'image', 'table', 'caption',
+               'header', 'footer', 'list', 'other'}
+    for prediction, region in zip(predictions, sheet['structure']):
+        assert prediction['page'] == region['page']
+        assert prediction['bbox'] == region['bbox']
+        assert prediction['inferred_type'] in allowed
+        assert set(prediction['alternatives']) <= allowed - {prediction['inferred_type']}
+        assert prediction['certainty'] in {'clear', 'tentative'}
+        assert prediction['reason']
+        if prediction['certainty'] == 'tentative':
+            assert prediction['alternatives']
+    assert any(p['inferred_type'] == 'image' for p in predictions)
+    assert all(r['type'] == 'text' for r in sheet['structure'])
+
+
+def test_owner_scoped_pdf_pairs_preserve_all_returned_regions():
+    """The owner's six-sheet scope retains raw evidence and unset judgments."""
+    import hashlib
+
+    root = RUNS.parent
+    pairs = {
+        'diario-de-poesia-excerpt': ('diario-de-poesia-excerpt', 'diario-de-poesia-excerpt-reader-b'),
+        'agentic-patterns-excerpt': ('agentic-patterns-excerpt-a', 'agentic-patterns-excerpt-b'),
+        'bank-statement-ca-excerpt': ('bank-statement-ca-excerpt-a', 'bank-statement-ca-excerpt-b'),
+    }
+    total = 0
+    for carrier, sources in pairs.items():
+        for reader, source in zip(('reader-a', 'reader-b'), sources):
+            raw = (root / (source + '.observations.json')).read_bytes()
+            stored = RUNS / reader / (carrier + '.observations.json')
+            assert stored.read_bytes() == raw
+            sheet = json.loads(raw)
+            assert sheet['reader'] == reader
+            assert sheet['carrier'] == carrier
+            assert REQUIRED_SHEET_KEYS <= sheet.keys()
+            assert hashlib.sha256(raw).hexdigest() in (RUNS / 'PROVENANCE.md').read_text()
+            for region in sheet['structure']:
+                assert region['page'] >= 1
+                assert region['bbox']['relative'] == 'page'
+            total += len(sheet['structure'])
+    assert total == 203

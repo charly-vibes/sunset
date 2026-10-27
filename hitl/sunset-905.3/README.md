@@ -85,3 +85,24 @@ offline: nothing leaves your machine.
 
 Use the reader id you were assigned (`reader-a` or `reader-b`) on every file
 and in the `reader` field of every sheet.
+
+### Marking workspace and step saves
+
+During observation and review, the carrier stays on the left and the current
+step stays on the right (stacked on narrow screens). Each pane scrolls
+independently. Drawing, selecting, or editing a region keeps the page position.
+Types and labels are optional; new regions start untyped for later inference.
+Expand “How to record this step” when you need guidance.
+
+“Save file” downloads the current partial sheet on any step. “Save & next”
+downloads it before moving on. The browser may add a number to repeated file
+names; keep the latest copy. Checkpoints can be loaded through “Resume a saved
+session”; incomplete fields and unset ranks stay incomplete. Browser draft
+saving continues, but cannot replace keeping a downloaded file. Only the final
+review workflow marks a carrier complete.
+
+## Current owner scope (2026-10-27)
+
+The six returned PDF observations are the complete required input set for sunset-905.3: A/B pairs for Diario, Agentic Patterns, and the bank statement. EPUB is waived because the app does not render it. The original four-carrier bundle is retained as distributed. See [returned-sheet review](agreement-matrix-human-returned.org) for findings and remaining unknowns.
+
+The [executed composition report](composition-results.org) separates passing assembly laws from partial extraction fidelity. Reproduce with `python3 hitl/sunset-905.3/run_composition.py`; attributed snapshots and the machine-readable comparison are under `runs/composition/`.

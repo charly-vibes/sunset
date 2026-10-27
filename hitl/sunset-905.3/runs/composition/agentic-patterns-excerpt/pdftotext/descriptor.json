@@ -1,0 +1,538 @@
+{
+  "version": "0.3",
+  "id": "reader-b-agentic-patterns-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66",
+    "locator": "fixtures/carriers/agentic-patterns-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "vb-main",
+      "kind": "physical",
+      "root": "rb-root"
+    },
+    {
+      "id": "vb-log",
+      "kind": "logical",
+      "root": "rb-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "rb-root",
+      "view_id": "vb-main",
+      "kind": "document"
+    },
+    {
+      "id": "rb-log",
+      "view_id": "vb-log",
+      "kind": "article"
+    },
+    {
+      "id": "rbp1",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp2",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp3",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp4",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp5",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp6",
+      "view_id": "vb-main",
+      "kind": "page"
+    }
+  ],
+  "contents": [
+    {
+      "id": "rbtxt1",
+      "kind": "text",
+      "value": "Agentic Patterns\n                Design Patterns and Best Practices for Building Agentic Systems\n\n\n\n\nContents\nDisclaimer                                                                                                         7\n\nChapter: Foundations                                                                                                8\n  Book Outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      8\n  Historical Perspectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     9\n  What is an Agent / Agentic System . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          10\n  Determinism vs stochasticity . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       12\n  Modularity in agentic systems . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      14\n  Best practices . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   19\n  Hands-On: Python Concepts for Async Agent Execution . . . . . . . . . . . . . . . . . . . . . . . .              21\n  Understanding the OpenAI API Standard . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .            24\n  Hands-On: Building Your First Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .          32\n  Hands-On: How run_agent() Works (Optional) . . . . . . . . . . . . . . . . . . . . . . . . . . . . .             35\n  Hands-On: System Prompts vs. User Prompts . . . . . . . . . . . . . . . . . . . . . . . . . . . . .              37\n  Hands-On: Multi-Turn Conversations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           39\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   43\n\nChapter: Core Agentic Patterns                                                                                    46\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46\n  Historical Perspectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46\n  Zero-shot / Few-shot Reasoning . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48\n  Chain-of-Thought (CoT) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 48\n  Tree of Thought (ToT) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49\n  ReAct (Reason + Act) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 49\n  CodeAct . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50\n  Self-Reflection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52\n  Verification / Critique . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 52\n  Planning and Decomposition . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53\n  Human in the Loop . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55\n  Hands-On: Zero-shot and Few-shot Prompting . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55\n  Hands-On: Chain-of-Thought Reasoning . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 57\n  Hands-On: Tree of Thought Reasoning . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59\n  Hands-On: ReAct (Reasoning + Acting) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63\n  Hands-On: CodeAct . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67\n  Hands-On: Self-Reflection Pattern . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 70\n  Hands-On: Verification / Critique Pattern . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 73\n  Hands-On: Planning and Decomposition . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 78\n  Hands-On: Human in the Loop . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 82\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 86\n\n\n                                                         1"
+    },
+    {
+      "id": "rbtxt2",
+      "kind": "text",
+      "value": "Chapter: Tools                                                                                                    89\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89\n  Historical Perspectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 89\n  Tool Use . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90\n  Structured Output . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 91\n  Tool Discovery and Selection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92\n  Tool Contracts and Schemas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92\n  Tool Permissions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94\n  The Workspace . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 96\n  Advanced topics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98\n  MCP — Model Context Protocol . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 101\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103\n  Hands-On: Tool Use . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 103\n  Hands-On: Structured Outputs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 106\n  Hands-On: Tool Discovery and Selection . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 107\n  Hands-On: Tool Permissions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 110\n  Hands-On: The Workspace . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 112\n  Hands-On: Advanced Topics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 115\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 118\n\nChapter: Orchestration & Control Flow                                                                            120\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 120\n  Historical Perspective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 120\n  Workflows . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 121\n  Graphs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 121\n  A2A: Agent-to-Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 123\n  Long-running tasks and async execution . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 124\n  Event-driven agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 126\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 128\n  Hands-On: Sequential Workflows . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 128\n  Hands-On: Graph-Based Orchestration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 131\n  Hands-On: Agent Delegation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 133\n  Hands-On: Agent Hand-Off . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 134\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 137\n\nChapter: RAG (Retrieval-Augmented Generation)                                                                    139\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 139\n  Historical Perspective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 139\n  Embeddings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 141\n  Vector Databases . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 145\n  Document Ingestion and Chunking . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 149\n  Document Retrieval . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 154\n  Evaluating RAG Systems . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 156\n  Attribution, Citation, Provenance, and Truth Maintenance . . . . . . . . . . . . . . . . . . . . . . 158\n  Multi-Source RAG & Evidence Grounding . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 160\n  Semantic Clustering . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 162\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 165\n  Hands-On: Simple Document Ingestion and Retrieval . . . . . . . . . . . . . . . . . . . . . . . . . 166\n  Hands-On: Advanced Document Ingestion and Retrieval . . . . . . . . . . . . . . . . . . . . . . . . 168\n  Hands-On: Semantic Clustering . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 171\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 174\n\nChapter: Context & Memory                                                                                        177\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 177\n\n\n\n                                                         2"
+    },
+    {
+      "id": "rbtxt3",
+      "kind": "text",
+      "value": "Historical Perspective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 177\n   Prompts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 178\n   Context engineering . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 180\n   Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 182\n   Hands-On: Prompts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 183\n   Hands-On: Context Result Decorator . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 185\n   Hands-On: History Compaction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 188\n   References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 192\n\nChapter: Model Context Protocol (MCP)                                                                             194\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194\n  Historical Perspective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194\n  Architecture . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194\n  Tools . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 197\n  Features . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 200\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 203\n  Hands-On: MCP STDIO Transport . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 204\n  Hands-On: MCP Tools with Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 207\n  Hands-On: MCP Features . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 209\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 212\n\nChapter: Agent2Agent Protocol (A2A)                                                                              214\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214\n  Historical Perspectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214\n  Task Lifecycle in Agent-to-Agent (A2A) Systems . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214\n  A2A in Detail . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 233\n  Security . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 242\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 245\n  Hands-On: A2A Client-Server . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 245\n  Hands-On: A2A Coordinator Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 247\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 251\n\nChapter: Skills, Sub-Agents & Tasks                                                                              254\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254\n  Sub-agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254\n  Context engineering: why sub-agents help . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254\n  Skills Specification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 255\n  Skills Engineering . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 257\n  Comparison: Sub-agents, Skills, MCP, and A2A . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 259\n  AGENTS.md . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 260\n  Tasks . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 262\n  Hands-On: Fixed Sub-Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 263\n  Hands-On: Dynamic Sub-Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 264\n  Hands-On: Tasks . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 266\n  Hands-On: Skills and Progressive Disclosure . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 267\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 269\n\nChapter: Evals                                                                                                    271\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 271\n  Historical Perspective . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 271\n  Testing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 272\n  Evals . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 273\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 277\n  Hands-On: Deterministic Testing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 278\n  Hands-On: Basic Evals . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 280\n\n\n                                                         3"
+    },
+    {
+      "id": "rbtxt4",
+      "kind": "text",
+      "value": "Hands-On: Pydantic Evals Framework . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 282\n   Hands-On: Eval Runner and Custom Evaluators . . . . . . . . . . . . . . . . . . . . . . . . . . . . 286\n   Hands-On: Doctors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 289\n   References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 293\n\nData Sources & Connectors                                                                                        295\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 295\n  Connector patterns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 295\n  NL2SQL (Natural Language to SQL) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 301\n  Private Data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 303\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 306\n  Hands-On: File Connector . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 307\n  Hands-On: NL2SQL with CSV Post-Processing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 308\n  Hands-On: OpenAPI Connector . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 310\n  Hands-On: Controlled Vocabularies . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 313\n  Hands-On: Private Data Guardrails . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 315\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 317\n\nUser Interface                                                                                                   319\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 319\n  Chainlit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 319\n  AG-UI . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 322\n  Error propagation, cancellation, and human-in-the-loop . . . . . . . . . . . . . . . . . . . . . . . . 324\n  Session propagation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 329\n  File Uploads . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 332\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 333\n  Hands-On: Chainlit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 334\n  Hands-On: AG-UI Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 340\n  Hands-On: AG-UI Backend . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 341\n  Hands-On: AG-UI Frontend . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 344\n  Hands-On: AG-UI Side-Channels . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 346\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 349\n\nChapter: Execution Infrastructure                                                                                352\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 352\n  Code Sandbox . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 352\n  REPL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 358\n  MCP Server Isolation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 362\n  Sandboxing Skill Execution . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 365\n  Hands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 366\n  Hands-On: MCP Server Isolation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 366\n  References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 368\n\nChapter: The Complete Agent                                                                                      370\n  Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370\n  First Steps . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370\n  Agent V1: The Coder . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370\n  Agent V2: The Planner . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 371\n  Agent V3: The Skilled . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 372\n  Agent V4: The Coordinator . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 374\n  Agent V5: The Full Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 375\n  Server Requirements . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 377\n  Infrastructure: The Distributed Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 379\n\nChapter: Advanced Agents                                                                                        382\n\n\n                                                         4"
+    },
+    {
+      "id": "rbtxt5",
+      "kind": "text",
+      "value": "2. Chainlit. Chat Life Cycle. Chainlit Documentation, 2025. https://docs.chainlit.io/concepts/chat-\n    lifecycle\n 3. Chainlit. Message. Chainlit Documentation, 2025. https://docs.chainlit.io/api-reference/message\n 4. Chainlit. Streaming. Chainlit Documentation, 2025. https://docs.chainlit.io/advanced-features/strea\n    ming\n 5. Chainlit. Step. Chainlit Documentation, 2025. https://docs.chainlit.io/concepts/step\n 6. Chainlit. Step Class. Chainlit Documentation, 2025. https://docs.chainlit.io/api-reference/step-class\n 7. Chainlit. User Session. Chainlit Documentation, 2025. https://docs.chainlit.io/concepts/user-session\n 8. Chainlit. Deployment Overview. Chainlit Documentation, 2025. https://docs.chainlit.io/deploy/over\n    view\n 9. Chainlit. Authentication Overview. Chainlit Documentation, 2025. https://docs.chainlit.io/authentic\n    ation/overview\n10. Chainlit. LangChain and LangGraph Integration. Chainlit Documentation, 2025. https://docs.chainli\n    t.io/integrations/langchain\n11. Chainlit. LlamaIndex Integration. Chainlit Documentation, 2025. https://docs.chainlit.io/integration\n    s/llama-index\n12. Chainlit. Model Context Protocol (MCP). Chainlit Documentation, 2025. https://docs.chainlit.io/adv\n    anced-features/mcp\n13. AG-UI Protocol Contributors. AG-UI Overview (Introduction). AG-UI Documentation, 2025. https:\n    //docs.ag-ui.com/introduction\n14. AG-UI Protocol Contributors. Events. AG-UI Documentation, 2025. https://docs.ag-ui.com/concept\n    s/events\n15. AG-UI Protocol Contributors. Build applications. AG-UI Documentation, 2025. https://docs.ag-\n    ui.com/quickstart/applications\n16. AG-UI Protocol Contributors. MCP, A2A, and AG-UI. AG-UI Documentation, 2025. https://docs.ag-\n    ui.com/agentic-protocols\n17. Pydantic Services Inc. Agent-User Interaction (AG-UI) Protocol. Pydantic AI Documentation, 2025.\n    https://ai.pydantic.dev/ui/ag-ui/\n18. Pydantic Services Inc. UI Event Streams. Pydantic AI Documentation, 2025. https://ai.pydantic.de\n    v/ui/overview/\n19. Pydantic Services Inc. MCP toolset. Pydantic AI Documentation, 2025. https://ai.pydantic.dev/mcp/\n20. Pydantic Services Inc. Exceptions. Pydantic AI Documentation, 2025. https://ai.pydantic.dev/api/ex\n    ceptions/\n21. FastMCP Contributors. Exceptions. FastMCP Documentation, 2025. https://gofastmcp.com/python-\n    sdk/fastmcp-exceptions\n22. Model Context Protocol Contributors. Tools. Model Context Protocol Specification, 2025. https:\n    //modelcontextprotocol.io/specification/2025-11-25/server/tools\n23. Model Context Protocol Contributors. Cancellation. Model Context Protocol Specification, 2025.\n    https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation\n24. Model Context Protocol Contributors. Elicitation. Model Context Protocol Specification, 2025. https:\n    //modelcontextprotocol.io/specification/2025-11-25/client/elicitation\n25. A2A Protocol Contributors. JSON-RPC Protocol Binding. A2A Specification, 2025. https://a2a-\n    protocol.org/latest/specification/\n26. A2A Protocol Contributors. Protocol Operations. A2A Specification, 2025. https://a2a-protocol.org/l\n    atest/specification/\n27. A2A Protocol Contributors. Task Lifecycle and States. A2A Specification, 2025. https://a2a-protoc\n    ol.org/latest/specification/\n28. FastMCP Contributors. Authentication. FastMCP Documentation, 2025. https://gofastmcp.com/se\n    rvers/auth\n29. AG-UI Protocol Contributors. @ag-ui/client. npm, 2025. https://www.npmjs.com/package/@ag-\n    ui/client\n30. AG-UI Protocol Contributors. @ag-ui/core. npm, 2025. https://www.npmjs.com/package/@ag-\n    ui/core\n\n\n\n                                                 350"
+    },
+    {
+      "id": "rbtxt6",
+      "kind": "text",
+      "value": "g/abs/2309.11495\n13. Xinyu Ma, Jiarui Zhang, Minwei Feng, Tianyu Zhang, Yuexian Zou, Dong Yu. Query Rewriting for\n    Retrieval-Augmented Large Language Models. EMNLP, 2023. https://arxiv.org/abs/2305.14283\n14. Hashemi, Arian, et al. LLM-Rubric: A Multidimensional, Calibrated Approach to Automated Evaluation\n    of Natural Language Texts. ACL, 2024. https://aclanthology.org/2024.acl-long.745/\n15. Electronic Code of Federal Regulations. 45 CFR 164.312 Technical safeguards (HIPAA Security Rule).\n    eCFR, current version. https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-\n    164/subpart-C/section-164.312\n16. Abbas, Amro, et al. SemDeDup: Data-eﬀicient learning at web-scale through semantic deduplication.\n    ICLR, 2023. https://arxiv.org/abs/2303.09540\n17. Joint Task Force. Security and Privacy Controls for Information Systems and Organizations (NIST\n    SP 800-53 Rev. 5). NIST, 2020. https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final\n18. Liu, Yang, et al. G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment. EMNLP, 2023.\n    https://arxiv.org/abs/2303.16634\n19. Zheng, Lianmin, et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS, 2023.\n    https://arxiv.org/abs/2306.05685\n20. David Holloway. ISO 27001 – Annex A.9: Access Control. ISMS.online, 2025. https://www.isms.onl\n    ine/iso-27001/annex-a-2013/annex-a-9-access-control-2013/\n21. OpenAI. Evals: A framework for evaluating LLMs and LLM systems. GitHub repository, 2024. https:\n    //github.com/openai/evals\n22. CocoIndex. Real-time Codebase Indexing (Example). CocoIndex Documentation, 2026. https://coco\n    index.io/examples/code_index\n23. cocoindex-io. realtime-codebase-indexing. GitHub repository, 2026. https://github.com/cocoindex-\n    io/realtime-codebase-indexing\n24. Jin, Linghua (CocoIndex). Build Real-Time Codebase Indexing for AI Coding agents. DEV Community,\n    2025. https://dev.to/cocoindex/build-real-time-codebase-indexing-for-ai-coding-agents-5eb2\n25. cocoindex-io. cocoindex: Data transformation framework for AI. GitHub repository, 2026. https:\n    //github.com/cocoindex-io/cocoindex\n26. Gupta, T., Weihs, L., Kembhavi, A. CodeNav: Beyond tool-use to using real-world codebases with LLM\n    agents. arXiv, 2024. https://arxiv.org/abs/2406.12276\n27. Liu, X. et al. CodexGraph: Bridging Large Language Models and Code Repositories via Code Graph\n    Databases. arXiv, 2024. https://arxiv.org/abs/2408.03910\n28. Microsoft. Presidio: Data Protection and De-identification SDK. Documentation. https://microsoft.\n    github.io/presidio/\n29. Microsoft. Presidio Anonymizer. Documentation. https://microsoft.github.io/presidio/anonymizer/\n30. Ollama. API Introduction. Documentation. https://docs.ollama.com/api/introduction\n31. Helen Nissenbaum. Privacy as Contextual Integrity. Washington Law Review, 2004. https://digitalc\n    ommons.law.uw.edu/wlr/vol79/iss1/10/\n32. European Union. General Data Protection Regulation, Article 4(5): Definition of ‘pseudonymisation’.\n    https://gdpr-info.eu/art-4-gdpr/\n33. Information Commissioner’s Oﬀice (UK). Pseudonymisation. Guidance. https://ico.org.uk/for-organi\n    sations/uk-gdpr-guidance-and-resources/data-sharing/anonymisation/pseudonymisation/\n34. Morris Dworkin (NIST). Recommendation for Block Cipher Modes of Operation: Methods for Format-\n    Preserving Encryption (SP 800-38G Rev. 1). NIST, 2019/2025. https://csrc.nist.gov/pubs/sp/800/\n    38/g/r1/ipd\n35. Latanya Sweeney. k-anonymity: A Model for Protecting Privacy. International Journal on Uncertainty,\n    Fuzziness and Knowledge-based Systems, 2002. https://dl.acm.org/doi/10.1142/S0218488502001648\n36. A. Stubbs, C. Kotfila, O. Uzuner. Automated systems for the de-identification of longitudinal clinical\n    narratives: Overview of the 2014 i2b2/UTHealth shared task Track 1. Journal of Biomedical Informatics,\n    2015. https://pmc.ncbi.nlm.nih.gov/articles/PMC4989908/\n\n\n\n\n                                                  399"
+    }
+  ],
+  "relations": [
+    {
+      "id": "relb-rc1",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp1"
+    },
+    {
+      "id": "relb-hc1",
+      "kind": "has-content",
+      "from": "rbp1",
+      "to": "rbtxt1"
+    },
+    {
+      "id": "relb-rc2",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp2"
+    },
+    {
+      "id": "relb-hc2",
+      "kind": "has-content",
+      "from": "rbp2",
+      "to": "rbtxt2"
+    },
+    {
+      "id": "relb-rc3",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp3"
+    },
+    {
+      "id": "relb-hc3",
+      "kind": "has-content",
+      "from": "rbp3",
+      "to": "rbtxt3"
+    },
+    {
+      "id": "relb-rc4",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp4"
+    },
+    {
+      "id": "relb-hc4",
+      "kind": "has-content",
+      "from": "rbp4",
+      "to": "rbtxt4"
+    },
+    {
+      "id": "relb-rc5",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp5"
+    },
+    {
+      "id": "relb-hc5",
+      "kind": "has-content",
+      "from": "rbp5",
+      "to": "rbtxt5"
+    },
+    {
+      "id": "relb-rc6",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp6"
+    },
+    {
+      "id": "relb-hc6",
+      "kind": "has-content",
+      "from": "rbp6",
+      "to": "rbtxt6"
+    }
+  ],
+  "annotations": [],
+  "evidence": [
+    {
+      "id": "evb-txt1",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+      "content_ids": [
+        "rbtxt1"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evb-txt2",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+      "content_ids": [
+        "rbtxt2"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evb-txt3",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+      "content_ids": [
+        "rbtxt3"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evb-txt4",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+      "content_ids": [
+        "rbtxt4"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evb-txt5",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:5",
+      "content_ids": [
+        "rbtxt5"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evb-txt6",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:6",
+      "content_ids": [
+        "rbtxt6"
+      ],
+      "selector_ids": []
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:1",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:1",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:1",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:2",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:2",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:2",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:3",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:3",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:3",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:4",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:4",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:4",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:1",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:2",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:3",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:4",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:5",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:6",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded files",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "pb-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory-b.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "pb-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest-b.json",
+      "version": "1",
+      "sha256": "7fb3b33f19deaea756b39a06cc77bc54aaac3e6926c34982f99492d0bb3dacba"
+    }
+  ]
+}

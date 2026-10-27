@@ -1,0 +1,238 @@
+{
+  "version": "0.3",
+  "id": "reader-b-agentic-patterns-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66",
+    "locator": "fixtures/carriers/agentic-patterns-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "vb-main",
+      "kind": "physical",
+      "root": "rb-root"
+    },
+    {
+      "id": "vb-log",
+      "kind": "logical",
+      "root": "rb-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "rb-root",
+      "view_id": "vb-main",
+      "kind": "document"
+    },
+    {
+      "id": "rb-log",
+      "view_id": "vb-log",
+      "kind": "article"
+    },
+    {
+      "id": "rbp5",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp6",
+      "view_id": "vb-main",
+      "kind": "page"
+    }
+  ],
+  "contents": [
+    {
+      "id": "rbtxt5",
+      "kind": "text",
+      "value": "2. Chainlit. Chat Life Cycle. Chainlit Documentation, 2025. https://docs.chainlit.io/concepts/chat-\n    lifecycle\n 3. Chainlit. Message. Chainlit Documentation, 2025. https://docs.chainlit.io/api-reference/message\n 4. Chainlit. Streaming. Chainlit Documentation, 2025. https://docs.chainlit.io/advanced-features/strea\n    ming\n 5. Chainlit. Step. Chainlit Documentation, 2025. https://docs.chainlit.io/concepts/step\n 6. Chainlit. Step Class. Chainlit Documentation, 2025. https://docs.chainlit.io/api-reference/step-class\n 7. Chainlit. User Session. Chainlit Documentation, 2025. https://docs.chainlit.io/concepts/user-session\n 8. Chainlit. Deployment Overview. Chainlit Documentation, 2025. https://docs.chainlit.io/deploy/over\n    view\n 9. Chainlit. Authentication Overview. Chainlit Documentation, 2025. https://docs.chainlit.io/authentic\n    ation/overview\n10. Chainlit. LangChain and LangGraph Integration. Chainlit Documentation, 2025. https://docs.chainli\n    t.io/integrations/langchain\n11. Chainlit. LlamaIndex Integration. Chainlit Documentation, 2025. https://docs.chainlit.io/integration\n    s/llama-index\n12. Chainlit. Model Context Protocol (MCP). Chainlit Documentation, 2025. https://docs.chainlit.io/adv\n    anced-features/mcp\n13. AG-UI Protocol Contributors. AG-UI Overview (Introduction). AG-UI Documentation, 2025. https:\n    //docs.ag-ui.com/introduction\n14. AG-UI Protocol Contributors. Events. AG-UI Documentation, 2025. https://docs.ag-ui.com/concept\n    s/events\n15. AG-UI Protocol Contributors. Build applications. AG-UI Documentation, 2025. https://docs.ag-\n    ui.com/quickstart/applications\n16. AG-UI Protocol Contributors. MCP, A2A, and AG-UI. AG-UI Documentation, 2025. https://docs.ag-\n    ui.com/agentic-protocols\n17. Pydantic Services Inc. Agent-User Interaction (AG-UI) Protocol. Pydantic AI Documentation, 2025.\n    https://ai.pydantic.dev/ui/ag-ui/\n18. Pydantic Services Inc. UI Event Streams. Pydantic AI Documentation, 2025. https://ai.pydantic.de\n    v/ui/overview/\n19. Pydantic Services Inc. MCP toolset. Pydantic AI Documentation, 2025. https://ai.pydantic.dev/mcp/\n20. Pydantic Services Inc. Exceptions. Pydantic AI Documentation, 2025. https://ai.pydantic.dev/api/ex\n    ceptions/\n21. FastMCP Contributors. Exceptions. FastMCP Documentation, 2025. https://gofastmcp.com/python-\n    sdk/fastmcp-exceptions\n22. Model Context Protocol Contributors. Tools. Model Context Protocol Specification, 2025. https:\n    //modelcontextprotocol.io/specification/2025-11-25/server/tools\n23. Model Context Protocol Contributors. Cancellation. Model Context Protocol Specification, 2025.\n    https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/cancellation\n24. Model Context Protocol Contributors. Elicitation. Model Context Protocol Specification, 2025. https:\n    //modelcontextprotocol.io/specification/2025-11-25/client/elicitation\n25. A2A Protocol Contributors. JSON-RPC Protocol Binding. A2A Specification, 2025. https://a2a-\n    protocol.org/latest/specification/\n26. A2A Protocol Contributors. Protocol Operations. A2A Specification, 2025. https://a2a-protocol.org/l\n    atest/specification/\n27. A2A Protocol Contributors. Task Lifecycle and States. A2A Specification, 2025. https://a2a-protoc\n    ol.org/latest/specification/\n28. FastMCP Contributors. Authentication. FastMCP Documentation, 2025. https://gofastmcp.com/se\n    rvers/auth\n29. AG-UI Protocol Contributors. @ag-ui/client. npm, 2025. https://www.npmjs.com/package/@ag-\n    ui/client\n30. AG-UI Protocol Contributors. @ag-ui/core. npm, 2025. https://www.npmjs.com/package/@ag-\n    ui/core\n\n\n\n                                                 350"
+    },
+    {
+      "id": "rbtxt6",
+      "kind": "text",
+      "value": "g/abs/2309.11495\n13. Xinyu Ma, Jiarui Zhang, Minwei Feng, Tianyu Zhang, Yuexian Zou, Dong Yu. Query Rewriting for\n    Retrieval-Augmented Large Language Models. EMNLP, 2023. https://arxiv.org/abs/2305.14283\n14. Hashemi, Arian, et al. LLM-Rubric: A Multidimensional, Calibrated Approach to Automated Evaluation\n    of Natural Language Texts. ACL, 2024. https://aclanthology.org/2024.acl-long.745/\n15. Electronic Code of Federal Regulations. 45 CFR 164.312 Technical safeguards (HIPAA Security Rule).\n    eCFR, current version. https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-\n    164/subpart-C/section-164.312\n16. Abbas, Amro, et al. SemDeDup: Data-eﬀicient learning at web-scale through semantic deduplication.\n    ICLR, 2023. https://arxiv.org/abs/2303.09540\n17. Joint Task Force. Security and Privacy Controls for Information Systems and Organizations (NIST\n    SP 800-53 Rev. 5). NIST, 2020. https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final\n18. Liu, Yang, et al. G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment. EMNLP, 2023.\n    https://arxiv.org/abs/2303.16634\n19. Zheng, Lianmin, et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS, 2023.\n    https://arxiv.org/abs/2306.05685\n20. David Holloway. ISO 27001 – Annex A.9: Access Control. ISMS.online, 2025. https://www.isms.onl\n    ine/iso-27001/annex-a-2013/annex-a-9-access-control-2013/\n21. OpenAI. Evals: A framework for evaluating LLMs and LLM systems. GitHub repository, 2024. https:\n    //github.com/openai/evals\n22. CocoIndex. Real-time Codebase Indexing (Example). CocoIndex Documentation, 2026. https://coco\n    index.io/examples/code_index\n23. cocoindex-io. realtime-codebase-indexing. GitHub repository, 2026. https://github.com/cocoindex-\n    io/realtime-codebase-indexing\n24. Jin, Linghua (CocoIndex). Build Real-Time Codebase Indexing for AI Coding agents. DEV Community,\n    2025. https://dev.to/cocoindex/build-real-time-codebase-indexing-for-ai-coding-agents-5eb2\n25. cocoindex-io. cocoindex: Data transformation framework for AI. GitHub repository, 2026. https:\n    //github.com/cocoindex-io/cocoindex\n26. Gupta, T., Weihs, L., Kembhavi, A. CodeNav: Beyond tool-use to using real-world codebases with LLM\n    agents. arXiv, 2024. https://arxiv.org/abs/2406.12276\n27. Liu, X. et al. CodexGraph: Bridging Large Language Models and Code Repositories via Code Graph\n    Databases. arXiv, 2024. https://arxiv.org/abs/2408.03910\n28. Microsoft. Presidio: Data Protection and De-identification SDK. Documentation. https://microsoft.\n    github.io/presidio/\n29. Microsoft. Presidio Anonymizer. Documentation. https://microsoft.github.io/presidio/anonymizer/\n30. Ollama. API Introduction. Documentation. https://docs.ollama.com/api/introduction\n31. Helen Nissenbaum. Privacy as Contextual Integrity. Washington Law Review, 2004. https://digitalc\n    ommons.law.uw.edu/wlr/vol79/iss1/10/\n32. European Union. General Data Protection Regulation, Article 4(5): Definition of ‘pseudonymisation’.\n    https://gdpr-info.eu/art-4-gdpr/\n33. Information Commissioner’s Oﬀice (UK). Pseudonymisation. Guidance. https://ico.org.uk/for-organi\n    sations/uk-gdpr-guidance-and-resources/data-sharing/anonymisation/pseudonymisation/\n34. Morris Dworkin (NIST). Recommendation for Block Cipher Modes of Operation: Methods for Format-\n    Preserving Encryption (SP 800-38G Rev. 1). NIST, 2019/2025. https://csrc.nist.gov/pubs/sp/800/\n    38/g/r1/ipd\n35. Latanya Sweeney. k-anonymity: A Model for Protecting Privacy. International Journal on Uncertainty,\n    Fuzziness and Knowledge-based Systems, 2002. https://dl.acm.org/doi/10.1142/S0218488502001648\n36. A. Stubbs, C. Kotfila, O. Uzuner. Automated systems for the de-identification of longitudinal clinical\n    narratives: Overview of the 2014 i2b2/UTHealth shared task Track 1. Journal of Biomedical Informatics,\n    2015. https://pmc.ncbi.nlm.nih.gov/articles/PMC4989908/\n\n\n\n\n                                                  399"
+    }
+  ],
+  "relations": [
+    {
+      "id": "relb-rc5",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp5"
+    },
+    {
+      "id": "relb-hc5",
+      "kind": "has-content",
+      "from": "rbp5",
+      "to": "rbtxt5"
+    },
+    {
+      "id": "relb-rc6",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp6"
+    },
+    {
+      "id": "relb-hc6",
+      "kind": "has-content",
+      "from": "rbp6",
+      "to": "rbtxt6"
+    }
+  ],
+  "annotations": [],
+  "evidence": [
+    {
+      "id": "evb-txt5",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:5",
+      "content_ids": [
+        "rbtxt5"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evb-txt6",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:6",
+      "content_ids": [
+        "rbtxt6"
+      ],
+      "selector_ids": []
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:5",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:6",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded files",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "pb-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory-b.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "pb-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest-b.json",
+      "version": "1",
+      "sha256": "7fb3b33f19deaea756b39a06cc77bc54aaac3e6926c34982f99492d0bb3dacba"
+    }
+  ]
+}

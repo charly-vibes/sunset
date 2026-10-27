@@ -1,0 +1,177 @@
+{
+  "version": "0.3",
+  "id": "adapter-bank-statement-ca-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2",
+    "locator": "fixtures/carriers/bank-statement-ca-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "v-main",
+      "kind": "physical",
+      "root": "r-root"
+    },
+    {
+      "id": "v-log",
+      "kind": "logical",
+      "root": "r-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "r-root",
+      "view_id": "v-main",
+      "kind": "document"
+    },
+    {
+      "id": "r-log",
+      "view_id": "v-log",
+      "kind": "article"
+    },
+    {
+      "id": "pg1",
+      "view_id": "v-main",
+      "kind": "page"
+    }
+  ],
+  "contents": [
+    {
+      "id": "txt1",
+      "kind": "text",
+      "value": "Resumen \n al 21/09/2017\nCaja de Ahorro ARS\nSALDO ANTERIOR 1.234,56\nBanco Mock"
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-rc1",
+      "kind": "contains",
+      "from": "r-root",
+      "to": "pg1"
+    },
+    {
+      "id": "rel-hc1",
+      "kind": "has-content",
+      "from": "pg1",
+      "to": "txt1"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "an1-1",
+      "target": "txt1",
+      "term": "ex:text",
+      "value": "ES: One-page 'Resumen' sheet: sparse 78-character text layer over a graphic layout; mocked balance rendered as decorative type.",
+      "origin": "source",
+      "status": "supported",
+      "evidence": [
+        "ev-txt1"
+      ],
+      "view_id": "v-main"
+    },
+    {
+      "id": "an1-2",
+      "target": "txt1",
+      "term": "ex:highlight",
+      "value": "reader-A",
+      "origin": "source",
+      "status": "supported",
+      "evidence": [
+        "ev-txt1"
+      ],
+      "view_id": "v-main"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-txt1",
+      "origin": "source",
+      "source_ref": "sha256:18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2#page:1",
+      "content_ids": [
+        "txt1"
+      ],
+      "selector_ids": []
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:1",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:images",
+      "scope": "page:1",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:vectors",
+      "scope": "page:1",
+      "status": "approximated",
+      "reason": "vector presence observed; geometry not extracted",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:annotations",
+      "scope": "page:1",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "p-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "p-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest.json",
+      "version": "1",
+      "sha256": "88b829b3443275b39950440508dfde8b44574a9e22d2035481fba322ba178a5e"
+    }
+  ]
+}

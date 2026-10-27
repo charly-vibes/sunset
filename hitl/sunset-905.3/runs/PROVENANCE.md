@@ -73,3 +73,50 @@ agent-executed and labeled as such).
   conflict (human pass supersedes, per recorded-deviations policy) and
   serves as the reference set until reader-b returns.
 - sha256: `60e0bd437953d19a7d1b14e9c5cd18c5f9fc41835cbd08ae8fceb01888fc313c`
+
+## Update (2026-10-27): returned reader-b Diario sheet
+
+Ingested unchanged from `../diario-de-poesia-excerpt-reader-b.observations.json`
+into `reader-b/diario-de-poesia-excerpt.observations.json`.
+SHA256: `8624a3518ae6d5edbcfe13c311dc3e21f245b4ad739a0464c1ccf33a0005bece`.
+The loose reader-a sheet is byte-identical to the already ingested baseline
+(`60e0bd437953d19a7d1b14e9c5cd18c5f9fc41835cbd08ae8fceb01888fc313c`).
+
+Reader-b records 81 page-relative regions, all typed text, 6 page inventory
+entries, 6 space entries, one context entry, and 16 elapsed minutes. Its
+`prefill_provenance.order_ranks` is `derived_from_arrangement`: ranks are
+not treated as independent human reading-order observations. Owner confirmed on 2026-10-27 that reader-b is a second human who worked
+independently without seeing reader-a’s sheet or discussing the carrier.
+The two-independent-human-readers condition is therefore met for Diario only. No source observations were normalized or corrected.
+
+See `../agreement-matrix-diario-returned.org` for the scoped comparison and
+remaining gates. Only Diario has a returned A/B pair; the native PDF, EPUB,
+and financial-statement human pairs remain outstanding. The ticket remains
+open pending these and the owner gate.
+
+## Update (2026-10-27): owner authorizes regions-first type inference
+
+Owner noted manual marking remains tedious and authorized using the regions
+and inferring their types. Reader-b’s raw all-text values are retained but
+not treated as deliberate human classifications for this experiment.
+The assistant visually inspected all six carrier pages with numbered boxes
+and produced `../inferences/diario-de-poesia-excerpt-reader-b.types.json`
+and the readable `.org` companion. All 81 source boxes are preserved;
+63 suggestions are clear and 18 tentative with alternatives. Source/carrier
+digests bind the sidecar to the returned evidence. No reader-a labels were
+transferred, but the agent had prior reader-a context: this is NOT an
+independent reader run. No human acceptance is asserted. These machine
+suggestions supplement, and do not replace, the human-only comparison.
+
+## Owner scope update (2026-10-27): six returned PDF sheets
+
+Owner accepts the six returned observations as the complete required input set for sunset-905.3. EPUB is waived for this ticket because the app does not render it. This is a scoped waiver, not EPUB conformance. The four new sheets use the same reader-a/reader-b identities as the previously confirmed independent human pair; no new reader execution was performed by the agent. Raw submissions are copied byte-for-byte.
+
+```
+ad87280135f2eb72913828ea71dd7a312d2b71d939187192f4bad50a62fc6c7a  reader-a/agentic-patterns-excerpt.observations.json
+8703e6fb66566c1ee7bc2cd7b7df1d54d3cb95934a04406d51a016b9f7d1a45e  reader-b/agentic-patterns-excerpt.observations.json
+594d7f7d971f33a391c4481124e2e63fd286435a7b266fcd40d12af43e8d3e0c  reader-a/bank-statement-ca-excerpt.observations.json
+ccb06c3c032bc901922d476dcdd44dc853487f42f37517d07e53a61e37e9a4dc  reader-b/bank-statement-ca-excerpt.observations.json
+```
+
+These supersede the earlier statements that native-PDF and bank-statement pairs are missing. Blank types remain unclassified; derived ranks remain machine-derived; empty sections remain unknown. See ../agreement-matrix-human-returned.org for review. No broad conformance claim follows from receipt of the six sheets.

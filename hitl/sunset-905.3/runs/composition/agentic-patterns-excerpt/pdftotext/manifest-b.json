@@ -1,0 +1,9 @@
+{
+ "adapter_id": "sunset-reader-b",
+ "adapter_version": "0.1",
+ "features": [
+  "pdf:glyphs"
+ ],
+ "source_format": "application/pdf",
+ "version": "1"
+}

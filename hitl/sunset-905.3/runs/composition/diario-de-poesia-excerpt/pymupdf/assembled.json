@@ -1,0 +1,429 @@
+{
+  "status": "assembled",
+  "descriptor": {
+    "version": "0.3",
+    "id": "adapter-diario-de-poesia-excerpt",
+    "source": {
+      "format": "application/pdf",
+      "sha256": "42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4",
+      "locator": "fixtures/carriers/diario-de-poesia-excerpt.pdf"
+    },
+    "vocabularies": [
+      {
+        "namespace": "ex",
+        "version": "1"
+      }
+    ],
+    "views": [
+      {
+        "id": "v-main",
+        "kind": "physical",
+        "root": "r-root"
+      },
+      {
+        "id": "v-log",
+        "kind": "logical",
+        "root": "r-log"
+      }
+    ],
+    "regions": [
+      {
+        "id": "r-root",
+        "view_id": "v-main",
+        "kind": "document"
+      },
+      {
+        "id": "r-log",
+        "view_id": "v-log",
+        "kind": "article"
+      },
+      {
+        "id": "pg1",
+        "view_id": "v-main",
+        "kind": "page"
+      },
+      {
+        "id": "pg2",
+        "view_id": "v-main",
+        "kind": "page"
+      },
+      {
+        "id": "pg3",
+        "view_id": "v-main",
+        "kind": "page"
+      },
+      {
+        "id": "pg4",
+        "view_id": "v-main",
+        "kind": "page"
+      },
+      {
+        "id": "pg5",
+        "view_id": "v-main",
+        "kind": "page"
+      },
+      {
+        "id": "pg6",
+        "view_id": "v-main",
+        "kind": "page"
+      }
+    ],
+    "contents": [],
+    "relations": [
+      {
+        "id": "rel-rc1",
+        "kind": "contains",
+        "from": "r-root",
+        "to": "pg1"
+      },
+      {
+        "id": "rel-rc2",
+        "kind": "contains",
+        "from": "r-root",
+        "to": "pg2"
+      },
+      {
+        "id": "rel-rc3",
+        "kind": "contains",
+        "from": "r-root",
+        "to": "pg3"
+      },
+      {
+        "id": "rel-rc4",
+        "kind": "contains",
+        "from": "r-root",
+        "to": "pg4"
+      },
+      {
+        "id": "rel-rc5",
+        "kind": "contains",
+        "from": "r-root",
+        "to": "pg5"
+      },
+      {
+        "id": "rel-rc6",
+        "kind": "contains",
+        "from": "r-root",
+        "to": "pg6"
+      }
+    ],
+    "annotations": [
+      {
+        "id": "an1-1",
+        "target": "pg1",
+        "term": "ex:text",
+        "value": "ES: Image-only scan (6 pp, no text layer): 1986 newspaper-format literary periodical front page; dense multi-column layout mixing photos and type.",
+        "origin": "source",
+        "status": "asserted_without_evidence",
+        "evidence": [],
+        "view_id": "v-main"
+      },
+      {
+        "id": "an1-2",
+        "target": "pg1",
+        "term": "ex:square",
+        "value": "ES: information-dense region of image-only page 1",
+        "origin": "source",
+        "status": "asserted_without_evidence",
+        "evidence": [],
+        "view_id": "v-main"
+      }
+    ],
+    "evidence": [],
+    "selectors": [],
+    "interpretations": [],
+    "profiles": [
+      {
+        "id": "p-inv",
+        "kind": "carrier-inventory",
+        "uri": "inventory.json",
+        "version": "1",
+        "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+      },
+      {
+        "id": "p-man",
+        "kind": "adapter-manifest",
+        "uri": "manifest.json",
+        "version": "1",
+        "sha256": "88b829b3443275b39950440508dfde8b44574a9e22d2035481fba322ba178a5e"
+      }
+    ],
+    "coverage": [
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:1",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:images",
+        "scope": "page:1",
+        "status": "approximated",
+        "reason": "image presence observed; pixels not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:vectors",
+        "scope": "page:1",
+        "status": "approximated",
+        "reason": "vector presence observed; geometry not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:annotations",
+        "scope": "page:1",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:2",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:images",
+        "scope": "page:2",
+        "status": "approximated",
+        "reason": "image presence observed; pixels not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:vectors",
+        "scope": "page:2",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:annotations",
+        "scope": "page:2",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:attachments",
+        "scope": "document",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:3",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:images",
+        "scope": "page:3",
+        "status": "approximated",
+        "reason": "image presence observed; pixels not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:vectors",
+        "scope": "page:3",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:annotations",
+        "scope": "page:3",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:4",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:images",
+        "scope": "page:4",
+        "status": "approximated",
+        "reason": "image presence observed; pixels not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:vectors",
+        "scope": "page:4",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:annotations",
+        "scope": "page:4",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:5",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:images",
+        "scope": "page:5",
+        "status": "approximated",
+        "reason": "image presence observed; pixels not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:vectors",
+        "scope": "page:5",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:annotations",
+        "scope": "page:5",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:glyphs",
+        "scope": "page:6",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:images",
+        "scope": "page:6",
+        "status": "approximated",
+        "reason": "image presence observed; pixels not extracted",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:vectors",
+        "scope": "page:6",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      },
+      {
+        "inventory_id": "p-inv",
+        "manifest_id": "p-man",
+        "feature": "pdf:annotations",
+        "scope": "page:6",
+        "status": "preserved",
+        "reason": "",
+        "adapter_id": "sunset-carrier",
+        "adapter_version": "0.1",
+        "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+      }
+    ]
+  }
+}

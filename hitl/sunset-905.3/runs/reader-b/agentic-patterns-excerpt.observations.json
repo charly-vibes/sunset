@@ -1,0 +1,734 @@
+{
+  "reader": "reader-b",
+  "carrier": "agentic-patterns-excerpt",
+  "elapsed_minutes": 3,
+  "page_frames": {
+    "1": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    },
+    "2": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    },
+    "3": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    },
+    "4": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    },
+    "5": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 966,
+      "viewport_h": 1250
+    },
+    "6": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1,
+      "viewport_w": 618,
+      "viewport_h": 800
+    }
+  },
+  "page_inventory": [],
+  "structure": [
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3977,
+        "y": 0.1322,
+        "w": 0.2065,
+        "h": 0.03,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "1",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2144,
+        "y": 0.1688,
+        "w": 0.5691,
+        "h": 0.0168,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "2",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1081,
+        "y": 0.2582,
+        "w": 0.1359,
+        "h": 0.0366,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "3",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1019,
+        "y": 0.2966,
+        "w": 0.132,
+        "h": 0.0192,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "4",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1019,
+        "y": 0.3248,
+        "w": 0.2477,
+        "h": 0.0222,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "5",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1034,
+        "y": 0.3488,
+        "w": 0.8075,
+        "h": 0.1938,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "6",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1073,
+        "y": 0.5552,
+        "w": 0.3121,
+        "h": 0.015,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "7",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 1,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1337,
+        "y": 0.5702,
+        "w": 0.771,
+        "h": 0.3354,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 1 (drawn region)",
+      "order_rank": "8",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1104,
+        "y": 0.089,
+        "w": 0.7842,
+        "h": 0.018,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "9",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1267,
+        "y": 0.1082,
+        "w": 0.7655,
+        "h": 0.2688,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "10",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1143,
+        "y": 0.3884,
+        "w": 0.7857,
+        "h": 0.0162,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "11",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1283,
+        "y": 0.4076,
+        "w": 0.764,
+        "h": 0.1986,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "12",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1143,
+        "y": 0.6146,
+        "w": 0.7865,
+        "h": 0.0162,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "13",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1298,
+        "y": 0.632,
+        "w": 0.7671,
+        "h": 0.2262,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "14",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.112,
+        "y": 0.8696,
+        "w": 0.7865,
+        "h": 0.0144,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "15",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 2,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1329,
+        "y": 0.8852,
+        "w": 0.764,
+        "h": 0.0162,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 2 (drawn region)",
+      "order_rank": "16",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1314,
+        "y": 0.086,
+        "w": 0.7593,
+        "h": 0.126,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "17",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1065,
+        "y": 0.2228,
+        "w": 0.788,
+        "h": 0.0168,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "18",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1321,
+        "y": 0.2438,
+        "w": 0.7624,
+        "h": 0.1476,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "19",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1151,
+        "y": 0.4028,
+        "w": 0.7756,
+        "h": 0.015,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "20",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1321,
+        "y": 0.4178,
+        "w": 0.7523,
+        "h": 0.1368,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "21",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1174,
+        "y": 0.5642,
+        "w": 0.7725,
+        "h": 0.0192,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "22",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1376,
+        "y": 0.5846,
+        "w": 0.7539,
+        "h": 0.195,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "23",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1104,
+        "y": 0.7886,
+        "w": 0.7826,
+        "h": 0.015,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "24",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 3,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1298,
+        "y": 0.8042,
+        "w": 0.7648,
+        "h": 0.1164,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 3 (drawn region)",
+      "order_rank": "25",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1182,
+        "y": 0.089,
+        "w": 0.771,
+        "h": 0.0678,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "26",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1089,
+        "y": 0.1652,
+        "w": 0.7787,
+        "h": 0.0156,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "27",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1321,
+        "y": 0.1784,
+        "w": 0.7547,
+        "h": 0.1668,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "28",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1089,
+        "y": 0.3614,
+        "w": 0.778,
+        "h": 0.0114,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "29",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1298,
+        "y": 0.3728,
+        "w": 0.7601,
+        "h": 0.1968,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "30",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1112,
+        "y": 0.5798,
+        "w": 0.7733,
+        "h": 0.0174,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "31",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1259,
+        "y": 0.5972,
+        "w": 0.7601,
+        "h": 0.123,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "32",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1065,
+        "y": 0.728,
+        "w": 0.7911,
+        "h": 0.0174,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "33",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.136,
+        "y": 0.749,
+        "w": 0.7585,
+        "h": 0.1344,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "34",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 4,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1143,
+        "y": 0.8894,
+        "w": 0.7857,
+        "h": 0.0198,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 4 (drawn region)",
+      "order_rank": "35",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 5,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1143,
+        "y": 0.08,
+        "w": 0.7937,
+        "h": 0.8194,
+        "viewport_w": 966,
+        "viewport_h": 1250
+      },
+      "evidence": "page 5 (drawn region)",
+      "order_rank": "36",
+      "order_alternatives": []
+    },
+    {
+      "label": "",
+      "type": "",
+      "page": 6,
+      "depth": 0,
+      "bbox": {
+        "relative": "page",
+        "x": 0.1095,
+        "y": 0.0838,
+        "w": 0.7913,
+        "h": 0.7688,
+        "viewport_w": 618,
+        "viewport_h": 800
+      },
+      "evidence": "page 6 (drawn region)",
+      "order_rank": "37",
+      "order_alternatives": []
+    }
+  ],
+  "relations": [],
+  "space": [],
+  "context": [],
+  "annotations": [],
+  "losses": [],
+  "uncertainties": [],
+  "notes": "",
+  "prefill_provenance": {
+    "order_ranks": "derived_from_arrangement"
+  }
+}

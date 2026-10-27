@@ -1,0 +1,5 @@
+---
+tags: [pipeline-run:epic-orchestrator-2026-10-19-sunset-xx7-lens-mvp-orchestration, pipeline-step:claim]
+---
+
+sunset-905.3 returned-sheet ingest (2026-10-27): reader-a loose Diario sheet is identical to existing human baseline; reader-b preserved unchanged with digest 8624a3518ae6d5edbcfe13c311dc3e21f245b4ad739a0464c1ccf33a0005bece. Scoped comparison in hitl/sunset-905.3/agreement-matrix-diario-returned.org retains 2 AGREE and 17 UNKNOWN. Region counts differ; labels absent, no identity correspondence or winner inferred. All B types are text; ranks explicitly derived_from_arrangement. Human independence and type intent require owner confirmation; human pairs for other three carriers absent. Quality ledger: Changed reader-b evidence copy, provenance, matrix, ingestion regression; Verified red missing-file then green 7/7 targeted tests, diff --check; Review self-reviewed source counts and provenance; Risks incomplete human coverage and unknown independence; Next full spec-check and owner gates. No commit/push or closure.

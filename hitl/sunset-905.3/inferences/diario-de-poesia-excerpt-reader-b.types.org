@@ -1,0 +1,114 @@
+#+title: Inferred Diario region types — reader-b
+#+date: 2026-10-27
+
+* Result
+81 human-drawn regions retained unchanged. Types are agent inferences from
+the six rendered carrier pages, not independent human judgments or accepted
+reference labels. The raw all-text sheet remains unchanged.
+
+The owner authorized using regions and inferring types to reduce annotation
+effort. No manual classification of every box is required for this experiment.
+Human corrections are optional and must be recorded separately if supplied.
+
+Counts: 1 footer, 6 header, 11 heading, 9 image, 8 list, 2 other, 40 text, 4 title.
+18 tentative results retain alternatives; the other 63 are clear visual readings.
+Qualitative certainty is not a calibrated confidence score.
+
+* Reproduce the evidence view
+Render bundle/carriers/diario-de-poesia-excerpt.pdf; overlay each bbox using
+page width/height times normalized x/y/w/h; label with source_index + 1.
+Inspect in full-page context. All source boxes, including mixed-content or
+partially clipped ones, are retained. No OCR, extraction, or reader-a label
+transfer was used. The agent had prior reader-a context, so this is not an
+independent reader run. Digests and exact bboxes are in the JSON sidecar.
+
+* Suggestions
+| Box (1-based) | Page | Suggested type | Certainty | Alternatives | Visual reason |
+|---+---+---+---+---+---|
+| 1 | 1 | header | tentative | title | Cover masthead and issue information. |
+| 2 | 1 | text | clear | — | Prose block visible inside the drawn region. |
+| 3 | 1 | heading | clear | — | Display heading above Juan L. Ortiz portrait. |
+| 4 | 1 | image | clear | — | Photographic portrait. |
+| 5 | 1 | text | clear | — | Prose block visible inside the drawn region. |
+| 6 | 1 | image | tentative | other, text | Graphic portrait; top of box overlaps preceding prose. |
+| 7 | 1 | image | clear | — | Large central photograph. |
+| 8 | 1 | heading | clear | — | Display headline above article excerpt. |
+| 9 | 1 | text | clear | — | Prose block visible inside the drawn region. |
+| 10 | 1 | image | clear | — | Photographic portrait. |
+| 11 | 1 | heading | clear | — | Display headline below portrait. |
+| 12 | 1 | text | clear | — | Prose block visible inside the drawn region. |
+| 13 | 1 | text | clear | — | Prose block visible inside the drawn region. |
+| 14 | 1 | image | clear | — | Cartoon illustration. |
+| 15 | 1 | heading | clear | — | Display heading above competition notice. |
+| 16 | 1 | text | clear | — | Prose block visible inside the drawn region. |
+| 17 | 1 | heading | clear | — | Large multiline headline. |
+| 18 | 1 | image | clear | — | Photographic group portrait. |
+| 19 | 2 | header | clear | — | Running header with folio and publication name. |
+| 20 | 2 | heading | clear | — | Contents heading. |
+| 21 | 2 | heading | clear | — | Editorial heading. |
+| 22 | 2 | heading | clear | — | Column heading. |
+| 23 | 2 | list | clear | — | Contents entries with page references. |
+| 24 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 25 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 26 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 27 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 28 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 29 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 30 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 31 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 32 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 33 | 2 | image | tentative | caption, other | Portrait with its caption included in the same box. |
+| 34 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 35 | 2 | image | tentative | other, text | Framed illustrated facsimile including handwriting and verse; mixed content. |
+| 36 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 37 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 38 | 2 | text | clear | — | Prose block visible inside the drawn region. |
+| 39 | 2 | other | tentative | header, title | Publication logo and issue metadata grouped together. |
+| 40 | 2 | text | clear | — | Editorial staff credits. |
+| 41 | 3 | header | clear | — | Running header and folio. |
+| 42 | 3 | title | clear | — | Article title across the page. |
+| 43 | 3 | text | tentative | heading | Bold introductory prose, not an article title. |
+| 44 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 45 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 46 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 47 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 48 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 49 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 50 | 3 | text | tentative | other | Italic pull quotation within the article. |
+| 51 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 52 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 53 | 3 | image | clear | — | Large photograph. |
+| 54 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 55 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 56 | 3 | text | clear | — | Prose block visible inside the drawn region. |
+| 57 | 4 | header | clear | — | Running section header and folio. |
+| 58 | 4 | title | tentative | other | Poem title with author/translator line in the same box. |
+| 59 | 4 | text | clear | — | Poem text, left column. |
+| 60 | 4 | text | clear | — | Poem text, right column. |
+| 61 | 4 | footer | clear | — | Publication note in bottom margin. |
+| 62 | 5 | header | clear | — | Running section header and folio. |
+| 63 | 5 | title | tentative | other | Poem title and attribution grouped together. |
+| 64 | 5 | text | clear | — | Poem text, left column. |
+| 65 | 5 | text | clear | — | Poem text, middle column. |
+| 66 | 5 | text | clear | — | Poem text, right column. |
+| 67 | 6 | header | clear | — | Running header and folio. |
+| 68 | 6 | list | tentative | other | Bulleted bibliography interspersed with commentary. |
+| 69 | 6 | title | clear | — | Article title. |
+| 70 | 6 | text | clear | — | Article prose, left column. |
+| 71 | 6 | text | clear | — | Article prose, right column with author credit. |
+| 72 | 6 | other | tentative | list, text | Quotation/commentary followed by bibliography entries; mixed content. |
+| 73 | 6 | list | tentative | other | Bulleted bibliography with intervening prose commentary. |
+| 74 | 6 | list | tentative | other | Bibliography entries and prose commentary. |
+| 75 | 6 | heading | tentative | image | Large E introducing Ensayos; typographic category marker. |
+| 76 | 6 | list | clear | — | Bulleted bibliography under Ensayos. |
+| 77 | 6 | list | tentative | other | Bulleted bibliography with a section note. |
+| 78 | 6 | heading | tentative | image | Large A introducing Antologias; typographic category marker. |
+| 79 | 6 | list | clear | — | Bulleted bibliography under Antologias. |
+| 80 | 6 | heading | tentative | image | Large R introducing Recitales; typographic category marker. |
+| 81 | 6 | list | tentative | text, other | Event announcement and dated recital entries. |
+
+* Scope
+These suggestions are stored separately from both human sheets. They do not
+change the human agreement matrix or close sunset-905.3. Human input for
+native PDF, EPUB, and financial statement still needs to be collected; the
+same regions-first experiment can be used, with machine types attributed.

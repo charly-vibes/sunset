@@ -1,0 +1,50 @@
+#+title: Six returned PDF observations — sunset-905.3
+#+date: 2026-10-27
+
+* Owner scope
+The owner accepts these six sheets (three PDF A/B pairs) as the required observation set. EPUB is excluded because the app does not render it; no further EPUB observation is required for this ticket. Historical agent-run EPUB evidence remains preserved.
+
+* Structural comparison
+Counts describe segmentation only. Equal counts do not establish region identity; unequal counts do not establish contradiction. No winner is elected.
+
+| Carrier | Page | A regions | B regions | Class |
+|---------+------+-----------+-----------+-------|
+| diario-de-poesia-excerpt | 1 | 18 | 18 | UNKNOWN |
+| diario-de-poesia-excerpt | 2 | 12 | 22 | UNKNOWN |
+| diario-de-poesia-excerpt | 3 | 8 | 16 | UNKNOWN |
+| diario-de-poesia-excerpt | 4 | 4 | 5 | UNKNOWN |
+| diario-de-poesia-excerpt | 5 | 4 | 5 | UNKNOWN |
+| diario-de-poesia-excerpt | 6 | 10 | 15 | UNKNOWN |
+| agentic-patterns-excerpt | 1 | 5 | 8 | UNKNOWN |
+| agentic-patterns-excerpt | 2 | 5 | 8 | UNKNOWN |
+| agentic-patterns-excerpt | 3 | 6 | 9 | UNKNOWN |
+| agentic-patterns-excerpt | 4 | 7 | 10 | UNKNOWN |
+| agentic-patterns-excerpt | 5 | 1 | 1 | UNKNOWN |
+| agentic-patterns-excerpt | 6 | 1 | 1 | UNKNOWN |
+| bank-statement-ca-excerpt | 1 | 1 | 3 | UNKNOWN |
+
+All 203 regions are retained: Diario 56/81, Agentic Patterns 25/37, bank statement 1/3. The 13 page-level segmentation comparisons are UNKNOWN pending correspondence; no array-position matching or automatic reconciliation was applied.
+
+* Findings
+- Diario: the earlier detailed comparison remains valid: 2 AGREE / 17 UNKNOWN. Both inventoried pages 1–6 as image-only. B types are default text, excluded as deliberate human classifications under the regions-first decision.
+- Agentic Patterns: both drew regions on pages 1–6, but page inventories are empty. Agreement on referenced page indices is narrower than agreement on complete page coverage. All 62 types are blank.
+- Bank statement: both drew on page 1; A drew one region and B three. All four types are blank. This can reflect a whole-page versus component segmentation; compatibility is unproven without correspondence.
+- All four new sheets have empty page_inventory, relations, space, context, annotations, losses and uncertainties, with empty notes. These are unrecorded observations, not assertions of absence or loss-free representation.
+- All new ranks are derived_from_arrangement and all depths are zero. They establish neither independently judged reading order nor a human assertion of flat hierarchy.
+- Recorded minutes: Diario 13/16, Agentic Patterns 4/3, bank statement 1/1; total A 18, B 20. Timing is effort, not quality.
+
+* Disposition
+Observation collection is satisfied for the owner-scoped three-PDF set. No additional manual typing or EPUB submission is requested. Type inference remains separately attributed machine work. Full structural agreement, loss-free extraction and general composition conformance are not established by these partial sheets. The ticket remains in progress for the composition-run comparison and owner disposition of unknowns; the old agent disagreements are historical, not human findings or silently adopted rulings.
+
+* Quality ledger
+Changed: ingested four new sheets unchanged, recorded provenance and the owner scope, reviewed all six submissions.
+Verified: regression first failed on missing native-PDF ingest; source-copy/digest/schema and 203-region preservation checks then passed.
+Review: agent self-review of all recorded sections, segmentation counts, and prefill provenance.
+Risks: semantic correspondence and unrecorded sections remain unknown.
+Next: compare composition outputs against this scoped reference set and retain explicit unknown/loss entries.
+
+* Executed composition comparison
+See [[file:composition-results.org][composition-results.org]] and [[file:runs/composition/comparison.json][comparison.json]] for the executed comparison: six adapter outputs, passing assembly laws, 203 omitted geometry references, retained native-text disagreements, and explicit unknowns. The composition-run step is now satisfied; owner acceptance of these concrete partial results remains.
+
+* Owner acceptance (2026-10-27)
+Owner accepted the executed partial results and authorized closing sunset-905.3. This supersedes the pending-owner and pending-composition statements above. The explicit losses, disagreements and unknowns remain; no broad conformance claim is made. See [[file:composition-results.org][owner disposition and final verification]].

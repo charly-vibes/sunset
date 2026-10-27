@@ -1,0 +1,13 @@
+{
+ "adapter_id": "sunset-carrier",
+ "adapter_version": "0.1",
+ "features": [
+  "pdf:glyphs",
+  "pdf:images",
+  "pdf:vectors",
+  "pdf:annotations",
+  "pdf:attachments"
+ ],
+ "source_format": "application/pdf",
+ "version": "1"
+}

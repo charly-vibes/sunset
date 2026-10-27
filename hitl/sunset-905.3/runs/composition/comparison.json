@@ -1,0 +1,3662 @@
+{
+  "run_kind": "agent-executed composition and extraction comparison against human sheets",
+  "epub": "owner-waived",
+  "real_carrier_conformance": false,
+  "runner_sha256": "e144832c3545e6794af4009bcf94ec880648315ecdc9e2d5bdeb307f4a4c5ef3",
+  "implementation_sha256": {
+    "dsc03/adapters.py": "cda666432d7bd42c95555f4fc114854184f4a530cc6ea72a44371880464df6e3",
+    "dsc03/substrate/reader_b.py": "07c8a850f9dfaaedb198d0b07415081957553d8bb00b50da4e9b236297bc050a",
+    "dsc03/substrate/assembly.py": "e128f060e9cefeb99525fdf35dd5c1b874a11f5aada30bf61f87c6e18e69e214",
+    "dsc03/canonical.py": "a02dd4f849f2f4f014b64a8b87bd52b6b18cb518193b73ed0b192632d653863b"
+  },
+  "pymupdf_version": "1.28.2",
+  "pdftotext_version": "pdftotext version 26.01.0",
+  "carriers": [
+    {
+      "carrier": "diario-de-poesia-excerpt",
+      "source_path": "fixtures/carriers/diario-de-poesia-excerpt.pdf",
+      "source_sha256": "42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4",
+      "outputs": [
+        {
+          "injected_conflict": {
+            "status": "refused",
+            "rule": "same_id_conflicting_claims",
+            "smallest": [
+              "r-root"
+            ],
+            "detail": {
+              "section": "regions"
+            }
+          },
+          "adapter": "pymupdf",
+          "descriptor_path": "diario-de-poesia-excerpt/pymupdf/descriptor.json",
+          "descriptor_sha256": "5ff540790d0da5510a5225e626edef21b19bb31e68b16062f028b9a29b3aa0f7",
+          "schema_errors": [],
+          "canonical_readers_agree": true,
+          "laws": {
+            "identity": true,
+            "associativity": true,
+            "records_preserved": true,
+            "no_invented_relations": true
+          },
+          "page_count": 6,
+          "text_content_count": 0,
+          "region_geometry_count": 0
+        },
+        {
+          "injected_conflict": {
+            "status": "refused",
+            "rule": "same_id_conflicting_claims",
+            "smallest": [
+              "rb-root"
+            ],
+            "detail": {
+              "section": "regions"
+            }
+          },
+          "adapter": "pdftotext",
+          "descriptor_path": "diario-de-poesia-excerpt/pdftotext/descriptor.json",
+          "descriptor_sha256": "f27d06b1d50e704f37262b509d5da67351253b6489269c57a239eaf9000b4fce",
+          "schema_errors": [],
+          "canonical_readers_agree": true,
+          "laws": {
+            "identity": true,
+            "associativity": true,
+            "records_preserved": true,
+            "no_invented_relations": true
+          },
+          "page_count": 6,
+          "text_content_count": 0,
+          "region_geometry_count": 0
+        }
+      ],
+      "human_comparisons": [
+        {
+          "reader": "reader-a",
+          "page_inventory": {
+            "class": "AGREE",
+            "human": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "machine_page_counts": [
+              6,
+              6
+            ]
+          },
+          "region_geometry": [
+            {
+              "source_index": 0,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0413,
+                "y": 0.0736,
+                "w": 0.9293,
+                "h": 0.1451,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 1,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0383,
+                "y": 0.2173,
+                "w": 0.9353,
+                "h": 0.1193,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 2,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0504,
+                "y": 0.3378,
+                "w": 0.2016,
+                "h": 0.6362,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 3,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0736,
+                "y": 0.3996,
+                "w": 0.1628,
+                "h": 0.2346,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 4,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2422,
+                "y": 0.3448,
+                "w": 0.3585,
+                "h": 0.4073,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 5,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2539,
+                "y": 0.7479,
+                "w": 0.1647,
+                "h": 0.2303,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 6,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4264,
+                "y": 0.7563,
+                "w": 0.1764,
+                "h": 0.2149,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 7,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4283,
+                "y": 0.7619,
+                "w": 0.1647,
+                "h": 0.1011,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 8,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6124,
+                "y": 0.3392,
+                "w": 0.1667,
+                "h": 0.3834,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 9,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.781,
+                "y": 0.342,
+                "w": 0.1609,
+                "h": 0.3778,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 10,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6163,
+                "y": 0.7254,
+                "w": 0.345,
+                "h": 0.0674,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 11,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6182,
+                "y": 0.5751,
+                "w": 0.157,
+                "h": 0.1419,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 12,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6143,
+                "y": 0.7998,
+                "w": 0.3469,
+                "h": 0.1517,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 13,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0601,
+                "y": 0.7936,
+                "w": 0.1705,
+                "h": 0.1728,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 14,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0678,
+                "y": 0.3386,
+                "w": 0.155,
+                "h": 0.0506,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 15,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4302,
+                "y": 0.8695,
+                "w": 0.1667,
+                "h": 0.0407,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 16,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2597,
+                "y": 0.7585,
+                "w": 0.1628,
+                "h": 0.0646,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 17,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7946,
+                "y": 0.3442,
+                "w": 0.1337,
+                "h": 0.0281,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 18,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0329,
+                "y": 0.0248,
+                "w": 0.9089,
+                "h": 0.0323,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 19,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0407,
+                "y": 0.0627,
+                "w": 0.1783,
+                "h": 0.9031,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 20,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2229,
+                "y": 0.0683,
+                "w": 0.1725,
+                "h": 0.8947,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 21,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4031,
+                "y": 0.0655,
+                "w": 0.1744,
+                "h": 0.8961,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 22,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5756,
+                "y": 0.0655,
+                "w": 0.1744,
+                "h": 0.8947,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 23,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.75,
+                "y": 0.0641,
+                "w": 0.1822,
+                "h": 0.8989,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 24,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3915,
+                "y": 0.3703,
+                "w": 0.3643,
+                "h": 0.3596,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 25,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7558,
+                "y": 0.602,
+                "w": 0.1764,
+                "h": 0.0618,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 26,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5833,
+                "y": 0.0922,
+                "w": 0.1647,
+                "h": 0.1236,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 27,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0543,
+                "y": 0.0669,
+                "w": 0.1434,
+                "h": 0.0211,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 28,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2519,
+                "y": 0.0655,
+                "w": 0.1105,
+                "h": 0.0253,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 29,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.593,
+                "y": 0.0669,
+                "w": 0.1415,
+                "h": 0.0267,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 30,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.064,
+                "y": 0.0693,
+                "w": 0.8934,
+                "h": 0.0478,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 31,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0678,
+                "y": 0.1156,
+                "w": 0.3508,
+                "h": 0.0787,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 32,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0659,
+                "y": 0.1886,
+                "w": 0.1705,
+                "h": 0.7767,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 33,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2345,
+                "y": 0.1971,
+                "w": 0.1802,
+                "h": 0.7711,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 34,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4264,
+                "y": 0.1212,
+                "w": 0.1686,
+                "h": 0.8539,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 35,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.595,
+                "y": 0.1198,
+                "w": 0.186,
+                "h": 0.8553,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 36,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7752,
+                "y": 0.1254,
+                "w": 0.1725,
+                "h": 0.8483,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 37,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2384,
+                "y": 0.3867,
+                "w": 0.5349,
+                "h": 0.3904,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 38,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2791,
+                "y": 0.0687,
+                "w": 0.469,
+                "h": 0.0674,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 39,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0678,
+                "y": 0.1319,
+                "w": 0.4438,
+                "h": 0.7191,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 40,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.531,
+                "y": 0.1277,
+                "w": 0.4302,
+                "h": 0.7219,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 41,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0736,
+                "y": 0.9184,
+                "w": 0.6725,
+                "h": 0.0337,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 42,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2171,
+                "y": 0.0752,
+                "w": 0.6298,
+                "h": 0.0604,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 43,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0543,
+                "y": 0.1385,
+                "w": 0.2946,
+                "h": 0.8174,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 44,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3488,
+                "y": 0.1469,
+                "w": 0.2965,
+                "h": 0.8118,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 45,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6395,
+                "y": 0.1413,
+                "w": 0.2946,
+                "h": 0.8146,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 46,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0736,
+                "y": 0.0721,
+                "w": 0.1628,
+                "h": 0.9059,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 47,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2558,
+                "y": 0.0763,
+                "w": 0.3353,
+                "h": 0.5,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 48,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2888,
+                "y": 0.0917,
+                "w": 0.2674,
+                "h": 0.0548,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 49,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.25,
+                "y": 0.5955,
+                "w": 0.1764,
+                "h": 0.3792,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 50,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4205,
+                "y": 0.5997,
+                "w": 0.1705,
+                "h": 0.3722,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 51,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.595,
+                "y": 0.0688,
+                "w": 0.1783,
+                "h": 0.9073,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 52,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5969,
+                "y": 0.4916,
+                "w": 0.1764,
+                "h": 0.1292,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 53,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7713,
+                "y": 0.0688,
+                "w": 0.1919,
+                "h": 0.9157,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 54,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7733,
+                "y": 0.3427,
+                "w": 0.186,
+                "h": 0.1419,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 55,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7713,
+                "y": 0.5927,
+                "w": 0.1938,
+                "h": 0.1461,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            }
+          ],
+          "reading_order": {
+            "class": "UNKNOWN",
+            "reason": "Human ranks absent or derived_from_arrangement; no independent order oracle"
+          },
+          "types": {
+            "class": "UNKNOWN",
+            "reason": "Regions-first scope; default/blank types are not a classification oracle"
+          },
+          "sections": {
+            "relations": "UNKNOWN",
+            "space": "UNKNOWN",
+            "context": "UNKNOWN",
+            "annotations": "UNKNOWN",
+            "losses": "UNKNOWN",
+            "uncertainties": "UNKNOWN"
+          },
+          "sheet_path": "hitl/sunset-905.3/runs/reader-a/diario-de-poesia-excerpt.observations.json",
+          "sheet_sha256": "60e0bd437953d19a7d1b14e9c5cd18c5f9fc41835cbd08ae8fceb01888fc313c"
+        },
+        {
+          "reader": "reader-b",
+          "page_inventory": {
+            "class": "AGREE",
+            "human": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "machine_page_counts": [
+              6,
+              6
+            ]
+          },
+          "region_geometry": [
+            {
+              "source_index": 0,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0264,
+                "y": 0.0677,
+                "w": 0.9736,
+                "h": 0.153,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 1,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0373,
+                "y": 0.2265,
+                "w": 0.9174,
+                "h": 0.1056,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 2,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0561,
+                "y": 0.3369,
+                "w": 0.1724,
+                "h": 0.0596,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 3,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0631,
+                "y": 0.4003,
+                "w": 0.1674,
+                "h": 0.2364,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 4,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0631,
+                "y": 0.641,
+                "w": 0.1754,
+                "h": 0.1932,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 5,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0353,
+                "y": 0.7983,
+                "w": 0.1882,
+                "h": 0.1803,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 6,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2384,
+                "y": 0.342,
+                "w": 0.3676,
+                "h": 0.4095,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 7,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2464,
+                "y": 0.7553,
+                "w": 0.1734,
+                "h": 0.069,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 8,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2533,
+                "y": 0.8272,
+                "w": 0.1635,
+                "h": 0.1408,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 9,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4287,
+                "y": 0.7539,
+                "w": 0.1575,
+                "h": 0.1142,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 10,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4247,
+                "y": 0.8703,
+                "w": 0.1684,
+                "h": 0.0424,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 11,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4217,
+                "y": 0.9148,
+                "w": 0.1724,
+                "h": 0.051,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 12,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.612,
+                "y": 0.3378,
+                "w": 0.1615,
+                "h": 0.2328,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 13,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.606,
+                "y": 0.575,
+                "w": 0.1625,
+                "h": 0.1422,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 14,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7814,
+                "y": 0.3332,
+                "w": 0.1694,
+                "h": 0.0388,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 15,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7805,
+                "y": 0.3687,
+                "w": 0.1643,
+                "h": 0.3481,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 16,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6054,
+                "y": 0.7235,
+                "w": 0.3409,
+                "h": 0.0696,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 17,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6023,
+                "y": 0.7965,
+                "w": 0.3564,
+                "h": 0.1538,
+                "viewport_w": 757,
+                "viewport_h": 1044
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 18,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0506,
+                "y": 0.0241,
+                "w": 0.8709,
+                "h": 0.0292,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 19,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0351,
+                "y": 0.0566,
+                "w": 0.1798,
+                "h": 0.0326,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 20,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2288,
+                "y": 0.0566,
+                "w": 0.1333,
+                "h": 0.0314,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 21,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5651,
+                "y": 0.0589,
+                "w": 0.186,
+                "h": 0.0348,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 22,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0475,
+                "y": 0.0925,
+                "w": 0.1658,
+                "h": 0.5591,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 23,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0398,
+                "y": 0.6674,
+                "w": 0.1674,
+                "h": 0.1302,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 24,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0367,
+                "y": 0.8066,
+                "w": 0.1767,
+                "h": 0.0763,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 25,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0413,
+                "y": 0.8863,
+                "w": 0.1689,
+                "h": 0.064,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 26,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2211,
+                "y": 0.0937,
+                "w": 0.1736,
+                "h": 0.7848,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 27,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3993,
+                "y": 0.0566,
+                "w": 0.1767,
+                "h": 0.1695,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 28,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3977,
+                "y": 0.2273,
+                "w": 0.1736,
+                "h": 0.1336,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 29,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3993,
+                "y": 0.7527,
+                "w": 0.1689,
+                "h": 0.1044,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 30,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3962,
+                "y": 0.8571,
+                "w": 0.1705,
+                "h": 0.0988,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 31,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5713,
+                "y": 0.7505,
+                "w": 0.1736,
+                "h": 0.2043,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 32,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5759,
+                "y": 0.0948,
+                "w": 0.1736,
+                "h": 0.1336,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 33,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.579,
+                "y": 0.2324,
+                "w": 0.1736,
+                "h": 0.1291,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 34,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3993,
+                "y": 0.366,
+                "w": 0.3564,
+                "h": 0.3806,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 35,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7526,
+                "y": 0.055,
+                "w": 0.1829,
+                "h": 0.0651,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 36,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.751,
+                "y": 0.1235,
+                "w": 0.1767,
+                "h": 0.1504,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 37,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7572,
+                "y": 0.2728,
+                "w": 0.1751,
+                "h": 0.3301,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 38,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7541,
+                "y": 0.601,
+                "w": 0.1798,
+                "h": 0.0674,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 39,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7588,
+                "y": 0.674,
+                "w": 0.1705,
+                "h": 0.2863,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 40,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0506,
+                "y": 0.0273,
+                "w": 0.9127,
+                "h": 0.0427,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 41,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0816,
+                "y": 0.0733,
+                "w": 0.8554,
+                "h": 0.0371,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 42,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.077,
+                "y": 0.1148,
+                "w": 0.3487,
+                "h": 0.0865,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 43,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0801,
+                "y": 0.2105,
+                "w": 0.1596,
+                "h": 0.5872,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 44,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0739,
+                "y": 0.7986,
+                "w": 0.172,
+                "h": 0.1662,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 45,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2505,
+                "y": 0.2035,
+                "w": 0.1658,
+                "h": 0.1808,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 46,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4272,
+                "y": 0.1171,
+                "w": 0.1658,
+                "h": 0.265,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 47,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6007,
+                "y": 0.1227,
+                "w": 0.1782,
+                "h": 0.2616,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 48,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7805,
+                "y": 0.1193,
+                "w": 0.1705,
+                "h": 0.2302,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 49,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7836,
+                "y": 0.3484,
+                "w": 0.1519,
+                "h": 0.0483,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 50,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.782,
+                "y": 0.4023,
+                "w": 0.1658,
+                "h": 0.2021,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 51,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7789,
+                "y": 0.6122,
+                "w": 0.172,
+                "h": 0.3615,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 52,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2366,
+                "y": 0.3888,
+                "w": 0.5362,
+                "h": 0.3896,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 53,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2459,
+                "y": 0.784,
+                "w": 0.1612,
+                "h": 0.1853,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 54,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.407,
+                "y": 0.7795,
+                "w": 0.189,
+                "h": 0.1897,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 55,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5914,
+                "y": 0.7818,
+                "w": 0.1736,
+                "h": 0.1875,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 56,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0661,
+                "y": 0.0217,
+                "w": 0.9034,
+                "h": 0.0427,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 57,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.297,
+                "y": 0.0789,
+                "w": 0.4199,
+                "h": 0.0516,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 58,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0677,
+                "y": 0.133,
+                "w": 0.4463,
+                "h": 0.7197,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 59,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5201,
+                "y": 0.1388,
+                "w": 0.4385,
+                "h": 0.7163,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 60,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0661,
+                "y": 0.9289,
+                "w": 0.6989,
+                "h": 0.0191,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 61,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0429,
+                "y": 0.0173,
+                "w": 0.8957,
+                "h": 0.0438,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 62,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2335,
+                "y": 0.0768,
+                "w": 0.5222,
+                "h": 0.0662,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 63,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0698,
+                "y": 0.1442,
+                "w": 0.281,
+                "h": 0.8006,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 64,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3566,
+                "y": 0.1484,
+                "w": 0.2829,
+                "h": 0.8006,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 65,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6492,
+                "y": 0.1527,
+                "w": 0.2984,
+                "h": 0.8006,
+                "viewport_w": 484,
+                "viewport_h": 668
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 66,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0698,
+                "y": 0.022,
+                "w": 0.8934,
+                "h": 0.0478,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 67,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.062,
+                "y": 0.0726,
+                "w": 0.1822,
+                "h": 0.9031,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 68,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2674,
+                "y": 0.0852,
+                "w": 0.3178,
+                "h": 0.059,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 69,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2616,
+                "y": 0.147,
+                "w": 0.1647,
+                "h": 0.4242,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 70,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4244,
+                "y": 0.1442,
+                "w": 0.1705,
+                "h": 0.4284,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 71,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2539,
+                "y": 0.5909,
+                "w": 0.1667,
+                "h": 0.3961,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 72,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.4205,
+                "y": 0.5909,
+                "w": 0.1744,
+                "h": 0.3862,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 73,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.593,
+                "y": 0.0656,
+                "w": 0.1802,
+                "h": 0.4213,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 74,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.6008,
+                "y": 0.4888,
+                "w": 0.1744,
+                "h": 0.1348,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 75,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.5988,
+                "y": 0.625,
+                "w": 0.1764,
+                "h": 0.3497,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 76,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7791,
+                "y": 0.0744,
+                "w": 0.1686,
+                "h": 0.2781,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 77,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7771,
+                "y": 0.3539,
+                "w": 0.1822,
+                "h": 0.1264,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 78,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7771,
+                "y": 0.4803,
+                "w": 0.1822,
+                "h": 0.125,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 79,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7713,
+                "y": 0.611,
+                "w": 0.1899,
+                "h": 0.139,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 80,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.7713,
+                "y": 0.75,
+                "w": 0.1744,
+                "h": 0.2317,
+                "viewport_w": 387,
+                "viewport_h": 534
+              },
+              "source_ref": "sha256:42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            }
+          ],
+          "reading_order": {
+            "class": "UNKNOWN",
+            "reason": "Human ranks absent or derived_from_arrangement; no independent order oracle"
+          },
+          "types": {
+            "class": "UNKNOWN",
+            "reason": "Regions-first scope; default/blank types are not a classification oracle"
+          },
+          "sections": {
+            "relations": "UNKNOWN",
+            "space": "LOSS",
+            "context": "LOSS",
+            "annotations": "UNKNOWN",
+            "losses": "UNKNOWN",
+            "uncertainties": "UNKNOWN"
+          },
+          "sheet_path": "hitl/sunset-905.3/runs/reader-b/diario-de-poesia-excerpt.observations.json",
+          "sheet_sha256": "8624a3518ae6d5edbcfe13c311dc3e21f245b4ad739a0464c1ccf33a0005bece"
+        }
+      ],
+      "machine_agreement": {
+        "pages": "agree",
+        "text_presence": "agree",
+        "text_exact": "agree"
+      }
+    },
+    {
+      "carrier": "agentic-patterns-excerpt",
+      "source_path": "fixtures/carriers/agentic-patterns-excerpt.pdf",
+      "source_sha256": "3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66",
+      "outputs": [
+        {
+          "injected_conflict": {
+            "status": "refused",
+            "rule": "same_id_conflicting_claims",
+            "smallest": [
+              "r-root"
+            ],
+            "detail": {
+              "section": "regions"
+            }
+          },
+          "adapter": "pymupdf",
+          "descriptor_path": "agentic-patterns-excerpt/pymupdf/descriptor.json",
+          "descriptor_sha256": "6c010b6e0a5c3094c8edf50a477f20aaa5a8041cf21b0376b9ec911850bbfe1a",
+          "schema_errors": [],
+          "canonical_readers_agree": true,
+          "laws": {
+            "identity": true,
+            "associativity": true,
+            "records_preserved": true,
+            "no_invented_relations": true
+          },
+          "page_count": 6,
+          "text_content_count": 6,
+          "region_geometry_count": 0
+        },
+        {
+          "injected_conflict": {
+            "status": "refused",
+            "rule": "same_id_conflicting_claims",
+            "smallest": [
+              "rb-root"
+            ],
+            "detail": {
+              "section": "regions"
+            }
+          },
+          "adapter": "pdftotext",
+          "descriptor_path": "agentic-patterns-excerpt/pdftotext/descriptor.json",
+          "descriptor_sha256": "55245f477b43b0486a4a37a6e4b70bb5e1e38984550b96984f40c97f29f9684d",
+          "schema_errors": [],
+          "canonical_readers_agree": true,
+          "laws": {
+            "identity": true,
+            "associativity": true,
+            "records_preserved": true,
+            "no_invented_relations": true
+          },
+          "page_count": 6,
+          "text_content_count": 6,
+          "region_geometry_count": 0
+        }
+      ],
+      "human_comparisons": [
+        {
+          "reader": "reader-a",
+          "page_inventory": {
+            "class": "UNKNOWN",
+            "human": [],
+            "machine_page_counts": [
+              6,
+              6
+            ]
+          },
+          "region_geometry": [
+            {
+              "source_index": 0,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1857,
+                "y": 0.1256,
+                "w": 0.6234,
+                "h": 0.0732,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 1,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0864,
+                "y": 0.2619,
+                "w": 0.8265,
+                "h": 0.6572,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 2,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0888,
+                "y": 0.2656,
+                "w": 0.818,
+                "h": 0.0581,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 3,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0852,
+                "y": 0.3256,
+                "w": 0.8192,
+                "h": 0.2231,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 4,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0937,
+                "y": 0.5534,
+                "w": 0.807,
+                "h": 0.3572,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 5,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0876,
+                "y": 0.0809,
+                "w": 0.8216,
+                "h": 0.8334,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 6,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.09,
+                "y": 0.0856,
+                "w": 0.8058,
+                "h": 0.3009,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 7,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0876,
+                "y": 0.3894,
+                "w": 0.807,
+                "h": 0.2231,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 8,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0985,
+                "y": 0.6181,
+                "w": 0.7998,
+                "h": 0.2466,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 9,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.101,
+                "y": 0.8694,
+                "w": 0.7973,
+                "h": 0.0347,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 10,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1083,
+                "y": 0.0838,
+                "w": 0.7913,
+                "h": 0.8409,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 11,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1167,
+                "y": 0.0903,
+                "w": 0.7731,
+                "h": 0.1237,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 12,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1167,
+                "y": 0.2216,
+                "w": 0.7731,
+                "h": 0.1753,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 13,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1119,
+                "y": 0.3997,
+                "w": 0.7816,
+                "h": 0.1603,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 14,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1119,
+                "y": 0.5647,
+                "w": 0.7816,
+                "h": 0.2212,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 15,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1107,
+                "y": 0.7878,
+                "w": 0.7816,
+                "h": 0.1312,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 16,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1265,
+                "y": 0.0809,
+                "w": 0.7755,
+                "h": 0.84,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 17,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1362,
+                "y": 0.0875,
+                "w": 0.7549,
+                "h": 0.0694,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 18,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1131,
+                "y": 0.1644,
+                "w": 0.7767,
+                "h": 0.1856,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 19,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.101,
+                "y": 0.3594,
+                "w": 0.7925,
+                "h": 0.2175,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 20,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.107,
+                "y": 0.5825,
+                "w": 0.7828,
+                "h": 0.1462,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 21,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1046,
+                "y": 0.7325,
+                "w": 0.7816,
+                "h": 0.1537,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 22,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1107,
+                "y": 0.8984,
+                "w": 0.7888,
+                "h": 0.0169,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 23,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1058,
+                "y": 0.0828,
+                "w": 0.801,
+                "h": 0.8213,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 24,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1143,
+                "y": 0.0762,
+                "w": 0.7937,
+                "h": 0.7856,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            }
+          ],
+          "reading_order": {
+            "class": "UNKNOWN",
+            "reason": "Human ranks absent or derived_from_arrangement; no independent order oracle"
+          },
+          "types": {
+            "class": "UNKNOWN",
+            "reason": "Regions-first scope; default/blank types are not a classification oracle"
+          },
+          "sections": {
+            "relations": "UNKNOWN",
+            "space": "UNKNOWN",
+            "context": "UNKNOWN",
+            "annotations": "UNKNOWN",
+            "losses": "UNKNOWN",
+            "uncertainties": "UNKNOWN"
+          },
+          "sheet_path": "hitl/sunset-905.3/runs/reader-a/agentic-patterns-excerpt.observations.json",
+          "sheet_sha256": "ad87280135f2eb72913828ea71dd7a312d2b71d939187192f4bad50a62fc6c7a"
+        },
+        {
+          "reader": "reader-b",
+          "page_inventory": {
+            "class": "UNKNOWN",
+            "human": [],
+            "machine_page_counts": [
+              6,
+              6
+            ]
+          },
+          "region_geometry": [
+            {
+              "source_index": 0,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.3977,
+                "y": 0.1322,
+                "w": 0.2065,
+                "h": 0.03,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 1,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.2144,
+                "y": 0.1688,
+                "w": 0.5691,
+                "h": 0.0168,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 2,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1081,
+                "y": 0.2582,
+                "w": 0.1359,
+                "h": 0.0366,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 3,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1019,
+                "y": 0.2966,
+                "w": 0.132,
+                "h": 0.0192,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 4,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1019,
+                "y": 0.3248,
+                "w": 0.2477,
+                "h": 0.0222,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 5,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1034,
+                "y": 0.3488,
+                "w": 0.8075,
+                "h": 0.1938,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 6,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1073,
+                "y": 0.5552,
+                "w": 0.3121,
+                "h": 0.015,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 7,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1337,
+                "y": 0.5702,
+                "w": 0.771,
+                "h": 0.3354,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 8,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1104,
+                "y": 0.089,
+                "w": 0.7842,
+                "h": 0.018,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 9,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1267,
+                "y": 0.1082,
+                "w": 0.7655,
+                "h": 0.2688,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 10,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1143,
+                "y": 0.3884,
+                "w": 0.7857,
+                "h": 0.0162,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 11,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1283,
+                "y": 0.4076,
+                "w": 0.764,
+                "h": 0.1986,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 12,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1143,
+                "y": 0.6146,
+                "w": 0.7865,
+                "h": 0.0162,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 13,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1298,
+                "y": 0.632,
+                "w": 0.7671,
+                "h": 0.2262,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 14,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.112,
+                "y": 0.8696,
+                "w": 0.7865,
+                "h": 0.0144,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 15,
+              "page": 2,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1329,
+                "y": 0.8852,
+                "w": 0.764,
+                "h": 0.0162,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:2",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 16,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1314,
+                "y": 0.086,
+                "w": 0.7593,
+                "h": 0.126,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 17,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1065,
+                "y": 0.2228,
+                "w": 0.788,
+                "h": 0.0168,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 18,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1321,
+                "y": 0.2438,
+                "w": 0.7624,
+                "h": 0.1476,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 19,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1151,
+                "y": 0.4028,
+                "w": 0.7756,
+                "h": 0.015,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 20,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1321,
+                "y": 0.4178,
+                "w": 0.7523,
+                "h": 0.1368,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 21,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1174,
+                "y": 0.5642,
+                "w": 0.7725,
+                "h": 0.0192,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 22,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1376,
+                "y": 0.5846,
+                "w": 0.7539,
+                "h": 0.195,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 23,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1104,
+                "y": 0.7886,
+                "w": 0.7826,
+                "h": 0.015,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 24,
+              "page": 3,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1298,
+                "y": 0.8042,
+                "w": 0.7648,
+                "h": 0.1164,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 25,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1182,
+                "y": 0.089,
+                "w": 0.771,
+                "h": 0.0678,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 26,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1089,
+                "y": 0.1652,
+                "w": 0.7787,
+                "h": 0.0156,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 27,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1321,
+                "y": 0.1784,
+                "w": 0.7547,
+                "h": 0.1668,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 28,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1089,
+                "y": 0.3614,
+                "w": 0.778,
+                "h": 0.0114,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 29,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1298,
+                "y": 0.3728,
+                "w": 0.7601,
+                "h": 0.1968,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 30,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1112,
+                "y": 0.5798,
+                "w": 0.7733,
+                "h": 0.0174,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 31,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1259,
+                "y": 0.5972,
+                "w": 0.7601,
+                "h": 0.123,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 32,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1065,
+                "y": 0.728,
+                "w": 0.7911,
+                "h": 0.0174,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 33,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.136,
+                "y": 0.749,
+                "w": 0.7585,
+                "h": 0.1344,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 34,
+              "page": 4,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1143,
+                "y": 0.8894,
+                "w": 0.7857,
+                "h": 0.0198,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 35,
+              "page": 5,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1143,
+                "y": 0.08,
+                "w": 0.7937,
+                "h": 0.8194,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:5",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 36,
+              "page": 6,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1095,
+                "y": 0.0838,
+                "w": 0.7913,
+                "h": 0.7688,
+                "viewport_w": 618,
+                "viewport_h": 800
+              },
+              "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:6",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            }
+          ],
+          "reading_order": {
+            "class": "UNKNOWN",
+            "reason": "Human ranks absent or derived_from_arrangement; no independent order oracle"
+          },
+          "types": {
+            "class": "UNKNOWN",
+            "reason": "Regions-first scope; default/blank types are not a classification oracle"
+          },
+          "sections": {
+            "relations": "UNKNOWN",
+            "space": "UNKNOWN",
+            "context": "UNKNOWN",
+            "annotations": "UNKNOWN",
+            "losses": "UNKNOWN",
+            "uncertainties": "UNKNOWN"
+          },
+          "sheet_path": "hitl/sunset-905.3/runs/reader-b/agentic-patterns-excerpt.observations.json",
+          "sheet_sha256": "8703e6fb66566c1ee7bc2cd7b7df1d54d3cb95934a04406d51a016b9f7d1a45e"
+        }
+      ],
+      "machine_agreement": {
+        "pages": "agree",
+        "text_presence": "agree",
+        "text_exact": "differ"
+      }
+    },
+    {
+      "carrier": "bank-statement-ca-excerpt",
+      "source_path": "fixtures/carriers/bank-statement-ca-excerpt.pdf",
+      "source_sha256": "18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2",
+      "outputs": [
+        {
+          "injected_conflict": {
+            "status": "refused",
+            "rule": "same_id_conflicting_claims",
+            "smallest": [
+              "r-root"
+            ],
+            "detail": {
+              "section": "regions"
+            }
+          },
+          "adapter": "pymupdf",
+          "descriptor_path": "bank-statement-ca-excerpt/pymupdf/descriptor.json",
+          "descriptor_sha256": "6fd12825f59f5bdde6a95a1482725bec12ba780c47649ba1eb32a4ee5187ce04",
+          "schema_errors": [],
+          "canonical_readers_agree": true,
+          "laws": {
+            "identity": true,
+            "associativity": true,
+            "records_preserved": true,
+            "no_invented_relations": true
+          },
+          "page_count": 1,
+          "text_content_count": 1,
+          "region_geometry_count": 0
+        },
+        {
+          "injected_conflict": {
+            "status": "refused",
+            "rule": "same_id_conflicting_claims",
+            "smallest": [
+              "rb-root"
+            ],
+            "detail": {
+              "section": "regions"
+            }
+          },
+          "adapter": "pdftotext",
+          "descriptor_path": "bank-statement-ca-excerpt/pdftotext/descriptor.json",
+          "descriptor_sha256": "6ef12619c45cd920e41dcfd18085fcbb759fa6ab9e6f6489c9dbb604429a8874",
+          "schema_errors": [],
+          "canonical_readers_agree": true,
+          "laws": {
+            "identity": true,
+            "associativity": true,
+            "records_preserved": true,
+            "no_invented_relations": true
+          },
+          "page_count": 1,
+          "text_content_count": 1,
+          "region_geometry_count": 0
+        }
+      ],
+      "human_comparisons": [
+        {
+          "reader": "reader-a",
+          "page_inventory": {
+            "class": "UNKNOWN",
+            "human": [],
+            "machine_page_counts": [
+              1,
+              1
+            ]
+          },
+          "region_geometry": [
+            {
+              "source_index": 0,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.0933,
+                "y": 0.0698,
+                "w": 0.2888,
+                "h": 0.0672,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            }
+          ],
+          "reading_order": {
+            "class": "UNKNOWN",
+            "reason": "Human ranks absent or derived_from_arrangement; no independent order oracle"
+          },
+          "types": {
+            "class": "UNKNOWN",
+            "reason": "Regions-first scope; default/blank types are not a classification oracle"
+          },
+          "sections": {
+            "relations": "UNKNOWN",
+            "space": "UNKNOWN",
+            "context": "UNKNOWN",
+            "annotations": "UNKNOWN",
+            "losses": "UNKNOWN",
+            "uncertainties": "UNKNOWN"
+          },
+          "sheet_path": "hitl/sunset-905.3/runs/reader-a/bank-statement-ca-excerpt.observations.json",
+          "sheet_sha256": "594d7f7d971f33a391c4481124e2e63fd286435a7b266fcd40d12af43e8d3e0c"
+        },
+        {
+          "reader": "reader-b",
+          "page_inventory": {
+            "class": "UNKNOWN",
+            "human": [],
+            "machine_page_counts": [
+              1,
+              1
+            ]
+          },
+          "region_geometry": [
+            {
+              "source_index": 0,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1089,
+                "y": 0.0686,
+                "w": 0.2469,
+                "h": 0.027,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 1,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1112,
+                "y": 0.0974,
+                "w": 0.1762,
+                "h": 0.0132,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            },
+            {
+              "source_index": 2,
+              "page": 1,
+              "bbox": {
+                "relative": "page",
+                "x": 0.1166,
+                "y": 0.113,
+                "w": 0.2158,
+                "h": 0.018,
+                "viewport_w": 966,
+                "viewport_h": 1250
+              },
+              "source_ref": "sha256:18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2#page:1",
+              "class": "LOSS",
+              "reason": "Neither current adapter emits source-anchored sub-page region geometry"
+            }
+          ],
+          "reading_order": {
+            "class": "UNKNOWN",
+            "reason": "Human ranks absent or derived_from_arrangement; no independent order oracle"
+          },
+          "types": {
+            "class": "UNKNOWN",
+            "reason": "Regions-first scope; default/blank types are not a classification oracle"
+          },
+          "sections": {
+            "relations": "UNKNOWN",
+            "space": "UNKNOWN",
+            "context": "UNKNOWN",
+            "annotations": "UNKNOWN",
+            "losses": "UNKNOWN",
+            "uncertainties": "UNKNOWN"
+          },
+          "sheet_path": "hitl/sunset-905.3/runs/reader-b/bank-statement-ca-excerpt.observations.json",
+          "sheet_sha256": "ccb06c3c032bc901922d476dcdd44dc853487f42f37517d07e53a61e37e9a4dc"
+        }
+      ],
+      "machine_agreement": {
+        "pages": "agree",
+        "text_presence": "agree",
+        "text_exact": "differ"
+      }
+    }
+  ]
+}

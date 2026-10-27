@@ -1,0 +1,47 @@
+==> openspec strict validation (deployed specs + active changes, incl. deployed 0.3)
+openspec validate --all --strict --no-interactive
+✓ change/add-document-structural-debugger
+✓ change/define-document-composition-semantics
+✓ spec/document-adapters
+✓ spec/document-conformance
+✓ spec/document-core
+✓ spec/document-evidence
+✓ spec/document-ontology-boundaries
+✓ spec/document-semantics
+✓ spec/document-structure
+✓ change/restore-document-substrate
+Totals: 10 passed, 0 failed (10 items)
+==> spk lint (Specodelic layer of openspec/changes, incl. archive)
+spk lint openspec/changes
+{"ok":true,"envelope_version":"0.1","cli_version":"0.12.1","envelope_kind":"ok","data":{"checklists_declared":0,"files_linted":8,"issues":[],"warnings":[]},"warnings":[{"rule_name":"","message":"openspec/changes/add-document-structural-debugger/design.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/add-document-structural-debugger/fixtures/README.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/add-document-structural-debugger/proposal.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/add-document-structural-debugger/specs/document-debugger/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/add-document-structural-debugger/specs/document-debugger-comparison/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/add-document-structural-debugger/tasks.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/design.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/proposal.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-adapters/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-conformance/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-core/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-evidence/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-ontology-boundaries/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-semantics/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/specs/document-structure/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/archive/2026-10-14-add-dsc-03/tasks.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/VALIDATION.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/design-decisions-assembly.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/design-decisions-views-space-context.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/design.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/proposal.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/specs/document-assembly/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/specs/document-context/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/specs/document-space/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/specs/document-views/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/define-document-composition-semantics/tasks.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/restore-document-substrate/design.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/restore-document-substrate/mapping.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/restore-document-substrate/proposal.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/restore-document-substrate/specs/document-categorical-model/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/restore-document-substrate/specs/document-purpose/spec.md: skipped (no frontmatter — not a spec file)"},{"rule_name":"","message":"openspec/changes/restore-document-substrate/tasks.md: skipped (no frontmatter — not a spec file)"}],"hints":[{"command":"specodelic graph","description":"run: specodelic graph"}],"meta":{"duration_ms":0,"tx":null,"request_id":null}}
+==> tracer suite (0.3 machinery, not real-carrier conformance)
+python3 -B -m pytest tests -q
+.................................................................... [ 22%]
+.......................................................... [ 41%]
+........................................................................ [ 65%]
+........................................................................ [ 89%]
+...............................                                          [100%]
+=============================== warnings summary ===============================
+tests/tracer/test_debugger_a11y.py::test_inspection_wall_time_recorded_no_claims
+  /var/home/sasha/para/areas/dev/gh/charly/sunset/tests/tracer/test_debugger_a11y.py:402: UserWarning: inspection wall-time record (measurement only, no perf claim): {"claim": "measurement only; no performance-win claim is made", "fixture": "tests/tracer/fixture_minimal.json", "runs": 2, "wall_time_s": [0.000353, 0.000344]}
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+301 passed, 1 warning, 18 subtests passed in 180.19s (0:03:00)
+==> frozen 0.2 reference validator
+python3 spec/document-model-specodelic-v3/validator.py test
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+==> openspec 1.x strict (same corpus, validator pinned by versions.ddl.toml)
+npx -y @fission-ai/openspec@1.14.2 validate --all --strict --no-interactive
+✓ change/add-document-structural-debugger
+✓ change/define-document-composition-semantics
+✓ spec/document-adapters
+✓ spec/document-conformance
+✓ spec/document-core
+✓ spec/document-evidence
+✓ spec/document-ontology-boundaries
+✓ spec/document-semantics
+✓ spec/document-structure
+✓ change/restore-document-substrate
+Totals: 10 passed, 0 failed (10 items)
+ALL GATES PASSED

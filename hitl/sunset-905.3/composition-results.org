@@ -1,0 +1,53 @@
+#+title: Executed real-PDF composition comparison — sunset-905.3
+#+date: 2026-10-27
+
+* Scope and execution
+The owner accepted six human observation sheets as the complete input set for this ticket. EPUB is owner-waived because the app does not render it. This run executes existing consumer-side PyMuPDF and pdftotext adapters, assembly, and both canonical readers. It is agent-executed processing of human evidence, not a new human reading. No extraction or general real-carrier conformance is claimed.
+
+Reproduce from repository root:
+=python3 hitl/sunset-905.3/run_composition.py=
+
+Full machine-readable results: [[file:runs/composition/comparison.json][comparison.json]]. Each carrier directory contains each adapter descriptor, its three input parts, assembled output, and pinned inventory/manifest. The result pins the runner, implementation files, all six sheets and all three carrier digests; copied bundle carriers were byte-compared. Tools: PyMuPDF 1.28.2; pdftotext version 26.01.0.
+
+* Assembly law results
+All six adapter outputs validate. Both canonical readers agree on every same-input descriptor. Identity, associativity, record preservation and no invented relations pass on all six. Injecting a conflicting root claim into each real output is refused as same_id_conflicting_claims with a finite root-ID witness. These injected conflicts are test counterexamples, not findings in the submitted sheets.
+
+Parts are partitions of existing page-level output, not independently extracted fragments. Six-page carriers use three two-page parts. The one-page bank statement uses two root-only parts plus its one page; that associativity witness does not exercise three-page continuation. No actual human continuation/order reference was recorded.
+
+* Adapter comparison
+| Carrier | Pages (both) | Native-text pages (both) | Page inventory | Text presence | Exact text |
+|---------+--------------+--------------------------+----------------+---------------+------------|
+| diario-de-poesia-excerpt | 6 | 0 | AGREE | AGREE | AGREE |
+| agentic-patterns-excerpt | 6 | 6 | AGREE | AGREE | DISAGREE |
+| bank-statement-ca-excerpt | 1 | 1 | AGREE | AGREE | DISAGREE |
+
+Diario has zero native-text contents in both outputs: their agreement does not establish transcription or OCR fidelity. Native-PDF and bank exact-text disagreements are retained in the attributed adapter descriptors; no text is normalized into agreement and neither extractor is chosen as correct. Human sheets provide no text transcription oracle.
+
+* Comparison against human references
+| Carrier | Human reader | Geometry references | Geometry class | Complete page inventory class |
+|---------+--------------+---------------------+----------------+-------------------------------|
+| diario-de-poesia-excerpt | reader-a | 56 | LOSS | AGREE |
+| diario-de-poesia-excerpt | reader-b | 81 | LOSS | AGREE |
+| agentic-patterns-excerpt | reader-a | 25 | LOSS | UNKNOWN |
+| agentic-patterns-excerpt | reader-b | 37 | LOSS | UNKNOWN |
+| bank-statement-ca-excerpt | reader-a | 1 | LOSS | UNKNOWN |
+| bank-statement-ca-excerpt | reader-b | 3 | LOSS | UNKNOWN |
+
+All 203 drawn-region geometry references are absent from both current extraction outputs. LOSS means omitted from extraction output; all original human regions remain preserved unchanged in the repository. Each loss entry records the source sheet digest, source index, original normalized bbox, and carrier-digest/page anchor. The adapters only emit page-level regions; no region identity is inferred by array position, local ID, similar labels, or overlapping boxes.
+
+Diario B also records page space (rotation/columns) and publication context. These fields have no corresponding modeled output in these adapters and are recorded as section-level LOSS. Empty sections in either reader remain UNKNOWN. Human ranks are absent or derived_from_arrangement: independent reading-order comparison remains UNKNOWN. Blank/default types remain UNKNOWN under the owner regions-first decision. The existing Diario machine type sidecar is not used as human evidence.
+
+The four newer native-PDF/bank sheets have empty page inventories. Their region page references are retained but cannot establish a complete inventory oracle. Missing relations/annotations/losses/uncertainties are not treated as observed absence.
+
+* Owner disposition (2026-10-27)
+The owner explicitly accepted these documented limitations and authorized closing sunset-905.3 as a partial result (reply “ok” to the concrete closure question). The requested composition run is executed and its losses, disagreements and unknowns remain explicit. Assembly machinery passes within the recorded scope; reference fidelity is partial. EPUB remains waived. Closure does not assert geometry recovery, exact-text agreement, or general real-carrier conformance. No further human marking is required.
+
+* Quality ledger
+Changed: consumer-side run_composition.py, persisted six adapter runs and reference comparisons, regression tests, and this report.
+Verified: test-first missing-runner failure; two initial tests green; injected-conflict test failed for missing result then all four run tests plus nine ingest tests passed. Full spec-check status is recorded in the ticket and session handoff.
+Review: agent self-review of graph partitions, source/digest pins, canonical equality, finite refusal witnesses, unrecorded-versus-absent semantics and artifact reproducibility.
+Risks: current adapters lack sub-page geometry and modeled publication/space fields; full text differs between the native extractors; bank associativity includes root-only parts.
+Next: no remaining work for the owner-scoped sunset-905.3; parent tickets are reviewed separately.
+
+* Final verification
+=OMP_THREAD_LIMIT=1 npm_config_cache=/tmp/sunset-905-3-npm-cache just spec-check= passed all gates: 301 tests, 18 subtests, frozen 0.2 PASS 11, both OpenSpec validators 10/10, and spk lint without issues. The four new runner regressions were added after that suite collected; they and nine ingest tests passed separately (13 passed). Final OpenSpec strict validation and git diff --check also passed. All persisted composition JSON artifacts reproduced byte-for-byte into a separate temporary output directory. Gate log: [[file:runs/composition/spec-check.log][spec-check.log]]. Reverted only generated demo timing/memory churn. No commit or push.

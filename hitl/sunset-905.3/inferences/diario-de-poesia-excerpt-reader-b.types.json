@@ -1,0 +1,1441 @@
+{
+  "schema_version": "0.1",
+  "status": "agent_inferred_not_human_reviewed",
+  "source": "runs/reader-b/diario-de-poesia-excerpt.observations.json",
+  "source_sha256": "8624a3518ae6d5edbcfe13c311dc3e21f245b4ad739a0464c1ccf33a0005bece",
+  "carrier": "bundle/carriers/diario-de-poesia-excerpt.pdf",
+  "carrier_sha256": "42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4",
+  "created": "2026-10-27",
+  "producer": "Codex assistant",
+  "method": "Visual inspection of six rendered carrier pages with numbered reader-b bounding boxes overlaid; no OCR or region matching to reader-a.",
+  "human_type_labels_used": false,
+  "independent_reader": false,
+  "limitations": [
+    "Agent had prior context about reader-a counts and type distribution; this is not an independent reader run.",
+    "Certainty is qualitative agent judgment, not a calibrated probability.",
+    "Mixed-content boxes receive one suggested type and alternatives; no boxes are split or moved.",
+    "Cover masthead is partially clipped by the supplied region; annotations rendered in the PDF are not treated as document region types.",
+    "No human acceptance or general conformance is implied."
+  ],
+  "regions": [
+    {
+      "source_index": 0,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0264,
+        "y": 0.0677,
+        "w": 0.9736,
+        "h": 0.153,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "header",
+      "certainty": "tentative",
+      "alternatives": [
+        "title"
+      ],
+      "reason": "Cover masthead and issue information."
+    },
+    {
+      "source_index": 1,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0373,
+        "y": 0.2265,
+        "w": 0.9174,
+        "h": 0.1056,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 2,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0561,
+        "y": 0.3369,
+        "w": 0.1724,
+        "h": 0.0596,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Display heading above Juan L. Ortiz portrait."
+    },
+    {
+      "source_index": 3,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0631,
+        "y": 0.4003,
+        "w": 0.1674,
+        "h": 0.2364,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "image",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Photographic portrait."
+    },
+    {
+      "source_index": 4,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0631,
+        "y": 0.641,
+        "w": 0.1754,
+        "h": 0.1932,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 5,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0353,
+        "y": 0.7983,
+        "w": 0.1882,
+        "h": 0.1803,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "image",
+      "certainty": "tentative",
+      "alternatives": [
+        "other",
+        "text"
+      ],
+      "reason": "Graphic portrait; top of box overlaps preceding prose."
+    },
+    {
+      "source_index": 6,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2384,
+        "y": 0.342,
+        "w": 0.3676,
+        "h": 0.4095,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "image",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Large central photograph."
+    },
+    {
+      "source_index": 7,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2464,
+        "y": 0.7553,
+        "w": 0.1734,
+        "h": 0.069,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Display headline above article excerpt."
+    },
+    {
+      "source_index": 8,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2533,
+        "y": 0.8272,
+        "w": 0.1635,
+        "h": 0.1408,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 9,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4287,
+        "y": 0.7539,
+        "w": 0.1575,
+        "h": 0.1142,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "image",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Photographic portrait."
+    },
+    {
+      "source_index": 10,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4247,
+        "y": 0.8703,
+        "w": 0.1684,
+        "h": 0.0424,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Display headline below portrait."
+    },
+    {
+      "source_index": 11,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4217,
+        "y": 0.9148,
+        "w": 0.1724,
+        "h": 0.051,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 12,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.612,
+        "y": 0.3378,
+        "w": 0.1615,
+        "h": 0.2328,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 13,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.606,
+        "y": 0.575,
+        "w": 0.1625,
+        "h": 0.1422,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "image",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Cartoon illustration."
+    },
+    {
+      "source_index": 14,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7814,
+        "y": 0.3332,
+        "w": 0.1694,
+        "h": 0.0388,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Display heading above competition notice."
+    },
+    {
+      "source_index": 15,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7805,
+        "y": 0.3687,
+        "w": 0.1643,
+        "h": 0.3481,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 16,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6054,
+        "y": 0.7235,
+        "w": 0.3409,
+        "h": 0.0696,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Large multiline headline."
+    },
+    {
+      "source_index": 17,
+      "page": 1,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6023,
+        "y": 0.7965,
+        "w": 0.3564,
+        "h": 0.1538,
+        "viewport_w": 757,
+        "viewport_h": 1044
+      },
+      "inferred_type": "image",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Photographic group portrait."
+    },
+    {
+      "source_index": 18,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0506,
+        "y": 0.0241,
+        "w": 0.8709,
+        "h": 0.0292,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "header",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Running header with folio and publication name."
+    },
+    {
+      "source_index": 19,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0351,
+        "y": 0.0566,
+        "w": 0.1798,
+        "h": 0.0326,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Contents heading."
+    },
+    {
+      "source_index": 20,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2288,
+        "y": 0.0566,
+        "w": 0.1333,
+        "h": 0.0314,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Editorial heading."
+    },
+    {
+      "source_index": 21,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5651,
+        "y": 0.0589,
+        "w": 0.186,
+        "h": 0.0348,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "heading",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Column heading."
+    },
+    {
+      "source_index": 22,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0475,
+        "y": 0.0925,
+        "w": 0.1658,
+        "h": 0.5591,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "list",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Contents entries with page references."
+    },
+    {
+      "source_index": 23,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0398,
+        "y": 0.6674,
+        "w": 0.1674,
+        "h": 0.1302,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 24,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0367,
+        "y": 0.8066,
+        "w": 0.1767,
+        "h": 0.0763,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 25,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0413,
+        "y": 0.8863,
+        "w": 0.1689,
+        "h": 0.064,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 26,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2211,
+        "y": 0.0937,
+        "w": 0.1736,
+        "h": 0.7848,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 27,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3993,
+        "y": 0.0566,
+        "w": 0.1767,
+        "h": 0.1695,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 28,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3977,
+        "y": 0.2273,
+        "w": 0.1736,
+        "h": 0.1336,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 29,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3993,
+        "y": 0.7527,
+        "w": 0.1689,
+        "h": 0.1044,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 30,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3962,
+        "y": 0.8571,
+        "w": 0.1705,
+        "h": 0.0988,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 31,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5713,
+        "y": 0.7505,
+        "w": 0.1736,
+        "h": 0.2043,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 32,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5759,
+        "y": 0.0948,
+        "w": 0.1736,
+        "h": 0.1336,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "image",
+      "certainty": "tentative",
+      "alternatives": [
+        "caption",
+        "other"
+      ],
+      "reason": "Portrait with its caption included in the same box."
+    },
+    {
+      "source_index": 33,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.579,
+        "y": 0.2324,
+        "w": 0.1736,
+        "h": 0.1291,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 34,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3993,
+        "y": 0.366,
+        "w": 0.3564,
+        "h": 0.3806,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "image",
+      "certainty": "tentative",
+      "alternatives": [
+        "other",
+        "text"
+      ],
+      "reason": "Framed illustrated facsimile including handwriting and verse; mixed content."
+    },
+    {
+      "source_index": 35,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7526,
+        "y": 0.055,
+        "w": 0.1829,
+        "h": 0.0651,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 36,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.751,
+        "y": 0.1235,
+        "w": 0.1767,
+        "h": 0.1504,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 37,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7572,
+        "y": 0.2728,
+        "w": 0.1751,
+        "h": 0.3301,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 38,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7541,
+        "y": 0.601,
+        "w": 0.1798,
+        "h": 0.0674,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "other",
+      "certainty": "tentative",
+      "alternatives": [
+        "header",
+        "title"
+      ],
+      "reason": "Publication logo and issue metadata grouped together."
+    },
+    {
+      "source_index": 39,
+      "page": 2,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7588,
+        "y": 0.674,
+        "w": 0.1705,
+        "h": 0.2863,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Editorial staff credits."
+    },
+    {
+      "source_index": 40,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0506,
+        "y": 0.0273,
+        "w": 0.9127,
+        "h": 0.0427,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "header",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Running header and folio."
+    },
+    {
+      "source_index": 41,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0816,
+        "y": 0.0733,
+        "w": 0.8554,
+        "h": 0.0371,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "title",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Article title across the page."
+    },
+    {
+      "source_index": 42,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.077,
+        "y": 0.1148,
+        "w": 0.3487,
+        "h": 0.0865,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "tentative",
+      "alternatives": [
+        "heading"
+      ],
+      "reason": "Bold introductory prose, not an article title."
+    },
+    {
+      "source_index": 43,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0801,
+        "y": 0.2105,
+        "w": 0.1596,
+        "h": 0.5872,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 44,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0739,
+        "y": 0.7986,
+        "w": 0.172,
+        "h": 0.1662,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 45,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2505,
+        "y": 0.2035,
+        "w": 0.1658,
+        "h": 0.1808,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 46,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4272,
+        "y": 0.1171,
+        "w": 0.1658,
+        "h": 0.265,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 47,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6007,
+        "y": 0.1227,
+        "w": 0.1782,
+        "h": 0.2616,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 48,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7805,
+        "y": 0.1193,
+        "w": 0.1705,
+        "h": 0.2302,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 49,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7836,
+        "y": 0.3484,
+        "w": 0.1519,
+        "h": 0.0483,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Italic pull quotation within the article."
+    },
+    {
+      "source_index": 50,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.782,
+        "y": 0.4023,
+        "w": 0.1658,
+        "h": 0.2021,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 51,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7789,
+        "y": 0.6122,
+        "w": 0.172,
+        "h": 0.3615,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 52,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2366,
+        "y": 0.3888,
+        "w": 0.5362,
+        "h": 0.3896,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "image",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Large photograph."
+    },
+    {
+      "source_index": 53,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2459,
+        "y": 0.784,
+        "w": 0.1612,
+        "h": 0.1853,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 54,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.407,
+        "y": 0.7795,
+        "w": 0.189,
+        "h": 0.1897,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 55,
+      "page": 3,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5914,
+        "y": 0.7818,
+        "w": 0.1736,
+        "h": 0.1875,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Prose block visible inside the drawn region."
+    },
+    {
+      "source_index": 56,
+      "page": 4,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0661,
+        "y": 0.0217,
+        "w": 0.9034,
+        "h": 0.0427,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "header",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Running section header and folio."
+    },
+    {
+      "source_index": 57,
+      "page": 4,
+      "bbox": {
+        "relative": "page",
+        "x": 0.297,
+        "y": 0.0789,
+        "w": 0.4199,
+        "h": 0.0516,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "title",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Poem title with author/translator line in the same box."
+    },
+    {
+      "source_index": 58,
+      "page": 4,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0677,
+        "y": 0.133,
+        "w": 0.4463,
+        "h": 0.7197,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Poem text, left column."
+    },
+    {
+      "source_index": 59,
+      "page": 4,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5201,
+        "y": 0.1388,
+        "w": 0.4385,
+        "h": 0.7163,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Poem text, right column."
+    },
+    {
+      "source_index": 60,
+      "page": 4,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0661,
+        "y": 0.9289,
+        "w": 0.6989,
+        "h": 0.0191,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "footer",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Publication note in bottom margin."
+    },
+    {
+      "source_index": 61,
+      "page": 5,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0429,
+        "y": 0.0173,
+        "w": 0.8957,
+        "h": 0.0438,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "header",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Running section header and folio."
+    },
+    {
+      "source_index": 62,
+      "page": 5,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2335,
+        "y": 0.0768,
+        "w": 0.5222,
+        "h": 0.0662,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "title",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Poem title and attribution grouped together."
+    },
+    {
+      "source_index": 63,
+      "page": 5,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0698,
+        "y": 0.1442,
+        "w": 0.281,
+        "h": 0.8006,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Poem text, left column."
+    },
+    {
+      "source_index": 64,
+      "page": 5,
+      "bbox": {
+        "relative": "page",
+        "x": 0.3566,
+        "y": 0.1484,
+        "w": 0.2829,
+        "h": 0.8006,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Poem text, middle column."
+    },
+    {
+      "source_index": 65,
+      "page": 5,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6492,
+        "y": 0.1527,
+        "w": 0.2984,
+        "h": 0.8006,
+        "viewport_w": 484,
+        "viewport_h": 668
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Poem text, right column."
+    },
+    {
+      "source_index": 66,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.0698,
+        "y": 0.022,
+        "w": 0.8934,
+        "h": 0.0478,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "header",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Running header and folio."
+    },
+    {
+      "source_index": 67,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.062,
+        "y": 0.0726,
+        "w": 0.1822,
+        "h": 0.9031,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Bulleted bibliography interspersed with commentary."
+    },
+    {
+      "source_index": 68,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2674,
+        "y": 0.0852,
+        "w": 0.3178,
+        "h": 0.059,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "title",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Article title."
+    },
+    {
+      "source_index": 69,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2616,
+        "y": 0.147,
+        "w": 0.1647,
+        "h": 0.4242,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Article prose, left column."
+    },
+    {
+      "source_index": 70,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4244,
+        "y": 0.1442,
+        "w": 0.1705,
+        "h": 0.4284,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "text",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Article prose, right column with author credit."
+    },
+    {
+      "source_index": 71,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.2539,
+        "y": 0.5909,
+        "w": 0.1667,
+        "h": 0.3961,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "other",
+      "certainty": "tentative",
+      "alternatives": [
+        "list",
+        "text"
+      ],
+      "reason": "Quotation/commentary followed by bibliography entries; mixed content."
+    },
+    {
+      "source_index": 72,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.4205,
+        "y": 0.5909,
+        "w": 0.1744,
+        "h": 0.3862,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Bulleted bibliography with intervening prose commentary."
+    },
+    {
+      "source_index": 73,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.593,
+        "y": 0.0656,
+        "w": 0.1802,
+        "h": 0.4213,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Bibliography entries and prose commentary."
+    },
+    {
+      "source_index": 74,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.6008,
+        "y": 0.4888,
+        "w": 0.1744,
+        "h": 0.1348,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "heading",
+      "certainty": "tentative",
+      "alternatives": [
+        "image"
+      ],
+      "reason": "Large E introducing Ensayos; typographic category marker."
+    },
+    {
+      "source_index": 75,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.5988,
+        "y": 0.625,
+        "w": 0.1764,
+        "h": 0.3497,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Bulleted bibliography under Ensayos."
+    },
+    {
+      "source_index": 76,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7791,
+        "y": 0.0744,
+        "w": 0.1686,
+        "h": 0.2781,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "tentative",
+      "alternatives": [
+        "other"
+      ],
+      "reason": "Bulleted bibliography with a section note."
+    },
+    {
+      "source_index": 77,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7771,
+        "y": 0.3539,
+        "w": 0.1822,
+        "h": 0.1264,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "heading",
+      "certainty": "tentative",
+      "alternatives": [
+        "image"
+      ],
+      "reason": "Large A introducing Antologias; typographic category marker."
+    },
+    {
+      "source_index": 78,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7771,
+        "y": 0.4803,
+        "w": 0.1822,
+        "h": 0.125,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "clear",
+      "alternatives": [],
+      "reason": "Bulleted bibliography under Antologias."
+    },
+    {
+      "source_index": 79,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7713,
+        "y": 0.611,
+        "w": 0.1899,
+        "h": 0.139,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "heading",
+      "certainty": "tentative",
+      "alternatives": [
+        "image"
+      ],
+      "reason": "Large R introducing Recitales; typographic category marker."
+    },
+    {
+      "source_index": 80,
+      "page": 6,
+      "bbox": {
+        "relative": "page",
+        "x": 0.7713,
+        "y": 0.75,
+        "w": 0.1744,
+        "h": 0.2317,
+        "viewport_w": 387,
+        "viewport_h": 534
+      },
+      "inferred_type": "list",
+      "certainty": "tentative",
+      "alternatives": [
+        "text",
+        "other"
+      ],
+      "reason": "Event announcement and dated recital entries."
+    }
+  ]
+}

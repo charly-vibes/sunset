@@ -1,0 +1,350 @@
+{
+  "version": "0.3",
+  "id": "reader-b-diario-de-poesia-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4",
+    "locator": "fixtures/carriers/diario-de-poesia-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "vb-main",
+      "kind": "physical",
+      "root": "rb-root"
+    },
+    {
+      "id": "vb-log",
+      "kind": "logical",
+      "root": "rb-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "rb-root",
+      "view_id": "vb-main",
+      "kind": "document"
+    },
+    {
+      "id": "rb-log",
+      "view_id": "vb-log",
+      "kind": "article"
+    },
+    {
+      "id": "rbp1",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp2",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp3",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp4",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp5",
+      "view_id": "vb-main",
+      "kind": "page"
+    },
+    {
+      "id": "rbp6",
+      "view_id": "vb-main",
+      "kind": "page"
+    }
+  ],
+  "contents": [],
+  "relations": [
+    {
+      "id": "relb-rc1",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp1"
+    },
+    {
+      "id": "relb-rc2",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp2"
+    },
+    {
+      "id": "relb-rc3",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp3"
+    },
+    {
+      "id": "relb-rc4",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp4"
+    },
+    {
+      "id": "relb-rc5",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp5"
+    },
+    {
+      "id": "relb-rc6",
+      "kind": "contains",
+      "from": "rb-root",
+      "to": "rbp6"
+    }
+  ],
+  "annotations": [],
+  "evidence": [],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:1",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:1",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:1",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:2",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:2",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:2",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:3",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:3",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:3",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:4",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:4",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:4",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:5",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:images",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded images",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:vectors",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine vector graphics",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:annotations",
+      "scope": "page:6",
+      "status": "unexamined",
+      "reason": "reader B does not examine source annotations",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:glyphs",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    },
+    {
+      "inventory_id": "pb-inv",
+      "manifest_id": "pb-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "unexamined",
+      "reason": "reader B does not examine embedded files",
+      "adapter_id": "sunset-reader-b",
+      "adapter_version": "0.1",
+      "config_sha256": "unavailable"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "pb-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory-b.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "pb-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest-b.json",
+      "version": "1",
+      "sha256": "7fb3b33f19deaea756b39a06cc77bc54aaac3e6926c34982f99492d0bb3dacba"
+    }
+  ]
+}

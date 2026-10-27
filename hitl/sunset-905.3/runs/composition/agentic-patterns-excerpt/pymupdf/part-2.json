@@ -1,0 +1,227 @@
+{
+  "version": "0.3",
+  "id": "adapter-agentic-patterns-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66",
+    "locator": "fixtures/carriers/agentic-patterns-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "v-main",
+      "kind": "physical",
+      "root": "r-root"
+    },
+    {
+      "id": "v-log",
+      "kind": "logical",
+      "root": "r-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "r-root",
+      "view_id": "v-main",
+      "kind": "document"
+    },
+    {
+      "id": "r-log",
+      "view_id": "v-log",
+      "kind": "article"
+    },
+    {
+      "id": "pg3",
+      "view_id": "v-main",
+      "kind": "page"
+    },
+    {
+      "id": "pg4",
+      "view_id": "v-main",
+      "kind": "page"
+    }
+  ],
+  "contents": [
+    {
+      "id": "txt3",
+      "kind": "text",
+      "value": "Historical Perspective\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 177\nPrompts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 178\nContext engineering\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 180\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 182\nHands-On: Prompts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 183\nHands-On: Context Result Decorator\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 185\nHands-On: History Compaction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 188\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 192\nChapter: Model Context Protocol (MCP)\n194\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194\nHistorical Perspective\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194\nArchitecture . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194\nTools . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 197\nFeatures . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 200\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 203\nHands-On: MCP STDIO Transport\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 204\nHands-On: MCP Tools with Agents\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 207\nHands-On: MCP Features . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 209\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 212\nChapter: Agent2Agent Protocol (A2A)\n214\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214\nHistorical Perspectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214\nTask Lifecycle in Agent-to-Agent (A2A) Systems . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214\nA2A in Detail . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 233\nSecurity . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 242\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 245\nHands-On: A2A Client-Server . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 245\nHands-On: A2A Coordinator Agent\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 247\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 251\nChapter: Skills, Sub-Agents & Tasks\n254\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254\nSub-agents\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254\nContext engineering: why sub-agents help . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254\nSkills Specification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 255\nSkills Engineering . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 257\nComparison: Sub-agents, Skills, MCP, and A2A . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 259\nAGENTS.md . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 260\nTasks\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 262\nHands-On: Fixed Sub-Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 263\nHands-On: Dynamic Sub-Agents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 264\nHands-On: Tasks . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 266\nHands-On: Skills and Progressive Disclosure . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 267\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 269\nChapter: Evals\n271\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 271\nHistorical Perspective\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 271\nTesting\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 272\nEvals . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 273\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 277\nHands-On: Deterministic Testing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 278\nHands-On: Basic Evals . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 280\n3"
+    },
+    {
+      "id": "txt4",
+      "kind": "text",
+      "value": "Hands-On: Pydantic Evals Framework . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 282\nHands-On: Eval Runner and Custom Evaluators\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . 286\nHands-On: Doctors . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 289\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 293\nData Sources & Connectors\n295\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 295\nConnector patterns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 295\nNL2SQL (Natural Language to SQL) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 301\nPrivate Data\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 303\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 306\nHands-On: File Connector . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 307\nHands-On: NL2SQL with CSV Post-Processing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 308\nHands-On: OpenAPI Connector\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 310\nHands-On: Controlled Vocabularies . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 313\nHands-On: Private Data Guardrails\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 315\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 317\nUser Interface\n319\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 319\nChainlit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 319\nAG-UI . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 322\nError propagation, cancellation, and human-in-the-loop\n. . . . . . . . . . . . . . . . . . . . . . . . 324\nSession propagation\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 329\nFile Uploads\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 332\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 333\nHands-On: Chainlit\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 334\nHands-On: AG-UI Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 340\nHands-On: AG-UI Backend . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 341\nHands-On: AG-UI Frontend . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 344\nHands-On: AG-UI Side-Channels . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 346\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 349\nChapter: Execution Infrastructure\n352\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 352\nCode Sandbox\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 352\nREPL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 358\nMCP Server Isolation\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 362\nSandboxing Skill Execution . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 365\nHands-On: Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 366\nHands-On: MCP Server Isolation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 366\nReferences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 368\nChapter: The Complete Agent\n370\nIntroduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370\nFirst Steps\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370\nAgent V1: The Coder\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 370\nAgent V2: The Planner\n. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 371\nAgent V3: The Skilled . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 372\nAgent V4: The Coordinator . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 374\nAgent V5: The Full Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 375\nServer Requirements . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 377\nInfrastructure: The Distributed Agent . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 379\nChapter: Advanced Agents\n382\n4"
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-rc3",
+      "kind": "contains",
+      "from": "r-root",
+      "to": "pg3"
+    },
+    {
+      "id": "rel-hc3",
+      "kind": "has-content",
+      "from": "pg3",
+      "to": "txt3"
+    },
+    {
+      "id": "rel-rc4",
+      "kind": "contains",
+      "from": "r-root",
+      "to": "pg4"
+    },
+    {
+      "id": "rel-hc4",
+      "kind": "has-content",
+      "from": "pg4",
+      "to": "txt4"
+    }
+  ],
+  "annotations": [],
+  "evidence": [
+    {
+      "id": "ev-txt3",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:3",
+      "content_ids": [
+        "txt3"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "ev-txt4",
+      "origin": "source",
+      "source_ref": "sha256:3b2425e5faeb373b3e46984d194bb26d2a0b8fc10c9ba1a49bcfec730e273c66#page:4",
+      "content_ids": [
+        "txt4"
+      ],
+      "selector_ids": []
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:3",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:images",
+      "scope": "page:3",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:vectors",
+      "scope": "page:3",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:annotations",
+      "scope": "page:3",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:glyphs",
+      "scope": "page:4",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:images",
+      "scope": "page:4",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:vectors",
+      "scope": "page:4",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:annotations",
+      "scope": "page:4",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    },
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "p-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "p-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest.json",
+      "version": "1",
+      "sha256": "88b829b3443275b39950440508dfde8b44574a9e22d2035481fba322ba178a5e"
+    }
+  ]
+}

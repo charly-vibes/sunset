@@ -1,0 +1,74 @@
+{
+  "version": "0.3",
+  "id": "adapter-bank-statement-ca-excerpt",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "18ce0c49df1ad61bdc638abb1b4cb9185987acda4c6333cc3fb5b10facdc29a2",
+    "locator": "fixtures/carriers/bank-statement-ca-excerpt.pdf"
+  },
+  "views": [
+    {
+      "id": "v-main",
+      "kind": "physical",
+      "root": "r-root"
+    },
+    {
+      "id": "v-log",
+      "kind": "logical",
+      "root": "r-log"
+    }
+  ],
+  "regions": [
+    {
+      "id": "r-root",
+      "view_id": "v-main",
+      "kind": "document"
+    },
+    {
+      "id": "r-log",
+      "view_id": "v-log",
+      "kind": "article"
+    }
+  ],
+  "contents": [],
+  "relations": [],
+  "annotations": [],
+  "evidence": [],
+  "vocabularies": [
+    {
+      "namespace": "ex",
+      "version": "1"
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [
+    {
+      "inventory_id": "p-inv",
+      "manifest_id": "p-man",
+      "feature": "pdf:attachments",
+      "scope": "document",
+      "status": "preserved",
+      "reason": "",
+      "adapter_id": "sunset-carrier",
+      "adapter_version": "0.1",
+      "config_sha256": "c3693ebc232d60346c83831760fb3f3599a4e5155bf6cd80c6c5a53fe3536937"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "p-inv",
+      "kind": "carrier-inventory",
+      "uri": "inventory.json",
+      "version": "1",
+      "sha256": "334cb4581cbefe6177b02e338500f1b5312ef458aff5b0069c31ad0d435883a6"
+    },
+    {
+      "id": "p-man",
+      "kind": "adapter-manifest",
+      "uri": "manifest.json",
+      "version": "1",
+      "sha256": "88b829b3443275b39950440508dfde8b44574a9e22d2035481fba322ba178a5e"
+    }
+  ]
+}
