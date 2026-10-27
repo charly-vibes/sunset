@@ -36,7 +36,12 @@ carrier in a normal PDF/EPUB viewer. The four carriers:
   rectangle around each part, pick its type (text, title, image, table…),
   and step through pages with *Prev/Next*. Each rectangle becomes an entry
   with `label`, `type`, `page`, `bbox` (page-relative drawn region — that
-  is the evidence), and `order_rank` for reading order (the ↑/↓ arrows).
+  is the evidence), and `order_rank` for reading order (the ↑/↓ arrows,
+  **→ indents** a row under the preceding shallower one — a sub-part whose
+  rank becomes `N.M` — and **← outdents**). Reading-order ranks you leave
+  unset are **derived from your arrangement** when you *Build JSON*
+  (hierarchical paths like `1.1.2`); hand-set ranks are never overwritten,
+  and the derivation is listed on the review screen.
   If your browser blocks reading the local PDF (normal over `file://` in
   Chrome), press *Load the PDF file…* once and pick the carrier — or
   serve the bundle with `python3 -m http.server`. If two orderings seem
@@ -52,6 +57,16 @@ carrier in a normal PDF/EPUB viewer. The four carriers:
   per page: `rotation` (does the page display sideways/upside-down?),
   `columns` (single/multi, and whether a column interrupts the other),
   `reading_order_ambiguous` (true if layout makes order unclear).
+  The SPA may offer **suggestions** (marked *suggested*): page entries
+  scaffolded from the document's real page count, and a columns guess
+  computed from the rectangles you drew. Suggestions never enter your
+  sheet until you press *Accept* — dismiss them and nothing is recorded.
+  Accepted suggestions become ordinary entries you can edit or delete;
+  accepted pre-fills are marked in an additive `prefill_provenance` object
+  in the emitted JSON (`reviewed_accepted` / `derived_from_arrangement`),
+  so tool-derived facts stay distinguishable from fully manual ones.
+  Relations, context, annotations, losses and uncertainties are **never**
+  machine-suggested.
 - `context` — claims about the document's own context, each with evidence:
   `publication_date` (and whether it is the carrier's date or a date
   *described inside* the content — they are different things),
@@ -81,7 +96,7 @@ carrier in a normal PDF/EPUB viewer. The four carriers:
     {"index": 2, "image_only": true, "summary": "table of contents, two columns"}
   ],
   "structure": [
-    {"label": "Table of contents", "evidence": "page 2, upper half", "order_rank": 1}
+    {"label": "Table of contents", "evidence": "page 2, upper half", "order_rank": "1"}
   ],
   "relations": [],
   "space": [

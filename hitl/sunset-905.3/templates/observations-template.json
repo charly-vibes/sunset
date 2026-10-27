@@ -34,7 +34,7 @@
         "viewport_h": 0
       },
       "evidence": "page N, quote or location (drawn regions: the rectangle IS the evidence; quote optional)",
-      "order_rank": 1,
+      "order_rank": "1.1",
       "order_alternatives": []
     }
   ],

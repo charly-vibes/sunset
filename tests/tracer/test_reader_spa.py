@@ -13,7 +13,11 @@ facing form that replaces hand-edited JSON observation sheets. It must:
 
 import json
 import re
+import shutil
+import subprocess
 from pathlib import Path
+
+import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 REPO_SPA = REPO / "hitl" / "sunset-905.3" / "templates" / "observations-spa.html"
@@ -349,3 +353,157 @@ def test_spa_annotator_links_regions_to_entries() -> None:
     # Region list rows and their removal must exist.
     assert re.search(r"[Rr]egion", html), "region list missing"
     assert re.search(r"[Dd]elete|[Rr]emove", html), "region removal missing"
+
+
+# ---------------------------------------------------------------------------
+# sunset-ejy: pre-fill observation sections from drawn regions
+# (hitl/sunset-905.3/prefill-spec.org, owner-approved 2026-10-26)
+# Governing rule: pre-fill only deterministic bookkeeping of facts the reader
+# already expressed; never pre-fill an interpretation (independence contract).
+# ---------------------------------------------------------------------------
+
+PREFILL_CORE = re.compile(r"<!--PREFILL-CORE-->(.*?)<!--END PREFILL-CORE-->", re.S)
+
+
+def _prefill_core_js() -> str:
+    m = PREFILL_CORE.search(_spa())
+    assert m, "PREFILL-CORE block missing from the SPA"
+    js = re.sub(r"</?script>", "", m.group(1))
+    assert "<script" not in js and "state" not in js, (
+        "pre-fill core must be pure: no DOM, no state access")
+    return js
+
+
+def _run_node(script: str) -> str:
+    r = subprocess.run(["node", "-e", script], capture_output=True, text=True, timeout=60)
+    assert r.returncode == 0, f"node failed:\n{r.stderr}"
+    return r.stdout
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
+def test_prefill_core_rank_paths_derive_hierarchical_paths() -> None:
+    """order_rank derivation is a pure function of (list order, depths):
+    walk the list keeping a 1-based sibling counter stack; each entry's path
+    is its sibling index appended to its parent's path. Depth jumps are
+    clamped to parent+1 (outline semantics)."""
+    script = _prefill_core_js() + r'''
+const assert = require("assert");
+// flat list -> "1", "2", ...
+assert.deepEqual(rankPaths([{depth:0},{depth:0},{depth:0}]), ["1","2","3"]);
+// indent -> hierarchical paths (second depth-2 child gets "1.1.2")
+assert.deepEqual(rankPaths([{depth:0},{depth:1},{depth:2},{depth:2},{depth:0}]),
+                 ["1","1.1","1.1.1","1.1.2","2"]);
+// a depth jump is clamped to parent+1 during the walk
+assert.deepEqual(rankPaths([{depth:0},{depth:2}]), ["1","1.1"]);
+// outdent back to the root level
+assert.deepEqual(rankPaths([{depth:0},{depth:1},{depth:0},{depth:0}]),
+                 ["1","1.1","2","3"]);
+// missing depth defaults to 0
+assert.deepEqual(rankPaths([{},{}]), ["1","2"]);
+console.log("ok");
+'''
+    assert "ok" in _run_node(script)
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
+def test_prefill_core_columns_suggestion_x_gap_clustering() -> None:
+    """The only real algorithm (prefill-spec §5): bands [x, x+w] of page-relative
+    eligible regions, greedy merge when gap < 0.06 page-widths, k = clusters
+    with >= 2 regions; k<=1 single, k=2 two, k>=3 multi; < 3 regions -> null."""
+    script = _prefill_core_js() + r'''
+const assert = require("assert");
+function region(type, x, w, rel) {
+  return { type, page: 1, bbox: { relative: rel || "page", x, y: 0.1, w, h: 0.2 } };
+}
+// two columns, two regions each (gutter 0.15 > 0.06) -> "two"
+assert.equal(columnsSuggestion([
+  region("text", 0.05, 0.40), region("text", 0.05, 0.40),
+  region("text", 0.60, 0.35), region("title", 0.60, 0.35)]), "two");
+// three clusters of two -> "multi"
+assert.equal(columnsSuggestion([
+  region("text", 0.02, 0.26), region("text", 0.02, 0.26),
+  region("text", 0.38, 0.26), region("text", 0.38, 0.26),
+  region("text", 0.74, 0.24), region("list", 0.74, 0.24)]), "multi");
+// overlapping bands merge into one cluster -> "single"
+assert.equal(columnsSuggestion([
+  region("text", 0.05, 0.30), region("text", 0.32, 0.30), region("text", 0.60, 0.35)]),
+  "single");
+// full-width bands (w > 0.9 — header/footer-by-geometry) still count as single evidence
+assert.equal(columnsSuggestion([
+  region("text", 0.05, 0.9), region("text", 0.05, 0.9), region("text", 0.05, 0.9)]),
+  "single");
+// fewer than 3 eligible regions -> no suggestion
+assert.equal(columnsSuggestion([region("text", 0.05, 0.4), region("text", 0.6, 0.35)]), null);
+// non-eligible types are not counted
+assert.equal(columnsSuggestion([
+  region("image", 0.05, 0.4), region("image", 0.6, 0.35), region("image", 0.05, 0.4)]), null);
+// overlay-relative regions are not counted (page-relative only)
+assert.equal(columnsSuggestion([
+  region("text", 0.05, 0.4, "overlay"), region("text", 0.6, 0.35, "overlay"),
+  region("text", 0.05, 0.4, "overlay")]), null);
+console.log("ok");
+'''
+    assert "ok" in _run_node(script)
+
+
+def test_spa_prefill_affordances_exist() -> None:
+    html = _spa()
+    # page scaffold affordance, gated on the real page count of the rendered doc
+    assert re.search(r"pages known", html), "page-entry scaffold line missing"
+    assert re.search(r"add page entries", html), "page-entry scaffold CTA missing"
+    # columns suggestion affordance with the suggested value in the line
+    assert re.search(r"suggest columns from your regions", html), (
+        "columns suggestion line missing")
+    # hierarchical indent/outdent controls on structure rows
+    assert re.search(r"[Ii]ndent", html), "indent control missing"
+    assert re.search(r"[Oo]utdent", html), "outdent control missing"
+    # the box tag shows the live rank path
+    assert "rankDisplay" in html, "live rank path missing from box tags"
+    # review screen shows exactly which ranks were derived at Build JSON
+    assert "derivNote" in html, "build-time rank derivation note missing"
+    # provenance recording (owner decision 3)
+    assert "prefill_provenance" in html, "prefill_provenance missing"
+    assert '"reviewed_accepted"' in html, "reviewed_accepted marker missing"
+    assert '"derived_from_arrangement"' in html, "derived_from_arrangement marker missing"
+
+
+def test_spa_prefill_only_in_page_inventory_and_space() -> None:
+    """The independence contract: relations/context/annotations (and every
+    interpretive section) must have no suggestion code path at all."""
+    html = _spa()
+    m = re.search(r"var PREFILL_SECTIONS = \[([^\]]*)\]", html)
+    assert m, "PREFILL_SECTIONS gate missing"
+    sections = re.findall(r'"([^"]+)"', m.group(1))
+    assert sorted(sections) == ["page_inventory", "space"], (
+        f"prefill must be limited to page_inventory+space, got {sections}")
+    # every suggestion emission passes through the single gate
+    assert re.search(r"PREFILL_SECTIONS\.indexOf\(sec\)", html), (
+        "suggestions must be routed through the PREFILL_SECTIONS gate")
+
+
+def test_spa_provenance_is_additive_schema_unchanged() -> None:
+    """Accepted pre-fills are marked only in the additive sheet-level
+    prefill_provenance object; the template schema itself gains no keys."""
+    assert "prefill_provenance" not in TEMPLATE, (
+        "template must not gain keys: provenance is additive-only in emitted sheets")
+    html = _spa()
+    # emitted only when it has keys — absent means fully manual
+    assert re.search(r"Object\.keys\(state\.prefill_provenance\)\.length", html), (
+        "prefill_provenance must be emitted only when non-empty")
+
+
+def test_template_order_rank_example_is_a_string_path() -> None:
+    """order_rank is now a hierarchical path string ("1", "1.1", "1.1.2");
+    the template example reflects the new shape (key set untouched)."""
+    entry = TEMPLATE["structure"][0]
+    assert isinstance(entry["order_rank"], str), "order_rank example must be a path string"
+    assert re.fullmatch(r"\d+(\.\d+)*", entry["order_rank"]), (
+        f"order_rank example {entry['order_rank']!r} is not a hierarchical path")
+
+
+def test_spa_rank_field_accepts_path_strings() -> None:
+    """The rank input must keep hierarchical paths intact ("1.1.2" is not an
+    int) while single integers still coerce to numbers."""
+    html = _spa()
+    assert re.search(r"\\d\+\(\\\.\\d\+\)\+", html), (
+        "hierarchical path pattern missing from rank coercion")
