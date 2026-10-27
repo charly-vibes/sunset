@@ -441,6 +441,7 @@ var annNeedsPick = false; /* browser blocks direct local reads → file picker *
 var annFit = "width";   /* "width" | "page" */
 var annZoom = 1;
 var annBmp = null;      /* offscreen cache of the last rendered page */
+var annPageDims = null; /* last rendered viewport dims (px) — for manual recalibration */
 
 function blank() {
   return {
@@ -804,6 +805,7 @@ function annRenderPage(canvas, done) {
     canvas.width = Math.floor(vp.width); canvas.height = Math.floor(vp.height);
     canvas.style.width = Math.floor(vp.width) + "px"; canvas.style.height = Math.floor(vp.height) + "px";
     wrap.style.width = Math.floor(vp.width) + "px"; wrap.style.height = Math.floor(vp.height) + "px";
+    annPageDims = { w: Math.floor(vp.width), h: Math.floor(vp.height) };
     var ctx = canvas.getContext("2d");
     function finish() {
       /* the canvas IS the page: auto-calibrate the frame to the full page */

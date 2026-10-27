@@ -507,3 +507,12 @@ def test_spa_rank_field_accepts_path_strings() -> None:
     html = _spa()
     assert re.search(r"\\d\+\(\\\.\\d\+\)\+", html), (
         "hierarchical path pattern missing from rank coercion")
+
+
+def test_spa_page_dims_tracked_for_manual_recalibration() -> None:
+    """The manual 'Page frame' recalibrate button stores the real rendered
+    viewport dims — annPageDims must be declared and set from the render
+    viewport, not left undefined (a click would throw)."""
+    html = _spa()
+    assert re.search(r"var annPageDims", html), "annPageDims never declared"
+    assert re.search(r"annPageDims = \{", html), "annPageDims never assigned"
