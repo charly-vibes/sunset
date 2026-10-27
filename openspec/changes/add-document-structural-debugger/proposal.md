@@ -52,3 +52,23 @@ A reader can load a fixture for each native PDF, EPUB, scanned magazine and hybr
   decision on which to reuse remains open.
 - **Not done:** no viewer, adapter, diagnostic or comparator implementation
   exists; `fixtures/README.md` specifies oracles only (see `tasks.md`).
+
+## Working-example amendment (2026-10-27, proposed)
+
+The closed sunset-xx7 tickets delivered Python inspection/comparison machinery,
+not the integrated visual review experience required above. Real composition
+runs also omit all 203 human-drawn geometries from adapter outputs (see
+`hitl/sunset-905.3/composition-results.org`). This amendment supplies explicit
+acceptance criteria; it does not reopen the owner-accepted partial 905.3 result.
+
+Deliver one local, read-only PDF review journey: import existing human region
+sheets into DSC 0.3 using declared geometry profiles; select a region on its
+source; inspect evidence and competing attributed readings; export and reopen
+one disagreement. Start with Diario de Poesía and its existing A/B sheets.
+No new human marking, automatic OCR, or general conformance claim is required.
+The earlier PDF/EPUB and other-carrier scope remains outstanding; this PDF
+milestone does not satisfy those broader release gates.
+
+Additional affected capability: document-adapters (human-sheet import).
+Implementation is pending owner approval of this amendment. Existing closed
+machinery tickets remain closed. The new tickets track the missing user outcomes.

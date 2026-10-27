@@ -33,3 +33,20 @@ The debugger SHALL offer keyboard navigation and redundant visual/text status en
 - **GIVEN** a region with a provenance warning
 - **WHEN** a keyboard user focuses and activates it
 - **THEN** the same source locations, status and details SHALL be available as for a pointer user.
+
+### Requirement: Executable PDF inspection journey
+The debugger SHALL provide a local browser workspace linking human-sheet-derived
+DSC regions to the matching PDF source, structure and attributed evidence, with
+pointer and keyboard operation. Acceptance SHALL execute an actual browser and
+SHALL fail if the required browser runtime is unavailable; modeled interaction
+alone SHALL NOT satisfy this requirement.
+
+#### Scenario: Inspect a human region on Diario
+- **GIVEN** the committed Diario PDF and validated descriptors imported from its existing human sheets
+- **WHEN** a reviewer selects a region by overlay or keyboard-accessible structure entry
+- **THEN** its page, source highlight, stable identity, sheet attribution and evidence SHALL be visible together
+- **AND** the highlight SHALL remain aligned after zoom and rotation while source and descriptor bytes remain unchanged
+
+#### Scenario: Anchor cannot be resolved
+- **WHEN** a source digest mismatches or a region lacks a valid coordinate frame
+- **THEN** the workspace SHALL display a typed unavailable or mismatch result and SHALL NOT invent a source highlight

@@ -33,3 +33,24 @@ The debugger SHALL expose canonical comparison outputs suitable for independent 
 - **GIVEN** a frozen descriptor pair, declared policy and scope
 - **WHEN** independent implementations compare them
 - **THEN** normalized result codes and witness references SHALL agree.
+
+### Requirement: Browser comparison and replay journey
+The debugger SHALL let a reviewer inspect two attributed observations under an
+explicit observable scope, export a disagreement and reopen it with pinned
+inputs. It SHALL preserve unsupported and unknown outcomes and SHALL NOT infer
+cross-reader region identity or choose a correct reading automatically.
+
+#### Scenario: Inspect two human readings
+- **GIVEN** two source-linked observations from the Diario A/B sheets
+- **WHEN** the reviewer explicitly selects them and a supported comparison scope
+- **THEN** both attributions, source loci, comparison policy, result and available witnesses SHALL be visible in the browser
+- **AND** missing judgments SHALL remain unknown rather than agreement
+
+#### Scenario: Reopen an exported disagreement
+- **WHEN** the reviewer exports a disagreement and reopens it with the matching local PDF
+- **THEN** pinned descriptors, source digest, observable scope, policy/version and witnesses SHALL reproduce the result and selected source locus
+- **AND** source bytes SHALL be omitted by default and replayability limits SHALL be explicit
+
+#### Scenario: Reopen without matching source
+- **WHEN** a package is opened without its source or with a different PDF
+- **THEN** the browser SHALL report unavailable or mismatched source and SHALL NOT claim successful source replay

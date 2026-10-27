@@ -19,3 +19,9 @@
 ## Done means
 
 All acceptance fixtures pass; each declared negative counterexample fails with expected diagnostic code and witness; two independent implementations agree on frozen comparison outputs; core input descriptors remain unchanged; unknown/unsupported never masquerades as pass; native PDF/EPUB run without OCR; `spk` and OpenSpec checks actually run and outputs are recorded.
+
+## 5. PDF working example (amendment pending approval)
+
+- [ ] 5.1 Source-linked human region inspection: first fail region-import and real-browser selection tests, then import the existing human sheets into valid DSC 0.3 and expose pointer/keyboard source-to-evidence navigation with tested page-frame transforms; preserve original bytes and explicit unknowns.
+- [ ] 5.2 Attributed reading comparison: first fail a real-browser A/B inspection test, then show selected observations, explicit comparison scope, outcomes and witnesses without inferred identity or an automatic winner.
+- [ ] 5.3 Reopen a source-linked disagreement: first fail real-browser export/reopen and wrong-source tests, then export pinned replay inputs, reopen with matching local PDF, reproduce outcome/locus and record a runnable example with its limits. Browser gates must fail rather than skip when unavailable; run just spec-check. Any optional refactoring is a separate ticket/commit.
