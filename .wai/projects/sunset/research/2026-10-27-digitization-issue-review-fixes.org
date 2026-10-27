@@ -1,0 +1,42 @@
+* Digitization issue-review fixes and repeat review
+System: Beads. Scope: sunset-rmx and children .1–.16 (17 issues).
+Source: openspec/changes/add-iterative-document-digitization/{proposal.md,design.md,tasks.md,specs/document-digitization/spec.md}.
+Work ticket: sunset-yzj. Prior review: sunset-yeq.
+
+** Resolved findings
+- ALIGN-001 HIGH: new sunset-rmx.15 / checkpoint 2.4 owns public run -> image-based detector -> real crop OCR -> attributed DSC/text -> inspect and whole-page baseline. Reuse assessment cites dsc03/demo.py and substrate/oracles.py; raw whitespace cannot be lost through existing strip/join helpers. Fake adapter tests plus separately bounded real local smoke required. Depends on .7 durable budget/resume and .10 approved local configuration; blocks .11.
+- CLRT-001 MEDIUM: .9 owns public evaluate and pre-inference stage validation, with known-answer CER 1/2 vs 0/2, region precision/recall 1/2, line boundary error 1/2, directed relation missing/spurious witnesses, empty/missing references UNKNOWN. .11/.12 must invoke shared evaluator and retain numeric reports/config/output digests. Design pins normalization and one-to-one matching fixtures, error units and exclusion accounting.
+- DEP-001 MEDIUM: .10 approves only difficult-page settings/references, with explicit engineering-only fallback and no positive claims. New .16 approves separate six-page manifest/references after .11, blocking .12. Difficult-page inference has no dependency on .16. Earlier stage evidence stays unchanged; six-page runs use a separate manifest directory.
+- EXEC-001 MEDIUM: .7 now owns __main__.py and fresh-process public resume coverage, original run identity/history/ledger, no resets/double settlement/dispatch, and uncertain-provider refusal. .2 placeholders explicitly temporary; .8 preserves resume; .13 exercises interrupted public CLI journey.
+
+** Pass 0 — mechanical preflight
+All 16 child tickets have nonempty files arrays, current base_commit 3f09292 and proposal digests matching the four final files; parent digests refreshed too. Body paths match metadata. New child label inheritance initially introduced parent complexity/lane labels; corrected to one lane and one complexity per child (.15 AFK/L; .16 HITL/M). No unresolved inherited-label issue remains. Shared code files already carry sequential co-modification/reanchoring notes. New paths are planned files, not claimed existing implementation. Global cycle check passes. Approval reachability and actual blocking-edge checks pass.
+
+** Pass 1 — clarity
+No remaining actionable finding. Evaluator explicitly owns arithmetic, source scope, denominators, missed/spurious units, directed relationships and report command. Smoke evidence and human approval are distinguished. Pilot thresholds remain a pre-inference owner decision, not fabricated values.
+
+** Pass 2 — scope/tracer bullets
+No remaining actionable finding. New local-provider slice crosses invocation, detection, recognition, export, inspection and durable evidence; it is not adapter-only plumbing. Default tests use fakes; a separately approved bounded smoke is required. Evaluation slice produces an independently inspectable report. Six-page reference approval is a distinct HITL gate.
+Convergence: 0 new CRITICAL, 0 new findings vs 0 prior; ratio undefined and false-positive rate unmeasured. ITERATE, no convergence claim.
+
+** Pass 3 — dependencies
+No remaining actionable finding. .7 -> .8 -> .9 -> .10 -> .15 -> .11 -> .16 -> .12 is acyclic; .15 also directly depends on .7, .11 on .10, .12 on .11, and all implementation/pilot children transitively on .1. The later six-page gate cannot block difficult-page inference. Stage manifests freeze references/settings before stage inference; explicitly approved engineering-only mode cannot pass quality/economy or scaling.
+Convergence: 0 new CRITICAL, 0 new findings vs 0 prior; ratio undefined and false-positive rate unmeasured. ITERATE.
+
+** Pass 4 — source-plan alignment
+No remaining actionable finding. Proposal/design/spec/tasks agree on bounded local integration, exact public resume and evaluation operations, staged references and preserved evidence. All OpenSpec checkpoints remain unchecked because no pipeline is implemented. Raw human sheets and accepted partial sunset-905.3 remain outside this work.
+Convergence: 0 new CRITICAL, 0 new findings vs 0 prior; ratio undefined and false-positive rate unmeasured. ITERATE.
+
+** Pass 5 — executability
+No remaining actionable finding. AFK children have concrete pytest meters, quantified Must gates, regression command, headers/TDD/separate tidy criteria and anti-goals. Missing future test paths must fail, not skip. HITL approvals require explicit owner wording/digests. Local-provider smoke must record actual approved argv, source/config/tool identities and usage; fake-only evidence cannot close it. Existing OCR paths were inspected for reuse, not modified.
+Convergence: five passes completed; 0 new CRITICAL, 0 new findings vs 0 prior; ratio undefined, false-positive rate unmeasured. No independent/model validation or convergence claim.
+
+** Verdict
+READY_TO_WORK for proposal approval/planning handoff; implementation and experiments remain blocked on explicit .1 and stage configuration approvals. No unresolved CRITICAL/HIGH/MEDIUM/LOW findings in this bounded self-review. Slice quality Good; horizontal leakage Low; lane clarity Good; clarity/scope/dependencies/completeness Good. This review does not establish runtime correctness or OCR quality.
+
+** Quality ledger / handoff
+Changed: four digitization proposal files, .rmx ticket descriptions/metadata/dependencies, two new child tickets and this research/handoff. Preserved earlier Lens amendment and whisper changes.
+Verified: before/after planning witnesses for all four findings (prior all fail, revised all pass); 16-child metadata/body/digest/lane/meter checks; transitive stage blockers and .1 approval reachability; bd dep cycles; openspec validate add-iterative-document-digitization --strict (valid, no warnings); openspec validate --specs --strict (7/7); frozen validator test (PASS 11); git diff --check. Full runtime suite not rerun: no runtime code changed.
+Review: self-executed preflight and five passes; no subagents or external inference services.
+Risks: pipeline/tests and real smoke remain future work; reference judgments, numerical pilot limits/thresholds and engine choices remain unapproved. No quality/cost improvement claimed.
+Next: owner reviews revised proposal via sunset-rmx.1; implementation only after recorded approval. No commit, push, remote upload, paid use or scaling performed/authorized.

@@ -1,0 +1,5 @@
+---
+tags: [pipeline-run:epic-orchestrator-2026-10-19-sunset-xx7-lens-mvp-orchestration, pipeline-step:claim]
+---
+
+Revised add-iterative-document-digitization for all five sunset-0cr findings. Changed: proposal/design/tasks/spec delta only; local run/resume/replay/inspect contract, allocation-ID-independent canonical graph equality and A-B-A/nonrepeat fixtures, durable dispatch uncertainty/idempotent reconciliation with encumbered reservations, concrete scenarios replacing every generic enforced scenario, minimum reviewed difficult-page and six-page references with nonempty denominators and blocked positive conclusions. Verified: strict change valid without warnings; deployed specs 7/7; frozen validator PASS 11; git diff --check; generic-scenario scan empty. Review: self-checked five finding contracts against acceptance fixtures, aligned action ordering with semantic graph labels. Risks: no independent re-review or runtime implementation; numerical budgets/models/thresholds and reference artifacts remain pilot prerequisites. Next: review revised proposal then obtain approval before implementation. Existing Lens/whisper edits preserved; no commit/push.
