@@ -1,4 +1,7 @@
 <!doctype html>
+<!-- Purpose: Collect offline human observations beside a persistent carrier viewer.
+Responsibilities: Draw/edit page-relative regions, preserve view position, save resumable sheets.
+Rationale: sunset-6ci keeps the carrier mounted across steps and offers step checkpoints. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -74,7 +77,7 @@ ul.warn:empty { display:none; }
 .canvaswrap { position:relative; margin:0 auto; }
 .canvaswrap canvas { display:block; }
 .ovl { position:absolute; inset:0; z-index:2; }
-.ovl.draw { cursor:crosshair; }
+.ovl.draw { cursor:crosshair; touch-action:none; }
 .ovl.idle { pointer-events:none; }
 .ovl .rbox { pointer-events:auto; } /* frame/region boxes stay clickable even when the overlay idles */
 .rbox { position:absolute; border:2px solid; border-radius:2px; cursor:pointer; }
@@ -92,6 +95,27 @@ ul.warn:empty { display:none; }
 .badge { display:inline-block; font-size:11px; border:1px solid var(--line); border-radius:4px; padding:1px 6px; background:#fff; }
 .suggline { display:flex; gap:10px; align-items:center; border:1px dashed var(--acc); background:var(--acc2); border-radius:8px; padding:8px 12px; margin:10px 0; font-size:13.5px; flex-wrap:wrap; }
 .suggline .spacer { flex:1; }
+/* Persistent reader workspace: viewer and form scroll independently. */
+.workspace.active { display:grid; grid-template-columns:minmax(0,3fr) minmax(340px,2fr); height:calc(100dvh - var(--topbar-height,64px)); }
+.workspace.active main { min-width:0; width:100%; max-width:none; margin:0; overflow:auto; padding:14px; }
+.workspace.active .viewer.open { display:flex; flex-direction:column; min-width:0; min-height:0; padding:12px; }
+.workspace.active .viewerbox { display:flex; flex-direction:column; flex:1; min-height:0; height:auto; border:0; background:transparent; overflow:hidden; }
+.workspace.active .stage { flex:1; min-height:0; height:auto; overflow-anchor:none; touch-action:pan-x pan-y; }
+.workspace.active .annbar { flex:none; }
+.workspace.active .vhead { flex:none; }
+.workspace.active .vhead .mut { display:none; }
+.workspace.active .vfile { overflow-wrap:anywhere; }
+.workspace.active .obrow .grow { min-width:min(200px,100%); }
+.workspace.active .field { max-width:100%; }
+details { margin-bottom:12px; }
+summary { cursor:pointer; color:var(--acc); margin-bottom:8px; }
+.save-status { font-size:12px; color:var(--mut); }
+@media (max-width:800px) {
+  .workspace.active { display:flex; flex-direction:column; height:auto; }
+  .workspace.active .viewer.open { height:60dvh; min-height:280px; }
+  .workspace.active main { overflow:visible; }
+  .topbar { padding:8px; gap:8px; }
+}
 </style>
 </head>
 <body>
@@ -105,9 +129,12 @@ ul.warn:empty { display:none; }
     <button class="mini" id="tStart">Start</button>
     <button class="mini" id="tStop">Pause</button>
   </span>
+  <button class="mini" id="saveStep" style="display:none">Save file</button>
+  <span id="saveStatus" class="save-status" role="status" aria-live="polite"></span>
   <button class="mini" id="viewBtn" style="display:none">Show carrier ▾</button>
 </div>
 
+<div class="workspace" id="workspace">
 <div class="viewer" id="viewerCard">
   <div class="vhead">
     <span class="vfile" id="viewerFile"></span>
@@ -219,7 +246,7 @@ ul.warn:empty { display:none; }
 <section class="screen" id="s-section">
   <div class="card">
     <h1 id="secTitle"></h1>
-    <div id="secGuidance"></div>
+    <details id="secGuidance"></details>
     <div id="panel"></div>
     <div class="skipbox" id="skipbox">
       <label><input type="checkbox" id="skipChk"> Nothing to record in this section</label>
@@ -228,7 +255,7 @@ ul.warn:empty { display:none; }
     <div class="ctarow">
       <button id="secBack">← Back</button>
       <span class="spacer"></span>
-      <button class="primary" id="secNext">Next →</button>
+      <button class="primary" id="secNext">Save & next →</button>
     </div>
   </div>
 </section>
@@ -284,6 +311,7 @@ ul.warn:empty { display:none; }
 </section>
 
 </main>
+</div><!-- workspace -->
 
 <!--VENDOR:pdf.js 3.11.174 (Apache-2.0) — inlined for fully offline page rendering; do not edit -->
 <script>
@@ -430,7 +458,7 @@ var SECTION_TITLES = {
 var REGION_TYPES = ["text","title","heading","image","table","caption","header","footer","list","other"];
 var TYPE_COLORS = { text:"#0b62c4", title:"#a34400", heading:"#7c3aed", image:"#1a7f37", table:"#b45309", caption:"#0f766e", header:"#64748b", footer:"#64748b", list:"#be185d", other:"#475569" };
 var annPage = 1;
-var annType = "text";
+var annType = "";
 var annSelect = -1;
 var drawMode = false;
 var drawFrameMode = false;
@@ -526,8 +554,8 @@ var GUIDANCE = {
     "Summary = one line: what the page shows. “Looks like a table of contents” is fine as a summary — do not infer beyond what you see."
   ],
   structure: [
-    "PDF carriers, two kinds of rectangle: first press <b>▢ Draw page frame</b> and drag <b>one rectangle around the whole page</b> — every region you draw afterwards is stored <b>relative to that page</b>, not to the viewer box (so zoom and viewer chrome do not matter; redraw the frame any time to re-map). Then press <b>✏ Draw regions</b> and drag a rectangle around each part, picking its <b>type</b> (text, title, image, table…). Use <b>Prev/Next page</b> to step through the document; each rectangle becomes an entry below, where you can add a label and the reading order.",
-    "Rectangles are recorded relative to the display box — they are evidence you could point another human to, not pixel-perfect measurements. Precision is not the goal.",
+    "The page frame is automatic. Press <b>✏ Draw regions</b> on the left and drag around each part you see. Types and labels are optional — leave them unset for later inference. Use <b>Prev/Next page</b> to move through the document. Click a rectangle to edit its entry on the right.",
+    "Rectangles are recorded relative to the page — they are evidence you could point another human to, not pixel-perfect measurements. Precision is not the goal.",
     "The document's <b>parts as a reader sees them</b>: headings, sections, articles, table titles, chapters.",
     "Each entry needs <b>evidence</b> — the page and a quote or location you could point another human to (a drawn rectangle already is that evidence; a quote is still welcome).",
     "<b>Order rank</b> = its position in reading order. ↑/↓ reorder rows; <b>→ indents</b> (the row becomes a sub-part of the nearest preceding shallower row, rank like 1.1), <b>← outdents</b>. Ranks you leave unset are derived from your arrangement when you Build JSON (paths like 1.1.2). If two orderings seem defensible, put the other ranking in <b>order_alternatives</b> — never silently pick one."
@@ -663,7 +691,7 @@ function annFrame(page) { return (state.page_frames && state.page_frames[String(
 function annDeleteRegion(i) {
   state.structure.splice(i, 1);
   annSelect = -1;
-  save(); renderSection("structure");
+  save(); refreshCurrentStep();
 }
 
 function structureIndent(i, obj, delta) {
@@ -679,7 +707,7 @@ function structureIndent(i, obj, delta) {
     if (d <= 0) return;
     obj.depth = d - 1;
   }
-  save(); renderSection("structure");
+  save(); refreshCurrentStep();
 }
 
 function renderBoxes(ovl) {
@@ -693,7 +721,7 @@ function renderBoxes(ovl) {
     fbox.addEventListener("click", function(ev){
       ev.stopPropagation();
       drawFrameMode = true; drawMode = false;
-      renderSection("structure");
+      refreshCurrentStep();
     });
     ovl.appendChild(fbox);
   }
@@ -722,10 +750,13 @@ function renderBoxes(ovl) {
     function jumpToEntry(ev) {
       ev.stopPropagation();
       annSelect = i;
-      renderSection("structure");
+      if (step !== 3) showStep(3); else refreshCurrentStep();
       var row = document.getElementById("srow-" + i);
       if (row) {
-        if (row.scrollIntoView) row.scrollIntoView({ block:"center" });
+        var form = document.querySelector("main");
+        form.scrollTop += row.getBoundingClientRect().top - form.getBoundingClientRect().top - 30;
+        var input = row.querySelector("input,select");
+        if (input) input.focus({ preventScroll:true });
         row.classList.remove("rowflash"); void row.offsetWidth; row.classList.add("rowflash");
       }
     }
@@ -774,7 +805,7 @@ function annLoadBytes(u8, name) {
     annPdf = { doc: doc, numPages: doc.numPages, name: name || "carrier" };
     annNeedsPick = false; annLoading = false; annBmp = null;
     if (annPage > doc.numPages) annPage = 1;
-    renderSection("structure");
+    refreshCurrentStep();
     return true;
   });
 }
@@ -787,14 +818,16 @@ function annStartLoad() {
     .then(function(buf){ return annLoadBytes(new Uint8Array(buf)); })
     .catch(function(){
       annLoading = false; annNeedsPick = true;
-      renderSection("structure");
+      refreshCurrentStep();
     });
 }
 function annRenderPage(canvas, done) {
   if (!annPdf) return;
-  var key = annPage + "|" + annFit + "|" + annZoom;
+  var renderingPage = annPage, renderingPdf = annPdf;
+  var key = renderingPage + "|" + annFit + "|" + annZoom;
   var wrap = canvas.parentNode;
-  annPdf.doc.getPage(annPage).then(function(page){
+  renderingPdf.doc.getPage(renderingPage).then(function(page){
+    if (!canvas.isConnected || annPage !== renderingPage || annPdf !== renderingPdf) return;
     var base = page.getViewport({ scale: 1 });
     var stageW = wrap.parentNode.clientWidth - 24;
     var stageH = wrap.parentNode.clientHeight - 24;
@@ -808,12 +841,13 @@ function annRenderPage(canvas, done) {
     annPageDims = { w: Math.floor(vp.width), h: Math.floor(vp.height) };
     var ctx = canvas.getContext("2d");
     function finish() {
+      if (!canvas.isConnected || annPage !== renderingPage || annPdf !== renderingPdf) return;
       /* the canvas IS the page: auto-calibrate the frame to the full page */
       if (!annFrame(annPage)) {
         state.page_frames[String(annPage)] = { x: 0, y: 0, w: 1, h: 1,
           viewport_w: Math.floor(vp.width), viewport_h: Math.floor(vp.height) };
         save();
-        renderSection("structure"); /* refresh the bar: region drawing unlocks now */
+        refreshCurrentStep(); /* refresh the bar: region drawing unlocks now */
         return;
       }
       if (done) done();
@@ -824,6 +858,7 @@ function annRenderPage(canvas, done) {
     }
     var render = page.render({ canvasContext: ctx, viewport: vp });
     Promise.resolve(render.promise).then(function(){
+      if (!canvas.isConnected || annPage !== renderingPage || annPdf !== renderingPdf) return;
       annBmp = { key: key, canvas: document.createElement("canvas") };
       annBmp.canvas.width = canvas.width; annBmp.canvas.height = canvas.height;
       var bctx = annBmp.canvas.getContext("2d");
@@ -842,46 +877,59 @@ function renderStructureAnnotator(panel) {
     frameBtn.addEventListener("click", function(){
       state.page_frames[String(annPage)] = { x: 0, y: 0, w: 1, h: 1,
         viewport_w: (annPageDims ? annPageDims.w : 0), viewport_h: (annPageDims ? annPageDims.h : 0) };
-      save(); renderSection("structure");
+      save(); refreshCurrentStep();
     });
     bar.appendChild(frameBtn);
   }
   var drawBtn = el("button", { type:"button", class: drawMode ? "primary" : "", text: drawMode ? "◼ Drawing ON — click to stop" : "✏ Draw regions",
     title: hasF ? "Drag rectangles around the parts you see" : "Wait for the page to render — regions are stored relative to it" });
   if (!hasF) drawBtn.disabled = true;
-  drawBtn.addEventListener("click", function(){ if (!annFrame(annPage)) return; drawMode = !drawMode; if (drawMode) drawFrameMode = false; renderSection("structure"); });
+  drawBtn.addEventListener("click", function(){ if (!annFrame(annPage)) return; drawMode = !drawMode; if (drawMode) drawFrameMode = false; refreshCurrentStep(); });
   bar.appendChild(drawBtn);
   if (annPdf) {
     var fitBtn = el("button", { type:"button", title:"Toggle page fit", text: annFit === "width" ? "Fit: width" : "Fit: page" });
-    fitBtn.addEventListener("click", function(){ annFit = (annFit === "width") ? "page" : "width"; annBmp = null; renderSection("structure"); });
+    fitBtn.addEventListener("click", function(){ annFit = (annFit === "width") ? "page" : "width"; annBmp = null; refreshCurrentStep(); });
     bar.appendChild(fitBtn);
     bar.appendChild(el("span", { class:"small mut", text:"Zoom" }));
     var zout = el("button", { type:"button", text:"−" });
-    zout.addEventListener("click", function(){ annZoom = Math.max(0.25, annZoom / 1.25); annBmp = null; renderSection("structure"); });
+    zout.addEventListener("click", function(){ annZoom = Math.max(0.25, annZoom / 1.25); annBmp = null; refreshCurrentStep(); });
     bar.appendChild(zout);
     bar.appendChild(el("span", { class:"small", text: Math.round(annZoom * 100) + "%" }));
     var zin = el("button", { type:"button", text:"+" });
-    zin.addEventListener("click", function(){ annZoom = Math.min(4, annZoom * 1.25); annBmp = null; renderSection("structure"); });
+    zin.addEventListener("click", function(){ annZoom = Math.min(4, annZoom * 1.25); annBmp = null; refreshCurrentStep(); });
     bar.appendChild(zin);
   }
   var prev = el("button", { type:"button", text:"◀ Prev page" });
-  prev.addEventListener("click", function(){ if (annPage > 1) { annPage--; renderSection("structure"); } });
+  prev.addEventListener("click", function(){ if (annPage > 1) { annPage--; refreshCurrentStep(); } });
   bar.appendChild(prev);
   var knownMax = pageCount();
   bar.appendChild(el("span", { class:"small", text:"Page " + annPage + (annPdf ? " of " + knownMax : "") }));
   var next = el("button", { type:"button", text:"Next page ▶" });
-  next.addEventListener("click", function(){ if (annPdf ? annPage < knownMax : true) { annPage++; renderSection("structure"); } });
+  next.addEventListener("click", function(){ if (annPdf ? annPage < knownMax : true) { annPage++; refreshCurrentStep(); } });
   bar.appendChild(next);
   bar.appendChild(el("span", { class:"small mut", text:"type for new rectangles:" }));
   var typeSel = el("select");
+  typeSel.appendChild(el("option", { value:"", text:"untyped — infer later" }));
   REGION_TYPES.forEach(function(t){ typeSel.appendChild(el("option", { value:t, text:t })); });
   typeSel.value = annType;
   typeSel.addEventListener("change", function(){ annType = typeSel.value; });
   bar.appendChild(typeSel);
-  panel.appendChild(bar);
-
-  var stage = el("div", { class:"stage" });
-  panel.appendChild(stage);
+  var oldBar = panel.querySelector(".annbar");
+  if (oldBar) oldBar.replaceWith(bar); else panel.appendChild(bar);
+  var oldStage = panel.querySelector(".stage");
+  var viewKey = [currentCarrier(), annPage, annFit, annZoom, drawMode, drawFrameMode,
+    !!annPdf, annNeedsPick, !!annFrame(annPage)].join("|");
+  if (oldStage && oldStage.dataset.viewKey === viewKey) {
+    var overlay = oldStage.querySelector(".ovl");
+    if (overlay) { overlay.textContent = ""; renderBoxes(overlay); }
+    return; /* canvas, scroll, pointer handlers, and focus stay intact */
+  }
+  var samePage = oldStage && oldStage.dataset.page === String(annPage);
+  var scrollTop = samePage ? oldStage.scrollTop : 0;
+  var scrollLeft = samePage ? oldStage.scrollLeft : 0;
+  var stage = el("div", { class:"stage", tabindex:"0", "aria-label":"Carrier page viewer" });
+  stage.dataset.viewKey = viewKey; stage.dataset.page = String(annPage);
+  if (oldStage) oldStage.replaceWith(stage); else panel.appendChild(stage);
   var status = null;
 
   if (!annPdf && !annNeedsPick) {
@@ -916,7 +964,9 @@ function renderStructureAnnotator(panel) {
     wrap.appendChild(ovl);
     stage.appendChild(wrap);
     renderBoxes(ovl);
-    annRenderPage(canvas);
+    annRenderPage(canvas, function() {
+      stage.scrollTop = scrollTop; stage.scrollLeft = scrollLeft;
+    });
 
     if (drawMode || drawFrameMode) {
       ovl.addEventListener("pointerdown", function(ev){
@@ -977,13 +1027,17 @@ function renderStructureAnnotator(panel) {
           },
           evidence: "page " + annPage + " (drawn region)", order_rank: null, order_alternatives: []
         });
-        save(); renderSection("structure");
+        save(); refreshCurrentStep();
       });
     }
   } else if (!status) {
     stage.appendChild(el("p", { class:"vfail", text:"The carrier could not be rendered. Record regions by hand below (Add another entry)." }));
   }
 
+}
+
+function renderRegionRows(panel) {
+  panel.appendChild(el("p", { class:"mut small", text:"Draw regions on the left. Types and labels are optional; leave them unset for later inference." }));
   panel.appendChild(el("h2", { text:"Regions — " + state.structure.length + " recorded (drawn on any page; click a rectangle to jump to its entry)" }));
   state.structure.forEach(function(obj, i) {
     var row = el("div", { class:"obrow" });
@@ -992,7 +1046,7 @@ function renderStructureAnnotator(panel) {
     var drawn = obj.bbox ? "✏ drawn" : "by hand";
     flex.appendChild(el("span", { class:"badge", text:"p" + (obj.page || "?") + " · " + drawn }));
     flex.appendChild(fieldCell(SPECS.structure[0], obj, function(k, v){ obj[k] = v; save(); }));  /* label */
-    flex.appendChild(fieldCell(SPECS.structure[1], obj, function(k, v){ obj[k] = v; save(); renderSection("structure"); }));  /* type (re-render recolors the box) */
+    flex.appendChild(fieldCell(SPECS.structure[1], obj, function(k, v){ obj[k] = v; save(); renderViewer(); }));  /* recolor without replacing the active field */
     flex.appendChild(fieldCell(SPECS.structure[3], obj, function(k, v){ obj[k] = v; save(); }));  /* evidence */
     flex.appendChild(fieldCell(SPECS.structure[4], obj, function(k, v){ obj[k] = v; save(); }));  /* order_rank */
     var alt = el("div", { class:"field grow" });
@@ -1010,7 +1064,7 @@ function renderStructureAnnotator(panel) {
       if (j < 0 || j >= arr.length) return;
       var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
       if (annSelect === i) annSelect = j; else if (annSelect === j) annSelect = i;
-      save(); renderSection("structure");
+      save(); refreshCurrentStep();
     }
     tools.appendChild(el("button", { class:"mini", title:"Move up", text:"↑" })).addEventListener("click", function(){ move(-1); });
     tools.appendChild(el("button", { class:"mini", title:"Move down", text:"↓" })).addEventListener("click", function(){ move(1); });
@@ -1019,7 +1073,7 @@ function renderStructureAnnotator(panel) {
     tools.appendChild(el("button", { class:"mini", title:"Remove", text:"✕" })).addEventListener("click", function(){
       state.structure.splice(i, 1);
       annSelect = -1;
-      save(); renderSection("structure");
+      save(); refreshCurrentStep();
     });
     flex.appendChild(tools);
     row.appendChild(flex);
@@ -1028,13 +1082,24 @@ function renderStructureAnnotator(panel) {
   var add = el("button", { class:"primary", text:"+ Add entry by hand (no rectangle)" });
   add.addEventListener("click", function() {
     state.structure.push({ label:"", type:"", page:annPage, depth:0, bbox:null, evidence:"", order_rank:null, order_alternatives:[] });
-    save(); renderSection("structure");
+    save(); refreshCurrentStep();
   });
   panel.appendChild(add);
   panel.appendChild(el("p", { class:"mut small", text:"Reading order = the ↑/↓ arrows: top of the list reads first. → indents a row under the nearest preceding shallower row (its rank becomes N.M), ← outdents. Ranks left unset are derived from this arrangement when you Build JSON. Zoom and Fit only change the view — rectangles stay pinned to the page." }));
 }
 
+function refreshCurrentStep() {
+  renderViewer();
+  if (step >= 2 && step <= 9) renderSection(SECTION_ORDER[step - 2]);
+}
 function renderSection(sec) {
+  var form = document.querySelector("main");
+  var top = form.scrollTop;
+  renderSectionContents(sec);
+  form.scrollTop = top;
+}
+function renderSectionContents(sec) {
+  if (viewerOpen && isPdfCarrier()) renderViewer();
   var panel = $("panel");
   panel.textContent = "";
   var skippedNow = !!skipped[sec];
@@ -1042,7 +1107,7 @@ function renderSection(sec) {
   $("skipNote").textContent = skippedNow ? " — recorded as empty (a deliberate observation)" : "";
   panel.style.display = skippedNow ? "none" : "";
   if (skippedNow) return;
-  if (sec === "structure" && isPdfCarrier()) { renderStructureAnnotator(panel); return; }
+  if (sec === "structure" && isPdfCarrier()) { renderRegionRows(panel); return; }
   if (sec === "structure" && state.structure.length === 0) {
     panel.appendChild(el("p", { class:"mut small", text:"Non-PDF carrier (e.g. EPUB): pages cannot be drawn on here — record parts by hand with “+ Add another entry” (or open the carrier in your EPUB reader and transcribe what you see)." }));
   }
@@ -1184,9 +1249,11 @@ function renderColumnSuggestions(panel) {
 /* ---------- persistence ---------- */
 function draftKey() { return "sunset9053." + currentReader() + "." + currentCarrier(); }
 function save() {
-  try { localStorage.setItem(draftKey(), JSON.stringify(state)); } catch (e) {}
+  var saved = true;
+  try { localStorage.setItem(draftKey(), JSON.stringify(state)); } catch (e) { saved = false; }
   try { localStorage.setItem(draftKey() + ".skipped", JSON.stringify(skipped)); } catch (e) {}
   try { localStorage.setItem("sunset9053.last", JSON.stringify({ reader: currentReader(), carrier: currentCarrier() })); } catch (e) {}
+  return saved;
 }
 function loadDraft() {
   var raw = null;
@@ -1296,6 +1363,21 @@ function collectWarnings(d) {
   if (!d.annotations.length) w.push("No annotations recorded — that means “none observed”. Confirm that is what you saw.");
   return w;
 }
+function saveCheckpoint() {
+  var draftSaved = save();
+  var data = buildJson(); /* partial observations remain partial, ranks untouched */
+  try {
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type:"application/json" });
+    var a = el("a", { href:URL.createObjectURL(blob), download:data.carrier + ".observations.json" });
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    $("saveStatus").textContent = "File download requested" + (draftSaved ? " · browser draft saved" : " · browser draft unavailable");
+    return true;
+  } catch (e) {
+    $("saveStatus").textContent = draftSaved ? "File could not be downloaded. Your browser draft is still available." : "Neither the file nor the browser draft could be saved. Stay on this step and try again.";
+    return false;
+  }
+}
 function download() {
   var d = buildJson();
   $("doneCarrier").disabled = false;
@@ -1317,6 +1399,21 @@ function copyOut() {
 /* ---------- embedded carrier viewer ---------- */
 var viewerOpen = false;
 function renderViewer() {
+  var carrier = currentCarrier() || state.carrier;
+  var box = $("viewerBox");
+  if (box.dataset.carrier !== carrier) {
+    box.textContent = "";
+    box.dataset.carrier = carrier;
+  }
+  if (isPdfCarrier()) {
+    $("viewerFile").textContent = CARRIER_FILES[carrier] || carrier;
+    $("newTabLink").style.display = "";
+    $("newTabLink").href = annFileUrl();
+    $("viewerFallback").style.display = "none";
+    renderStructureAnnotator(box);
+  } else if (!box.children.length) renderFallbackViewer();
+}
+function renderFallbackViewer() {
   var c = currentCarrier() || state.carrier;
   var file = CARRIER_FILES[c];
   var box = $("viewerBox");
@@ -1369,13 +1466,19 @@ function showStep(s) {
   }
   $("where").textContent = where;
   $("timerChip").style.display = (s >= 2 && s <= 10) ? "" : "none";
-  $("viewBtn").style.display = (s >= 2 && s <= 10) ? "" : "none";
+  var working = s >= 2 && s <= 10;
+  $("workspace").classList.toggle("active", working);
+  $("viewerCard").classList.toggle("open", working && viewerOpen);
+  document.documentElement.style.setProperty("--topbar-height", document.querySelector(".topbar").offsetHeight + "px");
+  $("saveStep").style.display = working ? "" : "none";
+  $("viewBtn").style.display = "none"; /* the carrier stays alongside every observation step */
   if (viewerOpen && (s >= 2 && s <= 10)) renderViewer();
   if (s >= 2 && s <= 9) {
     var sec2 = SECTION_ORDER[s - 2];
     $("secTitle").textContent = SECTION_TITLES[sec2];
     var g = $("secGuidance");
     g.textContent = "";
+    g.appendChild(el("summary", { text:"How to record this step" }));
     var box = el("div", { class:"hintbox" });
     GUIDANCE[sec2].forEach(function(line){
       var p = el("p", { style:"margin:0 0 4px" });
@@ -1393,7 +1496,8 @@ function showStep(s) {
     $("dl").disabled = true; $("cp").disabled = true; $("doneCarrier").disabled = true;
   }
   if (s === 11) renderProgress();
-  window.scrollTo(0, 0);
+  document.querySelector("main").scrollTop = 0;
+  if (!working) window.scrollTo(0, 0);
 }
 function renderProgress() {
   var done = loadProgress();
@@ -1491,6 +1595,19 @@ function setupChanged() {
 
 /* ---------- wiring ---------- */
 function init() {
+  var resizePending = false;
+  window.addEventListener("resize", function() {
+    if (resizePending) return;
+    resizePending = true;
+    requestAnimationFrame(function() {
+      resizePending = false;
+      var stage = $("viewerBox").querySelector(".stage");
+      if (!stage || step < 2 || step > 10) return;
+      stage.dataset.viewKey = ""; annBmp = null;
+      document.documentElement.style.setProperty("--topbar-height", document.querySelector(".topbar").offsetHeight + "px");
+      refreshCurrentStep();
+    });
+  });
   $("welcomeStart").addEventListener("click", function(){ showStep(1); });
   $("backWelcome").addEventListener("click", function(){ showStep(0); });
   $("readerSel").addEventListener("change", setupChanged);
@@ -1539,7 +1656,8 @@ function init() {
     rd.readAsText(f);
   });
   $("secBack").addEventListener("click", function(){ showStep(step - 1); });
-  $("secNext").addEventListener("click", function(){ showStep(step + 1); });
+  $("secNext").addEventListener("click", function(){ if (saveCheckpoint()) showStep(step + 1); });
+  $("saveStep").addEventListener("click", saveCheckpoint);
   $("finBack").addEventListener("click", function(){ showStep(9); });
   $("notes").addEventListener("input", function(){ state.notes = $("notes").value; save(); });
   $("gen").addEventListener("click", function(){
