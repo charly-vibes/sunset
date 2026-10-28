@@ -1,0 +1,374 @@
+#+title: Recorded digitization command reference
+
+The digitization consumer renders selected PDF pages and turns source-pinned
+recorded region/OCR observations into valid DSC, searchable text and a local
+inspection report. Run commands from the repository root with Python 3 and the
+repository's existing PyMuPDF dependency available.
+
+* Run a recorded page
+
+#+begin_src bash
+python3 -m digitization run --source scan.pdf --pages 2 --config recorded.json --output run-001
+#+end_src
+
+=--pages= accepts comma-separated one-based PDF indices, for example =2,3=.
+The output path must not exist. Inputs are validated before output creation;
+no provider, executable OCR engine or network service is invoked.
+
+A run with an unresolved caption returns exit code 2 and this JSON (the manifest
+path is absolute and depends on the working directory):
+
+#+name: partial-run-result
+#+begin_example
+{"manifest": "<RUN>/manifest.json", "reason": "recorded-unresolved", "status": "stopped-with-unresolved-work"}
+#+end_example
+
+* Supply source-pinned recorded observations
+
+=recorded.json= has this shape. Replace =SOURCE_SHA256= with the SHA256 of the
+exact PDF bytes. The fixture provider is explicitly recorded; it does not
+establish that OCR was run on the source or that these readings are correct.
+
+#+begin_src json
+{
+  "version": "1",
+  "source_sha256": "SOURCE_SHA256",
+  "provider": {"kind": "recorded", "id": "fixture-ocr", "version": "1"},
+  "render": {"dpi": 72},
+  "pages": {
+    "2": {
+      "detections": [
+        {"id": "p1", "kind": "poem", "bbox": [30, 60, 100, 100]},
+        {"id": "c1", "kind": "caption", "bbox": [30, 200, 100, 20]}
+      ],
+      "recognitions": {
+        "p1": {"raw_text": "  luna\nmar\n\n  sal", "unresolved": []},
+        "c1": {"raw_text": "?", "unresolved": ["caption-uncertain"]}
+      }
+    }
+  }
+}
+#+end_src
+
+Each selected page needs nonempty detections and exactly one recognition per
+unique local region ID. Boxes are =[x,y,width,height]= in nonnegative integer
+points of the rendered page, with top-left origin and x-right/y-down axes;
+width/height must be positive and the entire box must fit the page. The frame
+records the page index and rendering rotation; points convert to pixels using
+=DPI/72=. DPI is an integer from 36 through 300. Region roles are attributed
+provider proposals, not independent human judgments.
+
+Raw/layout text retains all whitespace. Search text collapses whitespace, and
+=search-map.json= uses half-open Unicode character offsets into =search.txt=
+to map each region's search span to its PDF page and DSC selector. Each mapping
+also contains =tokens= with global search =start/end= and region-local
+=raw_start/raw_end= offsets. Tokens bind their =observation_id=; =bbox= is null
+until complete recorded OCR line geometry is supplied. These derivations do
+not establish transcription accuracy or reading-order agreement.
+
+* Inspect retained outputs
+
+#+begin_src bash
+python3 -m digitization inspect --run run-001
+python3 -m digitization inspect --run run-001 --json
+#+end_src
+
+Both return exit code 0 for intact runs, including runs with unresolved work.
+The human report shows status/reason, source hash, raw/layout/search text,
+producer, page/frame selectors, unresolved diagnostics, revisions and usage.
+The JSON report exposes the same data plus the operation trace. Inspection
+checks retained artifact digests, requires manifest usage to agree exactly
+with its hash-bound =ledger.json=, and uses the existing DSC validator/index and
+locator resolver. It does not change the run or invoke inference.
+
+=manifest.json= pins the source/configuration copies, selected descriptor,
+page PNGs with renderer/rotation/pixel-to-page transforms, artifact digests and
+recorded usage. The directory also holds =descriptor.json=, =regions.json=,
+=search.txt=, =search-map.json=, =unresolved.json=, =history.json=, =trace.jsonl=,
+=ledger.json=, =structure.json= and hash-addressed artifacts. Keep the entire directory together.
+Zero provider charge describes this recorded import only; runtime is separate
+and neither total operating cost nor transcription quality is measured.
+
+* Exit codes and refusals
+
+| Code | Status/reason | Meaning |
+|------+---------------+---------|
+| 0 | completed / recorded-inputs-consumed | Recorded input processing finished; not verified accuracy or full coverage |
+| 0 | inspect success | Evidence verified and report returned |
+| 2 | stopped-with-unresolved-work / recorded-unresolved | Results retained, explicit recorded uncertainty remains |
+| 3 | invalid-input | Invalid page/config/source/box/provider or existing output; no provider calls |
+| 4 | unsupported / unsupported-operation | Resume/replay placeholder; no restart or output mutation |
+| 5 | inspection-failed / integrity-failure | Missing/corrupt or inconsistent local evidence; no repair inference |
+
+A page outside the PDF, a source hash mismatch, a missing recognition, duplicate
+IDs, malformed PDF, unavailable configuration, or a non-recorded provider is
+refused. Correct the inputs and select a new output directory. A nonempty output
+directory is never overwritten. Missing/corrupt evidence must be restored from
+its original copy before inspection can succeed.
+
+* Reuse verified region outputs
+
+Add =--cache CACHE_DIR= to share recognition attempts across new runs. With no
+cache directory, attempts are retained in that run only. Page rendering and
+recorded detection import still run; this slice caches region recognition.
+A hit verifies request bytes, attempt identity, response digest and response
+schema. It selects the cache's first recorded attempt unless explicitly told
+otherwise; changing a supplied response alone does not replace a cached reading.
+
+#+begin_src bash
+python3 -m digitization run --source scan.pdf --pages 2 --config recorded.json --output run-002 --cache .digitization-cache
+python3 -m digitization run --source scan.pdf --pages 2 --config recorded.json --output run-003 --cache .digitization-cache
+#+end_src
+
+With the poem/caption example, both return exit 2 and the same partial-run JSON
+shape shown above, pointing to their own manifest. The first imports two
+recorded observations; the second reports =cache_hits: 2= and
+=recorded_observations: 0= in its inspection usage. No provider call occurs.
+The shared cache must be outside the new run directory.
+
+To change only the poem's request, add this alongside its page's =detections=
+and =recognitions= in =recorded.json=:
+
+#+begin_src json
+"recognition_overrides": {"p1": {"prompt": "retain poem whitespace"}}
+#+end_src
+
+That changes only the poem's key. Repeating a run with that configuration imports
+one poem observation and reuses the caption. Global =recognition= request
+parameters apply to every region; per-page =recognition_overrides= merge by local
+region ID. Defaults are =schema: recorded-recognition-v1=, empty =prompt=,
+=language: und=, and empty =preprocessing=, =decoding= and =policy= objects.
+Overrides replace individual fields, including a complete nested field value.
+
+Keys bind versioned operation/schema identity; ordered source/render hashes;
+page, crop, frame, rotation and scale; consumer code/dependency versions;
+provider/model identity and revision availability; and all effective request
+parameters. Roles/IDs are retained so equal geometry does not merge observations.
+An unavailable model revision is recorded as =null= with
+=model_revision_available: false=. Fresh inference determinism is not claimed.
+
+* Retain a fresh attempt or explicitly choose an older one
+
+To import a new recorded response for the same poem request, update its
+=raw_text= in the configuration and request a fresh attempt:
+
+#+begin_src bash
+python3 -m digitization run --source scan.pdf --pages 2 --config recorded.json --output run-004 --cache .digitization-cache --fresh page-2-p1
+#+end_src
+
+It returns exit 2 for the still-uncertain caption. The new manifest pins the new
+poem attempt; every known alternative response remains retained. Repeating a run
+without =--fresh= still selects the original default. =--fresh= may be repeated
+for multiple region IDs; it does not invoke OCR or a remote model in recorded mode.
+
+Inspect =run-004= to read its =operations= mapping. Each entry includes =key=,
+=request=, =selected_attempt=, =selected_output=, =cache_hit= and all retained
+=attempts=. For an existing attempt ID copied from that report:
+
+#+begin_src bash
+python3 -m digitization run --source scan.pdf --pages 2 --config recorded.json --output run-005 --cache .digitization-cache --select page-2-p1=ATTEMPT_ID
+#+end_src
+
+It returns exit 2 and pins exactly that attempt without altering the shared
+default. =--select= may be repeated for different regions. An unknown region,
+an unavailable attempt under the current request, or =--fresh= plus =--select=
+for the same region returns invalid-input/exit 3 and publishes no run.
+
+All known attempt response bytes are copied into each new run along with its
+immutable attempt envelopes, so inspection of that run does not depend on the
+shared cache. Concurrent attempts use exclusive atomic publication and distinct
+content-addressed envelopes. Cache corruption returns
+=cache-failed / cache-integrity-failure=, exit 5, with zero provider calls and no
+published run; it is never silently repaired or substituted with a fresh result.
+Restore the cache evidence from an intact copy before reuse. A completed run's
+local copy remains independently inspectable if the shared cache is later damaged.
+
+* Preserve poetic layout and attributed alternatives
+
+Add a =structure= list alongside a page's =detections= and =recognitions=.
+Each observation has a unique run-wide =id=, =kind= (=ocr=, =model= or =manual=),
+a canonical =region_id= (=page-N-LOCAL_ID=), and a =producer= containing nonempty
+=id/version= strings and a =config= object. The kind records supplied attribution;
+it does not verify that a human or model produced the observation.
+
+For the poem above, this is a complete list entry:
+
+#+begin_src json
+{
+  "id": "ocr-poem",
+  "kind": "ocr",
+  "region_id": "page-2-p1",
+  "producer": {"id": "fixture-ocr", "version": "1", "config": {"language": "es"}},
+  "text": "  luna\nmar\n\n  sal",
+  "lines": [
+    {"start": 0, "end": 6, "bbox": [40, 60, 60, 10]},
+    {"start": 7, "end": 10, "bbox": [30, 75, 60, 10]},
+    {"start": 12, "end": 17, "bbox": [40, 105, 60, 10]}
+  ]
+}
+#+end_src
+
+=text= defaults to selected raw OCR. An =ocr= layout must match it exactly;
+model and manual text remain separate readings. Optional =lines= must be empty
+(geometry unavailable) or cover every nonblank physical line in order, including
+its leading whitespace, with exact half-open Unicode offsets. Each box uses
+page points and must fit the detected region. Derived =indent= counts leading
+whitespace characters; =stanza= is a zero-based group separated by blank lines.
+The first accepted complete OCR layout binds search tokens to line boxes;
+all later readings remain available without replacing raw/layout/search text.
+
+Optional =relations= contains objects with =kind= and =target=. Supported kinds
+are =caption-of=, =continues-to=, =member-of=, =authored-by= and =precedes=.
+Targets must be canonical detected region IDs within the selected pages. For
+example, a caption observation may retain both:
+
+#+begin_src json
+"relations": [
+  {"kind": "caption-of", "target": "page-2-i1"},
+  {"kind": "caption-of", "target": "page-2-i2"}
+]
+#+end_src
+
+The two image regions must also be detected. Cross-page continuation candidates
+use the same form with =continues-to= and next-page target IDs. Relations remain
+unresolved proposals, exposed in region =alternatives= and =unresolved= output;
+they never become asserted DSC relations or an automatic first-candidate winner.
+
+=structure.json= retains selected raw OCR with its operation/attempt binding,
+accepted observations with source hashes, selectors and producer configurations,
+and rejected proposals with explicit diagnostics. The manifest pins this sidecar
+alongside the valid DSC descriptor. Unknown fields, missing attribution, invalid
+line geometry/offsets, duplicate observation IDs and absent relation targets
+reject the entire proposal while retaining prior valid observations and OCR.
+A malformed page =structure= envelope is diagnosed too. These runs return exit 2
+with =invalid-structure= unresolved work; no provider call occurs. Structure-only
+changes reuse verified recognition attempts. Human and JSON inspection expose
+observations, line/token derivations, alternatives and diagnostics.
+
+* Refine recorded regions through immutable revisions
+
+Add a top-level =refinement= policy to the recorded configuration to apply
+explicit rule-triggered actions. Each rule is considered once in this slice;
+repeated-state/fixed-point detection belongs to =sunset-rmx.6=. A rule inspects
+selected recognition text or unresolved reason strings, including verified cached
+responses. It never treats an unselected supplied response as active text.
+
+For the poem example, this policy exercises a split (a synthetic engineering
+example, not a claim that the poem actually contains mixed columns):
+
+#+begin_src json
+"refinement": {
+  "version": "1",
+  "rules": [{
+    "id": "mixed-columns", "priority": 1,
+    "check": {"kind": "text-contains", "value": "luna"},
+    "action": {
+      "kind": "split", "inputs": ["page-2-p1"],
+      "outputs": [
+        {"page": 2, "id": "r1a", "kind": "text", "bbox": [30, 60, 45, 100],
+         "recognition": {"raw_text": "left", "unresolved": []}},
+        {"page": 2, "id": "r1b", "kind": "text", "bbox": [80, 60, 50, 100],
+         "recognition": {"raw_text": "right", "unresolved": []}}
+      ]
+    }
+  }]
+}
+#+end_src
+
+The existing =run= command returns exit 2 because the original caption remains
+uncertain; =inspect --json= exposes =refinement.steps[0]= with rule ID,
+=parents: ["state-0"]=, =revision: "state-1"=, parent-to-child mapping,
+source hashes and page-point transforms. Current regions contain =r1a/r1b/c1=.
+Inspect =RUN/revisions/state-0= with the same inspect command to see the retained
+parent =p1= and its original recognition. No network or inference call occurs.
+
+Rules need unique nonempty IDs and nonnegative integer priorities. Checks are
+={"kind":"always"}=, ={"kind":"text-contains","value":"TEXT"}= or
+={"kind":"unresolved","value":"REASON"}=; value strings must be nonempty.
+Pending rules sort by priority, page, canonical semantic input-region labels,
+rule ID and canonical action digest. Canonical labels retain separate nodes even
+when geometry matches and include recorded relationships. This order is an
+execution policy, not an inferred document reading order. Arrival order and new
+output allocation IDs do not decide it. Missing/retired action inputs produce
+explicit invalid-refinement diagnostics rather than geometric identity guesses.
+
+Actions have =kind=, =inputs= and =outputs=, plus optional replacement =structure=
+observations in the format above. All geometric inputs must share one page.
+Output records use the complete page/id/kind/bbox/recognition shape in the example.
+
+| Kind | Input/output rule |
+|------+-------------------|
+| split | One parent, at least two newly identified children inside its box |
+| merge | At least two parents, one newly identified box containing all parents |
+| expand | One parent, one newly identified strictly larger enclosing box |
+| rerecognize | One input/output retaining ID, role and geometry; import a fresh recorded attempt |
+| restructure | No geometric outputs; invalidate dependent structure and optionally supply replacements |
+
+New geometric identities cannot reuse active or retired IDs. Lineage retains
+all parents and source-coordinate bindings; equality of boxes never collapses
+regions. Rerecognition preserves the input's per-region request overrides.
+
+Changing a region invalidates its recognition and the transitive closure of
+structure observations depending on it, including next-page continuations.
+Dependent observations leave the active sidecar and remain in prior snapshots.
+Unrelated OCR keeps the same verified operation key, output and attempt,
+including selections made by an earlier rerecognition, =--fresh= or =--select=.
+Selections carry forward only when the complete request remains unchanged; new
+crops/identities create new requests. Invalidated structure without an accepted
+replacement remains =structure-recheck-required= unresolved work. Replacement
+relationships still follow the attributed/unresolved policy; no winner is asserted.
+Unknown actions, wrong arity, invalid geometry/identity, missing targets or malformed
+replacement structure produce =invalid-refinement= diagnostics and leave the last
+valid revision selected. Replacement structure is validated against the actual
+resolved recognition, including cached selections. Realized candidates refused
+at this stage are retained under =candidates/candidate-N/=; their diagnostics
+link to an independently inspectable run. The root manifest binds their artifacts
+and includes their recorded usage even though their state was not admitted.
+A replacement targeting a page with a malformed prior structure envelope is
+explicitly refused while retaining its existing diagnostic and valid state.
+Malformed policy envelopes return invalid-input/exit 3.
+
+The root contains the last selected descriptor/text/structure, =refinement.json=,
+=original-config.json= and all immutable =revisions/state-N/= run directories.
+The manifest binds every snapshot artifact, including its manifest, so inspection
+refuses missing/corrupt revision evidence. Snapshot configurations omit the
+refinement dispatcher and pin their effective observations; the original policy
+is retained separately. History/trace include the retained revision events.
+Top-level usage sums observations, cache hits and recorded runtime across snapshots;
+it measures neither real inference cost nor the entire orchestration overhead.
+
+* Recovery and replay are not enabled yet
+
+#+begin_src bash
+python3 -m digitization resume --run run-001
+python3 -m digitization replay --run run-001 --output replay-001
+#+end_src
+
+Each returns exit code 4 and =unsupported-operation= with =provider_calls: 0=,
+without creating another run or modifying evidence. =sunset-rmx.7= will enable
+durable resume and =sunset-rmx.8= will enable recorded replay. Real local crop
+OCR and whole-page baseline mode belong to =sunset-rmx.15=, after budget and
+stage configuration approval. Refinement/evaluation remain later slices.
+
+* Executable command coverage
+
+=tests/tracer/test_digitization_first_page.py= runs the public run, inspect,
+resume and replay commands against a six-page synthetic PDF, including the
+exact recorded poem/caption example above. It verifies status/exit codes,
+source mappings, profile resolution, no mutation, corrupt-evidence refusal,
+invalid-input refusals and a network/process-disabled in-process journey.
+=tests/tracer/test_digitization_cache.py= covers selective prompt/crop invalidation,
+provider/model/schema/language/preprocessing/decoding/policy/render key changes,
+fresh/default/explicit selection, concurrent retention, corrupt metadata/output
+refusal and process/network-disabled cache use. The cache command examples use
+the same public invocation tested there.
+The partial-run JSON example is compared after normalizing only its absolute
+run directory to =<RUN>=; hashes and runtime are not part of that snippet.
+
+=tests/tracer/test_digitization_structure.py= verifies the documented poem,
+OCR/model/manual attribution, competing caption/continuation candidates, invalid
+proposal retention, sidecar integrity, and structure-only cache reuse.
+
+=tests/tracer/test_digitization_refinement.py= covers public split/inspection,
+all action types, neighboring and transitive invalidation, replacement rechecks,
+semantic scheduling, malformed candidate retention and unchanged OCR attempts.
