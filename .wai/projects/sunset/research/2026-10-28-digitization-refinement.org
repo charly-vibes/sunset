@@ -1,0 +1,76 @@
+* Recorded immutable refinement — sunset-rmx.5
+
+** Scope and ownership
+Continued approved digitization implementation. Checked wai patterns and .5
+contract, no other in-progress issues; claimed .5 and reanchored against current
+uncommitted .2/.3/.4 files at HEAD1936eaf. Added inspection.py ownership because
+public inspection must expose revisions and invalidations. No tidy ticket or
+commit/push authority exercised.
+
+** Decisions and contracts
+A version1 top-level refinement policy pins uniquely identified rules, integer
+priorities and always/text-contains/unresolved checks over selected responses.
+Rules are considered once in this slice. Repeated-state/fixed-point orchestration
+is .6, crash/budget persistence .7, replay .8; none is claimed complete here.
+
+Each admitted split/merge/expand/rerecognize/restructure retains an independently
+inspectable revisions/state-N run. The root exposes the selected state and binds
+all snapshot bytes, original configuration and refinement policy. Explicit lineage
+maps parents to outputs with source hash and identity page-point transforms.
+Split children fit the parent; merge/expansion boxes enclose inputs; expansion
+is strict; rerecognition retains identity/role/crop and imports a fresh attempt.
+New IDs cannot collide with active or retired IDs. Equal geometry is never identity.
+
+Canonical semantic-region labeling preserves graph multiplicity, uses exact
+recorded attributes/relationships and does not rely on local allocation names.
+Rules sort by pinned priority/page/semantic input labels/rule ID/canonical action
+digest, recomputed against each selected state. Output allocation IDs are excluded
+from action ordering. Canonical graph labeling enumerates equal-attribute-node
+permutations; this exact small-fixture implementation can be expensive for many
+indistinguishable regions. .6 owns the full semantic state projection.
+
+Candidate transformations and replacement structure validate before admission.
+Invalid actions retain the previous snapshot with invalid-refinement diagnostics.
+Changed regions invalidate dependent structure transitively, including neighboring
+continuations. Removed observations remain in prior snapshots. Accepted replacement
+observations clear their recheck requirement; other removed observations remain
+structure-recheck-required. Unrelated recognition keys/output bytes/selected
+attempts survive unchanged. Checks bind selected cached responses, not unselected
+supplied recordings. Top-level usage sums snapshots; runtime excludes additional
+orchestration overhead and is not a quality/economy claim.
+
+** Test-first evidence
+13 original cases RED with missing refinement behavior, then GREEN after public
+run integration. Four edge cases RED for geometric semantics, transitive closure
+and replacement rechecks; corrected all. Additional malformed replacement case
+RED for scheduler iteration over malformed relationships, then GREEN after safe
+canonical action handling. Final focused19 passes. Combined prior .2/.3/.4 and
+first17 refinement cases passed70 before the final two scheduling cases.
+
+Tests include public split run/inspect, independent parent inspection, retained
+unrelated attempts, all action types, malformed geometry/identity/arity, shuffled
+action arrival, priority/page/semantic-label/rule ordering, equal-box multiplicity,
+transitive neighboring links, replacement recheck disposition and no-match behavior.
+In-process action journeys disable sockets/subprocesses; public split asserts
+source/config bytes unchanged. Snapshot manifests are bound by root artifacts.
+Manual smoke loads literal documented JSON blocks and runs public run/inspect:
+PASS, /tmp/sunset-rmx-5-smoke-0a61nuer (temporary engineering example only).
+
+** Quality ledger
+Changed — refinement.py, pipeline dispatcher/single-state integration,
+inspection revision report, refinement tests and command-reference policy examples.
+All new source files have Purpose/Responsibilities/Rationale headers; changed
+pipeline/inspection rationale explains .5. Prior uncommitted work preserved.
+Verified — focused19, prior combined70, literal docs/public CLI smoke, diff check.
+Full OMP_THREAD_LIMIT=1 npm_config_cache=/tmp/sunset-905-3-npm-cache just spec-check:
+ALL GATES PASSED377 tests +18 subtests, both strict OpenSpec validators11/11,
+spk lint, frozen PASS11. Restored generated demo timing/memory churn.
+OpenSpec2.1 checked and sunset-rmx.5 closed. wai close --project sunset again
+refused due the existing Lens pipeline at1/7; manual handoff appended instead.
+Review — self: snapshot bindings, candidate admission before active-state change,
+source-coordinate bounds, fresh attempt binding, transitive structure invalidation,
+recheck replacement disposition and unchanged unrelated cache selections.
+Risks — recorded-only, one-shot rules; no production scale/performance or real OCR
+quality/cost claims. Canonical-label permutation cost noted above. Existing Lens
+pipeline still prevents wai close; preserve it, do not force-abandon silently.
+Next — sunset-rmx.6 semantic equality and stable/repeated-state termination.

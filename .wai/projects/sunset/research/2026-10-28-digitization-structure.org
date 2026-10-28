@@ -1,0 +1,59 @@
+* Attributed structural observations — sunset-rmx.4
+
+** Scope and decisions
+Approved implementation continuation, one feature slice; reanchored issue at
+HEAD1936eaf against uncommitted .2/.3 files and checked no other in-progress
+issues. No tidy/refactor or commit authority exercised.
+
+Retain selected OCR and optional recorded OCR/model/manual observations in
+structure.json, digest-bound beside the valid DSC descriptor in the manifest.
+Each reading binds source hash, selector, frame and producer/configuration;
+selected OCR additionally binds the recognition operation and immutable attempt.
+Attribution describes the supplied record, not verified human/model authorship.
+
+Complete OCR line geometry binds exact physical-line offsets (including leading
+whitespace) to page-point boxes inside the region. Derived indentation and stanza
+numbers preserve whitespace apart from normalized search. Search tokens retain
+global search offsets, region-local raw offsets and the first valid complete OCR
+layout's line boxes/observation ID. Missing geometry is null; it is not invented.
+Model/manual text and geometry remain separately visible, never replacing raw
+selected OCR or asserting a transcription winner.
+
+Caption, continuation, membership, authorship and order relationships remain
+attributed unresolved sidecar proposals; targets must be detected regions within
+selected pages. All alternatives remain visible; no asserted DSC relationship
+is inferred. Schema/attribution/identity/offset/frame/target errors reject an
+entire proposal with diagnostic and original submitted record, retaining valid
+prior observations and exports. Malformed page envelopes are diagnosed too.
+Structure-only edits reuse verified recognition; structure is not an OCR input.
+
+** Test-first evidence
+Initial 13 cases RED on absent structure inspection output. Implemented the
+sidecar and public inspection integration; corrected fixture assumptions about
+raw-observation ordering and malformed-kind construction. Final focused18 GREEN:
+poem lines/stanzas/indents and token boxes, OCR/model/manual separation, competing
+caption and next-page continuations, 11 malformed proposal cases, corruption,
+structure-only cache reuse, and four malformed page envelopes. The poem journey
+disables sockets/processes and asserts no source/config mutations or calls.
+
+Manual public CLI smoke loaded the literal JSON blocks from the documentation,
+ran and inspected the synthetic two-page PDF, and compared each token box with
+its documented line. PASS; temporary example /tmp/sunset-rmx-4-smoke-klxgwg3m.
+
+** Quality ledger
+Changed — digitization/structure.py; pipeline sidecar/search/history integration;
+inspection structure verification/reporting; structure journey tests; command
+reference. New source files have Purpose/Responsibilities/Rationale headers;
+changed pipeline/inspection rationale updated for .4.
+Verified — focused18 and documented public run/inspect smoke pass. Full
+OMP_THREAD_LIMIT=1 npm_config_cache=/tmp/sunset-905-3-npm-cache just spec-check:
+ALL GATES PASSED, 358 tests +18 subtests, both strict OpenSpec validators11/11,
+spk lint, frozen PASS11. Restored generated demo timing/memory churn.
+Final git diff --check passed. OpenSpec1.3 marked complete; .4 closed.
+Review — self: checked whole-proposal admission before mutation, raw-reading
+immutability, unresolved alternatives, source/selector bindings, cache input
+separation, and unchanged DSC wire contract/frozen research bundle.
+Risks — recorded-only, supplied attribution unverified; no real OCR or pilot
+quality/economy measured. Manual corrections are retained alternatives, not an
+approved automatic-selection policy. Resume/refinement/replay are later slices.
+Next — sunset-rmx.5 region refinement after .4 acceptance.

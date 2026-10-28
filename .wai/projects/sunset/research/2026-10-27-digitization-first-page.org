@@ -1,0 +1,63 @@
+* Digitization first-page implementation — sunset-rmx.2
+
+** Approval and scope
+Owner explicitly said "approve and begin implementation". sunset-rmx.1 closed
+with exact approval wording, approval commit 1936eaf and the four original
+proposal file digests. This authorizes local implementation, not paid services,
+remote upload or full-issue scaling. Later stage .10/.16 reference/configuration
+gates remain open. Parent wording updated to reflect approval.
+
+One implementation ticket this session: sunset-rmx.2 / OpenSpec 1.1. Reanchored
+metadata to 1936eaf and claimed atomically; no other in-progress branch tickets.
+No material contract amendments; tasks.md 1.1 completion tick is execution state.
+
+** Delivered behavior
+- Public python3 -m digitization run --source PDF --pages 2 --config CONFIG --output NEW_DIR.
+- Recorded-only detections and per-region recognition; immutable source/config
+  copies, page PNGs with rotation/scale/renderer provenance, hash-addressed raw
+  artifacts, valid DSC 0.3, region-level search/source mappings, uncertainty,
+  initial revisions/trace and recorded-import usage ledger.
+- Public inspect --run RUN_DIR (human) or --json: digest verification, existing
+  DSC validator/index/locator reuse, raw/layout/search text, producer attribution,
+  page/frame selectors, alternatives, history, usage and unexamined coverage.
+- Resume/replay explicitly return unsupported-operation/exit 4 without restarting.
+  .7/.8 own removing these placeholders; no real OCR enabled before .7/.10/.15.
+- Explicit invalid-input refusals before output publication; no overwrite of
+  existing directories, no network or provider subprocesses. Output published
+  from temporary staging only after valid DSC export.
+
+** Test-first evidence
+Initial twelve public CLI tests all failed RED because digitization module did
+not exist. Minimal implementation GREEN after correcting required logical view.
+Added boundary tests: malformed PDF RED (uncaught FileDataError), then GREEN via
+preflight classification. Fifteen focused tests pass, covering offline/process-
+disabled execution, raw poem whitespace, uncertain caption, source/profile
+resolution, invalid page/config/hash/box/provider/duplicate/missing recognition,
+read-only inspect, corrupted artifact refusal and unsupported recovery commands.
+Docs partial-run result is checked after normalizing only the output directory.
+
+Manual verification: docs JSON used on a six-page image-only synthetic PDF,
+verified no native text; page 2 produced two source-linked regions and unresolved
+caption. Human/JSON inspection succeeded. Example retained at
+/tmp/sunset-rmx-2-example-th8iuqpd (temporary, not durable evidence/gold).
+
+** Quality ledger
+Changed — digitization/{__init__,__main__,pipeline,render,inspection}.py;
+tests/tracer/test_digitization_first_page.py; docs/src/digitization.org;
+OpenSpec checkpoint 1.1; Beads approval/status notes; this handoff research.
+All six new source/test files have Purpose/Responsibilities/Rationale headers.
+Verified — focused 15/15; full OMP_THREAD_LIMIT=1
+npm_config_cache=/tmp/sunset-905-3-npm-cache just spec-check: ALL GATES PASSED,
+320 tests +18 subtests, both strict OpenSpec validators 11/11, frozen PASS 11,
+spk lint. Full log /tmp/sunset-rmx-2-spec-check.log. Existing demo measurement
+runtime/memory-only churn inspected and restored to HEAD. git diff --check.
+Review — self-checked .2 acceptance against CLI outputs, DSC/profiles/locators,
+input preflight, atomic publication, evidence retention and inspection immutability;
+no independent reviewer or human UI/OCR quality validation claimed.
+Risks — recorded observations demonstrate orchestration only; real recognition,
+cache/invalidation, refined structure, durable dispatch/resume, replay, evaluator
+and pilots remain unimplemented. Initial mapping is region-level; integer page
+points are an explicit input boundary. No quality/cost winner or conformance gain.
+Next — sunset-rmx.3: verified operation cache/selective reuse, TDD, reanchor shared
+pipeline metadata before claiming. Keep .905.3 accepted partial result closed.
+No commit, push or remote service operation for this implementation session.

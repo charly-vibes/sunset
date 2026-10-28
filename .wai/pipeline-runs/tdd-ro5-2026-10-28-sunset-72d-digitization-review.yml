@@ -1,0 +1,12 @@
+run_id: tdd-ro5-2026-10-28-sunset-72d-digitization-review
+pipeline: tdd-ro5
+topic: sunset-72d-digitization-review
+created_at: '2026-10-28T17:32:14.399534718+00:00'
+current_step: 9
+approvals:
+  ship-close: '2026-10-28T18:17:45.472811932+00:00'
+epic: null
+child_issues: []
+child_runs: []
+handoff_artifact: null
+bypasses: []

@@ -1,0 +1,74 @@
+* Verified region caching — sunset-rmx.3
+
+** Scope and ownership
+Continued approved sunset-rmx after .2. Reanchored .3 metadata at HEAD1936eaf
+with hashes of uncommitted .2 workspace files before claiming; no other branch
+issues were in progress. Added __main__.py/inspection.py to ownership and body
+because controls and inspection are part of the vertical journey. Preserve all
+prior uncommitted first-page files, checkpoint, handoff and research.
+
+** Request and selection contracts
+Each recognition key hashes canonical versioned JSON binding ordered source and
+render digests; region identity/role; crop/page/frame/DPI/rotation/scale;
+implementation code/consumer/Unicode/renderer versions; complete recorded
+provider/model identity and explicit unavailable revision; and effective prompt,
+schema, language, preprocessing, decoding and policy. Per-region overrides merge
+by local ID, replacing individual fields; changed prompt/crop affects only its
+region under otherwise identical inputs. Page rendering and detection import
+still execute in this slice; only region recognition is cached.
+
+Public run adds --cache CACHE_DIR, repeated --fresh REGION_ID and repeated
+--select REGION_ID=ATTEMPT_ID. Recorded response changes alone cannot replace a
+cached selected result. A fresh run selects its new output for that run, keeps
+all previous outputs, and never updates the cache's first-default pointer.
+Explicit selection is pinned to a valid retained attempt under the same request.
+Unknown/conflicting flags or unavailable selection refuse publication.
+
+Requests and response blobs are verified before reuse; fresh output admission
+also verifies any existing request metadata first. Response schemas are checked
+on admission and reading. Attempt envelopes have nonce plus request/output
+bindings and content-addressed identities; exclusive atomic publication retains
+concurrent attempts without overwriting an earlier selection. Corrupt entries
+return cache-integrity-failure with no provider call or published run; no silent
+repair/substitution. Each run copies known response bytes and attempt envelopes
+locally; operations.json and manifest pin the same selections. Existing source-
+linked inspection exposes keys, requests, selections, alternatives and cache usage.
+Unavailable model revisions stay null/false; fresh determinism is not claimed.
+
+** Test-first evidence
+15 initial cache tests RED because --cache/store were absent. GREEN with public
+integration and all .2 regressions (30 tests). Expanded tests exposed fresh
+admission before corrupted request verification (RED); moved verification before
+admission (GREEN35). Final focused 35 includes selective prompt/crop reuse,
+provider/model/schema/language/preprocessing/decoding/policy/render invalidation,
+output corruption, request corruption without admission, invalid selections,
+concurrent fresh retention and socket/process-disabled recorded cache execution.
+
+Manual docs configuration on image-only source: first import -> two verified
+hits -> fresh changed poem -> unchanged default -> explicit fresh selection.
+All public statuses and inspection outputs correct. Temporary retained example:
+/tmp/sunset-rmx-3-example-qpz_q1wd (not durable reference evidence).
+
+** Quality ledger
+Changed — new digitization/artifacts.py and test_digitization_cache.py;
+pipeline.py operation keys/cache integration; __main__.py controls/refusals;
+inspection.py operation/selection reports; docs/src/digitization.org;
+OpenSpec1.2 execution checkpoint and this research/handoff. Eight current source/
+test files have Purpose/Responsibilities/Rationale headers. No behavior-only
+tidying or refactor bundled into this feature.
+Verified — focused35/35; manual public CLI journey; git diff --check.
+Full repository gate: ALL GATES PASSED — 340 tests +18 subtests; both strict
+OpenSpec validators11/11, spk lint, frozen DSC0.2 PASS11. Full log:
+/tmp/sunset-rmx-3-spec-check.log. Generated timing/memory-only measurement churn
+inspected and restored; OpenSpec1.2 checked after completion.
+Review — self-checked request dependency boundaries, immutable cache publication,
+first-selection preservation, concurrent attempts, failure admission ordering,
+response schema validation, manifest selection and standalone local inspection.
+No independent reviewer/human transcription quality verification claimed.
+Risks — recorded inputs only. No new OCR, remote inference/upload, paid service,
+quality/economy/conformance claim. Durable provider dispatch/resume, refined
+structure, replay and evaluation remain later slices. Shared-cache atomic file
+publication is not a claim that future provider dispatch is crash-safe.
+Next — sunset-rmx.4 attributed structure and poetic layout, reanchor shared file
+ownership before claiming. Keep accepted partial sunset-905.3 closed. No commit,
+push or Dolt remote sync performed for this continuation.

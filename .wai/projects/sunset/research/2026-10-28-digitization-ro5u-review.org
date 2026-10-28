@@ -1,0 +1,272 @@
+#+title: Rule of 5 Review - Recorded Digitization Implementation
+
+* Work reviewed and verdict
+Work Reviewed: code — digitization/{pipeline,artifacts,render,structure,refinement,inspection,__main__}.py;
+related first-page/cache/structure/refinement tests, docs/src/digitization.org,
+approved document-digitization specification and implementation checkpoints .2-.5.
+Review task: sunset-72d. No production fixes applied.
+Convergence: not established after Stage 5.
+Verdict: NEEDS_REVISION. Verification disposition: ESCALATE_TO_HUMAN under the
+skill's confidence gate, not a claim that the reproduced behavior is ambiguous.
+
+Total Issues by Severity:
+- CRITICAL: 0
+- HIGH: 3 — reproduced; TypeSafe REVIEW_REQUIRED
+- MEDIUM: 1 — reproduced; TypeSafe UNVERIFIED (below verification severity gate)
+- LOW: 0
+
+* Workflow audit
+Earlier implementations used empirical RED/GREEN and full gates, but did not
+use wai's TDD+RO5U pipeline. The active run was the old Lens epic-orchestrator.
+This was a process omission, not a completed pipeline. Prior green test counts
+and closure reports do not establish review acceptance.
+
+The installed wai version has a built-in template named tdd-ro5, with a
+ro5u-review step. The name tdd-ro5u generates a generic placeholder instead;
+that newly generated placeholder was removed immediately. Initialized the real
+built-in .wai/resources/pipelines/tdd-ro5.toml and started
+=tdd-ro5-2026-10-28-sunset-72d-digitization-review=. Completed its orientation
+and planning with new artifacts only; current step is RED (3/9). No retrospective
+RED/GREEN/refactor/review/ship gate completion is claimed. This independent
+review was requested before remediation; production regression tests/fixes remain
+future work. The older Lens run remains preserved, not force-abandoned.
+
+* STAGE 1: DRAFT
+Assessment: GOOD overall shape. Existing DSC validation/profiles/index/locators
+are reused; immutable cache attempts and source-bound sidecars avoid wire changes.
+Revision snapshots make previous states independently inspectable. Pilot execution,
+crash/budget recovery, full semantic equality and recorded replay remain explicitly
+deferred. Scope is recorded engineering behavior, not OCR quality/conformance.
+Major Issues: no new architectural blocker beyond the behavioral findings below.
+Shape Quality: GOOD.
+
+* STAGE 2: CORRECTNESS
+** [CORR-001] HIGH — fresh selections silently revert across revisions
+Location: digitization/refinement.py:254-259,275,307-308.
+Description: execute defaults selected=None; only the initial state receives the
+caller's selections. Later states pass fresh regions but do not preserve selected
+attempts for unchanged operations. OperationCache then chooses its first default.
+Evidence: rerecognize p1 from old to corrected, then restructure unrelated c1.
+Observed snapshot text: [old, corrected, old]. The last action did not authorize
+changing p1. This also threatens initial --fresh/--select choices on later steps.
+Recommendation: carry the selected attempt per unchanged operation key across
+all revisions; invalidate only intentionally changed requests. Write the two-step
+regression and variants for initial explicit/fresh selections before implementation.
+Follow-up: sunset-rmx.17.
+Verification: REVIEW_REQUIRED; TypeSafe choice verified, confidence0.57 <0.80.
+
+** [CORR-002] HIGH — replacement layout validates against unselected text
+Location: digitization/refinement.py:285-295,308.
+Description: replacement OCR layout validates against the supplied candidate
+recognition, before execution resolves cache selection. The cache may select
+different valid text; only then does structure collection refuse the layout.
+The split has already been admitted and its parent retired from active output.
+Evidence: warm child crop cache with old. Supply same child request with new
+recording and OCR layout text=new. Observed one admitted split, no refinement
+diagnostic, active parent absent, structure diagnostic:
+=OCR layout must bind the selected raw recognition=.
+Recommendation: stage and validate against actual selected candidate responses
+before admitting a revision. On invalid replacement retain the previous active
+state; fresh selection must remain explicit, not an automatic cache bypass.
+Follow-up: sunset-rmx.18.
+Verification: REVIEW_REQUIRED; TypeSafe choice verified, confidence0.67 <0.80.
+
+** [CORR-003] MEDIUM — inspection accepts inconsistent accounting
+Location: digitization/inspection.py:25-28,68-70.
+Description: inspection verifies ledger bytes but reports manifest usage without
+checking that these two retained representations agree. This is a consistency
+gap, not a claim of cryptographic authenticity for an editable root manifest.
+Evidence: change only manifest usage.provider_calls to999 on a valid zero-call
+recorded run. The bound ledger remains0; inspect succeeds and reports999.
+Recommendation: require the bound ledger and reported manifest accounting to
+agree, with a positive fixture and an integrity-failure negative fixture. This
+must precede relying on reported accounting for pilot evaluation/budget claims.
+Follow-up: sunset-rmx.20.
+Verification: UNVERIFIED by TypeSafe (MEDIUM excluded by skill's severity gate);
+behavior reproduced locally.
+
+Correctness Quality: FAIR.
+Convergence Check:
+New CRITICAL issues: 0
+Total new issues: 3
+New issues vs Previous Stage: N/A (previous stage found zero)
+Estimated false positive rate: unmeasured
+Status: CONTINUE
+
+* STAGE 3: CLARITY
+Assessment: command reference explains recorded-only scope, one-shot rules,
+source/line offsets, snapshot inspection and deferred operations. No additional
+independent clarity finding after accounting for the correctness defects. Claims
+about retaining the selected result/valid state need the above fixes; repeating
+those as documentation findings would double-count the same defects.
+Clarity Quality: GOOD.
+Convergence Check:
+New CRITICAL issues: 0
+Total new issues: 0
+New issues vs Previous Stage: -100% (new-issue rate0%)
+Estimated false positive rate: unmeasured; verification pending at this stage
+Status: CONTINUE — confidence/FP criterion not established; boundary pass pending.
+
+* STAGE 4: EDGE CASES
+** [EDGE-001] HIGH — malformed prior structure causes uncaught replacement crash
+Location: digitization/refinement.py:206-220,297-299;
+digitization/structure.py:110-127 documents existing envelope diagnosis behavior.
+Description: collection deliberately retains a malformed page structure envelope
+as a diagnostic. Candidate construction filters list envelopes only, then calls
+=setdefault('structure', []).append(observation)= on the existing malformed value.
+AttributeError escapes the exception handler, which catches ValueError/KeyError/
+TypeError only. The temporary run directory is discarded.
+Scenario: page structure is string malformed; a valid restructure rule supplies
+one manual correction on the same page.
+Evidence: ='str' object has no attribute 'append'=; published_run=false.
+Impact: public run loses the inspectable last valid state and returns an unhandled
+exception instead of the documented diagnostic/retention behavior.
+Recommendation: normalize or reject malformed prior envelopes explicitly before
+appending replacements; preserve an inspectable valid state with diagnostics.
+Do not merely blanket-catch errors after destroying needed evidence. Write the
+malformed-envelope-plus-valid-replacement regression before the fix.
+Follow-up: sunset-rmx.19.
+Verification: REVIEW_REQUIRED; TypeSafe choice verified, confidence0.27 <0.80.
+
+Edge Case Coverage: FAIR.
+Convergence Check:
+New CRITICAL issues: 0
+Total new issues: 1
+New issues vs Previous Stage: N/A (previous stage found zero)
+Estimated false positive rate: unmeasured
+Status: CONTINUE
+
+* STAGE 5: EXCELLENCE
+Final Polish Issues: no additional independent blocker. Exact canonical-label
+permutations can be expensive for indistinguishable nodes; already documented as
+a limitation, not counted as a newly validated defect. No new scale/conformance
+claim is introduced by this review.
+Excellence Assessment:
+- Structure: GOOD
+- Correctness: FAIR
+- Clarity: GOOD
+- Edge Cases: FAIR
+- Overall: FAIR
+Production Ready: NO — three reproduced HIGH defects remain.
+
+* Evidence and conditional verification
+Reproduce all four cases, using synthetic local PDFs only:
+#+begin_src bash
+PYTHONPATH=. python3 -B .wai/projects/sunset/research/2026-10-28-digitization-review-repros.py
+#+end_src
+Observed:
+#+begin_example
+CORR-001: snapshots [old, corrected, old]; expected final corrected
+CORR-002: admitted_steps1; parent_retained_active=false; invalid OCR layout binding
+EDGE-001: AttributeError on str.append; published_run=false
+CORR-003: verified ledger calls0; inspection reported calls999; refusal=false
+#+end_example
+Temporary evidence: /tmp/sunset-72d-review-r2hvuofb.
+Reproduction code is preserved beside this report. Its exit0 means the four
+undesired behaviors were reproduced; it is not a passing regression suite for
+the desired behavior. Fix tickets require proper RED tests under tests/tracer/.
+
+Fresh existing-suite check:
+#+begin_src bash
+python3 -B -m pytest tests/tracer/test_digitization_first_page.py tests/tracer/test_digitization_cache.py tests/tracer/test_digitization_structure.py tests/tracer/test_digitization_refinement.py -q
+#+end_src
+=72 passed in14.42s=. Existing cases do not cover these reproduced combinations.
+The full377+18 gate from the previous implementation remains historical evidence;
+it was not rerun for this review because production source was unchanged.
+
+TYPESAFE_API_KEY was present. Mechanical source-location existence checks passed.
+One batched HTTP request used the skill's specified endpoint, jev-latest model,
+Choice question per HIGH finding and exact verdict criteria. Resolved model:
+jev-1.14.0. All three choices were verified, but confidence values0.57/0.67/0.27
+were below CONFIDENCE_GATE0.80. Accordingly all remain REVIEW_REQUIRED and route
+to ESCALATE_TO_HUMAN; none is claimed independently verified. MEDIUM remains
+UNVERIFIED per the severity cost cap. No findings were dropped; measured false
+positive rate is undefined because no finding passed the confidence gate. Do not
+replace it with an estimated0% or claim convergence. Raw response is recorded below.
+
+* Recommended actions and tracking disposition
+1. Fix sunset-rmx.17, .18 and .19 with separate red/green cycles before .6.
+2. Fix or explicitly defer sunset-rmx.20 before trusting inspection usage downstream.
+3. Re-run focused/full gates and a fresh review of the repaired multi-step behavior.
+
+Reopened sunset-rmx.5, restored OpenSpec2.1 to unchecked, and added dependency
+edges from .5 to the three HIGH bug tickets; .6 is blocked again through .5.
+The review itself is complete; production fixes are not part of this review.
+The new tdd-ro5 run remains at RED, without falsely completing later gates.
+
+* Quality ledger
+Changed — review report/reproduction artifact, real built-in pipeline definition
+and new run orientation/plan artifacts, four follow-up bugs, .5 status/dependencies
+and its OpenSpec checkpoint. Prior implementation and Lens run preserved.
+Verified — four executable reproductions; fresh72 existing tests; conditional
+TypeSafe batch with below-gate confidences; git diff --check.
+Review — all five editorial stages, final NEEDS_REVISION, verification
+ESCALATE_TO_HUMAN. Convergence not established.
+Risks — three HIGH defects remain; prior acceptance was premature. No production
+code, commits, pushes, remote sync or pilot inference performed in this review.
+Next — claim sunset-rmx.17 and use actual pipeline RED/GREEN gates for repair.
+
+* TypeSafe raw response
+#+begin_src json
+{
+  "model": "jev-1.14.0",
+  "answers": {
+    "verify_CORR-001": {
+      "type": "choice",
+      "choice": "verified",
+      "confidence": 0.57,
+      "probabilities": {
+        "verified": 0.68,
+        "unsupported": 0.04,
+        "contradicted": 0.13,
+        "fabricated": 0.14
+      }
+    },
+    "verify_CORR-002": {
+      "type": "choice",
+      "choice": "verified",
+      "confidence": 0.67,
+      "probabilities": {
+        "verified": 0.75,
+        "unsupported": 0.03,
+        "contradicted": 0.1,
+        "fabricated": 0.12
+      }
+    },
+    "verify_EDGE-001": {
+      "type": "choice",
+      "choice": "verified",
+      "confidence": 0.27,
+      "probabilities": {
+        "verified": 0.45,
+        "unsupported": 0.07,
+        "contradicted": 0.27,
+        "fabricated": 0.21
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 17081,
+    "output_tokens": 161
+  }
+}
+#+end_src
+
+* Reviewed source digests
+digitization/__init__.py b085056ccda59831e8603f70e9266cf298aa0babd383d614b57e5be85553b626
+digitization/__main__.py 54b1f16b24876a9223c482b6832365991dd8c38265f1d92b89b3d941a6693f4b
+digitization/artifacts.py a6097ada5825361ae8975e5449a9c7c70c1451cbed332a103e92cd75cdc08fb3
+digitization/inspection.py 651c6383596e32dd4ac59804a356ca2609d2fd4da782668104ffe9d4aef685b0
+digitization/pipeline.py 9790325773307f334ed0b5020b3badad55bbe453330de4deeef95c9a63a01f00
+digitization/refinement.py cf30c91cbbaf10eeef61f2fd96c8c5abd16b6eaa01bca145a3efa82f3c3c93d4
+digitization/render.py deec218ffb7d6c994f6c7dbc92e06ee0c64f133e188950acf0b6c60addb76a6c
+digitization/structure.py dd62e6e21249bb10788ac88f2bd426bdbef4c503592f2e857fe8c6df13ac505e
+
+* Pipeline template applicability note
+The newly generated built-in ship-close oracle release-docs-fresh.sh checks
+Cargo.toml/CHANGELOG and is not yet adapted to this spec-corpus repository.
+Initializing a pipeline is not a claim that all its gates are repository-ready.
+The run remains RED3/9; adapt the ship oracle before reaching that stage.
+This is workflow setup follow-up, separate from the four code findings.
+The existing tests-pass oracle checks evidence text, so actual fresh tests
+remain required by the step prompts; an artifact substring is not a test result.

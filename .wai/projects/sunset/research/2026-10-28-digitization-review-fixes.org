@@ -1,0 +1,142 @@
+#+title: Digitization review repairs — sunset-rmx.17-.20 and sunset-0y1
+
+* Authorized scope and pipeline
+Owner explicitly requested fix all after the five-stage review. Repair each
+finding in its own ticket/test cycle; include the inapplicable ship-oracle setup.
+Continue existing tdd-ro5-2026-10-28-sunset-72d-digitization-review from real RED3/9.
+Preserve all previous uncommitted implementation/artifacts and the older Lens run.
+No commit or push authorization inferred. No tidy/refactor work bundled.
+
+* Test-first repair evidence
+** sunset-rmx.17 / CORR-001 — persistent selections
+RED3: rerecognition followed by an unrelated action, and initial --fresh/--select
+followed by refinement all reverted selected text/attempts. Added regressions
+before implementation. GREEN: carry inherited selections only for the identical
+canonical operation key; explicit fresh requests still override inheritance.
+Private single-state execution verifies the attempt through the existing cache.
+
+Verification correction: the initial focused command continued after one fixture
+reused the already-existing fresh output directory. Its GREEN artifact was
+incorrect. Corrected the test output path and reran42 passing tests before the
+pipeline review gate advanced. The correction and review are durable wai artifacts;
+no claim that the failed run passed. Subsequent commands stop on failures.
+
+Final correctness pass found Python dict equality conflated numeric0/booleanFalse
+request parameters. Added a failing request-type regression and switched inheritance
+to the versioned canonical SHA256 key. RED expected unavailable selected attempt;
+GREEN changed key imports the new response instead of inheriting the old attempt.
+Final refinement suite30 passes.
+
+** sunset-rmx.18 / CORR-002 — actual-output admission
+RED: warmed child cache selects left while new supplied response/layout says new;
+old implementation admitted a split then rejected its layout after retiring parent.
+Also RED inverse case: layout matches cached left but differs from unselected
+supplied recording; premature validation incorrectly refused this valid candidate.
+
+GREEN: realize candidates independently, validate replacement admission against
+the actual collected selected output, then move only valid candidates to accepted
+revision paths. Invalid realized candidates retain independently inspectable run
+artifacts under candidates/candidate-N, with explicit diagnostic links. Selected
+parent stays active. Candidate usage/attempts remain in aggregate accounting and
+root artifact hashes even when the state was refused. No implicit fresh inference
+or semantic winner is introduced. Positive fresh/cached layout cases pass.
+
+** sunset-rmx.19 / EDGE-001 — malformed prior envelopes
+RED4: string/null/object/number structure envelopes followed by a valid replacement
+raised AttributeError or equivalent unhandled append errors, losing all run output.
+GREEN: explicit list-envelope precondition refuses the candidate with a diagnostic;
+last valid state and original malformed-envelope diagnostic remain inspectable.
+No blanket exception handler or silent envelope rewrite was added.
+
+** sunset-rmx.20 / CORR-003 — accounting consistency
+RED3: differing provider_calls, booleanFalse versus integer0, and an unbound ledger
+were accepted during inspection. GREEN: require hash-bound ledger path and exact
+canonical agreement between retained ledger and manifest usage before reporting.
+Matching original and refined aggregate ledgers remain valid. This checks internal
+consistency, not authenticity against an attacker rewriting an entire manifest.
+
+** sunset-0y1 — actual corpus ship gate
+RED2: tdd-ro5 used the Cargo-only release oracle and no spec-corpus executable.
+GREEN2: ship stage references spec-corpus.sh, which execs actual just spec-check
+and propagates failures. Positive/negative isolated tests run the real frozen
+validator over copied fixtures; breaking a valid fixture causes nonzero exit.
+Actual full repository verification is invoked through this same script.
+Removed only the newly generated unused Cargo oracle; older oracles preserved.
+Ship prompt now respects conservative commit authority, and review prompt uses
+the installed CLI's required --reviews/--verdict/--severity arguments.
+Explicit human ship-approval gate remains intact; no bypass is authorized.
+
+* Fresh Rule-of-5 resolution review
+** STAGE 1: DRAFT
+Assessment: GOOD. Repairs fit existing request/cache, snapshot and inspection
+boundaries. Staged candidate admission is behavior required by .18, not unrelated
+refactoring. Immutable accepted/rejected evidence stays source-bound.
+Major Issues: none remaining in authorized repair scope.
+Shape Quality: GOOD.
+
+** STAGE 2: CORRECTNESS
+Reviewed complete-request matching, explicit/fresh precedence, cached selections,
+actual replacement bindings, refused-state publication and ledger invariants.
+Additional request-type alias defect was found, reproduced and repaired under .17
+as recorded above. Final pass: no new unresolved correctness findings.
+Correctness Quality: GOOD.
+Convergence check: new CRITICAL0; remaining new issues0; false-positive rate
+unmeasured. No formal statistical convergence claim is made.
+
+** STAGE 3: CLARITY
+Command reference now states exact retained candidate paths, admission against
+selected recognition, inherited explicit selections, malformed-envelope refusal
+and usage/ledger consistency. Prior review/reproduction artifacts remain historical
+records; they are not rewritten to conceal former failures.
+Issues Found: none remaining. Clarity Quality: GOOD.
+
+** STAGE 4: EDGE CASES
+Reviewed and executed numeric/boolean request distinction, all malformed prior
+envelope variants, valid cached-layout admission, invalid cached-layout refusal,
+fresh/explicit selection persistence, missing ledger binding, and rejected-candidate
+artifact/accounting retention. Existing geometry/identity/alternative/coverage and
+cache integrity tests remain unchanged and passing in the focused suite.
+Issues Found: none remaining. Edge Case Coverage: GOOD for bounded recorded scope.
+
+** STAGE 5: EXCELLENCE
+No cleanup-only changes added. Exact graph-label permutation performance remains
+an explicitly recorded existing limitation; cycles, durable budgets, replay and
+real OCR/pilot stages remain later tickets. No new scale or conformance claim.
+Excellence Assessment: Structure GOOD; Correctness GOOD; Clarity GOOD;
+Edge Cases GOOD; Overall GOOD.
+Production Ready: WITH_NOTES — ready for these recorded slices, not later pilots.
+Verdict: READY for the authorized review repairs after final gates recorded below.
+
+Conditional TypeSafe: initial high findings retain their original below0.8
+REVIEW_REQUIRED metadata in the preserved review. This resolution review has no
+new HIGH/CRITICAL finding to send; no new API verification was claimed or fabricated.
+Repair acceptance is backed by explicit before/after executable regressions.
+Measured false-positive rate remains undefined; do not label this a measured
+TypeSafe convergence result.
+
+* Quality ledger (final gate result appended below)
+Changed — pipeline.py request-key inheritance; refinement.py staged actual-output
+admission and malformed-envelope refusal; inspection.py ledger consistency;
+first-page/refinement regressions; pipeline/oracle and isolated gate tests; docs.
+Verified — each regression empirically RED before its production fix; intermediate
+focused85 passes, isolated oracle2 passes, final refinement30 passes; full oracle
+verification running when this ledger was drafted. git diff --check passed.
+Review — all five resolution passes above; all original behavior defects covered.
+Risks — recorded-only; no broader OCR quality/economy/conformance claim. Human
+ship approval remains an explicit pipeline gate; no commit/push performed.
+Next — finish final corpus verification, close repaired bugs and restore .5
+acceptance, update handoff and leave explicit ship approval pending if required.
+
+* Final verification and acceptance
+Final executable oracle: npm_config_cache=/tmp/sunset-905-3-npm-cache
+.wai/resources/oracles/spec-corpus.sh. ALL GATES PASSED:393 tests +18 subtests
+in196.45s, both strict OpenSpec validators11/11, spk lint, frozen PASS11.
+Intermediate full392+18 also passed before final typed-key regression.
+Final focused refinement30 passed, earlier combined85 and oracle2 passed.
+An isolated copied module with inheritance deliberately removed makes both
+corrected fresh/select regressions fail with the expected raw-text mismatch;
+this confirms those tests protect behavior independently of the earlier fixture
+path correction. Production files were unchanged during that proof.
+Restored only generated measurement timing/memory churn. Final diff check clean.
+Repair bugs .17-.20 and pipeline adaptation sunset-0y1 satisfied acceptance;
+restored .5 completion/OpenSpec2.1. No commits, push, sync or pilot inference.

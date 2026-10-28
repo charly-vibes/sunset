@@ -1,0 +1,5 @@
+---
+tags: [pipeline-run:tdd-ro5-2026-10-28-sunset-72d-digitization-review, pipeline-step:quality-ledger]
+---
+
+QUALITY LEDGER. Changed: request-key attempt inheritance, transactional selected-output candidate admission and retained refusal artifacts, explicit malformed-envelope refusal, canonical bound-ledger consistency,15 new regression/oracle cases plus typed-key edge coverage, corpus ship oracle and docs. Verified: command=npm_config_cache=/tmp/sunset-905-3-npm-cache .wai/resources/oracles/spec-corpus.sh;393 tests+18 subtests, OpenSpec11/11 twice, lint, frozen PASS11; isolated broken-fixture oracle refusal and inheritance removal proof; diff check clean. Review: five final passes, no remaining authorized findings, no measured TypeSafe convergence claim. Risks: recorded-only, later cycles/budgets/replay/pilot gates unchanged; exact canonical-label permutation cost documented. Next: explicit human ship approval; no commits/push authorized. Repair issues .17-.20/.0y1 and .5 closed; OpenSpec2.1 restored.
