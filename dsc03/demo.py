@@ -270,7 +270,7 @@ def _mode_text(run, snaps, mode, page):
 def _review_one(mode, run, snaps, coverage_dsc):
     results = {}
     for tid in _review_tasks():
-        t0 = time.perf_counter()
+        t0 = time.perf_counter_ns()
         if tid == "R1":
             txt = _mode_text(run, snaps, mode, 1)
             ok = "SALDO ACTUAL" in txt and "144.402,50" in txt
@@ -291,7 +291,7 @@ def _review_one(mode, run, snaps, coverage_dsc):
             ok = bool(coverage_dsc) if mode == "dsc" else False
         results[tid] = {
             "task": _review_tasks()[tid],
-            "time_s": round(time.perf_counter() - t0, 6),
+            "time_s": (time.perf_counter_ns() - t0) / 1_000_000_000,
             "decision": "correct" if ok else "incorrect",
         }
     return results

@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from dsc03 import adapters, canonical, conformance, demo
 
@@ -103,7 +104,28 @@ class TestProjectionAgainstOracle(unittest.TestCase):
 class TestMeasurementSheet(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.sheet = demo.run_full_demo(CARRIER)
+        cls.reference_path = Path("fixtures/demo/measurement.json")
+        cls.reference_before = cls.reference_path.read_bytes()
+        cls.output = tempfile.TemporaryDirectory()
+        cls.sheet = demo.run_full_demo(CARRIER, Path(cls.output.name))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.output.cleanup()
+
+    def test_submicrosecond_review_times_remain_positive(self):
+        ticks = iter(value for pair in ((100, 101), (200, 201), (300, 301),
+                                        (400, 401), (500, 501), (600, 601),
+                                        (700, 701), (800, 801), (900, 901),
+                                        (1000, 1001)) for value in pair)
+        run = {"native_ocr_disagreements": [6], "pages": {6: {"ocr": "recognized"}}}
+        with patch("dsc03.demo.time.perf_counter_ns", side_effect=lambda: next(ticks)), \
+                patch("dsc03.demo._mode_text", return_value="SALDO ACTUAL 144.402,50"):
+            results = demo._review_one("dsc", run, {}, True)
+        self.assertTrue(all(item["time_s"] == 1e-9 for item in results.values()))
+
+    def test_measurement_run_does_not_replace_committed_reference(self):
+        self.assertEqual(self.reference_path.read_bytes(), self.reference_before)
 
     def test_sheet_has_all_published_fields(self):
         self.assertEqual(self.sheet["source"]["sha256"], adapters._sha256(CARRIER.read_bytes()))
