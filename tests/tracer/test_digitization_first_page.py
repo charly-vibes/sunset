@@ -1,6 +1,6 @@
 # Purpose: Verify the first recorded digitization journey through the public CLI.
 # Responsibilities: Pin source/text/geometry outputs, input refusals, attribution,
-#   read-only inspection and explicit unsupported resume/replay behavior.
+#   read-only inspection, safe resume and artifact-only replay behavior.
 # Rationale: sunset-rmx.2 needs executable source-linked output before real OCR.
 import hashlib
 import json
@@ -157,16 +157,19 @@ def test_resume_preserves_recorded_run_without_restarting(inputs, tmp_path):
     assert before == {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
 
 
-def test_replay_remains_unsupported_without_restarting(inputs, tmp_path):
+def test_replay_copies_recorded_artifacts_without_restarting(inputs, tmp_path):
     source, config_path, _ = inputs
     run = tmp_path / 'original'
     cli('run', '--source', source, '--pages', '2', '--config', config_path, '--output', run)
     before = {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
-    code, result = cli('replay', '--run', run, '--output', tmp_path / 'replay')
-    assert code == 4 and result['reason'] == 'unsupported-operation'
+    replay = tmp_path / 'replay'
+    code, result = cli('replay', '--run', run, '--output', replay)
+    assert code == 0 and result['status'] == 'replayed'
     assert result['provider_calls'] == 0
     assert before == {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
-    assert not (tmp_path / 'replay').exists()
+    manifest = json.loads((run / 'manifest.json').read_text())
+    for relative in manifest['artifacts']:
+        assert (replay / relative).read_bytes() == (run / relative).read_bytes()
 
 
 def test_inspection_refuses_corrupted_evidence(inputs, tmp_path):

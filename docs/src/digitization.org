@@ -116,10 +116,11 @@ and neither total operating cost nor transcription quality is measured.
 |------+---------------+---------|
 | 0 | completed / recorded-inputs-consumed | Recorded input processing finished; not verified accuracy or full coverage |
 | 0 | inspect success | Evidence verified and report returned |
-| 2 | stopped-with-unresolved-work / recorded-unresolved | Results retained, explicit recorded uncertainty remains |
+| 0 | replayed / replay-verified | Verified artifacts copied offline; semantic digest and original envelope retained |
+| 2 | stopped-with-unresolved-work / recorded-unresolved; incomplete-artifacts | Results retained with uncertainty, or replay lacks a required artifact |
 | 3 | invalid-input | Invalid page/config/source/box/provider or existing output; no provider calls |
-| 4 | unsupported / unsupported-operation | Replay is not enabled; no output mutation |
-| 5 | inspection-failed / integrity-failure | Missing/corrupt or inconsistent local evidence; no repair inference |
+| 4 | unsupported-version | Replay schema version is not supported |
+| 5 | inspection-failed / integrity-failure | Corrupt or inconsistent local evidence; no repair inference |
 
 A page outside the PDF, a source hash mismatch, a missing recognition, duplicate
 IDs, malformed PDF, unavailable configuration, or a non-recorded provider is
@@ -381,11 +382,12 @@ control orchestration; they do not change DSC identity or evidence equivalence.
 The projection and pending action order use semantic inputs and the pinned
 policy, never execution timestamps, counters or hidden scheduler state.
 
-* Resume an existing run
+* Resume or replay an existing run
 
 #+begin_src bash
 python3 -m digitization resume --run run-001
 python3 -m digitization replay --run run-001 --output replay-001
+python3 -m digitization replay --run run-001 --output replay-002 --compare fresh-run
 #+end_src
 
 =resume= validates the existing run and returns its current status without
@@ -397,9 +399,22 @@ attempt makes resume return exit 2 with
 =stopped-with-unresolved-work / dispatch-uncertain= and zero provider calls;
 the reservation remains encumbered until evidence is settled. This recorded
 consumer has no provider dispatch route, so resume never starts or repeats
-inference. Replay remains disabled until =sunset-rmx.8=. Real local crop OCR
-and whole-page baseline mode belong to =sunset-rmx.15=, after budget and stage
-configuration approval. Refinement/evaluation remain later slices.
+inference.
+
+=replay= verifies every manifest artifact and selected response before copying
+the exact artifact bytes and manifest into a new output directory. It writes a
+=replay-report.json= with a digest of semantic artifacts and the source run's
+usage envelope marked as original evidence; it does not treat that timing or
+billing as a new measurement. Missing artifacts return exit 2,
+=incomplete-artifacts=; corrupted bytes return exit 5, =integrity-failure=;
+unsupported manifest or artifact versions return exit 4, =unsupported-version=.
+No missing response is synthesized, and the source run remains unchanged.
+
+Optional =--compare FRESH_RUN= compares selected raw text with another already
+recorded run and lists differences such as =luna= → =una=. It does not invoke
+inference or alter either run. Real local crop OCR and whole-page baseline mode
+belong to =sunset-rmx.15=, after budget and stage configuration approval.
+Refinement/evaluation remain later slices.
 
 * Executable command coverage
 
@@ -408,6 +423,9 @@ resume and replay commands against a six-page synthetic PDF, including the
 exact recorded poem/caption example above. It verifies status/exit codes,
 source mappings, profile resolution, no mutation, corrupt-evidence refusal,
 invalid-input refusals and a network/process-disabled in-process journey.
+=tests/tracer/test_digitization_replay.py= covers semantic artifact byte
+equality, missing/corrupt/unsupported artifacts, original usage-envelope
+provenance and an explicit recorded-vs-fresh text difference.
 =tests/tracer/test_digitization_cache.py= covers selective prompt/crop invalidation,
 provider/model/schema/language/preprocessing/decoding/policy/render key changes,
 fresh/default/explicit selection, concurrent retention, corrupt metadata/output

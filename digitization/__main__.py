@@ -1,6 +1,6 @@
 # Purpose: Expose local digitization run and inspection commands.
 # Responsibilities: Parse documented operations, emit stable JSON outcomes and
-#   refuse unavailable resume/replay instead of starting replacement runs.
+#   keep recovery/replay offline and bound to original run artifacts.
 # Rationale: sunset-rmx.3 adds cache/fresh/selection controls; .7 enables safe
 #   inspection-based recovery, while .8 owns recorded replay.
 import argparse
@@ -9,6 +9,7 @@ import json
 from digitization.artifacts import CacheIntegrityError
 from digitization.inspection import IntegrityError, format_report, inspect_run
 from digitization.pipeline import InputError, resume as resume_run, run
+from digitization.replay import replay as replay_run
 
 
 def main(argv=None):
@@ -28,12 +29,13 @@ def main(argv=None):
     replay = commands.add_parser('replay')
     replay.add_argument('--run', required=True)
     replay.add_argument('--output', required=True)
+    replay.add_argument('--compare')
     args = parser.parse_args(argv)
     try:
         if args.operation == 'replay':
-            result = {'status': 'unsupported', 'reason': 'unsupported-operation',
-                      'operation': args.operation, 'provider_calls': 0}
-            code = 4
+            result = replay_run(args.run, args.output, compare=args.compare)
+            code = {'replayed': 0, 'incomplete-artifacts': 2,
+                    'unsupported-version': 4}.get(result['status'], 5)
         elif args.operation == 'resume':
             result = resume_run(args.run)
             code = 2 if result['status'] == 'stopped-with-unresolved-work' else 0
