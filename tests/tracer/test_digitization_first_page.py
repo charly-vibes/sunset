@@ -145,18 +145,26 @@ def test_invalid_inputs_never_dispatch_or_overwrite(inputs, tmp_path, case):
     if out.exists(): assert (out / 'keep.txt').read_text() == 'keep me'
 
 
-@pytest.mark.parametrize('operation', ['resume', 'replay'])
-def test_unimplemented_operations_refuse_without_restarting(inputs, tmp_path, operation):
+def test_resume_preserves_recorded_run_without_restarting(inputs, tmp_path):
     source, config_path, _ = inputs
     run = tmp_path / 'original'
     cli('run', '--source', source, '--pages', '2', '--config', config_path, '--output', run)
-    before = {str(p): p.read_bytes() for p in run.rglob('*') if p.is_file()}
-    args = [operation, '--run', run]
-    if operation == 'replay': args += ['--output', tmp_path / 'replay']
-    code, result = cli(*args)
+    before = {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
+    code, result = cli('resume', '--run', run)
+    assert code == 2 and result['status'] == 'stopped-with-unresolved-work'
+    assert result['reason'] == 'recorded-unresolved' and result['provider_calls'] == 0
+    assert before == {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
+
+
+def test_replay_remains_unsupported_without_restarting(inputs, tmp_path):
+    source, config_path, _ = inputs
+    run = tmp_path / 'original'
+    cli('run', '--source', source, '--pages', '2', '--config', config_path, '--output', run)
+    before = {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
+    code, result = cli('replay', '--run', run, '--output', tmp_path / 'replay')
     assert code == 4 and result['reason'] == 'unsupported-operation'
     assert result['provider_calls'] == 0
-    assert before == {str(p): p.read_bytes() for p in run.rglob('*') if p.is_file()}
+    assert before == {str(p.relative_to(run)): p.read_bytes() for p in run.rglob('*') if p.is_file()}
     assert not (tmp_path / 'replay').exists()
 
 
@@ -166,6 +174,8 @@ def test_inspection_refuses_corrupted_evidence(inputs, tmp_path):
     cli('run', '--source', source, '--pages', '2', '--config', config_path, '--output', out)
     (out / 'search.txt').write_text('tampered')
     code, result = cli('inspect', '--run', out, '--json')
+    assert code == 5 and result['reason'] == 'integrity-failure'
+    code, result = cli('resume', '--run', out)
     assert code == 5 and result['reason'] == 'integrity-failure'
 
 

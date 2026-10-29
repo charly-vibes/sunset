@@ -1,13 +1,14 @@
 # Purpose: Expose local digitization run and inspection commands.
 # Responsibilities: Parse documented operations, emit stable JSON outcomes and
 #   refuse unavailable resume/replay instead of starting replacement runs.
-# Rationale: sunset-rmx.3 adds explicit cache/fresh/selection controls; .7/.8 own recovery.
+# Rationale: sunset-rmx.3 adds cache/fresh/selection controls; .7 enables safe
+#   inspection-based recovery, while .8 owns recorded replay.
 import argparse
 import json
 
 from digitization.artifacts import CacheIntegrityError
 from digitization.inspection import IntegrityError, format_report, inspect_run
-from digitization.pipeline import InputError, run
+from digitization.pipeline import InputError, resume as resume_run, run
 
 
 def main(argv=None):
@@ -29,10 +30,13 @@ def main(argv=None):
     replay.add_argument('--output', required=True)
     args = parser.parse_args(argv)
     try:
-        if args.operation in ('resume', 'replay'):
+        if args.operation == 'replay':
             result = {'status': 'unsupported', 'reason': 'unsupported-operation',
                       'operation': args.operation, 'provider_calls': 0}
             code = 4
+        elif args.operation == 'resume':
+            result = resume_run(args.run)
+            code = 2 if result['status'] == 'stopped-with-unresolved-work' else 0
         elif args.operation == 'inspect':
             result = inspect_run(args.run)
             if not args.json:

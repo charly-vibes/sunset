@@ -97,7 +97,7 @@ and neither total operating cost nor transcription quality is measured.
 | 0 | inspect success | Evidence verified and report returned |
 | 2 | stopped-with-unresolved-work / recorded-unresolved | Results retained, explicit recorded uncertainty remains |
 | 3 | invalid-input | Invalid page/config/source/box/provider or existing output; no provider calls |
-| 4 | unsupported / unsupported-operation | Resume/replay placeholder; no restart or output mutation |
+| 4 | unsupported / unsupported-operation | Replay is not enabled; no output mutation |
 | 5 | inspection-failed / integrity-failure | Missing/corrupt or inconsistent local evidence; no repair inference |
 
 A page outside the PDF, a source hash mismatch, a missing recognition, duplicate
@@ -360,18 +360,24 @@ control orchestration; they do not change DSC identity or evidence equivalence.
 The projection and pending action order use semantic inputs and the pinned
 policy, never execution timestamps, counters or hidden scheduler state.
 
-* Recovery and replay are not enabled yet
+* Resume an existing run
 
 #+begin_src bash
 python3 -m digitization resume --run run-001
 python3 -m digitization replay --run run-001 --output replay-001
 #+end_src
 
-Each returns exit code 4 and =unsupported-operation= with =provider_calls: 0=,
-without creating another run or modifying evidence. =sunset-rmx.7= will enable
-durable resume and =sunset-rmx.8= will enable recorded replay. Real local crop
-OCR and whole-page baseline mode belong to =sunset-rmx.15=, after budget and
-stage configuration approval. Refinement/evaluation remain later slices.
+=resume= validates the existing run and returns its current status without
+creating a replacement directory or changing its manifest, history, selected
+artifacts or recorded ledger. A missing run directory returns exit 3 and
+=invalid-input=. When =budget-state.json= contains a reserved or
+=dispatch-uncertain= attempt, resume returns exit 2 with
+=stopped-with-unresolved-work / dispatch-uncertain= and zero provider calls;
+the reservation remains encumbered until evidence is settled. This recorded
+consumer has no provider dispatch route, so resume never starts or repeats
+inference. Replay remains disabled until =sunset-rmx.8=. Real local crop OCR
+and whole-page baseline mode belong to =sunset-rmx.15=, after budget and stage
+configuration approval. Refinement/evaluation remain later slices.
 
 * Executable command coverage
 

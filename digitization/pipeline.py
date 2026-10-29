@@ -1,8 +1,8 @@
 # Purpose: Build source-linked runs with verified recorded-recognition reuse.
 # Responsibilities: Preflight all inputs, render pages before consuming recorded
 #   detections/recognitions, pin selected attempts and export valid DSC atomically.
-# Rationale: sunset-rmx.17 preserves selected attempts across immutable revisions
-#   only when the complete recognition request is unchanged; fresh remains explicit.
+# Rationale: sunset-rmx.7 resumes only integrity-checked runs and never retries
+#   uncertain dispatch; sunset-rmx.17 preserves selected attempts across revisions.
 import hashlib
 import json
 import os
@@ -96,6 +96,32 @@ def run(source_path, pages, config_path, output, *, cache_dir=None, fresh=(), se
                           fresh=fresh, selections=selections)
     return _run_once(source_path, pages, config_path, output, cache_dir=cache_dir,
                      fresh=fresh, selections=selections)
+
+
+def resume(run_directory):
+    """Inspect durable run state; never dispatch an unreconciled request."""
+    from digitization.budget import BudgetLedger
+    from digitization.inspection import IntegrityError, inspect_run
+
+    root = Path(run_directory).resolve()
+    if not root.is_dir():
+        raise InputError('run directory does not exist')
+    report = inspect_run(root)
+    ledger_path = root / 'budget-state.json'
+    if ledger_path.exists():
+        try:
+            ledger = BudgetLedger.open(ledger_path)
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            raise IntegrityError('invalid durable budget state: ' + str(error)) from error
+        unresolved = [attempt for attempt in ledger.attempts
+                      if attempt['state'] in ('reserved', 'dispatch-uncertain')]
+        if unresolved:
+            return {'manifest': str(root / 'manifest.json'),
+                    'status': 'stopped-with-unresolved-work',
+                    'reason': 'dispatch-uncertain', 'provider_calls': 0,
+                    'unresolved_attempts': [attempt['id'] for attempt in unresolved]}
+    return {'manifest': str(root / 'manifest.json'), 'status': report['status'],
+            'reason': report['reason'], 'provider_calls': 0}
 
 
 def _run_once(source_path, pages, config_path, output, *, cache_dir=None, fresh=(), selections=None,
