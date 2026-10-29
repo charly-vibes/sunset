@@ -52,6 +52,40 @@ def test_budget_ledger_refuses_attempt_without_a_safe_charge_bound(tmp_path):
         ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=None)
 
 
+def test_crash_after_reservation_before_send_keeps_consumed_attempt(tmp_path):
+    from digitization.budget import BudgetLedger
+
+    path = tmp_path / 'ledger.json'
+    BudgetLedger.create(path, cap=100, currency='USD')
+    crash = '''
+import os, sys
+from digitization.budget import BudgetLedger
+ledger = BudgetLedger.open(sys.argv[1])
+ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=70)
+os._exit(74)
+'''
+    stopped = subprocess.run([sys.executable, '-B', '-c', crash, str(path)],
+                              cwd=ROOT, capture_output=True, text=True)
+    assert stopped.returncode == 74
+    reopened = BudgetLedger.open(path)
+    assert reopened.available == 30
+    assert len(reopened.attempts) == 1
+    assert reopened.attempts[0]['state'] == 'reserved'
+
+
+def test_dispatch_budget_refusal_does_not_enter_provider(tmp_path):
+    from digitization.budget import BudgetLedger
+    from digitization.providers import dispatch
+
+    ledger = BudgetLedger.create(tmp_path / 'ledger.json', cap=100, currency='USD')
+    ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=70)
+    calls = []
+    with pytest.raises(ValueError, match='budget-exceeded'):
+        dispatch(ledger, request_key='request-2', payload=b'next', maximum_charge=40,
+                 provider=lambda *args: calls.append(args))
+    assert calls == []
+
+
 def test_settlement_releases_reservation_once_even_for_duplicate_receipt(tmp_path):
     from digitization.budget import BudgetLedger
 
@@ -100,11 +134,25 @@ def test_fresh_process_resume_retains_run_and_stops_uncertain_attempt(tmp_path):
     run = tmp_path / 'run'
     code, result = cli('run', '--source', source, '--pages', '1', '--config', config_path, '--output', run)
     assert code == 0 and result['status'] == 'completed'
-    ledger = BudgetLedger.create(run / 'budget-state.json', cap=100, currency='USD')
-    attempt = ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=70)
-    ledger.mark_dispatch_uncertain(attempt['id'])
+    BudgetLedger.create(run / 'budget-state.json', cap=100, currency='USD')
     retained = {name: (run / name).read_bytes() for name in
                 ('manifest.json', 'history.json', 'ledger.json', 'descriptor.json')}
+    marker = tmp_path / 'provider-entered'
+    crash = '''
+import os, sys
+from pathlib import Path
+from digitization.budget import BudgetLedger
+from digitization.providers import dispatch
+ledger = BudgetLedger.open(Path(sys.argv[1]) / 'budget-state.json')
+def provider(request_key, payload):
+    Path(sys.argv[2]).write_text(request_key)
+    os._exit(73)
+dispatch(ledger, request_key='request-1', payload=b'fixture',
+         maximum_charge=70, provider=provider)
+'''
+    crashed = subprocess.run([sys.executable, '-B', '-c', crash, str(run), str(marker)],
+                             cwd=ROOT, capture_output=True, text=True)
+    assert crashed.returncode == 73 and marker.read_text() == 'request-1'
     state_before = (run / 'budget-state.json').read_bytes()
 
     code, resumed = cli('resume', '--run', run)
@@ -116,4 +164,5 @@ def test_fresh_process_resume_retains_run_and_stops_uncertain_attempt(tmp_path):
                        'unresolved_attempts': ['attempt-1']}
     assert {name: (run / name).read_bytes() for name in retained} == retained
     assert (run / 'budget-state.json').read_bytes() == state_before
-    assert {p.name for p in tmp_path.iterdir()} == {'source.pdf', 'config.json', 'run'}
+    assert {p.name for p in tmp_path.iterdir()} == {
+        'source.pdf', 'config.json', 'run', 'provider-entered'}
