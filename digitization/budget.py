@@ -24,6 +24,24 @@ def _locked(path):
             fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
 
 
+def validate_policy(value):
+    expected = {'version', 'currency', 'max_refinement_rounds', 'max_provider_attempts',
+                'max_estimated_cost_microunits', 'max_request_bytes', 'max_output_bytes',
+                'price_schedule_sha256'}
+    if not isinstance(value, dict) or set(value) != expected or value.get('version') != '1':
+        raise ValueError('invalid-budget-policy')
+    if not isinstance(value['currency'], str) or not re.fullmatch(r'[A-Z]{3}', value['currency']):
+        raise ValueError('invalid-budget-policy')
+    for key in ('max_refinement_rounds', 'max_provider_attempts',
+                'max_estimated_cost_microunits', 'max_request_bytes', 'max_output_bytes'):
+        if type(value[key]) is not int or value[key] < 0:
+            raise ValueError('invalid-budget-policy')
+    if (not isinstance(value['price_schedule_sha256'], str)
+            or not re.fullmatch(r'[0-9a-f]{64}', value['price_schedule_sha256'])):
+        raise ValueError('invalid-budget-policy')
+    return dict(value)
+
+
 class BudgetLedger:
     """A small atomically replaced ledger; callers persist uncertainty before I/O."""
 
@@ -32,11 +50,15 @@ class BudgetLedger:
         self.state = state
 
     @classmethod
-    def create(cls, path, *, cap, currency):
+    def create(cls, path, *, cap, currency, policy=None):
         path = Path(path)
         if type(cap) is not int or cap < 0 or not isinstance(currency, str) or not currency:
             raise ValueError('invalid-budget-configuration')
-        ledger = cls(path, {'version': '1', 'cap': cap, 'currency': currency,
+        policy = validate_policy(policy) if policy is not None else None
+        if policy is not None and (policy['currency'] != currency
+                                   or policy['max_estimated_cost_microunits'] != cap):
+            raise ValueError('budget-policy-ledger-mismatch')
+        ledger = cls(path, {'version': '1', 'cap': cap, 'currency': currency, 'policy': policy,
                             'attempts': [], 'receipts': []})
         with _locked(path):
             if path.exists():
@@ -49,12 +71,17 @@ class BudgetLedger:
         path = Path(path)
         state = json.loads(path.read_text(encoding='utf-8'))
         if (not isinstance(state, dict) or set(state) !=
-                {'version', 'cap', 'currency', 'attempts', 'receipts'}
+                {'version', 'cap', 'currency', 'policy', 'attempts', 'receipts'}
                 or state['version'] != '1' or type(state['cap']) is not int
                 or state['cap'] < 0 or not isinstance(state['currency'], str)
                 or not state['currency'] or not isinstance(state['attempts'], list)
                 or not isinstance(state['receipts'], list)):
             raise ValueError('invalid-budget-ledger')
+        if state['policy'] is not None:
+            policy = validate_policy(state['policy'])
+            if (policy['currency'] != state['currency']
+                    or policy['max_estimated_cost_microunits'] != state['cap']):
+                raise ValueError('budget-policy-ledger-mismatch')
         if not cls._valid_records(state):
             raise ValueError('invalid-budget-ledger-records')
         return cls(path, state)
@@ -148,6 +175,9 @@ class BudgetLedger:
                     if attempt['payload_sha256'] != payload_sha256:
                         raise ValueError('request-key-payload-mismatch')
                     raise ValueError('request-key-already-reserved')
+            if (self.state['policy'] is not None
+                    and len(self.attempts) >= self.state['policy']['max_provider_attempts']):
+                raise ValueError('attempt-limit-exceeded')
             if maximum_charge > self.available:
                 raise ValueError('budget-exceeded')
             attempt = {'id': f"attempt-{len(self.attempts) + 1}", 'request_key': request_key,

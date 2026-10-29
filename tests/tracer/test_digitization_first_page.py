@@ -120,7 +120,7 @@ def test_public_run_inspect_and_source_links(inputs, tmp_path):
     assert human.returncode == 0 and 'caption-uncertain' in human.stdout and 'luna' in human.stdout
 
 
-@pytest.mark.parametrize('case', ['page', 'config', 'nonempty', 'source-hash', 'geometry', 'provider', 'duplicate', 'missing-response'])
+@pytest.mark.parametrize('case', ['page', 'config', 'nonempty', 'source-hash', 'geometry', 'provider', 'duplicate', 'missing-response', 'budget'])
 def test_invalid_inputs_never_dispatch_or_overwrite(inputs, tmp_path, case):
     source, config_path, config = inputs
     out = tmp_path / 'refused'
@@ -135,6 +135,7 @@ def test_invalid_inputs_never_dispatch_or_overwrite(inputs, tmp_path, case):
     elif case == 'provider': config['provider']['kind'] = 'remote'
     elif case == 'duplicate': config['pages']['2']['detections'].append(config['pages']['2']['detections'][0])
     elif case == 'missing-response': del config['pages']['2']['recognitions']['p1']
+    elif case == 'budget': config['budget'] = {'version': '1'}
     if case not in {'config', 'nonempty', 'page'}: config_path.write_text(json.dumps(config))
     original_source = source.read_bytes()
     code, result = cli('run', '--source', source, '--pages', pages, '--config', config_path, '--output', out)

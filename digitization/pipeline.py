@@ -15,6 +15,7 @@ import unicodedata
 from dsc03 import validator
 from digitization import __version__
 from digitization.artifacts import OperationCache, CacheIntegrityError, validate_response
+from digitization.budget import BudgetLedger, validate_policy
 from digitization.render import page_frames, render_page
 from digitization.structure import collect
 
@@ -51,6 +52,8 @@ def _preflight(source_path, pages, config_path, output):
             raise ValueError('invalid model identity/revision availability')
         if not isinstance(config.get('recognition', {}), dict):
             raise ValueError('recognition request parameters must be an object')
+        if 'budget' in config:
+            config['budget'] = validate_policy(config['budget'])
         dpi = config['render']['dpi']
         if type(dpi) is not int or not 36 <= dpi <= 300:
             raise ValueError('DPI must be an integer between 36 and 300')
@@ -107,12 +110,18 @@ def resume(run_directory):
     if not root.is_dir():
         raise InputError('run directory does not exist')
     report = inspect_run(root)
+    config = validator.load(root / report['configuration']['path'])
+    expected_policy = config.get('budget')
     ledger_path = root / 'budget-state.json'
+    if expected_policy is not None and not ledger_path.is_file():
+        raise IntegrityError('pinned budget policy has no durable budget state')
     if ledger_path.exists():
         try:
             ledger = BudgetLedger.open(ledger_path)
         except (OSError, ValueError, KeyError, TypeError) as error:
             raise IntegrityError('invalid durable budget state: ' + str(error)) from error
+        if ledger.state['policy'] != expected_policy:
+            raise IntegrityError('durable budget state differs from pinned configuration')
         unresolved = [attempt for attempt in ledger.attempts
                       if attempt['state'] in ('reserved', 'dispatch-uncertain')]
         if unresolved:
@@ -158,6 +167,11 @@ def _run_once(source_path, pages, config_path, output, *, cache_dir=None, fresh=
 
         source_ref = save('source.pdf', source)
         config_ref = save('config.json', config_raw)
+        if 'budget' in config:
+            policy = config['budget']
+            BudgetLedger.create(stage / 'budget-state.json',
+                                cap=policy['max_estimated_cost_microunits'],
+                                currency=policy['currency'], policy=policy)
         implementation = {'consumer_version': __version__, 'unicode_version': unicodedata.unidata_version,
                           'modules': {name: digest((Path(__file__).parent / name).read_bytes())
                                       for name in ('pipeline.py', 'artifacts.py', 'render.py')}}

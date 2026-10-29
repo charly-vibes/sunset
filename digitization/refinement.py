@@ -260,6 +260,7 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
         steps, diagnostics, states, histories, traces = [], [], [], [], []
         seen_states = {}
         stop_reason = None
+        rounds = 0
         allocated = set(regions(active, pages))
         revision = 0
         total_usage = {'provider_calls': 0, 'recorded_observations': 0, 'cache_hits': 0,
@@ -309,6 +310,11 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
         current, report, manifest, initial_projection = execute(active, 0, fresh, selections)
         seen_states[projection_digest(initial_projection)] = [(0, initial_projection)]
         while pending and stop_reason is None:
+            round_limit = config.get('budget', {}).get('max_refinement_rounds')
+            if round_limit is not None and rounds >= round_limit:
+                stop_reason = 'budget-exhausted'
+                break
+            rounds += 1
             rule = schedule(pending, active, pages, report)[0]
             pending.remove(rule)
             try:

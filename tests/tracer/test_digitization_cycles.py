@@ -13,6 +13,12 @@ from test_digitization_first_page import inputs
 from test_digitization_structure import proposal
 
 
+LIMITED_BUDGET = {'version': '1', 'currency': 'USD', 'max_refinement_rounds': 0,
+                  'max_provider_attempts': 4, 'max_estimated_cost_microunits': 100,
+                  'max_request_bytes': 4096, 'max_output_bytes': 8192,
+                  'price_schedule_sha256': 'c' * 64}
+
+
 def state():
     config = {
         'source_sha256': 'source',
@@ -119,6 +125,22 @@ def test_public_refinement_stops_immediate_semantic_repeat(inputs, tmp_path):
     assert len(report['refinement']['states']) == 2
     assert report['refinement']['steps'][0]['revision'] == 'state-1'
     assert report['reason'] == 'stable-state'
+
+
+def test_public_refinement_budget_stop_retains_unresolved_content(inputs, tmp_path):
+    source, path, config = inputs
+    _write_policy(path, config, [_rule('deferred')])
+    config['budget'] = LIMITED_BUDGET
+    path.write_text(json.dumps(config))
+    output = tmp_path / 'budget-stop'
+    result = run(source, [2], path, output)
+    report = inspect_run(output)
+    assert result['status'] == 'stopped-with-unresolved-work'
+    assert report['reason'] == 'budget-exhausted'
+    assert report['refinement']['steps'] == []
+    assert report['refinement']['stop_reason'] == 'budget-exhausted'
+    assert any(item['reason'] == 'budget-exhausted' for item in report['unresolved'])
+    assert any(item['reason'] == 'caption-uncertain' for item in report['unresolved'])
 
 
 def test_public_refinement_stops_nonadjacent_repeat_and_keeps_every_revision(inputs, tmp_path):

@@ -15,11 +15,23 @@ def dispatch(ledger, *, request_key, payload, maximum_charge, provider):
     """
     if not isinstance(payload, bytes):
         raise ValueError('provider-payload-must-be-bytes')
+    policy = ledger.state.get('policy')
+    if policy is not None and len(payload) > policy['max_request_bytes']:
+        raise ValueError('request-limit-exceeded')
     attempt = ledger.reserve(request_key=request_key,
                              payload_sha256=hashlib.sha256(payload).hexdigest(),
                              maximum_charge=maximum_charge)
     ledger.mark_dispatch_uncertain(attempt['id'])
-    receipt = provider(request_key, payload)
+    response = provider(request_key, payload)
+    if policy is not None:
+        if (not isinstance(response, tuple) or len(response) != 2
+                or not isinstance(response[0], bytes)):
+            raise ValueError('provider-output-must-be-bytes-with-receipt')
+        output, receipt = response
+        if len(output) > policy['max_output_bytes']:
+            raise ValueError('output-limit-exceeded')
+    else:
+        receipt = response
     if not isinstance(receipt, dict) or receipt.get('attempt_id') != attempt['id']:
         raise ValueError('provider-receipt-attempt-mismatch')
     ledger.settle(receipt)

@@ -14,6 +14,11 @@ import pymupdf
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+POLICY = {'version': '1', 'currency': 'USD', 'max_refinement_rounds': 2,
+          'max_provider_attempts': 1, 'max_estimated_cost_microunits': 100,
+          'max_request_bytes': 4096, 'max_output_bytes': 8192,
+          'price_schedule_sha256': 'c' * 64}
+
 
 def cli(*args):
     result = subprocess.run([sys.executable, '-B', '-m', 'digitization', *map(str, args)],
@@ -52,6 +57,29 @@ def test_budget_ledger_refuses_attempt_without_a_safe_charge_bound(tmp_path):
         ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=None)
 
 
+def test_budget_policy_pins_attempt_round_cost_io_and_price_limits(tmp_path):
+    from digitization.budget import BudgetLedger, validate_policy
+
+    policy = validate_policy(POLICY)
+    assert policy == POLICY
+    ledger = BudgetLedger.create(tmp_path / 'ledger.json', cap=100, currency='USD', policy=policy)
+    ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=70)
+    with pytest.raises(ValueError, match='attempt-limit-exceeded'):
+        ledger.reserve(request_key='request-2', payload_sha256='b' * 64, maximum_charge=10)
+    assert BudgetLedger.open(tmp_path / 'ledger.json').state['policy'] == POLICY
+
+
+def test_budget_policy_rejects_missing_cost_and_request_bounds():
+    from digitization.budget import validate_policy
+
+    for missing in ('max_estimated_cost_microunits', 'max_request_bytes', 'max_output_bytes',
+                    'max_provider_attempts', 'max_refinement_rounds', 'price_schedule_sha256'):
+        policy = dict(POLICY)
+        del policy[missing]
+        with pytest.raises(ValueError, match='invalid-budget-policy'):
+            validate_policy(policy)
+
+
 def test_crash_after_reservation_before_send_keeps_consumed_attempt(tmp_path):
     from digitization.budget import BudgetLedger
 
@@ -86,6 +114,28 @@ def test_dispatch_budget_refusal_does_not_enter_provider(tmp_path):
     assert calls == []
 
 
+def test_dispatch_enforces_pinned_request_and_output_bounds(tmp_path):
+    from digitization.budget import BudgetLedger
+    from digitization.providers import dispatch
+
+    policy = {**POLICY, 'max_provider_attempts': 2, 'max_request_bytes': 2,
+              'max_output_bytes': 2}
+    before = BudgetLedger.create(tmp_path / 'before.json', cap=100, currency='USD', policy=policy)
+    calls = []
+    with pytest.raises(ValueError, match='request-limit-exceeded'):
+        dispatch(before, request_key='request-1', payload=b'too long', maximum_charge=10,
+                 provider=lambda *args: calls.append(args))
+    assert calls == [] and before.attempts == []
+
+    after = BudgetLedger.create(tmp_path / 'after.json', cap=100, currency='USD', policy=policy)
+    receipt = {'receipt_id': 'receipt-1', 'attempt_id': 'attempt-1', 'charge': 1,
+               'outcome': 'completed'}
+    with pytest.raises(ValueError, match='output-limit-exceeded'):
+        dispatch(after, request_key='request-1', payload=b'x', maximum_charge=10,
+                 provider=lambda *args: (b'too long', receipt))
+    assert BudgetLedger.open(tmp_path / 'after.json').attempts[0]['state'] == 'dispatch-uncertain'
+
+
 def test_settlement_releases_reservation_once_even_for_duplicate_receipt(tmp_path):
     from digitization.budget import BudgetLedger
 
@@ -104,7 +154,8 @@ def test_settlement_releases_reservation_once_even_for_duplicate_receipt(tmp_pat
 def test_charged_failure_settles_usage_and_attempt_once(tmp_path):
     from digitization.budget import BudgetLedger
 
-    ledger = BudgetLedger.create(tmp_path / 'ledger.json', cap=100, currency='USD')
+    policy = {**POLICY, 'max_provider_attempts': 2}
+    ledger = BudgetLedger.create(tmp_path / 'ledger.json', cap=100, currency='USD', policy=policy)
     attempt = ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=70)
     receipt = {'receipt_id': 'receipt-1', 'attempt_id': attempt['id'],
                'charge': 12, 'outcome': 'charged-failed'}
@@ -113,6 +164,9 @@ def test_charged_failure_settles_usage_and_attempt_once(tmp_path):
     assert reopened.attempts[0]['state'] == 'charged-failed'
     assert reopened.settled == 12
     assert reopened.available == 88
+    retry = reopened.reserve(request_key='request-2', payload_sha256='b' * 64, maximum_charge=30)
+    assert retry['id'] == 'attempt-2'
+    assert reopened.available == 58
 
 
 def test_fresh_process_resume_retains_run_and_stops_uncertain_attempt(tmp_path):
@@ -126,7 +180,7 @@ def test_fresh_process_resume_retains_run_and_stops_uncertain_attempt(tmp_path):
     import hashlib
     config = {'version': '1', 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
               'provider': {'kind': 'recorded', 'id': 'fixture', 'version': '1'},
-              'render': {'dpi': 72},
+              'render': {'dpi': 72}, 'budget': {**POLICY, 'max_provider_attempts': 4},
               'pages': {'1': {'detections': [{'id': 'r1', 'kind': 'poem', 'bbox': [20, 60, 100, 50]}],
                               'recognitions': {'r1': {'raw_text': 'line', 'unresolved': []}}}}}
     config_path = tmp_path / 'config.json'
@@ -134,7 +188,7 @@ def test_fresh_process_resume_retains_run_and_stops_uncertain_attempt(tmp_path):
     run = tmp_path / 'run'
     code, result = cli('run', '--source', source, '--pages', '1', '--config', config_path, '--output', run)
     assert code == 0 and result['status'] == 'completed'
-    BudgetLedger.create(run / 'budget-state.json', cap=100, currency='USD')
+    assert BudgetLedger.open(run / 'budget-state.json').state['policy'] == config['budget']
     retained = {name: (run / name).read_bytes() for name in
                 ('manifest.json', 'history.json', 'ledger.json', 'descriptor.json')}
     marker = tmp_path / 'provider-entered'
