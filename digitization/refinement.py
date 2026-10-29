@@ -14,6 +14,7 @@ import shutil
 import tempfile
 
 from dsc03 import validator
+from digitization.state import semantic_projection, projection_digest
 
 
 def encoded(value):
@@ -257,6 +258,8 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
         del active['refinement']
         pending = copy.deepcopy(config['refinement']['rules'])
         steps, diagnostics, states, histories, traces = [], [], [], [], []
+        seen_states = {}
+        stop_reason = None
         allocated = set(regions(active, pages))
         revision = 0
         total_usage = {'provider_calls': 0, 'recorded_observations': 0, 'cache_hits': 0,
@@ -292,11 +295,20 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
                 accepted_path.parent.mkdir(parents=True, exist_ok=True)
                 os.rename(destination, accepted_path)
                 destination = accepted_path
-            states.append({'revision': f'state-{number}', 'manifest': f'revisions/state-{number}/manifest.json'})
-            return destination, report, manifest
+            projection = semantic_projection(value, pages, report)
+            projection_hash = projection_digest(projection)
+            projection_path = f'state-projections/state-{number}.json'
+            projection_file = stage / projection_path
+            projection_file.parent.mkdir(parents=True, exist_ok=True)
+            projection_file.write_bytes(projection)
+            states.append({'revision': f'state-{number}',
+                           'manifest': f'revisions/state-{number}/manifest.json',
+                           'projection': {'path': projection_path, 'sha256': projection_hash}})
+            return destination, report, manifest, projection
 
-        current, report, manifest = execute(active, 0, fresh, selections)
-        while pending:
+        current, report, manifest, initial_projection = execute(active, 0, fresh, selections)
+        seen_states[projection_digest(initial_projection)] = [(0, initial_projection)]
+        while pending and stop_reason is None:
             rule = schedule(pending, active, pages, report)[0]
             pending.remove(rule)
             try:
@@ -324,11 +336,28 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
                      'parents': [f'state-{previous}'], 'revision': f'state-{revision}',
                      'mapping': mapping, 'transforms': transforms, 'invalidated': invalidated}
             active = updated
-            current, report, manifest = selected_candidate
+            current, report, manifest, projection = selected_candidate
             allocated.update(regions(active, pages))
+            projection_hash = projection_digest(projection)
+            matches_for_digest = [(number, prior) for number, prior in seen_states.get(projection_hash, [])
+                                  if prior == projection]
+            previous_matches = matches_for_digest[-1][0] if matches_for_digest else None
+            if previous_matches is not None:
+                if previous_matches != previous:
+                    stop_reason = 'repeated-state'
+                    event['stop_reason'] = stop_reason
+                elif not pending:
+                    stop_reason = 'stable-state'
+                    event['stop_reason'] = stop_reason
+            seen_states.setdefault(projection_hash, []).append((revision, projection))
             steps.append(event)
             histories.append(event)
             traces.append(event)
+        if stop_reason is None and steps and pending == []:
+            occurrences = seen_states[projection_digest(projection)]
+            if len(occurrences) > 1 and occurrences[-1][1] == occurrences[-2][1]:
+                stop_reason = 'stable-state'
+                steps[-1]['stop_reason'] = stop_reason
         # Publish selected semantic output at root and retain every earlier run.
         for path in current.rglob('*'):
             if path.is_file():
@@ -343,7 +372,7 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
             manifest['artifacts'][name] = ref
             return ref
         refinement = {'version': '1', 'policy': config['refinement'], 'states': states,
-                      'steps': steps, 'diagnostics': diagnostics}
+                      'steps': steps, 'diagnostics': diagnostics, 'stop_reason': stop_reason}
         manifest['refinement'] = save('refinement.json', refinement)
         save('original-config.json', original_raw)
         save('history.json', histories)
@@ -353,19 +382,26 @@ def refine_run(source_path, pages, config_path, output, *, cache_dir, fresh, sel
         manifest['usage'] = usage
         unresolved = validator.load(stage / 'unresolved.json')
         unresolved['regions'].extend({'region_id': f"rule:{d['rule_id']}", 'reason': d['reason']} for d in diagnostics)
+        if stop_reason:
+            unresolved['regions'].append({'region_id': 'run', 'reason': stop_reason})
         accepted_structure = {o['id'] for o in report['structure']['observations']}
         for step in steps:
             unresolved['regions'].extend({'region_id': key, 'reason': 'structure-recheck-required'}
                                          for key in step['invalidated'] if key.startswith('structure:')
                                          and key.removeprefix('structure:') not in accepted_structure)
         save('unresolved.json', unresolved)
-        if unresolved['regions']:
+        if stop_reason:
+            manifest['status'], manifest['reason'] = 'stopped-with-unresolved-work', stop_reason
+        elif unresolved['regions']:
             manifest['status'], manifest['reason'] = 'stopped-with-unresolved-work', 'recorded-unresolved'
         for directory in ('revisions', 'candidates'):
             for path in (stage / directory).rglob('*'):
                 if path.is_file():
                     relative = str(path.relative_to(stage))
                     manifest['artifacts'][relative] = {'path': relative, 'sha256': digest(path.read_bytes())}
+        for path in (stage / 'state-projections').glob('*.json'):
+            relative = str(path.relative_to(stage))
+            manifest['artifacts'][relative] = {'path': relative, 'sha256': digest(path.read_bytes())}
         (stage / 'manifest.json').write_bytes(json_bytes(manifest))
         os.rename(stage, output)
     return {'manifest': str(output / 'manifest.json'), 'status': manifest['status'], 'reason': manifest['reason']}

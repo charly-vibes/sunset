@@ -248,8 +248,8 @@ observations, line/token derivations, alternatives and diagnostics.
 * Refine recorded regions through immutable revisions
 
 Add a top-level =refinement= policy to the recorded configuration to apply
-explicit rule-triggered actions. Each rule is considered once in this slice;
-repeated-state/fixed-point detection belongs to =sunset-rmx.6=. A rule inspects
+explicit rule-triggered actions. Each pending rule is considered at most once.
+A rule inspects
 selected recognition text or unresolved reason strings, including verified cached
 responses. It never treats an unselected supplied response as active text.
 
@@ -336,6 +336,29 @@ refinement dispatcher and pin their effective observations; the original policy
 is retained separately. History/trace include the retained revision events.
 Top-level usage sums observations, cache hits and recorded runtime across snapshots;
 it measures neither real inference cost nor the entire orchestration overhead.
+
+* Refinement semantic-state equality and stopping
+
+Every initial and admitted revision has canonical projection bytes at
+=state-projections/state-N.json=, with its SHA256 recorded in =refinement.json=
+and the artifact manifest. The versioned projection includes the active region
+multiset, page/frame/exact geometry, role and producer attribution, selected
+raw/layout/search text, attributed structural observations and relationships,
+alternatives, coverage and unresolved outcomes. It excludes allocated region,
+observation, revision and attempt IDs, parent/history edges, timestamps, counters
+and resource envelopes. Region nodes are canonically relabeled over permutations
+of equal-attribute nodes; equal geometry and duplicate observations retain their
+multiplicity. A matching digest is confirmed against the projection bytes.
+
+An immediate projection repeat is a stable state. Pending rules still run in the
+pinned deterministic order; the run reports =stable-state= when the policy is
+exhausted at an unchanged state. A projection matching a nonadjacent state stops
+with =repeated-state= immediately. The candidate revision and all earlier
+revisions remain inspectable, and the root run is marked
+=stopped-with-unresolved-work= with the stop reason. These comparisons only
+control orchestration; they do not change DSC identity or evidence equivalence.
+The projection and pending action order use semantic inputs and the pinned
+policy, never execution timestamps, counters or hidden scheduler state.
 
 * Recovery and replay are not enabled yet
 
