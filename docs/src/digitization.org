@@ -414,7 +414,32 @@ Optional =--compare FRESH_RUN= compares selected raw text with another already
 recorded run and lists differences such as =luna= → =una=. It does not invoke
 inference or alter either run. Real local crop OCR and whole-page baseline mode
 belong to =sunset-rmx.15=, after budget and stage configuration approval.
-Refinement/evaluation remain later slices.
+Refinement is a later slice.
+
+**Offline pilot evaluation**
+
+The shared evaluator accepts verified run directories, a frozen reference JSON,
+and an approved stage manifest. It makes no provider calls:
+
+#+begin_src sh
+python3 -m digitization evaluate --baseline BASELINE_RUN \\
+  --candidate CANDIDATE_RUN --reference REFERENCE_JSON \\
+  --policy STAGE_MANIFEST --output NEW_REPORT_DIR
+#+end_src
+
+The stage manifest is version 1 and pins =stage_id=, =mode= (=assessment= or
+=engineering-only=), approved owner, source/pages, reference digest, baseline
+and candidate configuration digests, engine/configuration/price schedule,
+budget policy, required scopes, metric thresholds, and exclusions. Assessment
+requires a reference digest. Engineering-only manifests set it to null and
+name nonempty =missing_scopes=; their report is always
+=evaluation-incomplete= and disallows positive conclusions. The reference JSON
+uses =regions= (reviewed =id= and =bbox=), =text= (region ID to verbatim text),
+=layout= (=line_breaks=, =stanza_boundaries=, =indentation=), and directed
+=relationships=. Output contains =evaluation.json= and =evaluation.txt= with
+input digests, measured/unknown metrics, denominators, exclusions, and unknown
+effort claims. Text normalization is identity: whitespace and Unicode code
+point distinctions are retained.
 
 * Executable command coverage
 

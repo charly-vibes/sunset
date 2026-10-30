@@ -10,6 +10,7 @@ from digitization.artifacts import CacheIntegrityError
 from digitization.inspection import IntegrityError, format_report, inspect_run
 from digitization.pipeline import InputError, resume as resume_run, run
 from digitization.replay import replay as replay_run
+from digitization.evaluation import evaluate as evaluate_run
 
 
 def main(argv=None):
@@ -30,12 +31,22 @@ def main(argv=None):
     replay.add_argument('--run', required=True)
     replay.add_argument('--output', required=True)
     replay.add_argument('--compare')
+    evaluate = commands.add_parser('evaluate')
+    evaluate.add_argument('--baseline', required=True)
+    evaluate.add_argument('--candidate', required=True)
+    evaluate.add_argument('--reference', required=True)
+    evaluate.add_argument('--policy', required=True)
+    evaluate.add_argument('--output', required=True)
     args = parser.parse_args(argv)
     try:
         if args.operation == 'replay':
             result = replay_run(args.run, args.output, compare=args.compare)
             code = {'replayed': 0, 'incomplete-artifacts': 2,
                     'unsupported-version': 4}.get(result['status'], 5)
+        elif args.operation == 'evaluate':
+            result = evaluate_run(args.baseline, args.candidate, args.reference,
+                                  args.policy, args.output)
+            code = 0 if result['status'] == 'measured' else 2
         elif args.operation == 'resume':
             result = resume_run(args.run)
             code = 2 if result['status'] == 'stopped-with-unresolved-work' else 0
@@ -67,7 +78,7 @@ def main(argv=None):
     except IntegrityError as error:
         result = {'status': 'inspection-failed', 'reason': 'integrity-failure', 'detail': str(error), 'provider_calls': 0}
         code = 5
-    except (InputError, OSError) as error:
+    except (InputError, OSError, ValueError) as error:
         result = {'status': 'invalid-input', 'reason': 'invalid-input', 'detail': str(error), 'provider_calls': 0}
         code = 3
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
