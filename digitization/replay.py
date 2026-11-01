@@ -33,6 +33,13 @@ def _load_run(directory):
         raise IntegrityError('invalid replay manifest') from error
     if not isinstance(manifest, dict):
         raise IntegrityError('invalid replay manifest')
+    if manifest.get('mode') == 'native':
+        from digitization.native import inspect_native
+        report = inspect_native(root)
+        if report.get('status') == 'unsupported-version':
+            return {'status': 'unsupported-version', 'reason': 'unsupported-version', 'provider_calls': 0}
+        return {'root': root, 'manifest': manifest, 'report': report, 'native': True,
+                'paths': {name: root / name for name in manifest['artifacts']}}
     if manifest.get('version') != '1':
         return {'status': 'unsupported-version', 'reason': 'unsupported-version',
                 'provider_calls': 0}
@@ -145,6 +152,31 @@ def replay(run_directory, output, *, compare=None):
     recorded = _load_run(run_directory)
     if 'root' not in recorded:
         return recorded
+    if recorded.get('native'):
+        root = recorded['root']
+        destination = Path(output).absolute()
+        if destination.exists() or destination.is_symlink():
+            raise InputError('replay output directory already exists')
+        if destination.resolve().is_relative_to(root) or root.is_relative_to(destination.resolve()):
+            raise InputError('replay output must be separate from source run')
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='.replay-', dir=destination.parent) as temporary:
+            stage = Path(temporary) / 'run'
+            stage.mkdir()
+            for name, reference in recorded['manifest']['artifacts'].items():
+                target = stage / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(recorded['paths'][name], target)
+            shutil.copyfile(root / 'manifest.json', stage / 'manifest.json')
+            (stage / 'replay-report.json').write_bytes(json_bytes({
+                'version': '1', 'status': 'replayed', 'provider_calls': 0,
+                'semantic_artifacts': recorded['manifest']['semantic_artifacts'],
+                'semantic_sha256': recorded['manifest']['semantic_sha256'],
+                'execution_envelope': {'origin': 'original-run', 'fresh_measurement': False}}))
+            os.rename(stage, destination)
+        return {'manifest': str(destination / 'manifest.json'), 'status': 'replayed',
+                'reason': 'replay-verified', 'provider_calls': 0,
+                'semantic_sha256': recorded['manifest']['semantic_sha256']}
     fresh = _load_run(compare) if compare is not None else None
     if fresh is not None and 'root' not in fresh:
         return fresh

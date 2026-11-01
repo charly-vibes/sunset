@@ -10,62 +10,57 @@
 [![tracked with wai](https://img.shields.io/badge/tracked%20with-wai-blue)](https://github.com/charly-vibes/wai)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-> **Why:** exchange document observations without losing where they came from,
-> how they changed, where interpretations disagree, or what extraction omitted.
-> sunset hosts the **DSC (Document Structural Core)** specification corpus:
-> a deterministic, carrier-independent **document-structure interchange
-> substrate** with explicit evidence, scoped loss and honest partiality —
-> native PDF, EPUB, scanned PDF and structured carriers are first-class;
-> extraction reconciliation (historical periodicals) is the **first
-> consumer**, not the definition.
-> **Status:** [experimental](docs/src/status.md) · 0.3 machinery implemented, substrate gates in progress · [Conformance matrix](docs/src/conformance-matrix.md) · [Bundle](spec/document-model-specodelic-v3/README.md)
+> **Why:** turn PDFs into searchable text with verifiable source references,
+> so extracted information can be checked, corrected and reused.
+> **Status:** experimental. Native PDF extraction exists as a Python adapter;
+> the one-command native workflow retains word locations and supports offline
+> inspection and replay. OCR for scanned pages remains separate work.
 
-`sunset` is the home of the **DSC specification corpus** in the
-[charly-vibes](https://github.com/charly-vibes) tool fleet: an executable
-**0.2 baseline** plus the **0.3 design proposal**. The research bundle landed
-here from the specodelic v3 pass (`document-model-specodelic-v3`) and is
-preserved as received under [`spec/`](spec/document-model-specodelic-v3/) —
-except its `specs/`, which were converted to the OpenSpec tree and removed
-from the bundle (see below).
+Sunset is developing a local document extraction tool backed by **DSC
+(Document Structural Core)**, its format for retaining source locations,
+producer identity, transformations, disagreements and omissions. This repository
+contains the DSC specifications, Python adapters and validation machinery,
+and an experimental recorded-input digitization command.
 
 ## Who it is for
 
-The initial consumer is a reviewer reconciling extraction of historical
-periodicals: locating disputed text on a page, retaining competing reading
-orders, and finding unexamined material. The proposed benefit is preserving
-these distinctions across tools; improved OCR accuracy or reduced review time
-has not been demonstrated.
+People building searchable archives or extracting information from documents
+need to verify results against the original pages. The first practical baseline
+is a PDF with embedded text: extract it locally, retain page and word locations,
+and inspect any passage against its source. Scanned historical periodicals are
+a more demanding consumer, extending that baseline with OCR and structural review.
 
-The [first-consumer acceptance gate](openspec/changes/add-dsc-03/specs/document-conformance/spec.md#requirement-first-consumer-demonstration)
-requires one real issue, two extractors and a reviewing consumer, with source
-traceability, disagreement/loss retention, review effort and representation
-overhead measured against native extractor outputs. Passing that narrow demo
-does **not** establish full 0.3 or substrate conformance.
+The intended journey is **PDF → searchable text with source mappings → inspection**.
+Later interpretations, such as court or case-number fields, can cite supporting
+passages without replacing the original text. Domain-field extraction is outside
+the initial native-text workflow.
 
 ## Purpose, consumers, non-goals
 
-**Normative purpose.** DSC is a deterministic, extensible
-structural-description substrate: source observation, logical structure and
-semantic interpretation stay separately addressable; evidence and loss are
-always scoped; domain extensions never redefine core meaning.
+DSC keeps source observations, logical structure and semantic interpretation
+separately addressable. It supports the extraction tool and other consumers
+such as indexers, comparators and archival pipelines. Existing deployed
+requirements remain authoritative; the
+[native-PDF proposal](openspec/changes/add-native-pdf-extraction/proposal.md)
+records the design source for the implemented local workflow.
 
-**Consumers.** Extraction-review workflows are one consumer. Others the
-substrate must serve equally: any tool that needs deterministic,
-carrier-independent document structure with provenance (indexers, comparators,
-debuggers, archival pipelines).
+| Available now | Planned baseline |
+|---|---|
+| Python PDF/EPUB adapters; local native PDF extraction with word/line mappings, integrity inspection and offline replay | OCR for scanned pages and visual completeness |
+| DSC 0.3 validation, selectors, evidence transforms and coverage checks | General cross-tool conformance and installable packaging |
+| Recorded-input digitization, inspection, caching and offline replay | OCR and visual completeness for scanned pages |
 
-**Current capabilities (honest).** The deployed 0.3 machinery validates
-0.3 descriptors, resolves pinned profiles, replays evidence transforms,
-verifies scoped coverage, and adapts real PDF/EPUB carriers
-([conformance matrix](docs/src/conformance-matrix.md)). The substrate gates
-(restoring-document-substrate) run deterministic per-carrier oracles and
-categorical law checks over committed screened fixtures — machinery-level
-evidence only. **Real-carrier conformance and cross-tool interchange
-conformance are NOT claimed.**
+See the [digitization reference](docs/src/digitization.org) for current commands
+and [status](docs/src/status.md) for limitations. The native route requires Python
+3 and PyMuPDF 1.28.2 (see [requirements-native.txt](requirements-native.txt));
+it does not invoke OCR or network services. Improved OCR accuracy, reduced human review
+time and general cross-tool interchange conformance have not been demonstrated.
+Conformance labels remain scoped by `dsc03/conformance.py`.
 
-**Non-goals.** No universal ontology; no lossless conversion promise; no OCR
-engine, PDF/EPUB parser product, CLI, or categorical runtime; PDF and EPUB
-representations are not assumed isomorphic; evidence never implies truth.
+Sunset reuses extraction engines. It does not promise lossless conversion,
+a universal ontology, or that evidence establishes truth. Native PDF extraction
+does not require OCR; scanned pages need a separate recognition route. EPUB
+support remains part of DSC and the adapter machinery.
 
 ## What's in the bundle
 
@@ -80,13 +75,13 @@ representations are not assumed isomorphic; evidence never implies truth.
 
 The bundle's capability specs live **once**, in OpenSpec standard form:
 
-- [`openspec/specs/`](openspec/) → the six 0.2-baseline capability specs (deployed truth, validated by `validator.py`)
-- [`openspec/changes/add-dsc-03/`](openspec/changes/add-dsc-03/proposal.md) — the DSC 0.3 design proposal as spec deltas (design-only)
+- [`openspec/specs/`](openspec/) → the seven deployed capabilities, including 0.3 requirements (validated by `dsc03/`)
+- [`archived add-dsc-03`](openspec/changes/archive/2026-10-14-add-dsc-03/proposal.md) — the deployed DSC 0.3 change
 
 The bundle's original `specs/` were converted into these and removed from the bundle — no duplicates.
 
-The active 0.3 deltas supersede conflicting details in the preserved research
-draft. [Review resolutions](openspec/changes/add-dsc-03/design.md) explain the
+The deployed 0.3 requirements supersede conflicting details in the preserved research
+draft. [Review resolutions](openspec/changes/archive/2026-10-14-add-dsc-03/design.md) explain the
 explicit profile bindings, exact Unicode text, scoped coverage and content
 lineage. Capability requirements remain solely in OpenSpec.
 
@@ -113,6 +108,8 @@ composition and frozen baseline fixtures. The composition check does not
 validate 0.3 descriptors or execute its acceptance scenarios.
 
 ## Roadmap
+
+The native-PDF baseline is implemented and tracked by `sunset-jbb`; it is independent of the scanned Diario OCR pilot and its approval gates. OCR and visual completeness remain future work.
 
 Implemented: the 0.3 validator, selector profiles, manifest grammar, migrated
 fixtures, PDF/EPUB adapters, cross-reader benchmark and conformance labels

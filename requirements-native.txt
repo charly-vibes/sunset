@@ -1,0 +1,4 @@
+# Purpose: Pin the supported native PDF extraction runtime.
+# Responsibilities: Keep extractor and PyMuPDF bindings reproducible.
+# Rationale: sunset-jbb.4 manifests bind artifacts to this extractor version.
+PyMuPDF==1.28.2

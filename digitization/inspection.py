@@ -1,8 +1,10 @@
 # Purpose: Inspect retained digitization evidence without inference or mutation.
 # Responsibilities: Verify local artifact bytes, reuse DSC validation/index and
-#   locator resolution, and present source links, text, uncertainty and history.
+#   locator resolution, and present source links, text, uncertainty and history
+#   for recorded and native extraction run modes.
 # Rationale: sunset-rmx.20 reports usage only when the manifest agrees exactly
-#   with its hash-bound ledger; revision and interpretation evidence stays visible.
+#   with its hash-bound ledger; sunset-jbb.3 exposes native scope exclusions and
+#   unexamined visual coverage through its mode-specific integrity checks.
 import json
 from pathlib import Path
 
@@ -18,6 +20,15 @@ class IntegrityError(ValueError):
 
 def inspect_run(run_directory):
     root = Path(run_directory).resolve()
+    try:
+        early_manifest = validator.load(root / 'manifest.json')
+    except (OSError, ValueError, validator.Duplicate) as error:
+        raise IntegrityError(str(error)) from error
+    if not isinstance(early_manifest, dict):
+        raise IntegrityError('invalid manifest')
+    if early_manifest.get('mode') == 'native':
+        from digitization.native import inspect_native
+        return inspect_native(root)
     try:
         manifest = validator.loads((root / 'manifest.json').read_text())
         if manifest['version'] != '1':
@@ -84,6 +95,20 @@ def inspect_run(run_directory):
 
 
 def format_report(report):
+    if report.get('mode') == 'native':
+        lines = [f"{report['status']}: {report['reason']}",
+                 f"Source SHA256: {report['source']['sha256']}",
+                 f"Pages: {', '.join(map(str, report['pages']))}",
+                 f"Extractor: {report['extractor']['id']}@{report['extractor']['version']}"]
+        coverage = report['coverage']
+        lines.append('Visual completeness: not established')
+        if coverage['excluded_pages']:
+            lines.append('Excluded pages: ' + ', '.join(map(str, coverage['excluded_pages'])))
+        if coverage['unexamined_pages']:
+            lines.append('Textless/unexamined pages: ' + ', '.join(map(str, coverage['unexamined_pages'])))
+        lines.extend(f"Page {word['page']} {word['text']!r} {word['box']} raw[{word['raw_start']}:{word['raw_end']}]"
+                     for word in report['words'])
+        return '\n'.join(lines)
     lines = [f"{report['status']}: {report['reason']}",
              f"Source SHA256: {report['source']['sha256']}",
              f"Coverage: {report['coverage']}"]

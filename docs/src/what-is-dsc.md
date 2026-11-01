@@ -1,5 +1,9 @@
 # What is DSC and why
 
+Sunset turns PDFs with embedded text into searchable text with verifiable source
+references through its experimental local native workflow. Commands and limits
+are described in the [digitization reference](digitization.org).
+
 DSC — the **Document Structural Core** — is a specification for exchanging
 observations about documents: what text and layout a tool saw, where each
 observation came from in the source file, how it was transformed, and what
@@ -97,18 +101,26 @@ The corpus carries two versions with different statuses:
 baseline that 0.3 was proposed against; it is history and evidence, not the
 on-ramp.
 
-## What sunset is (and is not)
+## How Sunset uses DSC
 
-This repository, **sunset**, is a **DSC specification corpus**: the
-capability specs, the frozen 0.2 executable truth, and the 0.3 conformance
-machinery (`dsc03/`, fixtures, tracer tests). It is **not a tool** — there
-is no CLI, no installable package, and none is planned; the
-[scope ruling](status.md#deviations-from-the-fleet-standardization-checklist)
-records this deliberately. The intended adoption path is external
-consumers implementing DSC and running the conformance suite against their
-own implementations. A walk-through of the machinery in action —
-descriptor → validate → profile resolve → evidence replay — is in the
-[first-consumer demonstration](tracer-bullet.org).
+Sunset develops a local extraction tool alongside the DSC specification corpus
+and its validation machinery. DSC is the internal record that keeps extracted
+text connected to source pages, locations, producer configuration and corrections.
+Users of the implemented native-PDF workflow do not need to author descriptors
+or supply recognition observations before extracting text.
+
+Today, `dsc03.adapters.describe_pdf` extracts native page text with source-hash
+and page attribution. The experimental digitization command also extracts
+embedded PDF text with word/line mappings, verifies retained artifacts during
+inspection and supports offline replay. The native route is local and does not
+invoke OCR. Scanned/textless pages, visual completeness, OCR and installable
+packaging remain outside this baseline; see [status](status.md) and the
+[native extraction proposal](../../openspec/changes/add-native-pdf-extraction/proposal.md).
+
+Other tools can still implement DSC independently and use the conformance suite.
+The extraction tool does not change the core wire contract or establish broader
+conformance. The [first-consumer demonstration](tracer-bullet.org) illustrates
+the existing validation and evidence machinery.
 
 ## Where next
 

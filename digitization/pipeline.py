@@ -110,6 +110,9 @@ def resume(run_directory):
     if not root.is_dir():
         raise InputError('run directory does not exist')
     report = inspect_run(root)
+    if report.get('mode') == 'native':
+        return {'manifest': str(root / 'manifest.json'), 'status': report['status'],
+                'reason': report['reason'], 'provider_calls': 0}
     config = validator.load(root / report['configuration']['path'])
     expected_policy = config.get('budget')
     ledger_path = root / 'budget-state.json'

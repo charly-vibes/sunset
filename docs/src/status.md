@@ -9,9 +9,13 @@
 
 **sunset** is **experimental**.
 
-- Hosts the DSC (Document Structural Core) specification corpus.
+- Develops local source-linked extraction alongside the DSC specification corpus.
+- Product direction: PDF → searchable text with source locations → inspection.
+  The local PyMuPDF native baseline now retains word/line mappings, supports
+  read-only inspection/resume and verified offline replay. OCR and visual
+  completeness remain separate work. See [current commands](digitization.org).
 - Orientation: [What is DSC and why](what-is-dsc.md) — the docs entry point.
-- Executable truth: DSC 0.2 only — `spec/document-model-specodelic-v3/validator.py`
+- Frozen DSC 0.2 baseline — `spec/document-model-specodelic-v3/validator.py`
   (frozen at 0.2), `PASS 11 descriptor fixtures`.
 - DSC 0.3 machinery is implemented (`dsc03/` package, tests under
   `tests/tracer/`, gate `just spec-check`). The 0.3 capability deltas were
@@ -105,19 +109,22 @@
 - The baseline's [known validation limitations](baseline-limitations.md)
   remain visible. The proposal composition regression checks specification
   replacement only, not 0.3 behavior.
-- No CLI ships from this repo by design (see scope ruling below); the ddl
-  registry checklist is out of scope.
+- A repository-local Python digitization command exists. An installable product
+  is not shipped; packaging remains outside the native-extraction proposal.
 
 ## Deviations from the fleet standardization checklist
 
-**Scope ruling (2026-10-15, closing `sunset-408`):** sunset is a **DSC
-specification corpus** — specs, a frozen 0.2 executable truth, and 0.3
-conformance machinery — not a shipped tool. The dulce-de-leche tool-registry
-checklist (registry row, capability matrix, CI workflows, book pages,
-`llms.txt`) assumes an installable CLI; building one for sunset would exist
-only to satisfy the checklist. The items below are therefore **deliberately
-out of scope**, not deferred work. Adoption happens via external consumers
-implementing DSC and running the conformance suite against themselves.
+**Current scope:** the owner selected a usable local extraction tool backed by
+DSC as Sunset's product direction. The native PDF workflow is implemented under
+`add-native-pdf-extraction`; the Python command also consumes recorded
+observations. This direction does not claim a packaged release or authorize
+publishing, deployment or fleet registration.
+
+**Historical scope ruling (2026-10-15, `sunset-408`):** Sunset was scoped as a
+specification corpus with external consumers, and tool-registry work was excluded.
+The exclusions below describe the current checkout; they are not a prohibition
+on delivering the extraction workflow. Packaging and fleet-registration work can
+be scoped when there is a working product to distribute.
 
 Other recorded deviations:
 
@@ -150,3 +157,15 @@ lineage/replay, reports, migration and honest conformance labels
 See [tracer-bullet.org](tracer-bullet.org) for the demo run and the
 first-consumer workflow. The
 frozen 0.2 validator stays untouched (PASS 11 descriptor fixtures).
+
+## Native PDF extraction
+
+The implemented native baseline extracts embedded text locally with PyMuPDF
+1.28.2 and retains DSC, raw/search text, word/line maps, page frames and pinned
+configuration. Its manifest declares semantic artifact hashes separately from
+run context. Inspection verifies the retained source and mappings without
+re-extraction; replay verifies and copies a native run offline. Scanned or
+textless pages and unsupported/mixed page features remain partial or
+unexamined. OCR, visual completeness and installable packaging are not part of
+this baseline. Commands and exit statuses are documented in
+[digitization.org](digitization.org).

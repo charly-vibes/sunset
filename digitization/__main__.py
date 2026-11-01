@@ -2,15 +2,18 @@
 # Responsibilities: Parse documented operations, emit stable JSON outcomes and
 #   keep recovery/replay offline and bound to original run artifacts.
 # Rationale: sunset-rmx.3 adds cache/fresh/selection controls; .7 enables safe
-#   inspection-based recovery, while .8 owns recorded replay.
+#   inspection-based recovery, .8 owns recorded replay, and sunset-jbb.3 adds
+#   explicit partial native results and stable expected-failure exits.
 import argparse
 import json
+from pathlib import Path
 
 from digitization.artifacts import CacheIntegrityError
 from digitization.inspection import IntegrityError, format_report, inspect_run
 from digitization.pipeline import InputError, resume as resume_run, run
 from digitization.replay import replay as replay_run
 from digitization.evaluation import evaluate as evaluate_run
+from digitization.native import NativeInputError, extract as extract_native
 
 
 def main(argv=None):
@@ -37,6 +40,10 @@ def main(argv=None):
     evaluate.add_argument('--reference', required=True)
     evaluate.add_argument('--policy', required=True)
     evaluate.add_argument('--output', required=True)
+    native = commands.add_parser('native')
+    native.add_argument('--source', required=True)
+    native.add_argument('--output', required=True)
+    native.add_argument('--pages')
     args = parser.parse_args(argv)
     try:
         if args.operation == 'replay':
@@ -49,13 +56,25 @@ def main(argv=None):
             code = 0 if result['status'] == 'measured' else 2
         elif args.operation == 'resume':
             result = resume_run(args.run)
-            code = 2 if result['status'] == 'stopped-with-unresolved-work' else 0
+            code = {'stopped-with-unresolved-work': 2, 'partial': 2,
+                    'unsupported-version': 4}.get(result['status'], 0)
         elif args.operation == 'inspect':
             result = inspect_run(args.run)
+            if result.get('status') == 'unsupported-version':
+                code = 4
+                print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+                return code
             if not args.json:
                 print(format_report(result))
                 return 0
             code = 0
+        elif args.operation == 'native':
+            try:
+                pages = None if args.pages is None else [int(p) for p in args.pages.split(',')]
+            except ValueError as error:
+                raise InputError('pages must be comma-separated integer PDF indices') from error
+            result = extract_native(args.source, args.output, pages)
+            code = 2 if result['status'] == 'partial' else 0
         else:
             try:
                 pages = [int(p) for p in args.pages.split(',')]
@@ -78,6 +97,9 @@ def main(argv=None):
     except IntegrityError as error:
         result = {'status': 'inspection-failed', 'reason': 'integrity-failure', 'detail': str(error), 'provider_calls': 0}
         code = 5
+    except NativeInputError as error:
+        result = {'status': 'invalid-input', 'reason': error.reason, 'detail': str(error), 'provider_calls': 0}
+        code = 3
     except (InputError, OSError, ValueError) as error:
         result = {'status': 'invalid-input', 'reason': 'invalid-input', 'detail': str(error), 'provider_calls': 0}
         code = 3

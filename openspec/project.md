@@ -2,16 +2,23 @@
 
 ## Purpose
 
-`sunset` hosts the **DSC (Document Structural Core)** specification for
-document descriptors: multiple structural views, source-addressable selectors,
+`sunset` develops a local PDF extraction tool backed by the **DSC
+(Document Structural Core)** specification for document descriptors: multiple structural views, source-addressable selectors,
 explicit interpretation provenance, and honest extraction coverage.
 
-Current executable truth is the **DSC 0.2** baseline, implemented by
+The frozen **DSC 0.2** baseline is implemented by
 `spec/document-model-specodelic-v3/validator.py` (reference validator, frozen
 at 0.2). The **DSC 0.3** machinery is implemented in the `dsc03/` package
 (archived OpenSpec change `add-dsc-03`, deployed to the deployed specs
 2026-10-15); no real-carrier conformance is claimed, and agent-executed
 review deviations are recorded in `docs/src/status.md`.
+
+The product baseline is automatic native PDF → searchable text with verifiable
+page/word references → inspection, implemented by `add-native-pdf-extraction`
+and tracked by `sunset-jbb`. The local PyMuPDF route retains semantic artifacts,
+supports read-only inspection/resume and offline replay. OCR for scanned pages
+and visual completeness remain separate work. The digitization command also
+continues to support recorded observations.
 
 ## Tech Stack
 
@@ -25,8 +32,8 @@ review deviations are recorded in `docs/src/status.md`.
 - Requirements are normative (EARS: SHALL) with at least one `#### Scenario:` each.
 - Version scoping is explicit: deployed specs under `openspec/specs/` carry
   both the **0.2 baseline** and the **deployed 0.3 updates** (from archived
-  change `openspec/changes/archive/2026-10-14-add-dsc-03/`); no other active
-  deltas exist.
+  change `openspec/changes/archive/2026-10-14-add-dsc-03/`); active proposals live
+  under `openspec/changes/`.
 - The specodelic-format research bundle (`spec/document-model-specodelic-v3/`)
   is provenance for these specs; its `specs/` were converted to OpenSpec format
   and are NOT duplicated here.
