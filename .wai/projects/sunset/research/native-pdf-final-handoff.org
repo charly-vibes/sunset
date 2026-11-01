@@ -1,0 +1,20 @@
+#+title: Native PDF product baseline handoff
+
+* Changed
+Delivered sunset-jbb.1-.4 with Codex gpt-6-luna implementors through four native-pdf-orchestrator runs. Native extraction, normalized search with raw spans and word/line geometry, pinned profiles/dependencies, coverage/partiality, inspection, safe resume and offline replay now work locally. README, explanation/status, native command reference and OpenSpec context describe current behavior. Runtime prerequisite pinned in requirements-native.txt. Beads epic and children track completion; OpenSpec checkpoints match. No commits or pushes.
+
+* Verified
+Full just spec-check:441 passed,2 skipped,1 warning,18 subtests; strict12/12, frozenPASS11, Specodelic zero findings, pinned OpenSpec pass. Log /tmp/sunset-native-final-gate.log. After final integrity fixes, all digitization+docs157 passed21.07s in /tmp/sunset-native-final-repaired.log. Strictall12/12 and git diff --check pass. Tests first RED/GREEN evidence lives in each sunset-jbb child report.org and logs. No fabricated retrospective RED claim.
+
+* Review
+Lead reviewed each slice and reran tests. Additional gpt-6-luna read-only review found missing geometry profile; fixed and verified. Lead findings repaired with tests: raw adjacent-word mapping from owner PDF, supported-text vs visual scope, output symlinks, native resume routing, profile bindings and manifest status consistency. This is agent review, not independent-family or human confirmation.
+
+* Local owner PDF verification
+Source unmodified. Two fresh native runs /tmp/sunset-pba-judicial-native and /tmp/sunset-pba-judicial-native-repeat each have26 pages15679 attributed words and12 byte-identical semantic artifacts. Digest5b93cec3e2f9ef76bbdc109a99bb1465371e8ba500af7b94b9a063749ce63d7c. Offline replay /tmp/sunset-pba-judicial-native-replay verified; source unchanged. Machine report /tmp/sunset-pba-judicial-native-verification.json. Both runs partial(exit2) due non-text coverage, with no unexamined native-text pages. PDF never published or added to fixtures.
+
+* Limits and next
+Native embedded text only: no OCR, semantic field extraction, visual completeness, packaged release or broader conformance claim. Two existing optional skips remain. All code is uncommitted in shared worktree under conservative git policy. Existing whisper edits and owner PDF remain untouched. Active completed OpenSpec change remains available for review/archive; no deployment/archive claimed. Older unrelated wai runs preserved.
+
+* Working invocation
+/tmp/sunset-native-venv/bin/python -m digitization native --source pba-judicial-2026-07-29.pdf --output NEW_DIR
+/tmp/sunset-native-venv/bin/python -m digitization inspect --run NEW_DIR --json

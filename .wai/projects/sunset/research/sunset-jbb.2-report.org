@@ -1,0 +1,43 @@
+#+title: sunset-jbb.2 native layout and Unicode report
+#+date: 2026-10-30
+
+* Outcome
+
+Implemented the native layout and normalized search behavior in ~digitization/native.py~ and added the public CLI fixture in ~tests/tracer/test_digitization_native_layout.py~. Adjusted the existing baseline search expectation in ~tests/tracer/test_digitization_native_basic.py~ to reflect the normalization contract; the raw text, attribution, geometry, descriptor and integrity assertions remain.
+
+Raw text retains PyMuPDF extraction output, adding a terminal line feed only when needed to delimit a page. Search is the NFC-normalized extracted word sequence joined by one ASCII space. Word maps carry half-open Unicode codepoint offsets independently into raw and search text, the exact raw token, PyMuPDF's unrotated crop-page box, and the box transformed into the declared rotated visible page frame. Mapping aligns each raw whitespace token in extractor order and fails explicitly if it cannot align every extracted word or if raw tokens remain unmapped. Line groups remain PyMuPDF's returned groups. Page maps record cropbox, rotation, frame names, and the transformation matrix.
+
+Inspection checks normalization/configuration consistency, raw and search spans, frame mappings, transformed boxes, line spans, and artifact digests. The feature remains native-only and makes no reading-order or semantic claim.
+
+* TDD evidence
+
+RED command:
+
+#+begin_example
+PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_layout.py -q
+#+end_example
+
+Observed: 1 failed because existing ~search.txt~ copied raw layout text rather than emitting the expected NFC-normalized single-space token sequence. Fixture experimentation also showed default Helvetica substitutes the combining accent, so the final synthetic PDF uses PyMuPDF's built-in ~japan~ font to preserve decomposed Unicode. The raw fixture pins the actual blank lines and two-space gap.
+
+GREEN commands and outputs:
+
+#+begin_example
+PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_layout.py -q
+1 passed in 0.29s
+
+PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_first_page.py -q
+20 passed in 3.17s
+
+git diff --check
+passed
+#+end_example
+
+* Limitations
+
+The alignment contract intentionally fails extraction when PyMuPDF's raw text whitespace tokens cannot be aligned one-for-one with its word extractor output. This prevents silent omission, but unusual PDF encodings/layouts may require a future explicit alignment strategy. Focused tests passed; the lead owns ~just spec-check~ and overall verification. No issue closure, commit, push, or pipeline advancement performed.
+
+* Lead smoke follow-up
+
+A lead-side read-only smoke on page 10 of the owner PDF revealed raw text `(Art.9delaLey14967)` whose corresponding word extractor sequence is `(Art.`, `9`, `de`, `la`, `Ley`, `14967)`. Replaced whitespace-token equality with sequential contiguous span alignment. Adjacent word spans can touch while retaining their exact raw substrings; all remaining non-whitespace text must be covered, and irreconcilable sequences still fail explicitly. A helper-level regression generates a PDF from adjacent text fragments with no raw whitespace and passes their known source segments as a simulated extractor word sequence to the alignment helper; it verifies touching spans. The separate rotated/Unicode test exercises extraction and inspection through the public fresh-process CLI. NFC candidate matching also handles decomposed input whose initial `cafe` prefix does not normalize to the final `café` until the combining mark arrives.
+
+Owner-PDF run (read-only source, output under `/tmp`): `PATH=/tmp/sunset-native-venv/bin:$PATH python -B -m digitization native --source pba-judicial-2026-07-29.pdf --output /tmp/sunset-pba-native-layout2` completed with zero provider calls. Fresh-process inspection reported `native complete 15679 26` (words, frames). The PDF was not modified or copied into output beyond normal native-run source retention under `/tmp`; no publishing occurred.

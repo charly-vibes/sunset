@@ -1,0 +1,52 @@
+#+title: sunset-jbb.4 implementation report
+
+* Result
+Native runs now declare deterministic semantic artifact hashes and a semantic digest. The fixed required native artifact set is enforced, and inspection verifies artifacts read-only, including the source bytes, geometry profiles, word/line source attribution, spans and transforms. Replay supports native mode by verifying through the existing inspection path and copying the original artifacts without extraction, OCR, inference or network calls. The replay report stores semantic identity separately from the execution envelope.
+
+* Test evidence
+RED command:
+#+begin_example
+PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_replay.py -q
+2 failed: missing semantic_artifacts declaration; native replay classified a missing artifact as unsupported-version (exit 4).
+#+end_example
+
+GREEN/regression command:
+#+begin_example
+PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_replay.py tests/tracer/test_digitization_replay.py tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_native_partial.py tests/tracer/test_digitization_native_layout.py tests/tracer/test_digitization_first_page.py -q
+35 passed in 7.65s
+
+git diff --check
+passed
+#+end_example
+The native basic test resolves every declared profile through Registry and resolves page frames through dsc03.profiles.resolve_frame.
+
+* Public smoke
+Using a generated PDF at =/tmp/sunset-native-example.pdf=, the tested public commands were:
+#+begin_example
+python3 -m digitization native --source /tmp/sunset-native-example.pdf --output /tmp/sunset-native-example-run
+exit 0; status complete; reason native-extraction-complete; provider_calls 0
+python3 -m digitization inspect --run /tmp/sunset-native-example-run --json
+exit 0; mode native; status complete; PyMuPDF 1.28.2; maps Example/native/text
+python3 -m digitization replay --run /tmp/sunset-native-example-run --output /tmp/sunset-native-example-replayed
+exit 0; status replayed; reason replay-verified; provider_calls 0; semantic_sha256 05538a7a112e21550ef7760d12bb0b6e84a9cf9dc1091255a89296e8672902d4
+#+end_example
+
+Owner-provided =pba-judicial-2026-07-29.pdf= was read-only and run into =/tmp/sunset-owner-native=. Native extraction returned partial / exit 2 / zero provider calls. Inspection returned partial native status for 26 pages and 15,679 words, with no unexamined glyph pages. The source PDF was not copied into test fixtures or modified.
+
+* Changed paths in this slice
+=digitization/native.py=, =digitization/replay.py=, =digitization/inspection.py=, =digitization/__main__.py=, =tests/tracer/test_digitization_native_replay.py=, =tests/tracer/test_digitization_native_basic.py=, =README.md=, =docs/src/digitization.org=, =docs/src/status.md=, =docs/src/what-is-dsc.md=, =requirements-native.txt=.
+
+* Reuse rationale and limits
+Used existing dsc03 descriptor/profile grammar, the existing native inspect integrity boundary, the existing CLI and the recorded replay copy model. No wire format or package layout was added. Full =just spec-check= is owned by the lead; this slice ran focused replay/native/first-page regressions only. Runtime pin provided is PyMuPDF 1.28.2; this is not an installable package. OCR, visual completeness and broader carrier conformance remain outside the native route.
+
+* Lead review follow-up
+Fixed native resume by routing through verified inspection. Complete and partial native resumes return retained status with exit 0/2 and leave all run files unchanged; unsupported versions return 4. Tests prove fresh-process behavior and byte-for-byte non-mutation.
+
+Expanded replay tests cover missing file and missing manifest entry, refreshed hash plus malformed short box/source mapping, path traversal/symlink refusal, unsupported version, and monkeypatched guards proving replay invokes neither native extraction nor PDF open. Added exact PyMuPDF VersionBind/MuPDF VersionFitz assertions and descriptor dependency check. The effective config records both versions; `requirements-native.txt` pins PyMuPDF 1.28.2.
+
+Corrected README/status/OpenSpec project/digitization guide language for implemented native capability and documented resume outputs. Replayed example's observed semantic digest after the dependency declaration update: `92725d7785d83a74f682e121a7f369e548b5bd38aba6961e7d387173a7bf4bcf`.
+
+Follow-up focused gate: 43 passed in 10.41s; `git diff --check` passed. The lead owns the full `just spec-check`.
+
+* Final integrity follow-up
+Added tests first; before the fix, removal of carrier/selector.json, a descriptor profile SHA mismatch with refreshed outer digests, and contradictory complete-vs-partial manifest status all incorrectly inspected successfully. Fixed by requiring all four carrier profile artifacts (inventory, adapter manifest, selector, geometry), binding every descriptor profile URI/hash to its artifact map reference, resolving profiles with the existing local dsc03 Registry, and checking status/reason against coverage. No PDF open or network access is involved. Focused regression gate: 46 passed in 10.20s; diff check passed.

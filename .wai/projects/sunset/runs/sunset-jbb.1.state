@@ -1,0 +1,17 @@
+{
+  "ticket": "sunset-jbb.1",
+  "branch": "main",
+  "head": "bb895d1dd9c8fb31ebca3a1adfdf8f1a4dea98e4",
+  "brief": ".wai/projects/sunset/briefs/sunset-jbb.1.md",
+  "history": [
+    "claim",
+    "gates",
+    "brief",
+    "spawn",
+    "verify:20 passed",
+    "deliver",
+    "stop"
+  ],
+  "agent": "/root/native_basic",
+  "log": ".wai/projects/sunset/logs/sunset-jbb.1.log"
+}

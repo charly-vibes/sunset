@@ -1,0 +1,30 @@
+#+title: sunset-jbb.3 — Native partial results and safe PDF refusal
+#+date: 2026-10-30
+
+* Outcome
+Implemented explicit partial native extraction and inspection results. Native text alone is no longer reported as complete visual coverage. Textless pages remain unexamined, image/vector feature scope remains declared, and page selection excludes unselected text observations while retaining page inventory and coverage. Invalid native inputs return stable non-success status/reason JSON without traceback or output overwrite. No OCR/network path was added.
+
+* Files
+- =digitization/native.py=: native input reason type, safe input checks, page-scoped coverage and partial status, inspection coverage report.
+- =digitization/__main__.py=: stable native refusal JSON and exit 2 for retained partial output.
+- =digitization/inspection.py=: human-readable native coverage summary.
+- =tests/tracer/test_digitization_native_partial.py=: generated PDF fixtures and public fresh-process partiality/refusal tests.
+- =tests/tracer/test_digitization_native_basic.py= and =tests/tracer/test_digitization_native_layout.py=: success expectations updated to the stronger partial-result contract.
+
+* Evidence
+The test-first RED run failed 3 tests in 0.60s: two cases saw complete status where partial was required; malformed PDF produced an uncaught =pymupdf.FileDataError= traceback.
+
+GREEN commands:
+- =PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_partial.py -q= — 3 passed in 1.49s.
+- =PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_native_layout.py tests/tracer/test_digitization_first_page.py -q= — 22 passed in 3.10s.
+- =git diff --check= — passed.
+
+The test suite verifies malformed, missing, encrypted, invalid/duplicate/out-of-bounds selection and existing empty/nonempty directory or file outputs; it verifies no extraction output is created on refused requests. It verifies a mixed native/image page, image-only page, empty textless page, selected page exclusion, DSC validation and read-only inspection.
+
+* Limits and handoff
+No OCR, model, network, or visual inspection was performed. Empty native text means unexamined, not blank. The focused tests and first-page regression pass; the lead retains the full spec-check gate. No commit, push, tracker close, wai phase update, or changes to the owner PDF/frozen research bundle were made.
+
+* Lead review correction
+Supported native glyph extraction remains `preserved` in coverage and can produce `complete` status within the native extraction scope. A separate manifest/inspection field always reports `visual_completeness: not-established`, so complete native extraction does not claim full visual coverage. Partiality is retained for actual excluded, textless, approximated or unsupported scopes. Existing basic/layout mappings remain asserted, with main run status updated to complete for supported text-only inputs. Selected-page output remains partial due explicit excluded-page scopes.
+
+Output path existence is checked on the user-supplied path before `resolve()`, including dangling symlinks. Added tests for dangling and valid output symlinks plus a fully textless-only run through inspection. RED: 5 failed/3 passed in 2.08s; GREEN: 8 passed in 2.86s using the same command: `PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_partial.py tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_native_layout.py -q`.

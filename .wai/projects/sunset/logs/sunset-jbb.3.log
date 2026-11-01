@@ -1,0 +1,22 @@
+
+RED — partial coverage and refusal behavior
+Command: PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_partial.py -q
+Expected RED: new public tests require partial result states, scoped excluded/unexamined coverage, native inspection coverage summary, encrypted/malformed/missing/invalid-selection and existing-output refusals.
+Observed RED output: `3 failed in 0.60s`. The mixed and selected-page journeys returned status `complete` with exit 0 instead of partial; malformed bytes raised uncaught `pymupdf.FileDataError` and printed a traceback rather than JSON.
+
+GREEN — implementation and targeted regressions
+`digitization/native.py` now emits stable refusal reasons for missing/unreadable, malformed, encrypted, invalid-selection, and existing-output requests. It retains full adapter page inventory and feature coverage, marks unselected page scopes unexamined, removes their text observations, marks selected glyph coverage unexamined because native text cannot establish visual completeness, and records no-text pages as unexamined rather than blank. Any unsupported, approximated or unexamined feature makes the manifest/result partial (exit 2); extraction remains native-only. `inspect` validates pinned artifacts as before and reports selected/excluded/textless coverage, with a human-readable visual-completeness boundary.
+The preexisting basic/layout success assertions were strengthened to partial/exit 2 because the native text layer alone does not establish complete visual coverage.
+
+Commands and output:
+- RED: `PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_partial.py -q` — `3 failed in 0.60s` (expected behavioral failures; traceback defect captured).
+- GREEN: same partial command — `3 passed in 1.49s`.
+- Regression: `PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_native_layout.py tests/tracer/test_digitization_first_page.py -q` — `22 passed in 3.10s`.
+- `git diff --check` — passed.
+
+Limits: native extraction does not assess visual content, OCR, or establish a blank page. Unsupported image/vector feature inventory is scoped and retained; pixel extraction is not performed. Full repository/OCR `just spec-check` remains assigned to the lead as briefed.
+
+Lead-review corrections — RED/GREEN
+New RED command: `PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_partial.py tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_native_layout.py -q` — `5 failed, 3 passed in 2.08s`. Failures showed text-bearing glyph coverage was incorrectly unexamined (making supported native-only runs partial), no zero-text-only journey had been pinned, and a dangling output symlink was followed.
+Corrections: selected pages with native text now retain adapter glyph coverage (`preserved`); pages without native text remain unexamined. The manifest and inspection report separately state `visual_completeness: not-established`, even when native-scope extraction is complete. Partial status now follows actual excluded, textless, approximated or unsupported scopes. Output existence is checked on the supplied path including `is_symlink()` before path resolution; both dangling and valid symlink fixtures are refused without creating or modifying targets. Added an all-textless extraction/inspection test. Basic and layout mapping assertions remain intact; their main success journeys now expect native-scope complete where applicable, and selected-page extraction remains partial due excluded scopes.
+GREEN command: same focused command — `8 passed in 2.86s`.

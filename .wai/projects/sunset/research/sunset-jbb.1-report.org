@@ -1,0 +1,84 @@
+#+title: sunset-jbb.1 implementation evidence
+#+date: 2026-10-30
+
+* Outcome
+
+Implemented the public native extraction command:
+
+#+begin_src sh
+python3 -m digitization native --source PDF --output NEW_DIR [--pages 2,3]
+#+end_src
+
+It writes retained source bytes, raw and searchable text, word and line maps,
+extractor/configuration metadata, a validated DSC 0.3 descriptor, carrier
+inventory and profiles. Native text is labeled as extracted evidence, with no
+OCR/provider calls. Existing recorded run inspection remains available through
+the same `inspect_run` entry point, which routes native artifacts through
+mode-specific integrity checks.
+
+* TDD evidence
+
+RED command:
+
+#+begin_src sh
+/tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py -q
+#+end_src
+
+Actual RED result: one failure at the fresh-process CLI invocation because
+argparse did not yet recognize `native` (available operations were `run`,
+`inspect`, `resume`, `replay`, and `evaluate`); 1 failed in 1.24s.
+
+GREEN command:
+
+#+begin_src sh
+PATH=/tmp/sunset-native-venv/bin:$PATH /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py -q
+#+end_src
+
+Actual result: `1 passed in 2.70s`.
+
+Existing first-page regression:
+
+#+begin_src sh
+PATH=/tmp/sunset-native-venv/bin:$PATH /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_first_page.py -q
+#+end_src
+
+Actual result: `19 passed in 9.46s`. `git diff --check` exited 0 with no output.
+Full-suite verification is delegated to the lead.
+
+* Reuse and provenance
+
+- Reused `dsc03.adapters.describe_pdf` for carrier inventory, scoped source
+  coverage, adapter metadata and inventory profiles. Its logical root label is
+  generalized to `document`; native run output also adds a pinned selector
+  profile.
+- Existing profile resolution is exercised through `dsc03.profiles.Registry`;
+  the selected page locator is checked with `dsc03.locators.resolve`, and the
+  descriptor is checked by the DSC validator.
+- Each word and line map carries the source SHA-256, selected page, declared
+  page-point frame, and bounding box; raw and search offsets are checked against
+  the retained text.
+- Did not route extraction through the recorded pipeline. That pipeline requires
+  recognition configuration and retains recorded recognition observations;
+  native extraction is instead labeled `extracted`, transforms carrier-observed
+  page text, and declares the PyMuPDF extractor/configuration. The CLI reports
+  `provider_calls: 0`.
+
+* Files changed
+
+- `digitization/native.py` — native extraction, retained artifacts, valid DSC,
+  word/line source offsets and native integrity inspection.
+- `digitization/__main__.py` — `native` command and mode-aware inspect entry point.
+- `digitization/inspection.py` — native routing through `inspect_run` and human
+  report formatting.
+- `tests/tracer/test_digitization_native_basic.py` — generated two-page PDF
+  fresh-process behavioral test, exact word/line offsets, profile/locator checks,
+  public inspection and `--pages` selection.
+- `.wai/projects/sunset/logs/sunset-jbb.1.log` — RED/GREEN and regression output.
+- This report.
+
+* Limits
+
+This baseline covers simple embedded text and one basic line layout. More complex
+layout and Unicode behavior, explicit incomplete-page dispositions, and replay or
+repeatability guarantees are left to later epic slices. No commits or issue-state
+changes were made.

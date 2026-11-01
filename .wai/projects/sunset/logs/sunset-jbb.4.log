@@ -1,0 +1,36 @@
+2026-10-30 sunset-jbb.4 implementation log
+
+TDD RED
+Command: PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_replay.py -q
+Observed: 2 failed. Identical semantic bytes had no semantic_artifacts declaration (KeyError); missing native word-map was reported by replay as unsupported-version (exit 4), not integrity failure.
+
+Implementation
+- Declared semantic hashes/digest in native manifest; excluded no artifact file from the semantic set. Run-specific manifest execution values remain outside artifact bytes.
+- Added native replay by reusing inspect_native as the verification boundary and copying only verified artifacts offline.
+- Required the complete fixed native artifact set; validated manifest/reference paths, symlinks, artifact hashes, semantic digest, source hash binding, raw/search spans, frame transforms and descriptor source.
+- Registered carrier/geometry.json using dsc03's geometry profile grammar and bound page frames/transforms. Added Registry/resolve_frame assertion.
+- Added pinned PyMuPDF requirement and native user journey/status docs. Owner PDF smoke used only in /tmp.
+
+TDD GREEN and regression
+Command: PATH=/tmp/sunset-native-venv/bin:$PATH OMP_THREAD_LIMIT=1 /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_replay.py tests/tracer/test_digitization_replay.py tests/tracer/test_digitization_native_basic.py tests/tracer/test_digitization_native_partial.py tests/tracer/test_digitization_native_layout.py tests/tracer/test_digitization_first_page.py -q
+Observed: 35 passed in 7.65s.
+Command: git diff --check
+Observed: passed (empty output).
+
+Owner PDF smoke (never copied or modified)
+Native command returned status=partial, reason=native-extraction-partial, provider_calls=0, exit 2. Read-only inspect returned mode=native, status=partial, 26 pages, 15,679 words, no unexamined glyph pages. Both output dirs were under /tmp.
+
+Additional review request from lead: profile registry must resolve the geometry profile. Implemented and verified by native_basic and replay suites; reran focused gate above.
+
+Lead review follow-up
+TDD RED for native resume: added complete and partial read-only resume cases; both failed with exit 1 due to the recorded resume path requiring report['configuration'] on native reports.
+GREEN: route native resume through inspect_run output and map native partial/unsupported status to exit 2/4. Added replay assertions for missing artifacts, hash-refreshed malformed maps/source hashes, symlink/path traversal refusal, unsupported version and a monkeypatched no-extractor/no-PDF-open assertion.
+Pinning: native config and descriptor dependencies now record both PyMuPDF VersionBind and MuPDF VersionFitz; requirements-native.txt pins PyMuPDF 1.28.2. Test asserts exact versions and dependency declaration.
+Documentation: corrected native workflow title and current/future statements in README, status, digitization guide and openspec/project.md; included resume output in tested example.
+Focused regression command (including all prior native/recorded suites): 43 passed in 10.41s. git diff --check passed.
+Fresh smoke output after pin change: native/inspect/resume all complete with exit 0; replay exit 0 and semantic digest 92725d7785d83a74f682e121a7f369e548b5bd38aba6961e7d387173a7bf4bcf.
+
+Final integrity follow-up
+TDD RED: three refreshed-manifest fixtures passed unexpectedly before fix: removal of carrier/selector.json, mismatched selector profile SHA in a descriptor whose own digest was refreshed, and a complete status/reason contradicting partial coverage.
+GREEN: required fixed profile set now includes carrier/{inventory,manifest,selector,geometry}.json. Inspection binds each descriptor profile URI/SHA to its artifact entry, resolves every profile via dsc03.profiles.Registry (no PDF open/network), and checks manifest status/reason against descriptor coverage-derived partial state.
+Focused native/recorded regression suites: 46 passed in 10.20s. git diff --check passed.

@@ -1,0 +1,43 @@
+RED: /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py -q
+
+RED output:
+F                                                                        [100%]
+Failure point: tests/tracer/test_digitization_native_basic.py:40 called the fresh-process public CLI.
+Captured stderr: `argument operation: invalid choice: 'native' (choose from 'run', 'inspect', 'resume', 'replay', 'evaluate')`.
+1 failed in 1.24s
+
+GREEN: PATH=/tmp/sunset-native-venv/bin:$PATH /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py -q
+.                                                                        [100%]
+1 passed in 2.70s
+
+Regression: PATH=/tmp/sunset-native-venv/bin:$PATH /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_first_page.py -q
+...................                                                      [100%]
+19 passed in 9.46s
+
+Diff hygiene: git diff --check
+(no output; exit 0)
+
+After pinning the declared text extraction flags into both text and word calls:
+PATH=/tmp/sunset-native-venv/bin:$PATH /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py -q
+.                                                                        [100%]
+1 passed in 0.57s
+git diff --check: no output, exit 0.
+
+After asserting per-word and per-line source hashes:
+PATH=/tmp/sunset-native-venv/bin:$PATH /tmp/sunset-native-venv/bin/python -B -m pytest tests/tracer/test_digitization_native_basic.py -q
+.                                                                        [100%]
+1 passed in 0.58s
+git diff --check: no output, exit 0.
+
+Implementation decisions:
+- Reused dsc03.adapters.describe_pdf for real carrier inventory, scoped coverage,
+  adapter manifest and pinned profile declarations. Added a pinned selector profile
+  for page source locations, and checked all profile resolution in the new test.
+- Kept native extraction separate from digitization.pipeline.run: the recorded path
+  requires recognition configuration and stores recorded recognition observations;
+  routing direct PDF extraction through it would conflate the two provenances.
+- Native text evidence is `extracted` and transforms the adapter's observed page
+  text; there are zero provider/OCR calls. inspect_run dispatches by mode to native
+  integrity checks, and CLI inspection remains on the shared API.
+- Scope is simple embedded text. Complex layout/Unicode, explicit partial coverage
+  semantics and replay/repeatability remain for later children.

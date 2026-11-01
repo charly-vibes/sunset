@@ -1,0 +1,17 @@
+{
+  "ticket": "sunset-jbb.4",
+  "branch": "main",
+  "head": "bb895d1dd9c8fb31ebca3a1adfdf8f1a4dea98e4",
+  "brief": ".wai/projects/sunset/briefs/sunset-jbb.4.md",
+  "history": [
+    "claim",
+    "gates",
+    "brief",
+    "spawn",
+    "verify:full gate441 + final focused157",
+    "deliver",
+    "stop"
+  ],
+  "agent": "/root/native_replay",
+  "log": ".wai/projects/sunset/logs/sunset-jbb.4.log"
+}

@@ -1,0 +1,54 @@
+# Local-worktree variant of epic-orchestrator for the conservative git policy.
+# Retains per-ticket delegation/evidence gates; no commits or remote actions.
+[pipeline]
+name = "native-pdf-orchestrator"
+description = "Claim one native-PDF child, gate, brief, delegate to luna, verify, record delivery, stop"
+
+[[steps]]
+id = "claim"
+prompt = "{topic}: Claim one ready child, check conflicts, and create a durable .wai/projects/sunset/runs/<ticket>.state with branch, HEAD, brief path and step history. Record orientation with wai add research. One ticket per run."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps]]
+id = "gates"
+prompt = "{topic}: Run and record baseline tests and strict spec validation. Resolve environment prerequisites before delegation. Record commands/results using wai add research."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps]]
+id = "brief"
+prompt = "{topic}: Write a reviewable repo brief under .wai/projects/sunset/briefs with Why, Completion criteria (runnable commands), Spawn model (gpt-6-luna), outcome, exact files, test-first sequence, wall-clock budget and evidence contract. The session user requested orchestration; conservative git policy remains active, so do not commit. Record with wai add design."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["design"]
+
+[[steps]]
+id = "spawn"
+prompt = "{topic}: Spawn a named gpt-6-luna implementation subagent with fork_turns none and the brief. Record the agent/session id and repo log path in durable state. Require RED/GREEN output, no commits, no other subagents and a report artifact. Check progress within 60-second lead commentary intervals; budget 20 minutes per ticket. Record with wai add research."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps]]
+id = "verify"
+prompt = "{topic}: Independently inspect changed code and report; rerun tests. Review invariant and negative cases. Fix findings through the implementor and reverify. Record artifact paths and fresh command/results with wai add research; lead-side verification must be labeled as such, not independent-family confirmation."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps]]
+id = "deliver"
+prompt = "{topic}: After passing verification, close the child, update its OpenSpec checkpoint, and record the quality ledger with wai add research. Leave code uncommitted. No push, release, archive or owner-PDF publication."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps]]
+id = "stop"
+prompt = "{topic}: Record STOP in wai and durable state. Finish this run. Next child starts a fresh pipeline run; do not abandon older unrelated runs."
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
