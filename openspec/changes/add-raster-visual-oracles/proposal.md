@@ -14,7 +14,9 @@ the rendered page. An independently rendered source page provides a different
 evidence class: raster checks can confirm that extracted regions align with
 visible ink, and seeded-mutation experiments (2026-10-30 BORA-page prototype)
 demonstrated that a binarized ink/geometry-mask comparison detects an
-introduced 22 px displacement (ink coverage 96.42% → 89.96%). The same review
+introduced 22 px displacement (ink coverage 96.42% → 89.96%; prototype
+numbers, unreproduced in-repo — the mutation gate below supersedes them with
+in-repo demonstrations). The same review
 established the limits: those prototype metrics proved sensitivity, not
 accuracy — extraction and rasterization both used PyMuPDF, and no threshold was
 calibrated across varied pages. Sunset needs a contract that captures what
@@ -27,7 +29,7 @@ which checks must stay distinct from reader agreement and extractor comparison.
   validation oracles: pinned render configuration, declared frame mapping,
   labeled evidence classes (`correlated`/`independent`), scoped property
   claims, mutation-validated sensitivity, calibrated per-page outcomes
-  (`agree`/`differ`/`unknown`), no silent resolution, and a distinct evidence
+  (`agree`/`differ`/`unknown`/`unavailable`), no silent resolution, and a distinct evidence
   class in demonstrations.
 - Reuse existing machinery: pinned extractors and `run_pinned` subprocess
   handling (`dsc03/demo.py`), declared geometry-profile frames
@@ -44,8 +46,12 @@ which checks must stay distinct from reader agreement and extractor comparison.
   document-conformance evidence classes).
 - Expected code: a `dsc03/visual/` oracle module, mutation fixtures under
   `tests/tracer/fixtures/visual/`, calibration sheet, tracer tests. Reuse
-  decisions precede new code; poppler (`pdftoppm`) is the initial independent
-  renderer, PyMuPDF renders allowed but labeled `correlated`.
+  decisions precede new code; poppler (`pdftoppm`) is the initial renderer —
+  independent of MuPDF-lineage extractors, correlated with pdftotext (poppler)
+  extraction; PyMuPDF renders allowed but labeled `correlated`.
+- Applicability: renderable page-based carriers (PDF). Formats the pinned
+  renderer cannot rasterize (e.g. EPUB) are out of scope and report `unknown`,
+  never silent absence.
 - No DSC core wire changes, no frozen-validator changes, no OCR, no
   conformance-label changes (`dsc03/conformance.py` labels unchanged), no
   Bajan export, no universal image-similarity gate, no preserved-bundle edits.

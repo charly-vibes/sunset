@@ -6,7 +6,9 @@ Define raster-based validation oracles: what independently rendered source
 pages may establish about extracted observations, how renders and coordinate
 frames are pinned, which checks stay correlated, and which claims raster
 comparisons can never make. These checks complement — never replace — reader
-agreement, extractor comparison and reviewed anchor mapping.
+agreement, extractor comparison and reviewed anchor mapping. They apply to
+carriers with renderable pages (PDF); formats the pinned renderer cannot
+rasterize (e.g. EPUB) are out of scope and report `unknown`.
 
 ## ADDED Requirements
 
@@ -57,7 +59,8 @@ Every oracle result SHALL carry an evidence class: `correlated` when extraction 
 
 ### Requirement: Scoped property claims
 
-Each oracle SHALL declare the single property it evaluates, such as ink coverage or region alignment. A passing oracle SHALL NOT establish text correctness, reading order, semantic grouping or visual completeness, and every reported outcome SHALL restate the property scope.
+Each oracle SHALL declare the single property it evaluates, such as ink coverage or region alignment. A passing oracle SHALL NOT establish text correctness, reading order, semantic grouping or visual completeness, and every reported outcome SHALL carry the evaluated property as a field,
+limiting the claim to that property.
 
 #### Scenario: Coverage pass with wrong order
 
@@ -66,7 +69,7 @@ Each oracle SHALL declare the single property it evaluates, such as ink coverage
 
 ### Requirement: Mutation-validated sensitivity
 
-An oracle property SHALL be demonstrated, using seeded mutations (shift, omission, duplication, wrong frame) on pinned carriers, to detect each defect class it claims. Properties without a recorded mutation demonstration SHALL be `uncalibrated` and SHALL NOT gate any decision.
+An oracle property SHALL be demonstrated, using seeded mutations (shift, omission, duplication, wrong frame) on pinned carriers, to detect each defect class it claims. Properties without a recorded mutation demonstration SHALL be `uncalibrated` and SHALL NOT gate any decision — conformance labeling, demonstration-suite acceptance and aggregate outcomes are the only decisions an oracle could gate, and none may consume uncalibrated results.
 
 #### Scenario: Seeded shift detected
 
@@ -81,7 +84,7 @@ An oracle property SHALL be demonstrated, using seeded mutations (shift, omissio
 
 ### Requirement: Calibrated thresholds with per-page outcomes
 
-Thresholds SHALL come from recorded calibration over varied pinned carriers, and outcomes SHALL be reported per page and per property as `agree`, `differ` or `unknown`. No aggregate SHALL report pass while any page is `unknown` or its property `uncalibrated`.
+Thresholds SHALL come from recorded calibration over varied pinned carriers, and outcomes SHALL be reported per page and per property as `agree`, `differ`, `unknown` or `unavailable`. No aggregate SHALL report pass while any page is `unknown` or `unavailable`, or its property `uncalibrated`.
 
 #### Scenario: Faint scan
 

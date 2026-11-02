@@ -50,9 +50,11 @@ coverage tolerance) and records it in the render configuration.
 
 ### D5 — Outcome vocabulary
 
-Per page and per property: `agree`, `differ`, `unknown`. `unknown` covers
+Per page and per property: `agree`, `differ`, `unknown`, plus the typed
+`unavailable` render outcome (pinned renderer missing). `unknown` covers
 frame mismatch, unrenderable pages, insufficient resolution and missing
-calibration — it never collapses to pass or fail. `differ` results are
+calibration; `unavailable` behaves like `unknown` for aggregates — neither
+ever collapses to pass or fail. `differ` results are
 retained with region attribution; no winner election, no smoothing, no
 mutation of extracted observations (consistent with document-conformance
 "Anchored matching without silent resolution").
@@ -64,7 +66,12 @@ defect class it claims (shift, omission, duplication, wrong frame) on pinned
 carriers, with thresholds chosen from calibration data over varied pages
 (native, scanned, mixed, rotated, faint). The prototype's single-page,
 single-mutation result motivates this gate; uncalibrated properties cannot
-gate any decision.
+gate any decision — conformance labels (D7), demonstration-suite acceptance
+and aggregate outcomes are the only decisions an oracle could gate, and none
+of them may consume uncalibrated results. A calibration record lists: the
+property, defect classes exercised, carriers used, per-page outcomes,
+thresholds derived and the render configuration (task 5.2 asserts against
+these fields).
 
 ### D7 — Conformance labels unchanged
 
@@ -76,7 +83,9 @@ lack independent readers, extractor comparison or reviewed anchor mapping stay
 ## Risks
 
 - Renderer drift: poppler upgrades change raster output; mitigated by pinning
-  the renderer version in the configuration record.
+  the renderer version and recording the binary identity in the configuration
+  record. Byte-identity holds within the pinned environment; a recorded
+  reference render hash detects drift when the environment changes.
 - Threshold brittleness on degraded scans: mitigated by `unknown` outcomes and
   per-page reporting rather than corpus-wide aggregates.
 - Scope creep toward visual completeness claims: explicitly out of scope;
