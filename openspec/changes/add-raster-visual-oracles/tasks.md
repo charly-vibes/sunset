@@ -11,7 +11,7 @@
 ## 3. Pinned rendering infrastructure
 
 - [x] 3.1 TDD: failing test first — render configuration record (renderer name/version, DPI, page selection, binarization, source simplification) reproduces byte-identical renders; missing renderer yields typed `unavailable`. (sunset-xzy.1: dsc03/visual/render.py RenderConfig + pdftoppm runner + typed Rendered/RenderUnavailable + evidence-class labeling; tests/tracer/test_visual_render.py)
-- [ ] 3.2 TDD: frame mapping through a declared geometry profile frame resolves pixel↔descriptor coordinates for native, scanned and rotated pinned carriers; incompatible or missing frames produce `unknown`, never `agree`/`differ`.
+- [x] 3.2 TDD: frame mapping through a declared geometry profile frame resolves pixel↔descriptor coordinates for native, scanned and rotated pinned carriers; incompatible or missing frames produce `unknown`, never `agree`/`differ`. (sunset-xzy.2: dsc03/visual/frames.py typed PixelMapping/UnknownMapping via profiles.resolve_frame; 18 tests + rotated/cropped frame fixtures)
 
 ## 4. First two oracle properties (representation levels B and C)
 
