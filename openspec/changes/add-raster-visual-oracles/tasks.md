@@ -16,7 +16,7 @@
 ## 4. First two oracle properties (representation levels B and C)
 
 - [x] 4.1 TDD: binarized ink-coverage oracle (level B) over pinned carriers, including the like-with-like source simplification (design D4); outcomes per page/property with evidence class `correlated` or `independent`. (sunset-xzy.3: dsc03/visual/coverage.py — scoped property ink-coverage, D4 dilation from recorded config, declared-frame region mapping, typed outcomes + aggregate rule; 17 tests)
-- [ ] 4.2 TDD: geometry-mask alignment oracle (level C) comparing descriptor region masks with the simplified source; disagreements retained with region attribution; no winner election.
+- [x] 4.2 TDD: geometry-mask alignment oracle (level C) comparing descriptor region masks with the simplified source; disagreements retained with region attribution; no winner election. (sunset-xzy.4: dsc03/visual/masks.py — scoped property region-alignment, D4 simplified-source comparison, ink-outside-rect attribution, shared aggregate rule; 15 tests)
 
 ## 5. Mutation validation and calibration
 
