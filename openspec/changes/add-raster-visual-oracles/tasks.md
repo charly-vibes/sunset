@@ -2,11 +2,11 @@
 
 ## 1. Contract validation (this proposal)
 
-- [ ] 1.1 Validate the change strictly: `openspec validate add-raster-visual-oracles --strict` passes; `spk lint openspec/changes` reports no issues for this change; full `just spec-check` stays green (no code touched yet).
+- [x] 1.1 Validate the change strictly: `openspec validate add-raster-visual-oracles --strict` passes; `spk lint openspec/changes` reports no issues for this change; full `just spec-check` stays green (no code touched yet).
 
 ## 2. Owner approval gate
 
-- [ ] 2.1 Owner reviews proposal.md and design.md; approval (recorded in beads) authorizes implementation slices below. No implementation before approval.
+- [x] 2.1 Owner reviews proposal.md and design.md; approval (recorded in beads) authorizes implementation slices below. No implementation before approval.
 
 ## 3. Pinned rendering infrastructure
 
