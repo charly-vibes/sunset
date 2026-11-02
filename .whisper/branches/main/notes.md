@@ -269,3 +269,8 @@
   - Gates after review fixes: just spec-check ALL GATES PASSED (strict 13/13 both, lint 0, pytest 455 + 18 subtests, frozen PASS 11).
   - main is 2 ahead of origin (395e489 raster-oracles proposal + 0239f5a 5jo fix). Whisper deltas + owner PDF + storage-design note remain uncommitted by design.
   - **Next:** /renew sunset — owner authorizes push of both commits; rules the three HITL gates (sunset-zo5, sunset-5ay, sunset-rmx.10); then wai close + /clear.
+- 2026-11-02T18:33:47Z [id:7dafdbff9b5317dbf8de700a7f89eea86685acf6d1afc18dcec16fc368f3d7cc] (#snap) ### 2026-11-02 15:45 — pushed: main up to date at 16fd81c
+  - Owner authorized commit + push: 16fd81c (session snaps) on top of 0239f5a (5jo fix) and 395e489 (raster-oracles proposal); aa4cb78..16fd81c pushed, origin/main up to date. Whisper deltas now committed; owner PDF (pba-judicial-2026-07-29.pdf) and .wai storage-design note remain untracked by design.
+  - Gates at push: just spec-check ALL GATES PASSED (strict 13/13 both validators, spk lint 0, pytest 455 + 18 subtests, frozen 0.2 PASS 11).
+  - Board: 3 owner decision gates (sunset-zo5, sunset-5ay, sunset-rmx.10) + rmx epic; zero automatable tickets. Clean exit point: wai close + /clear.
+  - **Next:** /renew sunset — owner rules zo5/5ay/rmx.10; each unlock ships its own afk chain.
