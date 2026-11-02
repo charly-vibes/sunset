@@ -14,6 +14,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -150,7 +151,7 @@ def _pymupdf_pages(data_path):
         f"doc = pymupdf.open({data_path!r})\n"
         "print(json.dumps({i+1: p.get_text() for i, p in enumerate(doc)}))\n"
     )
-    out, peak = run_pinned(["python3", "-c", code])
+    out, peak = run_pinned([sys.executable, "-c", code])
     pages = {int(k): v for k, v in json.loads(out).items()}
     return pages, peak
 

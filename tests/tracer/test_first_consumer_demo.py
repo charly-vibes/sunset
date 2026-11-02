@@ -11,6 +11,7 @@
 # Rationale: add-dsc-03 document-conformance "First-consumer demonstration".
 """First-consumer demo (sunset-r68.13): extractors, snapshots, projection, measurement."""
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -20,6 +21,11 @@ from unittest.mock import patch
 from dsc03 import adapters, canonical, conformance, demo
 
 CARRIER = Path("fixtures/carriers/resumen-periodical-excerpt.pdf")
+
+
+def _empty_path_dir():
+    """A directory with no executables, used as a stripped PATH in tests."""
+    return tempfile.mkdtemp(prefix="sunset-no-python3-")
 
 
 class TestExtractors(unittest.TestCase):
@@ -192,3 +198,14 @@ class TestPinnedRunner(unittest.TestCase):
     def test_hung_child_is_killed_after_timeout(self):
         with self.assertRaises(subprocess.TimeoutExpired):
             demo.run_pinned(["sleep", "60"], timeout=2)
+
+    def test_pymupdf_pages_spawn_the_running_interpreter_not_path_python3(self):
+        # sunset-5jo: with PATH stripped there is no `python3` to resolve, so
+        # the pinned PyMuPDF runner only works when it spawns the running
+        # interpreter itself (sys.executable, absolute path). Regression
+        # guards the brew python3.15 upgrade that dropped pymupdf and broke
+        # the demo suite.
+        with patch.dict(os.environ, {"PATH": _empty_path_dir()}):
+            pages, peak = demo._pymupdf_pages(str(CARRIER))
+        self.assertEqual(set(pages), set(range(1, 7)))
+        self.assertGreater(peak, 0)

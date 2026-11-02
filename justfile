@@ -2,6 +2,12 @@
 # Purpose: Run the corpus gates and proposal composition regression.
 # Responsibilities: Validate spec syntax, replacement semantics and frozen fixtures.
 # Rationale: sunset-6pi found strict lint alone missed contradictory deltas.
+#   Tracer-suite interpreter is overridable (sunset-5jo): machines whose PATH
+#   python3 lacks pytest/pymupdf pin their own via .env (SUNSET_PYTHON=...).
+
+set dotenv-load
+
+python := env_var_or_default("SUNSET_PYTHON", "python3")
 
 # Run all spec-corpus gates (OpenSpec strict validation + frozen 0.2 validator)
 spec-check:
@@ -10,7 +16,7 @@ spec-check:
     @echo "==> spk lint (Specodelic layer of openspec/changes, incl. archive)"
     spk lint openspec/changes
     @echo "==> tracer suite (0.3 machinery, not real-carrier conformance)"
-    python3 -B -m pytest tests -q
+    {{python}} -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"
     python3 spec/document-model-specodelic-v3/validator.py test
     @echo "==> openspec 1.x strict (same corpus, validator pinned by versions.ddl.toml)"

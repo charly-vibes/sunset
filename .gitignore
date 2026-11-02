@@ -28,3 +28,4 @@ __pycache__/
 .beads-credential-key
 .beads/proxieddb/
 *.gate.lock*
+.env
