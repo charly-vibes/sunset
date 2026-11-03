@@ -179,8 +179,12 @@ def _run_once(source_path, pages, config_path, output, *, cache_dir=None, fresh=
                           'modules': {name: digest((Path(__file__).parent / name).read_bytes())
                                       for name in ('pipeline.py', 'artifacts.py', 'render.py')}}
         geometry = {'kind': 'geometry', 'version': '1', 'frames': [
-            {'name': f'page-{p}-pt', 'unit': 'pt', 'origin': 'top-left',
-             'axes': 'x-right-y-down', 'scale': [1, 1], 'rotation': 0,
+            # canonical descriptor space (document-visual-oracles resolver
+            # convention): origin bottom-left, y-up. Config bboxes stay y-down
+            # page points as the native reader reports them; region geometry
+            # converts at emission (see geometry_box below).
+            {'name': f'page-{p}-pt', 'unit': 'pt', 'origin': 'bottom-left',
+             'axes': 'x-right-y-up', 'scale': [1, 1], 'rotation': 0,
              'crop': None, 'source_scope': f'page:{p}'} for p in pages]}
         geometry_ref = blob(json_bytes(geometry))
         selector_ref = blob(json_bytes({'kind': 'selector', 'version': '1',
@@ -255,7 +259,12 @@ def _run_once(source_path, pages, config_path, output, *, cache_dir=None, fresh=
                 raw = response['raw_text']
                 search_text = ' '.join(raw.split())
                 box = detection['bbox']
-                geometry_box = dict(zip(('x', 'y', 'width', 'height'), box))
+                frame = page_frames(source, [page])[page]
+                # config bbox is y-down from the page top (native reader
+                # convention); descriptor geometry is canonical y-up, so the
+                # box carries its bottom edge measured from the page bottom.
+                geometry_box = {'x': box[0], 'y': int(frame['height'] - box[1] - box[3]),
+                                'width': box[2], 'height': box[3]}
                 selector = {'id': sid, 'kind': 'pdf-area', 'profile_id': 'selector',
                             'source_sha256': digest(source), 'target': rid,
                             'locator': f'page:{page} rect:' + ','.join(map(str, box))}

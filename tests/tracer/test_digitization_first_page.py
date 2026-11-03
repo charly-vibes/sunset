@@ -60,6 +60,39 @@ def inputs(tmp_path):
     return source, config_path, config
 
 
+def test_recorded_descriptor_declares_canonical_geometry(inputs, tmp_path):
+    """Recorded descriptors declare the canonical y-up space (sunset-bv4).
+
+    The deployed document-visual-oracles resolver only implements the
+    canonical descriptor space (bottom-left origin, x-right-y-up, pt); the
+    recorded pipeline used to declare top-left y-down, which every declared
+    frame consumer must type unknown. Config bboxes stay y-down page points
+    (as the native reader reports them); the descriptor converts at emission:
+    p1 (30, 60, 100, 100) on a 300x400 page -> y = 400-60-100 = 240.
+    """
+    source, config_path, config = inputs
+    out = tmp_path / 'canonical'
+    code, _ = cli('run', '--source', source, '--pages', '2',
+                  '--config', config_path, '--output', out)
+    assert code == 2  # partial: c1 carries an unresolved marker
+    manifest = json.loads((out / 'manifest.json').read_text())
+    descriptor = validator.load(out / manifest['descriptor']['path'])
+    assert validator.validate(descriptor) == []
+    geometry_profile = next(p for p in descriptor['profiles'] if p['kind'] == 'geometry')
+    status, artifact = resolve_profile(geometry_profile, Registry(out))
+    assert status == 'resolved'
+    frame = artifact['frames'][0]
+    assert frame['name'] == 'page-2-pt'
+    assert frame['origin'] == 'bottom-left' and frame['axes'] == 'x-right-y-up'
+    assert frame['unit'] == 'pt' and frame['source_scope'] == 'page:2'
+    assert frame['scale'] == [1, 1] and frame['rotation'] == 0 and frame['crop'] is None
+    geometry = {r['id']: r['geometry'] for r in descriptor['regions'] if 'geometry' in r}
+    assert geometry['page-2-p1'] == {'profile_id': 'geometry', 'space': 'page-2-pt',
+                                     'x': 30, 'y': 240, 'width': 100, 'height': 100}
+    assert geometry['page-2-c1']['x'] == 30 and geometry['page-2-c1']['y'] == 180
+    assert geometry['page-2-c1']['width'] == 100 and geometry['page-2-c1']['height'] == 20
+
+
 def test_public_run_inspect_and_source_links(inputs, tmp_path):
     source, config_path, config = inputs
     before = source.read_bytes(), config_path.read_bytes()
