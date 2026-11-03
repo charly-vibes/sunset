@@ -60,9 +60,9 @@ Package docstring (`dsc03/__init__.py`): "DSC 0.3 validator package
 executable under `spec/document-model-specodelic-v3/` stays untouched and
 must keep reporting PASS 11 descriptor fixtures."
 
-The raster visual oracles (`dsc03/visual/`) are implemented under the active
-change [`add-raster-visual-oracles`](../../openspec/changes/add-raster-visual-oracles/proposal.md)
-— a proposal under implementation, not deployed truth. The oracle contract,
+The raster visual oracles (`dsc03/visual/`) implement the deployed
+[`document-visual-oracles`](../../openspec/specs/document-visual-oracles/spec.md)
+capability (archived 2026-11-03 from change `add-raster-visual-oracles`). The oracle contract,
 evidence-class rules and calibrated limits are described in
 [visual-oracles.md](visual-oracles.md).
 
@@ -185,7 +185,7 @@ Actual carrier files (inventory per `MANIFEST.org`):
 - `snapshots/` — pinned extraction snapshots with descriptor, inventory, and
   manifest per extractor: `snapshot-pdftotext/`, `snapshot-pymupdf/`.
 
-### Visual-oracle fixtures — raster machinery (active change `add-raster-visual-oracles`)
+### Visual-oracle fixtures — raster machinery (`document-visual-oracles`)
 
 - `tests/tracer/fixtures/visual/` — synthetic strip rasters and seeded
   mutation carriers for the two visual oracles: pristine

@@ -83,10 +83,10 @@
   both pass; `openspec@1.14.2` is now the ratified gate binary
   (`versions.ddl.toml`, folded into `just spec-check`).
 - **Raster visual oracles (sunset-xzy, 2026-11-02/03):** implemented as
-  scoped machinery under the active (not deployed) change
-  [`add-raster-visual-oracles`](../../openspec/changes/add-raster-visual-oracles/proposal.md)
-  — owner-approved 2026-11-02 in `sunset-zo5`; sections 3–6 of its tasks.md
-  are done, and the docs slice and final gate remain open in tasks.md. Two
+  scoped machinery and deployed 2026-11-03 into the
+  [`document-visual-oracles`](../../openspec/specs/document-visual-oracles/spec.md)
+  capability (archived from owner-approved change `add-raster-visual-oracles`,
+  `sunset-zo5` ruling 2026-11-02; tasks.md sections 3–7 all done). Two
   properties only (`ink-coverage`, `region-alignment`), every outcome
   labeled `correlated`/`independent`, calibration bounded to the recorded
   carriers in `fixtures/visual/calibration.json` (the committed faint

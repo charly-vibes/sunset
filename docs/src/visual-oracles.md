@@ -6,10 +6,11 @@ Companion pages: [reference.md](reference.md) (machinery index),
 [integrate.md](integrate.md) (how results are recorded into reports),
 [status.md](status.md) (machinery state and recorded deviations).
 
-**Provenance.** The machinery is implemented under the active change
-[`openspec/changes/add-raster-visual-oracles/`](../../openspec/changes/add-raster-visual-oracles/proposal.md)
-— a proposal under implementation, **not deployed truth**; the deployed
-capability specs under `openspec/specs/` are unchanged by it. Owner approval
+**Provenance.** The machinery implements the deployed capability spec
+[`document-visual-oracles`](../../openspec/specs/document-visual-oracles/spec.md)
+— deployed 2026-11-03 from the archived change
+[`2026-11-03-add-raster-visual-oracles`](../../openspec/changes/archive/2026-11-03-add-raster-visual-oracles/proposal.md).
+Owner approval
 was recorded 2026-11-02 in decision ticket `sunset-zo5` (beads): APPROVED,
 with all nine rule-of-5 findings applied as amendments in commit `eeac8b0`;
 the authorization scope is that change's tasks.md sections 3–7 only.
@@ -35,8 +36,9 @@ happens anywhere in it.
 
 ## The oracle contract
 
-One guarantee per requirement in the change's spec delta (a proposal, not
-deployed truth — see the provenance note above):
+One guarantee per requirement in the deployed
+[`document-visual-oracles`](../../openspec/specs/document-visual-oracles/spec.md)
+spec:
 
 | Contract requirement | What it guarantees |
 |---|---|
