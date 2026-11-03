@@ -71,7 +71,8 @@ preserved as received under `spec/document-model-specodelic-v3/` (except its
   `openspec/changes/archive/2026-10-14-add-dsc-03/`). The research bundle's
   original `specs/` were converted there — never re-create a second copy.
 - Spec edits: `openspec validate --specs --strict` must pass
-  (7 capabilities).
+  (8 capabilities as of 2026-11-03, when `document-visual-oracles` was
+  deployed from the archived change `2026-11-03-add-raster-visual-oracles`).
 - The 0.3 executable machinery lives in `dsc03/` with tests under
   `tests/tracer/` (gate: `just spec-check`). Note: the scripted machinery and
   its reviews were agent-executed — recorded deviations; a human pass
