@@ -28,3 +28,12 @@ spec-check:
 # Default: run every gate
 default:
     @just spec-check
+
+# Build + serve the human visual-review SPA over every recorded calibration
+# example (sunset-e8t/sunset-fgg): side-by-side + overlay comparison of the
+# claimed regions against pinned renders. Output is gitignored.
+visual-review port="8123":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p .visual-review
+    {{python}} -B -m dsc03.visual.review --out .visual-review/index.html --serve {{port}}

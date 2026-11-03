@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Visual review — side-by-side and overlay comparison</title>
+<style>
+  :root { --ink:#1a1a1a; --accent:#0b62d6; --ok:#1a7f37; --bad:#c62828; --unknown:#8a6d00; --bg:#f6f6f4; }
+  * { box-sizing: border-box; }
+  body { font: 15px/1.45 system-ui, sans-serif; color: var(--ink); margin: 0; background: var(--bg); }
+  header { padding: .6rem 1rem; background: #fff; border-bottom: 2px solid #ddd; }
+  header h1 { font-size: 1.05rem; margin: 0 0 .2rem; }
+  .meta { color: #555; font-size: .85rem; }
+  .badge { display:inline-block; padding: .05rem .45rem; border:1px solid #bbb; border-radius: 1rem; font-size:.78rem; margin-left:.4rem; }
+  #resume-banner { padding: .5rem 1rem; background: #fff7d6; border-bottom:1px solid #e6d78a; display:none; }
+  #resume-banner button { margin-right:.5rem; }
+  nav { display:flex; gap:.4rem; align-items:center; padding:.5rem 1rem; flex-wrap:wrap; }
+  .pill { border:1px solid #bbb; background:#fff; border-radius:1rem; padding:.15rem .8rem; cursor:pointer; }
+  .pill.active { background: var(--accent); color:#fff; border-color: var(--accent); }
+  .pill.done::after { content: " ✓"; }
+  .navlabel { color:#777; font-size:.78rem; margin-right:.2rem; }
+  .views { margin-left:auto; display:flex; gap:.4rem; align-items:center; }
+  main { display:flex; gap:1rem; padding:0 1rem 1rem; align-items:flex-start; flex-wrap:wrap; }
+  .pane { background:#fff; border:1px solid #ddd; padding:.5rem; position:relative; }
+  .pane h2 { font-size:.9rem; margin:.1rem 0 .4rem; font-weight:600; color:#444; }
+  .pane img { display:block; max-width:100%; height:auto; image-rendering: pixelated; }
+  .wrap { position:relative; }
+  .box { position:absolute; border:1.5px solid var(--accent); background:rgba(11,98,214,.12); }
+  .box.expected-no-ink { border-color: var(--bad); background: rgba(198,40,40,.08); }
+  .box.verdict-agree { border-color: var(--ok); background: rgba(26,127,55,.12); }
+  .box.verdict-differ { border-color: var(--bad); background: rgba(198,40,40,.15); }
+  .box.verdict-unknown { border-color: var(--unknown); border-style: dashed; }
+  .box .lbl { position:absolute; top:-1.1em; left:0; font-size:10px; color:var(--accent); white-space:nowrap; }
+  .missed-ink { position:absolute; border:1px dashed var(--bad); background:rgba(198,40,40,.10); }
+  .missed-ink.ghost { pointer-events:none; }
+  aside { flex:1 1 320px; min-width:300px; max-width:520px; }
+  .card { background:#fff; border:1px solid #ddd; padding:.6rem .8rem; margin-bottom:.8rem; }
+  .card h2 { font-size:.95rem; margin:.1rem 0 .5rem; }
+  .verdict-row { display:flex; align-items:center; gap:.4rem; margin:.25rem 0; flex-wrap:wrap; }
+  .verdict-row .rid { font-weight:600; }
+  .verdict-row .exp { color:#777; font-size:.8rem; }
+  button.v { border:1px solid #bbb; background:#fff; border-radius:.5rem; padding:.15rem .6rem; cursor:pointer; }
+  button.v.selected[data-v="agree"] { background: var(--ok); color:#fff; border-color:var(--ok); }
+  button.v.selected[data-v="differ"] { background: var(--bad); color:#fff; border-color:var(--bad); }
+  button.v.selected[data-v="unknown"] { background: var(--unknown); color:#fff; border-color:var(--unknown); }
+  .note { flex:1 1 100%; margin-top:.2rem; }
+  .missed-list li { margin:.2rem 0; }
+  #rules { color:#555; font-size:.85rem; }
+  #download { font-size:1rem; padding:.4rem 1rem; }
+  #progress { font-size:.85rem; color:#555; margin-left:.6rem; }
+  .hint { color:#777; font-size:.8rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Visual review <span id="carrier-name"></span><span id="evidence-badge" class="badge"></span></h1>
+  <div class="meta" id="meta-line"></div>
+</header>
+<div id="resume-banner">
+  A saved review for these carriers exists in this browser.
+  <button id="resume-restore">Restore</button>
+  <button id="resume-discard">Discard and start fresh</button>
+</div>
+<nav>
+  <span class="navlabel">carriers:</span>
+  <span id="carrier-pills"></span>
+  <span class="navlabel">pages:</span>
+  <span id="page-pills"></span>
+  <span id="progress"></span>
+  <span class="views">
+    <input type="radio" name="view" id="view-side" value="side-by-side" checked>
+    <label for="view-side">side-by-side</label>
+    <input type="radio" name="view" id="view-overlay" value="overlay">
+    <label for="view-overlay">overlay</label>
+  </span>
+</nav>
+<main>
+  <div class="pane" id="pane-clean">
+    <h2>Page render (pinned)</h2>
+    <div class="wrap" id="wrap-clean"></div>
+  </div>
+  <div class="pane" id="pane-annotated">
+    <h2>Claimed regions over the render — drag to mark missed ink</h2>
+    <div class="wrap" id="wrap-annotated"></div>
+  </div>
+  <aside>
+    <div class="card">
+      <h2>Reviewer</h2>
+      <input id="reviewer" placeholder="your name (optional)">
+    </div>
+    <div class="card">
+      <h2>Region verdicts <span class="hint">(unknown is an answer)</span></h2>
+      <div id="region-list"></div>
+    </div>
+    <div class="card">
+      <h2 id="missed-ink-heading">Missed-ink boxes <span class="hint">(drag on the annotated pane)</span></h2>
+      <ul class="missed-list" id="missed-list"></ul>
+    </div>
+    <div class="card">
+      <button id="download">Download verdicts JSON</button>
+      <div class="hint" id="autosave-note">Progress autosaves in this browser across all carriers.</div>
+    </div>
+    <div id="rules">Review rules: no winner election, no smoothing. Disagreements
+    are recorded as recorded — unknown stays unknown, and every verdict names
+    its region. Visual comparison judges structure claims only; it establishes
+    nothing about text correctness or reading order.</div>
+  </aside>
+</main>
+<script type="application/json" id="review-data">__REVIEW_DATA_ISLAND__</script>
+<script>
+/* REVIEW-CORE-START */
+const VERDICTS = ["agree", "differ", "unknown"];
+
+function buildVerdictJson(data, answers, missed) {
+  const carriers = data.carriers.map(c => {
+    const carrierAnswers = (answers && answers[c.carrier]) || {};
+    const carrierMissed = (missed && missed[c.carrier]) || {};
+    const pages = c.pages.map(p => {
+      const pageAnswers = carrierAnswers[p.page] || {};
+      const pageMissed = carrierMissed[p.page] || [];
+      const regions = p.regions.map(r => {
+        const a = pageAnswers[r.id] || {};
+        const v = (a.verdict === undefined) ? null : a.verdict;
+        if (v !== null && !VERDICTS.includes(v)) {
+          throw new Error("verdict " + JSON.stringify(v) + " outside the agree/differ/unknown vocabulary");
+        }
+        return { id: r.id, rect_px: r.rect_px, verdict: v, note: a.note || "" };
+      });
+      return {
+        page: p.page,
+        unavailable: p.unavailable,
+        regions: regions,
+        missed_ink: pageMissed.map(m => ({ rect_px: m.rect_px }))
+      };
+    });
+    return { carrier: c.carrier, pages: pages };
+  });
+  return JSON.stringify({
+    reviewer: (data && data.reviewer) || null,
+    carriers: carriers,
+    rules: data.rules
+  });
+}
+
+function pushMissedBox(list, box) {
+  // one layer per identical rect: the same drag must never stack copies
+  const key = box.join(",");
+  if (list.some(m => m.rect_px.join(",") === key)) return list;
+  list.push({ rect_px: box });
+  return list;
+}
+
+function attachMissedInkHandlers(ann, env) {
+  // Idempotent per element: renderPanes() re-invokes this on every re-render,
+  // but the wrap element persists — without the guard, listeners accumulate
+  // and one drag commits N stacked copies of the same box.
+  if (ann.__missedInkWired) return;
+  ann.__missedInkWired = true;
+  let start = null;
+  ann.addEventListener("mousedown", ev => {
+    if (!env.active()) return;
+    start = env.point(ev);
+    if (ev.cancelable) ev.preventDefault();
+  });
+  ann.addEventListener("mousemove", ev => {
+    if (!start) return;
+    const [x, y] = env.point(ev);
+    env.ghost([Math.min(start[0], x), Math.min(start[1], y),
+               Math.abs(x - start[0]), Math.abs(y - start[1])]);
+  });
+  ann.addEventListener("mouseup", ev => {
+    if (!start) return;
+    const [x, y] = env.point(ev);
+    const box = [Math.min(start[0], x), Math.min(start[1], y),
+                 Math.abs(x - start[0]), Math.abs(y - start[1])];
+    start = null;
+    env.ghost(null);
+    if (box[2] < 4 || box[3] < 4) return;
+    env.commit(box);
+  });
+}
+/* REVIEW-CORE-END */
+
+const PNG_DATA_PREFIX = "data:image/png;base64";
+const EMPTY_PNG = PNG_DATA_PREFIX + ",iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+
+const DATA = JSON.parse(document.getElementById("review-data").textContent);
+let cur = { c: 0, p: 0 };
+let answers = {};   // {carrier: {page: {regionId: {verdict, note}}}}
+let missed = {};    // {carrier: {page: [{rect_px:[x,y,w,h]}]}}
+
+function storageKey() {
+  return "visual-review:" + DATA.carriers.map(c => c.carrier).join("+");
+}
+function save() {
+  try {
+    localStorage.setItem(storageKey(), JSON.stringify({
+      reviewer: document.getElementById("reviewer").value,
+      answers: answers,
+      missed: missed
+    }));
+  } catch (e) { /* private mode etc. — autosave is best-effort */ }
+}
+function loadSaved() {
+  try { return JSON.parse(localStorage.getItem(storageKey())); } catch (e) { return null; }
+}
+
+function carrier() { return DATA.carriers[cur.c]; }
+function page() { return carrier().pages[cur.p]; }
+function pageAnswers() {
+  const c = answers[carrier().carrier] = answers[carrier().carrier] || {};
+  return c[page().page] = c[page().page] || {};
+}
+function pageMissed() {
+  const c = missed[carrier().carrier] = missed[carrier().carrier] || {};
+  return c[page().page] = c[page().page] || [];
+}
+
+function renderHeader() {
+  const c = carrier();
+  document.getElementById("carrier-name").textContent = "— " + c.carrier;
+  const badge = document.getElementById("evidence-badge");
+  badge.textContent = c.evidence_class + " evidence";
+  const rc = c.render_config || {};
+  document.getElementById("meta-line").textContent =
+    "frame: " + (page().frame || c.frame || "?") + " · renderer: " + (rc.renderer_name || "?") +
+    " " + (rc.renderer_version || "") + " · " + (rc.dpi || "?") + " dpi · binarization: " +
+    ((rc.binarization && rc.binarization.method) || "?") + " @" +
+    (rc.binarization && rc.binarization.threshold);
+}
+
+function pill(label, active, cls, onClick) {
+  const b = document.createElement("button");
+  b.className = "pill" + (active ? " active" : "") + (cls ? " " + cls : "");
+  b.textContent = label;
+  b.addEventListener("click", onClick);
+  return b;
+}
+
+function carrierDone(c) {
+  return c.pages.every(p =>
+    p.regions.every(r => ((answers[c.carrier] || {})[p.page] || {})[r.id]));
+}
+
+function renderPills() {
+  const hosts = document.getElementById("carrier-pills");
+  hosts.innerHTML = "";
+  DATA.carriers.forEach((c, i) => {
+    hosts.appendChild(pill(c.carrier, i === cur.c, carrierDone(c) ? "done" : "",
+      () => { cur = { c: i, p: 0 }; renderAll(); }));
+  });
+  const phost = document.getElementById("page-pills");
+  phost.innerHTML = "";
+  carrier().pages.forEach((p, i) => {
+    phost.appendChild(pill("page " + p.page + (carrier().pages.length > 1 ? " · " + (p.frame || "") : ""),
+      i === cur.p, "", () => { cur.p = i; renderAll(); }));
+  });
+  const total = DATA.carriers.reduce((n, c) => n + c.pages.reduce((m, p) => m + p.regions.length, 0), 0);
+  const ruled = DATA.carriers.reduce((n, c) => n + c.pages.reduce((m, p) =>
+    m + p.regions.filter(r => (((answers[c.carrier] || {})[p.page] || {})[r.id] || {}).verdict).length, 0), 0);
+  document.getElementById("progress").textContent = ruled + "/" + total + " regions ruled";
+}
+
+function imageFor(p) {
+  const img = document.createElement("img");
+  img.src = p.image || EMPTY_PNG;
+  img.alt = "page " + p.page + " render";
+  img.draggable = false;
+  return img;
+}
+
+function pctBox(rect_px, p) {
+  return {
+    left: (rect_px[0] / p.width * 100) + "%",
+    top: (rect_px[1] / p.height * 100) + "%",
+    width: (rect_px[2] / p.width * 100) + "%",
+    height: (rect_px[3] / p.height * 100) + "%"
+  };
+}
+
+function applyBox(el, pos) {
+  el.style.left = pos.left; el.style.top = pos.top;
+  el.style.width = pos.width; el.style.height = pos.height;
+}
+
+function renderPanes() {
+  const p = page();
+  const clean = document.getElementById("wrap-clean");
+  const ann = document.getElementById("wrap-annotated");
+  clean.innerHTML = ""; ann.innerHTML = "";
+  const overlayMode = document.getElementById("view-overlay").checked;
+  document.getElementById("pane-clean").style.display = overlayMode ? "none" : "block";
+  clean.appendChild(imageFor(p));
+  const img = imageFor(p);
+  ann.appendChild(img);
+  (p.regions || []).forEach(r => {
+    if (!r.rect_px) return;
+    const el = document.createElement("div");
+    const v = (pageAnswers()[r.id] || {}).verdict;
+    el.className = "box" + (r.expected === "no-ink" ? " expected-no-ink" : "") +
+                   (v ? " verdict-" + v : "");
+    applyBox(el, pctBox(r.rect_px, p));
+    const lbl = document.createElement("span");
+    lbl.className = "lbl"; lbl.textContent = r.id;
+    el.appendChild(lbl);
+    ann.appendChild(el);
+  });
+  (missed[carrier().carrier] || {})[page().page] && (missed[carrier().carrier][page().page] || []).forEach(m => {
+    const el = document.createElement("div");
+    el.className = "missed-ink";
+    applyBox(el, pctBox(m.rect_px, p));
+    ann.appendChild(el);
+  });
+  const status = document.createElement("div");
+  status.className = "hint";
+  status.textContent = p.unavailable ? "status: " + p.unavailable : "";
+  ann.appendChild(status);
+  const ghost = document.createElement("div");
+  ghost.className = "missed-ink ghost"; ghost.style.display = "none";
+  ann.appendChild(ghost);
+  attachMissedInkHandlers(ann, {
+    active: () => !!p.width && !p.unavailable,
+    point: ev => {
+      const r = ann.getBoundingClientRect();
+      return [Math.round((ev.clientX - r.left) / r.width * p.width),
+              Math.round((ev.clientY - r.top) / r.height * p.height)];
+    },
+    ghost: box => {
+      const g = ann.querySelector(".missed-ink.ghost");
+      if (!g) return;
+      if (!box) { g.style.display = "none"; return; }
+      applyBox(g, pctBox(box, p));
+      g.style.display = "block";
+    },
+    commit: box => {
+      pushMissedBox(pageMissed(), box);
+      renderRegionList(); renderPanes(); renderPills(); save();
+    }
+  });
+}
+
+function renderRegionList() {
+  const p = page();
+  const host = document.getElementById("region-list");
+  host.innerHTML = "";
+  const pa = pageAnswers();
+  if (!(p.regions || []).length) {
+    host.innerHTML = p.unavailable
+      ? "<em>No regions to review: " + p.unavailable + "</em>"
+      : "<em>No claimed regions recorded for this page.</em>";
+  }
+  (p.regions || []).forEach(r => {
+    const a = pa[r.id] = pa[r.id] || {};
+    const row = document.createElement("div");
+    row.className = "verdict-row";
+    const id = document.createElement("span");
+    id.className = "rid"; id.textContent = r.id;
+    row.appendChild(id);
+    if (r.expected) {
+      const exp = document.createElement("span");
+      exp.className = "exp"; exp.textContent = "(expected: " + r.expected + ")";
+      row.appendChild(exp);
+    }
+    VERDICTS.forEach(v => {
+      const b = document.createElement("button");
+      b.className = "v" + (a.verdict === v ? " selected" : "");
+      b.dataset.v = v; b.textContent = v;
+      b.addEventListener("click", () => {
+        a.verdict = v;
+        renderRegionList(); renderPanes(); renderPills(); save();
+      });
+      row.appendChild(b);
+    });
+    const note = document.createElement("input");
+    note.className = "note"; note.placeholder = "note (what differs, where)";
+    note.value = a.note || "";
+    note.addEventListener("input", () => { a.note = note.value; save(); });
+    row.appendChild(note);
+    if (!r.rect_px) {
+      const warn = document.createElement("span");
+      warn.className = "exp"; warn.textContent = "(unmapped: unknown frame)";
+      row.appendChild(warn);
+    }
+    host.appendChild(row);
+  });
+  const list = document.getElementById("missed-list");
+  list.innerHTML = "";
+  const mlist = pageMissed();
+  mlist.forEach((m, i) => {
+    const li = document.createElement("li");
+    li.textContent = "missed ink at " + m.rect_px.join(", ");
+    const del = document.createElement("button");
+    del.textContent = "remove"; del.className = "v";
+    del.addEventListener("click", () => {
+      mlist.splice(i, 1); renderRegionList(); renderPanes(); renderPills(); save();
+    });
+    li.appendChild(del);
+    list.appendChild(li);
+  });
+  if (!mlist.length) list.innerHTML = "<li><em>none marked</em></li>";
+}
+
+function renderAll() {
+  renderPills(); renderPanes(); renderRegionList();
+}
+
+function wireChrome() {
+  document.getElementById("view-side").addEventListener("change", renderPanes);
+  document.getElementById("view-overlay").addEventListener("change", renderPanes);
+  document.getElementById("reviewer").addEventListener("input", save);
+  document.getElementById("download").addEventListener("click", () => {
+    const payload = buildVerdictJson(
+      Object.assign({}, DATA, { reviewer: document.getElementById("reviewer").value.trim() || null }),
+      answers, missed);
+    const blob = new Blob([payload], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "review-verdicts.json";
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  const saved = loadSaved();
+  if (saved && (saved.answers || saved.missed)) {
+    const banner = document.getElementById("resume-banner");
+    banner.style.display = "block";
+    document.getElementById("resume-restore").addEventListener("click", () => {
+      answers = saved.answers || {}; missed = saved.missed || {};
+      document.getElementById("reviewer").value = saved.reviewer || "";
+      banner.style.display = "none"; renderAll();
+    });
+    document.getElementById("resume-discard").addEventListener("click", () => {
+      localStorage.removeItem(storageKey());
+      banner.style.display = "none";
+    });
+  }
+}
+
+wireChrome();
+renderAll();
+</script>
+</body>
+</html>

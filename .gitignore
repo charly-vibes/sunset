@@ -36,3 +36,4 @@ __pycache__/
 .beads/proxieddb/
 *.gate.lock*
 .env
+.visual-review/
