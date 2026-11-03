@@ -1,0 +1,139 @@
+#+title: Difficult-page pilot references and bounded configuration (sunset-rmx.10)
+
+#+begin_quote
+STATUS: DRAFT — nothing here is approved. =pilot.json= does not exist yet;
+the stage manifest below is a proposal embedded as documentation, so
+=digitization evaluate= refuses until the owner pins it with
+=approved: true= and a real =reference_sha256=. No candidate inference has
+run. Reader passes have not run.
+#+end_quote
+
+* Scope and traceability
+
+Beads: =sunset-rmx.10= (decision gate; blockers =sunset-rmx.1=, =sunset-rmx.9=
+closed). Checkpoint: =openspec/changes/add-iterative-document-digitization/
+tasks.md: 3.1a=. Six-page references are =sunset-rmx.16= and never block this
+gate. Local providers only; no paid service or remote upload is authorized.
+
+* Proposed page selection (owner to confirm)
+
+Source: =fixtures/carriers/diario-de-poesia-excerpt.pdf=
+(sha256 =42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4=,
+6 image-only scanned pages, source pp. 1,2,3,4,18,35 of 36; AHIRA public
+archive provenance per =fixtures/carriers/MANIFEST.org=).
+
+- *Difficult page:* excerpt page 5 (source p.18, "DOSSIER JUANELE",
+  "La sonata del claro de luna") — three-column poem, hundreds of lines,
+  italic intro note, repeated stanza refrains, indentation geometry,
+  reading order across columns. Poem layout ✓, image/caption ✗.
+- *Feature page (design-mandated additional page):* excerpt page 2
+  (source p.2, "2/SUMARIO") — portrait photo with caption, illustration with
+  caption ("Facsimil de una pagina del libro de lectura 'La base', e. 1928"),
+  handwritten facsimile poem lines, masthead block, multi-column reading
+  order. Image/caption ✓.
+
+Stage =pages: [2, 5]= covers the entire difficult page plus the required
+image/caption feature page, per design.md:78.
+
+* Reader protocol (independent reference judgments)
+
+References are new judgments; existing region sheets (905.3, r68 carrier
+annotations) are NOT transcription gold and are not repurposed. Two
+independent readers, different model families where available, each produce:
+
+1. Full region inventory with coverage dispositions (text / handwriting /
+   image / caption / decoration / page furniture); nothing silently dropped.
+2. Verbatim text per text region (Spanish, accents preserved; uncertain
+   characters marked, never smoothed).
+3. Poem geometry on the difficult page: line breaks, stanza boundaries,
+   indentation per stanza.
+4. Scoped reading order (per column; column order declared).
+5. Image/caption relationships (directed, scoped).
+6. Timing noted; unknown is an answer.
+
+Disputed items stay explicit: the agreement matrix records AGREE / COMPATIBLE
+/ DISAGREE / UNKNOWN per item; DISAGREE and UNKNOWN items become manifest
+=exclusions= with counts and reasons. No winner election, no smoothing.
+Reviewer identity, scope, per-reader sheet digest and agreement matrix are
+recorded here before any candidate run. Agent-executed readers are a recorded
+deviation: a human pass supersedes, and the owner explicitly rules whether
+this reference supports assessment mode or only engineering-only execution.
+
+* Proposed bounded local configuration (owner to set numbers)
+
+- Engines (all local, pinned): renderer =pdftoppm= (poppler, as pinned in
+  =dsc03.demo.run_pinned=) at 200 dpi; OCR =tesseract-ocr= =spa= TSV line
+  mode (config digest =ee2c4d8ee6d1e5066343397ebdd686937af09901deea3e44dfd3d7b7ad883db4=
+  over {provider, lang spa, tsv-lines, dpi 200, granularity lines, wrapper
+  run_pinned}); native-truth/baseline recording =pymupdf= 1.28.2
+  (=b035dbfe42288a64146110e6efab1064ae586f3501a7d1b74c3d502f7906ed1d=).
+- Price schedule: local-zero (currency USD, all rates 0;
+  =357e4136d0bea16484bf016363d7c3f7295e39fb09276d7e7ab39143664bba9f=).
+- Budget policy proposal: =max_refinement_rounds= 3,
+  =max_provider_attempts= 2, =max_estimated_cost_microunits= 0,
+  request/output byte caps generous enough for whole-page OCR (exact ints
+  pinned in =pilot.json= at approval).
+- Policy proposal: normalization =identity=, tie-break
+  =canonical-geometry-then-recorded-id=, =region_iou_threshold= 0.5,
+  required scopes: =regions=, =text-cer=, =line-boundary=,
+  =stanza-boundary=, =indentation=, =continuation-relationships=.
+- Quality thresholds (owner sets): CER max, region precision/recall min,
+  line/stanza/indentation error max, continuation missing-rate max.
+- Metric denominators: nonempty per scope or the metric reports UNKNOWN;
+  empty denominators never produce zero-error passes.
+- Exclusions: filled only from the reader agreement matrix (disputed items,
+  with counts and reasons). Setup/reference effort recorded separately;
+  unmeasured correction effort stays UNKNOWN.
+
+* Draft stage manifest (proposal only — DO NOT write to pilot.json yet)
+
+#+begin_src json
+{
+  "version": "1",
+  "stage_id": "diario-difficult-page-r1",
+  "mode": "assessment",
+  "approval": {"approved": false, "owner": "PENDING — charly must record explicit approval"},
+  "source_sha256": "42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4",
+  "pages": [2, 5],
+  "reference_sha256": "PENDING — digest of reference.json after reader pass + agreement",
+  "baseline_configuration_sha256": "PENDING — digest of the approved rmx.15 whole-page OCR config",
+  "candidate_configuration_sha256": "PENDING — digest of the approved rmx.15 crop-OCR config",
+  "engine": {"id": "tesseract-ocr", "version": "PENDING — pinned report from ocr_config",
+             "configuration_sha256": "ee2c4d8ee6d1e5066343397ebdd686937af09901deea3e44dfd3d7b7ad883db4",
+             "price_schedule_sha256": "357e4136d0bea16484bf016363d7c3f7295e39fb09276d7e7ab39143664bba9f"},
+  "budget": {"version": "1", "currency": "USD", "max_refinement_rounds": 3,
+             "max_provider_attempts": 2, "max_estimated_cost_microunits": 0,
+             "max_request_bytes": 0, "max_output_bytes": 0,
+             "price_schedule_sha256": "357e4136d0bea16484bf016363d7c3f7295e39fb09276d7e7ab39143664bba9f"},
+  "policy": {"version": "1", "normalization": "identity",
+             "tie_break": "canonical-geometry-then-recorded-id",
+             "region_iou_threshold": 0.5,
+             "required_scopes": ["regions", "text-cer", "line-boundary",
+                                 "stanza-boundary", "indentation",
+                                 "continuation-relationships"],
+             "thresholds": {"PENDING-OWNER": 0}},
+  "exclusions": [],
+  "missing_scopes": []
+}
+#+end_src
+
+Notes: =baseline/candidate_configuration_sha256= cannot be pinned before
+=sunset-rmx.15= builds the public whole-page and crop OCR routes and commits
+their configs; the gate records engine/policy/budget approval now and the
+config digests at =pilot.json= finalization, still before any inference.
+=max_request_bytes= / =max_output_bytes= = 0 are placeholders to be replaced
+with real caps at approval (0 is a valid-but-meaningless policy value; the
+final manifest must carry deliberate numbers).
+
+* What closes this gate
+
+1. Owner confirms page selection [2, 5] (or redirects).
+2. Owner rules on reader path: agent-executed readers (deviation, human
+   supersedes) vs human sheets vs engineering-only mode (missing scopes
+   listed; evaluation-incomplete; no quality/economy claims).
+3. Reader pass runs; agreement matrix recorded here; =reference.json=
+   written with per-reader + merged provenance; disputed items become
+   exclusions.
+4. Owner approves the final numbers; =pilot.json= written with
+   =approved: true= and all digests; this file records the approval quote,
+   date and manifest digest.
