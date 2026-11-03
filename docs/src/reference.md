@@ -49,11 +49,22 @@ One line per module, quoted or condensed from its docstring.
 | `dsc03/corpus.py` | "Adversarial corpus builder + corpus gate (machinery-only)." |
 | `dsc03/demo.py` | "First-consumer demo: pinned extractors, snapshots, projection, measurement." |
 | `dsc03/coverage.py` | "Scoped coverage verification: inventories, manifests, dispositions, summaries." (support module feeding the reports above) |
+| `dsc03/visual/render.py` | "Pinned render configuration, pdftoppm runner, and evidence-class labeling." (byte-identical renders per config; missing renderer → typed `unavailable`) |
+| `dsc03/visual/frames.py` | "Declared frame mapping: pixel↔descriptor coordinate resolution." (`unknown` for missing/incompatible frames — never a guessed convention) |
+| `dsc03/visual/coverage.py` | "Binarized ink-coverage oracle (representation level B, design D3)." (one scoped property; typed per-page outcomes + shared aggregate rule) |
+| `dsc03/visual/masks.py` | "Geometry-mask alignment oracle (representation level C, design D3)." (region-attributed disagreements, no winner election) |
+| `dsc03/visual/reports.py` | "Visual-oracle results as a separate evidence class in report dicts." (`record` adds a `visual_oracles` section; conformance labels stay inert) |
 
 Package docstring (`dsc03/__init__.py`): "DSC 0.3 validator package
 (sunset-r68). Implements the add-dsc-03 capability deltas. The frozen 0.2
 executable under `spec/document-model-specodelic-v3/` stays untouched and
 must keep reporting PASS 11 descriptor fixtures."
+
+The raster visual oracles (`dsc03/visual/`) are implemented under the active
+change [`add-raster-visual-oracles`](../../openspec/changes/add-raster-visual-oracles/proposal.md)
+— a proposal under implementation, not deployed truth. The oracle contract,
+evidence-class rules and calibrated limits are described in
+[visual-oracles.md](visual-oracles.md).
 
 ## Conformance label taxonomy
 
@@ -173,3 +184,19 @@ Actual carrier files (inventory per `MANIFEST.org`):
   (`page-text` required and allowed-unresolved), comparison results.
 - `snapshots/` — pinned extraction snapshots with descriptor, inventory, and
   manifest per extractor: `snapshot-pdftotext/`, `snapshot-pymupdf/`.
+
+### Visual-oracle fixtures — raster machinery (active change `add-raster-visual-oracles`)
+
+- `tests/tracer/fixtures/visual/` — synthetic strip rasters and seeded
+  mutation carriers for the two visual oracles: pristine
+  `visual-strip.pdf`, `visual-strip-rot90.pdf` (rotated),
+  `visual-strip-faint.pdf` (honestly uncalibrated by design), and the
+  mutation demonstrations `visual-strip-shift.pdf`,
+  `visual-strip-omission.pdf`, `visual-strip-duplication.pdf`;
+  `geometry-rotated-strip.json` declares the rotated frame;
+  [README.org](../../tests/tracer/fixtures/visual/README.org) documents the
+  set. AGENT-EXECUTED fixtures; a human pass supersedes.
+- `fixtures/visual/calibration.json` — the calibration record: per-page
+  derivation/detection outcomes, thresholds with provenance, and the render
+  configuration (the six design-D6 fields). Thresholds exist only for its
+  recorded carriers; see [visual-oracles.md](visual-oracles.md).

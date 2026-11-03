@@ -1,0 +1,147 @@
+#+TITLE: sunset-xzy.8 report — docs: oracle contract, evidence-class rules, calibrated limits
+#+DATE: 2026-11-03
+#+TICKET: sunset-xzy.8 (beads) · change openspec/changes/add-raster-visual-oracles/ tasks.md 6.2
+#+VERIFIER: wai-px4g — all claims below carry pasted gate tails
+#+EVIDENCE_CLASS: AGENT-EXECUTED — human pass supersedes everything on this page.
+
+* Baseline (pre-edit, recorded verbatim)
+
+Base commit 04d7b7b (xzy.1–.7 shipped). Full run tails:
+
+#+BEGIN_EXAMPLE
+$ just spec-check
+==> frozen 0.2 reference validator
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+...
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+$ /usr/bin/python3 -m pytest tests -q
+533 passed, 1 warning, 18 subtests passed in 199.58s (0:03:19)
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+$ /usr/bin/python3 -m pytest tests/docs -q
+10 passed in 0.10s
+#+END_EXAMPLE
+
+Baseline = RED state for the docs slice (green gates before edits, per the
+brief's red→green shape; the docs edit itself is the change under test).
+
+* Post-edit gates (verbatim tails)
+
+#+BEGIN_EXAMPLE
+$ /usr/bin/python3 -m pytest tests -q
+533 passed, 1 warning, 18 subtests passed in 203.60s (0:03:23)
+#+END_EXAMPLE
+
+Unchanged from baseline: 533 + 18 — docs only, no test churn.
+
+#+BEGIN_EXAMPLE
+$ /usr/bin/python3 -m pytest tests/docs -q
+10 passed in 0.11s
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+$ just spec-check
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+#+END_EXAMPLE
+
+* Files changed (exactly the brief's set)
+
+- CREATE ~docs/src/visual-oracles.md~ — the oracle contract (one row per
+  requirement), evidence-class rules, calibrated limits (faint fixture
+  honestly uncalibrated by design), conformance inertness (record +
+  non_substitution + classify-never-reads-it), provenance (active change
+  link, sunset-zo5 approval 2026-11-02, eeac8b0 amendments, scope = tasks.md
+  sections 3–7, AGENT-EXECUTED caveat), honest boundary. Filename kept as
+  CLRT-001 planned (=visual-oracles.md=) — no clearly better home exists.
+- EDIT ~docs/src/reference.md~ — five ~dsc03/visual/*~ rows added to the
+  "Reviewer / developer machinery" table (one line each, from docstrings);
+  cross-ref paragraph under the package docstring (active-change link +
+  visual-oracles.md); new fixture-catalog subsection "Visual-oracle
+  fixtures" (tests/tracer/fixtures/visual/ + fixtures/visual/calibration.json).
+- EDIT ~docs/src/integrate.md~ — Recipe 3 extended with "Recording
+  visual-oracle results (a separate evidence class)": short paragraph +
+  minimal =dsc03.visual.reports.record(...)= example (aggregate status
+  ~pass~/~blocked~, evidence class, ~non_substitution~ list); states the
+  section never changes conformance labels; four-reports framing intact.
+- EDIT ~docs/src/status.md~ — new dated machinery bullet (sunset-xzy,
+  2026-11-02/03): scoped machinery under the active change, sections 3–6
+  done with docs slice + final gate open in tasks.md, labeled evidence
+  classes, calibration bounded to recorded carriers, labels inert,
+  AGENT-EXECUTED caveat, link to the new page.
+
+* Link-resolution evidence
+
+Every repo-relative link in the four touched pages resolves on disk
+(checker run: =BROKEN: none= — inline-links regex over all four files,
+each target =ls=-resolved against docs/src/). Introduced targets verified:
+
+#+BEGIN_EXAMPLE
+docs/src/../../openspec/changes/add-raster-visual-oracles/proposal.md  OK
+docs/src/../../fixtures/visual/calibration.json                        OK
+docs/src/../../tests/tracer/fixtures/visual/README.org                 OK
+docs/src/visual-oracles.md  (new page linked from reference/integrate/status) OK
+docs/src/{reference,integrate,status}.md  (companion links from new page) OK
+#+END_EXAMPLE
+
+No ~what-is-dsc.md~ navigation link added (brief: only if natural — the
+reference.md index + three cross-links are the discovery path; nav left
+untouched so the link gate stays exactly as scoped).
+
+* Provenance recorded on the page (as briefed)
+
+- Active change link (relative repo path) — described as a proposal under
+  implementation, NOT deployed truth; deployed specs under =openspec/specs/=
+  stated as unchanged by it.
+- Owner approval 2026-11-02, decision ticket =sunset-zo5= (beads), APPROVED,
+  all 9 rule-of-5 findings applied as amendments in commit =eeac8b0=
+  (commit verified on disk: "docs(specs): apply rule-of-5 review fixes to
+  add-raster-visual-oracles"); authorization scope = tasks.md sections 3–7.
+- AGENT-EXECUTED caveat on all measurements/thresholds/fixtures, page-level
+  and per-section; human pass supersedes.
+
+* Anti-goal compliance
+
+- No accuracy/completeness/semantic/OCR claims anywhere in the four pages;
+  the pipeline is explicitly described as never reading text.
+- The change's specs are nowhere described as deployed; =openspec/specs/=,
+  =validator.py= (frozen 0.2), code, fixtures, tests, justfile and
+  =tests/docs/= expectations were not touched.
+- Honest-boundary voice throughout; no marketing.
+
+* Deviations
+
+None material. Two judgment calls, both brief-conformant:
+
+1. *Stale-wording scope in status.md*: the two OCR/visual limitation
+   sentences ("OCR and visual completeness remain separate work"; "OCR,
+   visual completeness and installable packaging are not part of this
+   baseline") were kept VERBATIM — neither is made stale by this change.
+   "Visual completeness" is a claim category the change explicitly does not
+   make (design risk note: completeness stays a coverage-inventory concern),
+   and "this baseline" scopes to the native PDF extraction baseline, which
+   the visual oracles are not part of. The new machinery bullet carries the
+   update instead. Follow-up threshold NOT triggered: no existing sentence
+   contradicts the change's existence.
+2. *Status bullet phrasing*: "sections 3–6 done; docs slice and final gate
+   remain open in tasks.md" mirrors the brief verbatim and matches tasks.md
+   checkbox state at ship time (lead updates checkboxes; not my scope).
+
+* Findings (AGENT-EXECUTED — human pass supersedes)
+
+1. Calibration record cross-checked while writing: six D6 fields present,
+   five thresholded carriers + faint-by-design, aggregate =pass/blocked=
+   scalars confirmed against =dsc03/visual/coverage.py::aggregate=; the
+   integrate.md example comments match the real =record= output shape.
+2. ~supports_accuracy_claim~ confirmed (correlated → False) before citing
+   it as the encoded restriction on the new page.
+3. The "Where next" nav in what-is-dsc.md was left untouched; if the lead
+   wants the new page in the nav, the page already exists so the link gate
+   would stay green — left as a lead-side choice per the brief's "unless
+   natural".

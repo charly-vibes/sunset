@@ -208,6 +208,34 @@ The same reading rule applies throughout: `coverage.status == "skipped"` is
 not a coverage failure — fix the schema or the unresolved profile named in the
 `profiles` report, then re-run.
 
+### Recording visual-oracle results (a separate evidence class)
+
+Raster visual-oracle outcomes are recorded into the report dict with
+`dsc03.visual.reports.record(report, visual_results)` — the oracle contract
+and its limits live in [visual-oracles.md](visual-oracles.md). It returns a
+new dict with a distinct `visual_oracles` section and never mutates its
+input:
+
+```python
+from dsc03.visual import reports as visual_reports
+
+recorded = visual_reports.record(reports, visual_results)
+
+print(recorded["visual_oracles"]["aggregate"]["status"])  # pass / blocked
+print(recorded["visual_oracles"]["evidence_class"])       # correlated / independent / mixed
+print(recorded["visual_oracles"]["non_substitution"])
+# ['real_carriers', 'independent_readers', 'extractor_comparison',
+#  'anchor_mapping_reviewed'] — none of these is filled by the section
+```
+
+`visual_results` are the typed outcomes of the two oracles (`ink-coverage`,
+`region-alignment`). The section is a separate evidence class: honest
+statuses pass through verbatim (`unknown` and `unavailable` included, never
+upgraded), and `dsc03.conformance.classify` never reads it — recording
+visual results never changes conformance labels, so passing oracles plus no
+independent readers still leave the suite `incomplete`. The four reports
+above remain the conformance inputs.
+
 ## Recipe 4: Classify honestly
 
 To state what your test suite actually established, describe it as a suite

@@ -82,6 +82,21 @@
   (0 issues, 8 delta files + 8 sidecars) and 1.x strict (`--all`, 10/10)
   both pass; `openspec@1.14.2` is now the ratified gate binary
   (`versions.ddl.toml`, folded into `just spec-check`).
+- **Raster visual oracles (sunset-xzy, 2026-11-02/03):** implemented as
+  scoped machinery under the active (not deployed) change
+  [`add-raster-visual-oracles`](../../openspec/changes/add-raster-visual-oracles/proposal.md)
+  — owner-approved 2026-11-02 in `sunset-zo5`; sections 3–6 of its tasks.md
+  are done, and the docs slice and final gate remain open in tasks.md. Two
+  properties only (`ink-coverage`, `region-alignment`), every outcome
+  labeled `correlated`/`independent`, calibration bounded to the recorded
+  carriers in `fixtures/visual/calibration.json` (the committed faint
+  fixture is honestly uncalibrated → `unknown` → aggregate blocked), and
+  conformance labels stay inert: visual results are recorded as a separate
+  evidence class (`dsc03/visual/reports.py`) and never substitute for
+  independent readers, extractor comparison or reviewed anchor mapping. No
+  accuracy, completeness or semantic claims are made; all measurements,
+  thresholds and fixtures are AGENT-EXECUTED (a human pass supersedes).
+  Contract and limits: [visual-oracles.md](visual-oracles.md).
 - Recorded deviations across the 0.3 work (each human pass supersedes):
   reviewer personas, reader annotations and review times in the
   [first-consumer demonstration](tracer-bullet.org) are agent-executed; the
