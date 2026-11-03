@@ -345,14 +345,25 @@ def main(argv=None):
     parser.add_argument("--out", default=".visual-review/index.html")
     parser.add_argument("--record", default=None,
                         help="calibration record (default fixtures/visual/calibration.json)")
+    parser.add_argument("--descriptor", default=None,
+                        help="DSC 0.3 descriptor (e.g. a digitization run output); "
+                             "mutually exclusive with --record")
     parser.add_argument("--serve", nargs="?", const="8123", default=None,
                         metavar="PORT")
     args = parser.parse_args(argv)
+    if args.descriptor and args.record:
+        parser.error("--descriptor and --record are mutually exclusive")
 
-    record = build_calibration_review_bundle(args.out, record_path=args.record)
-    n_pages = sum(len(c["pages"]) for c in record["carriers"])
-    print(f"built {args.out}: {len(record['carriers'])} carriers, "
-          f"{n_pages} render targets")
+    if args.descriptor:
+        record = build_descriptor_review_bundle(args.descriptor, args.out)
+        n_pages = sum(len(c["pages"]) for c in record["carriers"])
+        print(f"built {args.out}: {record['carriers'][0]['carrier']} — "
+              f"{n_pages} descriptor pages")
+    else:
+        record = build_calibration_review_bundle(args.out, record_path=args.record)
+        n_pages = sum(len(c["pages"]) for c in record["carriers"])
+        print(f"built {args.out}: {len(record['carriers'])} carriers, "
+              f"{n_pages} render targets")
 
     if args.serve:
         port = int(args.serve)

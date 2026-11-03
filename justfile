@@ -37,3 +37,21 @@ visual-review port="8123":
     set -euo pipefail
     mkdir -p .visual-review
     {{python}} -B -m dsc03.visual.review --out .visual-review/index.html --serve {{port}}
+
+# Recorded digitization of a native-text PDF + its visual-review bundle
+# (sunset-bv4): pymupdf text blocks become recorded detections/recognitions,
+# the tested pipeline renders + exports the descriptor, and the review SPA
+# presents the real extraction claims over pinned renders. `pages` is an
+# optional comma-separated 1-based list. `output` is the run directory
+# (review lands at <output>/review.html). E.g.:
+#   just digitization-review pba-judicial-2026-07-29.pdf /tmp/pba-review 8124
+digitization-review source output port="8124" pages="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    src="{{source}}"; out="{{output}}"; cfg="{{output}}-recorded.json"
+    page_flag=""
+    [ -n "{{pages}}" ] && page_flag="--pages {{pages}}"
+    {{python}} -B -m digitization.recorded_config --source "$src" --output "$cfg" $page_flag
+    run_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$cfg")
+    {{python}} -B -m digitization run --source "$src" --pages "$run_pages" --config "$cfg" --output "$out"
+    {{python}} -B -m dsc03.visual.review --descriptor "$out/descriptor.json" --out "$out/review.html" --serve {{port}}

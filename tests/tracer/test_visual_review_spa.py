@@ -414,6 +414,31 @@ def test_calibration_bundle_walks_every_recorded_example(tmp_path):
     assert "page-1-rot180" in html
 
 
+def test_cli_builds_descriptor_bundle_without_serving(tmp_path):
+    """--descriptor reviews a real digitization run output (sunset-bv4)."""
+    r = subprocess.run(
+        [sys.executable, "-B", "-m", "dsc03.visual.review",
+         "--descriptor", str(DESCRIPTOR_FIXTURE), "--out", str(tmp_path / "review.html")],
+        capture_output=True, text=True, timeout=120, cwd=REPO,
+        env={**os.environ, "PATH": "/usr/bin:" + os.environ["PATH"]},
+    )
+    assert r.returncode == 0, r.stderr
+    html = (tmp_path / "review.html").read_text()
+    assert "visual-review-bundle" in html and "fixture-cta-cte-review" in html
+
+
+def test_cli_rejects_descriptor_and_record_together(tmp_path):
+    r = subprocess.run(
+        [sys.executable, "-B", "-m", "dsc03.visual.review",
+         "--descriptor", str(DESCRIPTOR_FIXTURE), "--record",
+         "fixtures/visual/calibration.json", "--out", str(tmp_path / "review.html")],
+        capture_output=True, text=True, timeout=120, cwd=REPO,
+        env={**os.environ, "PATH": "/usr/bin:" + os.environ["PATH"]},
+    )
+    assert r.returncode == 2, r.stderr
+    assert "mutually exclusive" in r.stderr
+
+
 def test_cli_builds_the_all_examples_bundle_without_serving(tmp_path):
     r = subprocess.run(
         [sys.executable, "-B", "-m", "dsc03.visual.review",
