@@ -2,8 +2,10 @@
 
 Sunset's implemented native workflow is PDF → searchable text with source
 locations → integrity inspection or offline replay. It handles embedded text
-locally and retains word and line mappings. OCR and visual completeness for
-scanned pages remain separate work.
+locally and retains word and line mappings. OCR dispatch inside =digitization
+run= and measured visual completeness for scanned pages remain separate work;
+recorded OCR configs over rasterized image PDFs exist for review loops (see
+the derived-configs section below).
 
 * What works today
 
@@ -11,7 +13,12 @@ The Python =dsc03.adapters.describe_pdf= adapter extracts native page text with
 source-hash and page attribution; it does not produce word-location mappings.
 The recorded-input commands later in this reference render PDF pages and import
 supplied, source-pinned region/OCR observations into valid DSC, searchable text and an
-inspection report. They do not extract those observations automatically.
+inspection report. They do not extract those observations automatically, but
+the observations can be derived mechanically: =digitization.recorded_config=
+builds a recorded config from the PDF's native text layer, and
+=digitization.ocr_config= builds one from pinned tesseract over rasterized
+pages (both covered after the recorded-input reference). Two =just= recipes,
+=digitization-review= and =ocr-review=, chain derivation, run and SPA review.
 Run from the repository root. The Python layer is pinned by =uv.lock=
 (PyMuPDF 1.28.2, mirrored in
 [[../../requirements-native.txt][requirements-native.txt]]); =uv sync=
@@ -60,9 +67,11 @@ exit: 0
 These are actual outputs from a generated one-page PDF with the text “Example
 native text”; inspection JSON is abbreviated after its verified word list.
 
-Scanned-page OCR integration remains separate work (=sunset-rmx.15=), under
-its existing configuration approvals. The native-text route requires neither
-OCR nor an external service. Pages with no native text must be reported explicitly;
+Live OCR dispatch inside =digitization run= remains separate work
+(=sunset-rmx.15=), under its existing configuration approvals; the recorded
+OCR-config path (derived configs section) already reviews image-only PDFs
+without touching that route. The native-text route requires neither OCR nor
+an external service. Pages with no native text must be reported explicitly;
 a native text layer alone does not establish complete page coverage. The recorded
 examples below invoke no provider unless explicitly configured; native commands
 above are offline and local.
@@ -483,7 +492,101 @@ inference or alter either run. Real local crop OCR and whole-page baseline mode
 belong to =sunset-rmx.15=, after budget and stage configuration approval.
 Refinement is a later slice.
 
-**Offline pilot evaluation**
+* Derived configs and the review loops (sunset-bv4, sunset-9op)
+
+Recorded configs do not need to be hand-authored. Three helper commands
+derive them mechanically, and two =just= recipes chain derivation, run and
+review into loops a human can walk in the visual-review SPA.
+
+** Canonical geometry in recorded descriptors
+
+Config bounding boxes stay in the y-down page points the native reader
+reports (PyMuPDF convention); tesseract pixel boxes are converted to the same
+y-down points via the declared dpi. At emission the recorded pipeline converts
+regions and declares the canonical descriptor space per the
+document-visual-oracles resolver convention: origin bottom-left,
+=axes: x-right-y-up=. Consumers see canonical geometry only; configs stay
+y-down.
+
+** Recorded configs from native text (recorded_config)
+
+#+begin_src bash
+python3 -m digitization.recorded_config --source input.pdf --output config.json
+python3 -m digitization.recorded_config --source input.pdf --output lines.json --granularity lines
+python3 -m digitization.recorded_config --source input.pdf --output p1.json --pages 1
+#+end_src
+
+=--granularity= picks =blocks= (default: PyMuPDF text blocks) or =lines=
+(text lines — the granularity tesseract emits, used for OCR ground truth).
+=--pages= is a comma-separated 1-based list. The output targets =digitization
+run --config=: per-page detections carry y-down bboxes and recorded
+recognitions carry the native text under a pinned =pymupdf= provider
+identity. Zero provider calls, no OCR, text-only by construction.
+
+** Image-only derivatives (rasterize)
+
+#+begin_src bash
+python3 -m digitization.rasterize --source input.pdf --output-dir raster/ --dpi 200 [--pages 1]
+#+end_src
+
+Renders every selected page through the pinned pdftoppm configuration
+(=raster/page-N.png=) and assembles =raster/image.pdf=: an image-only PDF with
+identical page geometry and no text layer — the controlled image side of
+ground-truth OCR experiments. Exit 3 on invalid input.
+
+** Recorded configs from pinned tesseract (ocr_config)
+
+#+begin_src bash
+python3 -m digitization.ocr_config --image-pdf raster/image.pdf \
+  --pages-dir raster/ --dpi 200 --output ocr-config.json [--lang spa]
+#+end_src
+
+Runs pinned tesseract (default language =spa=, TSV mode) over the page PNGs,
+aggregates word rows into line boxes, converts pixel boxes to y-down page
+points via =--dpi=, and emits a recorded config targeting the image-only PDF.
+Provider identity is pinned =tesseract-ocr= with the reported version. The
+result feeds =digitization run --config= exactly like any recorded config;
+live OCR dispatch inside =run= remains separate (=sunset-rmx.15=).
+
+** OCR-vs-truth measurement (ocr_eval)
+
+#+begin_src bash
+python3 -m digitization.ocr_eval --true truth-run/descriptor.json \
+  --ocr ocr-run/descriptor.json --output ocr-eval.json --iou 0.5
+#+end_src
+
+Both inputs are recorded-run descriptors (canonical y-up spaces; region text
+resolved through has-content relations). Matching is geometry-first: greedy
+best-IoU pairing above the threshold, then matched pairs are scored on
+normalized text equality and similarity. The JSON sheet reports =totals=
+(matched, false positives/negatives, exact text matches, mean IoU, mean text
+ratio, region counts) and per-page detail including every match. Exit 0 = no
+discrepancies; exit 2 = discrepancies measured (that is the finding, not a
+crash); exit 3 = invalid input. Nothing here claims accuracy beyond the
+measured sheet.
+
+** One-recipe review loops
+
+#+begin_src bash
+just digitization-review input.pdf /tmp/review-run 8124 [pages]
+just ocr-review input.pdf /tmp/ocr-run 8126 [pages] [dpi]
+#+end_src
+
+=digitization-review= derives a recorded config from native text, runs the
+pipeline, and serves the review SPA over the run's real claims at
+=<output>/review.html=. =ocr-review= rasterizes, derives native truth at line
+granularity, OCRs the raster, measures OCR-vs-truth into =<output>/ocr-eval.json=,
+and serves the OCR claims over the rasterized render. Serving is a local
+review aid, not the scope-ruled DSC CLI. =dsc03.visual.review= takes either a
+calibration record (default) or =--descriptor <run>/descriptor.json=; the two
+modes are mutually exclusive.
+
+Measured baseline (pba-judicial-2026-07-29.pdf page 1, 200 dpi): 49 truth
+lines vs 54 OCR claims → 47 matched (IoU ≥ 0.5), 7 false positives (decorative
+heading fragments — content-class evidence feeding sunset-9rg/sunset-pkj),
+2 false negatives, mean IoU 0.776, mean text ratio 0.994, 33/47 exact text.
+
+** Offline pilot evaluation**
 
 The shared evaluator accepts verified run directories, a frozen reference JSON,
 and an approved stage manifest. It makes no provider calls:
@@ -533,3 +636,12 @@ proposal retention, sidecar integrity, and structure-only cache reuse.
 =tests/tracer/test_digitization_refinement.py= covers public split/inspection,
 all action types, neighboring and transitive invalidation, replacement rechecks,
 semantic scheduling, malformed candidate retention and unchanged OCR attempts.
+
+=tests/tracer/test_digitization_recorded_config.py=,
+=tests/tracer/test_digitization_rasterize.py=,
+=tests/tracer/test_digitization_ocr_config.py= and
+=tests/tracer/test_digitization_ocr_eval.py= cover the derived-config helpers:
+native blocks/lines configs, pinned rasterization to image-only PDFs, pinned
+tesseract line boxes with px→pt conversion, and the greedy best-IoU evaluation
+sheet with its exit codes. =tests/tracer/test_visual_review_spa.py= covers the
+review-bundle generator, including =--descriptor= mode over run output.
