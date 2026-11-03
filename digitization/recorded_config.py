@@ -29,13 +29,55 @@ def _sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def build_config(source_path, pages=None):
+def _line_detections(page, width, height):
+    detections, recognitions = [], {}
+    for block in page.get_text('dict')['blocks']:
+        if block.get('type') != 0:
+            continue
+        for line in block.get('lines', []):
+            text = ''.join(span['text'] for span in line.get('spans', [])).strip()
+            if not text:
+                continue
+            x0, y0, x1, y1 = line['bbox']
+            box = [max(0, math.floor(x0)), max(0, math.floor(y0)),
+                   min(width, math.ceil(x1)) - max(0, math.floor(x0)),
+                   min(height, math.ceil(y1)) - max(0, math.floor(y0))]
+            if box[2] <= 0 or box[3] <= 0:
+                continue
+            did = f'line-{len(detections)}'
+            detections.append({'id': did, 'kind': 'text-line', 'bbox': box})
+            recognitions[did] = {'raw_text': text, 'unresolved': []}
+    return detections, recognitions
+
+
+def _block_detections(page, width, height):
+    detections, recognitions = [], {}
+    for x0, y0, x1, y1, text, *_rest in page.get_text('blocks'):
+        if not text.strip():
+            continue
+        bx0, by0 = max(0, math.floor(x0)), max(0, math.floor(y0))
+        bx1 = min(width, math.ceil(x1))
+        by1 = min(height, math.ceil(y1))
+        box = [bx0, by0, bx1 - bx0, by1 - by0]
+        if box[2] <= 0 or box[3] <= 0:
+            continue
+        did = f'block-{len(detections)}'
+        detections.append({'id': did, 'kind': 'text-block', 'bbox': box})
+        recognitions[did] = {'raw_text': text.strip(), 'unresolved': []}
+    return detections, recognitions
+
+
+def build_config(source_path, pages=None, granularity='blocks'):
     """Build a recorded-run config from the source's native text layer.
 
     ``pages`` is an optional list of 1-based page numbers (default: every
-    page). Blocks are pymupdf text blocks; bboxes are nonnegative integer
-    page points, top-left origin, y-down — the pipeline's preflight contract.
+    page). ``granularity`` selects 'blocks' (pymupdf text blocks, default)
+    or 'lines' (individual layout lines — matching granularity for OCR
+    comparisons). Bboxes are nonnegative integer page points, top-left
+    origin, y-down — the pipeline's preflight contract.
     """
+    if granularity not in ('blocks', 'lines'):
+        raise ValueError("granularity must be 'blocks' or 'lines'")
     data = Path(source_path).read_bytes()
     try:
         document = pymupdf.open(stream=data, filetype='pdf')
@@ -54,19 +96,8 @@ def build_config(source_path, pages=None):
         for number in pages:
             page = document[number - 1]
             width, height = int(page.rect.width), int(page.rect.height)
-            detections, recognitions = [], {}
-            for x0, y0, x1, y1, text, *_rest in page.get_text('blocks'):
-                if not text.strip():
-                    continue
-                bx0, by0 = max(0, math.floor(x0)), max(0, math.floor(y0))
-                bx1 = min(width, math.ceil(x1))
-                by1 = min(height, math.ceil(y1))
-                box = [bx0, by0, bx1 - bx0, by1 - by0]
-                if box[2] <= 0 or box[3] <= 0:
-                    continue
-                did = f'block-{len(detections)}'
-                detections.append({'id': did, 'kind': 'text-block', 'bbox': box})
-                recognitions[did] = {'raw_text': text.strip(), 'unresolved': []}
+            extract = _block_detections if granularity == 'blocks' else _line_detections
+            detections, recognitions = extract(page, width, height)
             pages_config[str(number)] = {'detections': detections,
                                          'recognitions': recognitions}
     return {
@@ -85,10 +116,12 @@ def main(argv=None):
     parser.add_argument('--output', required=True)
     parser.add_argument('--pages', default=None,
                         help='comma-separated 1-based page numbers (default: all)')
+    parser.add_argument('--granularity', default='blocks', choices=['blocks', 'lines'])
     args = parser.parse_args(argv)
     try:
         pages = None if args.pages is None else [int(p) for p in args.pages.split(',')]
-        config = build_config(args.source, pages)
+        granularity = args.granularity
+        config = build_config(args.source, pages, granularity=granularity)
     except ValueError as error:
         print(json.dumps({'status': 'invalid-input', 'reason': 'invalid-input',
                           'detail': str(error), 'provider_calls': 0},
@@ -101,7 +134,8 @@ def main(argv=None):
     blocks = sum(len(p['detections']) for p in config['pages'].values())
     print(json.dumps({'status': 'recorded-config', 'provider': PROVIDER_ID,
                       'pages': [int(p) for p in sorted(config['pages'], key=int)],
-                      'blocks': blocks, 'provider_calls': 0},
+                      'blocks': blocks, 'granularity': granularity,
+                      'provider_calls': 0},
                      ensure_ascii=False, sort_keys=True))
     return 0
 

@@ -115,6 +115,38 @@ def test_page_selection_restricts_the_config(source, tmp_path):
     assert sorted(config['pages']) == ['2']
 
 
+def test_line_granularity_splits_blocks_into_lines(source, tmp_path):
+    """--granularity lines: one detection per native text line (sunset-9op).
+
+    OCR comparisons need matching granularity: tesseract reports lines, so
+    the native truth side must too — block-level truth vs line-level OCR
+    would score paragraph boxes against line boxes.
+    """
+    blocks_out = tmp_path / 'blocks.json'
+    lines_out = tmp_path / 'lines.json'
+    assert cli('--source', source, '--output', blocks_out)[0] == 0
+    code, result = cli('--source', source, '--output', lines_out,
+                       '--granularity', 'lines')
+    assert code == 0 and result['status'] == 'recorded-config'
+    blocks = json.loads(blocks_out.read_text())
+    lines = json.loads(lines_out.read_text())
+    first = '1'
+    assert (len(lines['pages'][first]['detections'])
+            >= len(blocks['pages'][first]['detections']))
+    line_text = ' '.join(r['raw_text'] for r in lines['pages'][first]['recognitions'].values())
+    assert 'SALDO ANTERIOR 1.234,56' in line_text
+    # end-to-end: the line-granularity config drives the real pipeline too
+    out = tmp_path / 'run-lines'
+    r = subprocess.run(
+        [sys.executable, '-B', '-m', 'digitization', 'run', '--source', source,
+         '--pages', '1,2', '--config', lines_out, '--output', out],
+        cwd=ROOT, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    manifest = json.loads((out / 'manifest.json').read_text())
+    descriptor = validator.load(out / manifest['descriptor']['path'])
+    assert validator.validate(descriptor) == []
+
+
 def test_unreadable_source_is_typed_invalid(tmp_path):
     bogus = tmp_path / 'bogus.pdf'
     bogus.write_bytes(b'not a pdf')
