@@ -52,6 +52,21 @@ y 468..492. Pristine whole-page ink fraction ≈ 0.018 (fill 7200 px of
   evaluated under it maps every rect elsewhere ⇒ =differ=,
   region-attributed.
 
+* Faint fixture (carrier id =visual-strip-faint=, sunset-xzy.6 tasks.md 5.2)
+
+- =visual-strip-faint.pdf= — *faint-scan variety*. The SAME pristine strip
+  geometry drawn in uniform gray 200 (fill-only =fill=(200/255,)*3=,
+  =color=None, width=0= — no stroke halo), built once with =pymupdf= 1.28.2
+  via =/usr/bin/python3= and committed as bytes. Gray 200 is strictly above
+  the pinned fixed-threshold 128, so the pinned binarization sees NO ink:
+  measured page/region fractions are identically 0 — indistinguishable from
+  a truly blank page. Per spec scenario "Faint scan" no honest
+  calibration window exists; the calibration record
+  (=fixtures/visual/calibration.json=) carries no threshold entry for this
+  carrier, both properties stay =uncalibrated=, the oracle outcome is
+  =unknown=, and =aggregate()= blocks. AGENT-EXECUTED (human pass
+  supersedes).
+
 * Calibration windows used by the suite (recorded in-test, not files)
 
 - region-alignment: ={"min": 0.95, "max": 1.0}= — a claimed rect must sit on

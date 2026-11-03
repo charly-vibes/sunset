@@ -1,0 +1,189 @@
+{
+  "property": ["ink-coverage", "region-alignment"],
+
+  "defect_classes_exerciced": {
+    "ink-coverage": ["omission", "duplication"],
+    "region-alignment": ["shift", "wrong-frame"]
+  },
+
+  "carriers": [
+    {
+      "id": "bank-statement-ca-excerpt",
+      "variety": "native text",
+      "file": "fixtures/carriers/bank-statement-ca-excerpt.pdf",
+      "source_simplification": "ink-dilation-2px",
+      "regions": [
+        {"id": "ledger-block", "x": 110, "y": 667, "w": 140, "h": 50, "expected": "ink"},
+        {"id": "margin-lower", "x": 102, "y": 332, "w": 150, "h": 60, "expected": "no-ink"}
+      ],
+      "region_provenance": "claimed rects measured off the pinned 612x792 render: ledger-block sits raster x 110..250, y 75..125 (dense ledger text block, dilated fraction 0.216286); margin-lower sits in an all-zero margin band",
+      "measured_under_pinned_render": {"page_fraction_dilated": 0.008201, "ink_region_fraction_dilated": 0.216286, "noink_region_fraction_dilated": 0.0}
+    },
+    {
+      "id": "diario-de-poesia-excerpt",
+      "variety": "image-only scan",
+      "file": "fixtures/carriers/diario-de-poesia-excerpt.pdf",
+      "source_simplification": "ink-dilation-2px",
+      "regions": [
+        {"id": "dark-panel", "x": 188, "y": 668, "w": 189, "h": 80, "expected": "ink"},
+        {"id": "scan-margin", "x": 765, "y": 668, "w": 54, "h": 80, "expected": "no-ink"}
+      ],
+      "region_provenance": "claimed rects measured off the pinned 821x1133 render: dark-panel sits raster x 188..377, y 385..465 (dense scanned artwork, dilated fraction 0.905754); scan-margin is the lightest stable margin strip of the degraded scan (dilated fraction 0.147454) — the calibration floor honestly admits it",
+      "measured_under_pinned_render": {"page_fraction_dilated": 0.463995, "ink_region_fraction_dilated": 0.905754, "noink_region_fraction_dilated": 0.147454}
+    },
+    {
+      "id": "budgeting-basics-excerpt",
+      "variety": "mixed",
+      "file": "fixtures/carriers/budgeting-basics-excerpt.pdf",
+      "source_simplification": "ink-dilation-2px",
+      "regions": [
+        {"id": "dense-band", "x": 108, "y": 379, "w": 180, "h": 54, "expected": "ink"},
+        {"id": "bottom-margin", "x": 36, "y": 0, "w": 97, "h": 54, "expected": "no-ink"}
+      ],
+      "region_provenance": "claimed rects measured off the pinned 433x649 render: dense-band sits raster x 108..288, y 216..270 (image-dense band, dilated fraction 0.632716); bottom-margin sits in an all-zero band",
+      "measured_under_pinned_render": {"page_fraction_dilated": 0.253832, "ink_region_fraction_dilated": 0.632716, "noink_region_fraction_dilated": 0.0}
+    },
+    {
+      "id": "visual-strip-rot",
+      "variety": "rotated",
+      "file": "tests/tracer/fixtures/visual/visual-strip-rot90.pdf",
+      "source_simplification": "ink-dilation-2px",
+      "regions": [
+        {"id": "ink-strip", "x": 100, "y": 300, "w": 300, "h": 24, "expected": "ink"},
+        {"id": "blank-lower", "x": 100, "y": 60, "w": 300, "h": 24, "expected": "no-ink"}
+      ],
+      "region_provenance": "landscape-raster rot90 trick committed by sunset-xzy.5 (never set_rotation): descriptor rects map through the TRUE frame page-1-rot90 of geometry-rotated-strip.json; dilated strip fraction 1.0, blank 0.0, page 0.017561",
+      "measured_under_pinned_render": {"page_fraction_dilated": 0.017561, "ink_region_fraction_dilated": 1.0, "noink_region_fraction_dilated": 0.0}
+    },
+    {
+      "id": "visual-strip",
+      "variety": "synthetic strip (calibration baseline)",
+      "file": "tests/tracer/fixtures/visual/visual-strip.pdf",
+      "source_simplification": "ink-dilation-2px",
+      "regions": [
+        {"id": "ink-strip", "x": 100, "y": 300, "w": 300, "h": 24, "expected": "ink"},
+        {"id": "blank-lower", "x": 100, "y": 60, "w": 300, "h": 24, "expected": "no-ink"}
+      ],
+      "region_provenance": "pristine portrait strip committed by sunset-xzy.5; its derivation runs pin the thresholds the omission-detection run consumes; dilated strip fraction 1.0, blank 0.0, page 0.017561",
+      "measured_under_pinned_render": {"page_fraction_dilated": 0.017561, "ink_region_fraction_dilated": 1.0, "noink_region_fraction_dilated": 0.0}
+    },
+    {
+      "id": "visual-strip-faint",
+      "variety": "faint",
+      "file": "tests/tracer/fixtures/visual/visual-strip-faint.pdf",
+      "source_simplification": "ink-dilation-2px",
+      "regions": [
+        {"id": "ink-strip", "x": 100, "y": 300, "w": 300, "h": 24, "expected": "ink"},
+        {"id": "blank-lower", "x": 100, "y": 60, "w": 300, "h": 24, "expected": "no-ink"}
+      ],
+      "region_provenance": "same pristine strip geometry drawn in uniform gray 200 (fill-only, no stroke halo) — claimed regions are the strip's declared rects; no oracle run ever evaluates them because the page outcome is unknown before region evaluation (uncalibrated)",
+      "measured_under_pinned_render": {"page_fraction_dilated": 0.0, "strip_gray_level": 200}
+    }
+  ],
+
+  "per_page_outcomes": [
+    {"carrier": "bank-statement-ca-excerpt", "file": "fixtures/carriers/bank-statement-ca-excerpt.pdf", "page": 1, "property": "ink-coverage", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["ledger-block", "margin-lower"]},
+    {"carrier": "bank-statement-ca-excerpt", "file": "fixtures/carriers/bank-statement-ca-excerpt.pdf", "page": 1, "property": "region-alignment", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["ledger-block", "margin-lower"]},
+
+    {"carrier": "diario-de-poesia-excerpt", "file": "fixtures/carriers/diario-de-poesia-excerpt.pdf", "page": 1, "property": "ink-coverage", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["dark-panel", "scan-margin"]},
+    {"carrier": "diario-de-poesia-excerpt", "file": "fixtures/carriers/diario-de-poesia-excerpt.pdf", "page": 1, "property": "region-alignment", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["dark-panel", "scan-margin"]},
+
+    {"carrier": "budgeting-basics-excerpt", "file": "fixtures/carriers/budgeting-basics-excerpt.pdf", "page": 1, "property": "ink-coverage", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["dense-band", "bottom-margin"]},
+    {"carrier": "budgeting-basics-excerpt", "file": "fixtures/carriers/budgeting-basics-excerpt.pdf", "page": 1, "property": "region-alignment", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["dense-band", "bottom-margin"]},
+
+    {"carrier": "visual-strip-rot", "file": "tests/tracer/fixtures/visual/visual-strip-rot90.pdf", "page": 1, "property": "ink-coverage", "run": "derivation", "geometry": "geometry-rotated-strip", "frame": "page-1-rot90", "status": "agree", "reason": null, "expected_agree_regions": ["ink-strip", "blank-lower"]},
+    {"carrier": "visual-strip-rot", "file": "tests/tracer/fixtures/visual/visual-strip-rot90.pdf", "page": 1, "property": "region-alignment", "run": "derivation", "geometry": "geometry-rotated-strip", "frame": "page-1-rot90", "status": "agree", "reason": null, "expected_agree_regions": ["ink-strip", "blank-lower"]},
+
+    {"carrier": "visual-strip", "file": "tests/tracer/fixtures/visual/visual-strip.pdf", "page": 1, "property": "ink-coverage", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["ink-strip", "blank-lower"]},
+    {"carrier": "visual-strip", "file": "tests/tracer/fixtures/visual/visual-strip.pdf", "page": 1, "property": "region-alignment", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "agree", "reason": null, "expected_agree_regions": ["ink-strip", "blank-lower"]},
+
+    {"carrier": "visual-strip-faint", "file": "tests/tracer/fixtures/visual/visual-strip-faint.pdf", "page": 1, "property": "ink-coverage", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "unknown", "reason": "uncalibrated"},
+    {"carrier": "visual-strip-faint", "file": "tests/tracer/fixtures/visual/visual-strip-faint.pdf", "page": 1, "property": "region-alignment", "run": "derivation", "geometry": "geometry-page-pt", "frame": "page-1", "status": "unknown", "reason": "uncalibrated"},
+
+    {"carrier": "visual-strip", "file": "tests/tracer/fixtures/visual/visual-strip-omission.pdf", "page": 1, "property": "ink-coverage", "run": "detection", "geometry": "geometry-page-pt", "frame": "page-1", "status": "differ", "reason": null, "expected_differ_regions": ["ink-strip"], "expected_agree_regions": ["blank-lower"]},
+    {"carrier": "visual-strip-rot", "file": "tests/tracer/fixtures/visual/visual-strip-rot90.pdf", "page": 1, "property": "region-alignment", "run": "detection", "geometry": "geometry-rotated-strip", "frame": "page-1-rot180", "status": "differ", "reason": null, "expected_differ_regions": ["ink-strip"], "expected_agree_regions": ["blank-lower"]}
+  ],
+
+  "thresholds": [
+    {"property": "ink-coverage", "carrier": "bank-statement-ca-excerpt", "page": 1, "min": 0.0041, "max": 1.0},
+    {"property": "region-alignment", "carrier": "bank-statement-ca-excerpt", "page": 1, "min": 0.0041, "max": 1.0},
+
+    {"property": "ink-coverage", "carrier": "diario-de-poesia-excerpt", "page": 1, "min": 0.232, "max": 1.0},
+    {"property": "region-alignment", "carrier": "diario-de-poesia-excerpt", "page": 1, "min": 0.232, "max": 1.0},
+
+    {"property": "ink-coverage", "carrier": "budgeting-basics-excerpt", "page": 1, "min": 0.1269, "max": 1.0},
+    {"property": "region-alignment", "carrier": "budgeting-basics-excerpt", "page": 1, "min": 0.1269, "max": 1.0},
+
+    {"property": "ink-coverage", "carrier": "visual-strip-rot", "page": 1, "min": 0.01, "max": 1.0},
+    {"property": "region-alignment", "carrier": "visual-strip-rot", "page": 1, "min": 0.95, "max": 1.0},
+
+    {"property": "ink-coverage", "carrier": "visual-strip", "page": 1, "min": 0.01, "max": 1.0},
+    {"property": "region-alignment", "carrier": "visual-strip", "page": 1, "min": 0.95, "max": 1.0}
+  ],
+
+  "threshold_provenance": [
+    {"property": "ink-coverage", "carrier": "bank-statement-ca-excerpt", "derivation_file": "fixtures/carriers/bank-statement-ca-excerpt.pdf", "kind": "derived-this-slice", "rule": "min = max(page_dil/2, noink_dil*1.25) rounded to 4dp (0.008201/2 -> 0.0041); max = 1.0 admits region-scale ink up to 100%"},
+    {"property": "region-alignment", "carrier": "bank-statement-ca-excerpt", "derivation_file": "fixtures/carriers/bank-statement-ca-excerpt.pdf", "kind": "derived-this-slice", "rule": "same measured fractions as ink-coverage (both oracles measure the dilated/simplified mask); window kept identical"},
+
+    {"property": "ink-coverage", "carrier": "diario-de-poesia-excerpt", "derivation_file": "fixtures/carriers/diario-de-poesia-excerpt.pdf", "kind": "derived-this-slice", "rule": "min = max(page_dil/2=0.2319975, noink_dil*1.25=0.1843175) -> 0.232; max = 1.0"},
+    {"property": "region-alignment", "carrier": "diario-de-poesia-excerpt", "derivation_file": "fixtures/carriers/diario-de-poesia-excerpt.pdf", "kind": "derived-this-slice", "rule": "same measured fractions as ink-coverage; window kept identical"},
+
+    {"property": "ink-coverage", "carrier": "budgeting-basics-excerpt", "derivation_file": "fixtures/carriers/budgeting-basics-excerpt.pdf", "kind": "derived-this-slice", "rule": "min = page_dil/2 (0.253832/2 -> 0.1269); max = 1.0"},
+    {"property": "region-alignment", "carrier": "budgeting-basics-excerpt", "derivation_file": "fixtures/carriers/budgeting-basics-excerpt.pdf", "kind": "derived-this-slice", "rule": "same measured fractions as ink-coverage; window kept identical"},
+
+    {"property": "ink-coverage", "carrier": "visual-strip-rot", "derivation_file": "tests/tracer/fixtures/visual/visual-strip-rot90.pdf", "kind": "reused-xzy.5-bounds-remeasured", "rule": "COV_BOUNDS {0.01, 1.0} from sunset-xzy.5 re-confirmed by re-measurement under the pinned render (page 0.017561, strip 1.0, blank 0.0)"},
+    {"property": "region-alignment", "carrier": "visual-strip-rot", "derivation_file": "tests/tracer/fixtures/visual/visual-strip-rot90.pdf", "kind": "reused-xzy.5-bounds-remeasured", "rule": "ALN_BOUNDS {0.95, 1.0} from sunset-xzy.5 re-confirmed by re-measurement"},
+
+    {"property": "ink-coverage", "carrier": "visual-strip", "derivation_file": "tests/tracer/fixtures/visual/visual-strip.pdf", "kind": "reused-xzy.5-bounds-remeasured", "rule": "COV_BOUNDS {0.01, 1.0} from sunset-xzy.5 re-confirmed by re-measurement"},
+    {"property": "region-alignment", "carrier": "visual-strip", "derivation_file": "tests/tracer/fixtures/visual/visual-strip.pdf", "kind": "reused-xzy.5-bounds-remeasured", "rule": "ALN_BOUNDS {0.95, 1.0} from sunset-xzy.5 re-confirmed by re-measurement"}
+  ],
+
+  "derivation_vs_detection": {
+    "derivation_files": [
+      "fixtures/carriers/bank-statement-ca-excerpt.pdf",
+      "fixtures/carriers/diario-de-poesia-excerpt.pdf",
+      "fixtures/carriers/budgeting-basics-excerpt.pdf",
+      "tests/tracer/fixtures/visual/visual-strip.pdf",
+      "tests/tracer/fixtures/visual/visual-strip-rot90.pdf",
+      "tests/tracer/fixtures/visual/visual-strip-faint.pdf"
+    ],
+    "detection_files": [
+      "tests/tracer/fixtures/visual/visual-strip-shift.pdf",
+      "tests/tracer/fixtures/visual/visual-strip-omission.pdf",
+      "tests/tracer/fixtures/visual/visual-strip-duplication.pdf",
+      "tests/tracer/fixtures/visual/visual-strip-rot90.pdf"
+    ],
+    "overlap_files": ["tests/tracer/fixtures/visual/visual-strip-rot90.pdf"],
+    "overlap_note": "ALIGN-001, recorded explicitly: the rot90 raster is BOTH in the derivation set (thresholds derived under the TRUE frame page-1-rot90, which agrees) and the detection set (the seeded wrong-frame control runs it under page-1-rot180, which differs). The calibration is marked from the derivation run only; the detection run is never what marks a property calibrated. The remaining three mutation rasters (shift, omission, duplication) are detection-only."
+  },
+
+  "render_configuration": {
+    "renderer_name": "pdftoppm",
+    "renderer_version": "26.01.0",
+    "dpi": 72,
+    "page": 1,
+    "binarization": {"enabled": true, "method": "fixed-threshold", "threshold": 128},
+    "source_simplification": "ink-dilation-2px",
+    "extractor_lineage": "pymupdf",
+    "renderer_lineage": "poppler",
+    "evidence_class": "independent",
+    "per_carrier_simplification": {
+      "bank-statement-ca-excerpt": "ink-dilation-2px",
+      "diario-de-poesia-excerpt": "ink-dilation-2px",
+      "budgeting-basics-excerpt": "ink-dilation-2px",
+      "visual-strip-rot": "ink-dilation-2px",
+      "visual-strip": "ink-dilation-2px",
+      "visual-strip-faint": "ink-dilation-2px"
+    },
+    "byte_identity_note": "pdftoppm renders are byte-identical within the pinned environment (sunset-xzy.1 finding); every measurement in this record was taken through render.render_page with exactly this configuration."
+  },
+
+  "faint_mechanism": "uncalibrated-by-record: the faint carrier's strip ink is uniform gray 200, strictly lighter than the pinned fixed-threshold-128 binarization, so the pinned pipeline measures page ink fraction identically 0.0 — indistinguishable from a truly blank page. No honest calibration window exists, so the record deliberately carries NO threshold entry for visual-strip-faint for either property; both oracle outcomes are unknown via the typed reason 'uncalibrated' (spec scenario 'Faint scan': the degraded page blocks the aggregate). No outcome is faked and no window is weakened.",
+
+  "measurement_notes": {
+    "agent_executed": "AGENT-EXECUTED: all thresholds, fractions and outcomes in this record were measured by a coding agent on 2026-11-03 through the pinned render pipeline (pymupdf 1.28.2 decode, pdftoppm 26.01.0 render, /usr/bin/python3). A human pass supersedes.",
+    "threshold_rule": "Derived entries: min = max(page_dil/2, noink_dil*1.25) rounded to 4 dp, max = 1.0 — the window admits region- AND page-scale fractions (xzy.2 finding) with deterministic margins on both sides. Strip entries: xzy.5 bounds reused after re-measurement confirmation.",
+    "mixed_pick_rationale": "budgeting-basics-excerpt chosen as the mixed variety over invoice-arca-redacted.pdf: its pinned render separates image-dense bands (block fractions >= 0.6) from text rows (~0.2-0.3) with guaranteed all-zero margins, giving cleaner ink/no-ink claims; invoice-arca measured viable (page 0.1641, blank bands present) but with busier partial-ink bands.",
+    "class_demonstration_split": "This record's own detection runs exercise omission (ink-coverage) and wrong-frame (region-alignment). The duplication (ink-coverage) and shift (region-alignment) classes are claimed from the committed sunset-xzy.5 mutation suite (tests/tracer/test_visual_mutations.py), which demonstrates all four classes on these same pinned strip rasters and stays green independently of this record."
+  }
+}
