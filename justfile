@@ -55,3 +55,29 @@ digitization-review source output port="8124" pages="":
     run_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$cfg")
     {{python}} -B -m digitization run --source "$src" --pages "$run_pages" --config "$cfg" --output "$out"
     {{python}} -B -m dsc03.visual.review --descriptor "$out/descriptor.json" --out "$out/review.html" --serve {{port}}
+
+# OCR ground-truth loop (sunset-9op): rasterize a text PDF to pixels, OCR the
+# raster with pinned tesseract (spa), compare OCR regions against the native
+# truth (IoU + text similarity measurement sheet), and serve the OCR claims
+# in the review SPA over the rasterized render. Args: source output [port]
+# [pages] [dpi]. `pages` is a comma-separated 1-based list (default: all).
+# Eval exit 2 = measured discrepancies (expected — that is the finding).
+# E.g.: just ocr-review pba-judicial-2026-07-29.pdf /tmp/pba-ocr 8126 1
+ocr-review source output port="8125" pages="" dpi="200":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    src="{{source}}"; root="{{output}}"; dpi="{{dpi}}"
+    page_flag=""; [ -n "{{pages}}" ] && page_flag="--pages {{pages}}"
+    mkdir -p "$root"
+    {{python}} -B -m digitization.rasterize --source "$src" --output-dir "$root/raster" --dpi "$dpi" $page_flag
+    {{python}} -B -m digitization.recorded_config --source "$src" --output "$root/truth-config.json" --granularity lines $page_flag
+    truth_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$root/truth-config.json")
+    {{python}} -B -m digitization run --source "$src" --pages "$truth_pages" --config "$root/truth-config.json" --output "$root/truth-run"
+    {{python}} -B -m digitization.ocr_config --image-pdf "$root/raster/image.pdf" --pages-dir "$root/raster" --dpi "$dpi" $page_flag --output "$root/ocr-config.json"
+    ocr_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$root/ocr-config.json")
+    {{python}} -B -m digitization run --source "$root/raster/image.pdf" --pages "$ocr_pages" --config "$root/ocr-config.json" --output "$root/ocr-run"
+    set +e
+    {{python}} -B -m digitization.ocr_eval --true "$root/truth-run/descriptor.json" --ocr "$root/ocr-run/descriptor.json" --output "$root/ocr-eval.json" --iou 0.5 >/dev/null
+    echo "eval exit $? (2 = discrepancies measured — sheet at $root/ocr-eval.json)"
+    set -e
+    {{python}} -B -m dsc03.visual.review --descriptor "$root/ocr-run/descriptor.json" --out "$root/ocr-run/review.html" --serve {{port}}
