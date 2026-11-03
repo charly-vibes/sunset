@@ -25,9 +25,9 @@
 
 ## 6. Integration and documentation
 
-- [ ] 6.1 Demo/evaluation reports record visual oracle results as a separate evidence class; conformance labels unchanged (test asserts labels ignore oracle outcomes).
-- [ ] 6.2 Docs: update `docs/src/` extraction pages and status.md with the oracle contract, evidence-class rules and calibrated limits; no accuracy, completeness or semantic claims.
+- [x] 6.1 Demo/evaluation reports record visual oracle results as a separate evidence class; conformance labels unchanged (test asserts labels ignore oracle outcomes). (sunset-xzy.7: dsc03/visual/reports.py `record()` — distinct `visual_oracles` section with `non_substitution` note; tests/tracer/test_visual_integration.py 7 tests incl. classify-inertness and passing-oracles/no-readers-stays-`incomplete`; conformance.py untouched. AGENT-EXECUTED spawn glm-5.3-flash + lead verification, REVIEW_REQUIRED caveat — human pass supersedes)
+- [x] 6.2 Docs: update `docs/src/` extraction pages and status.md with the oracle contract, evidence-class rules and calibrated limits; no accuracy, completeness or semantic claims. (sunset-xzy.8: docs/src/visual-oracles.md new page — 8-requirement contract, evidence-class rules, calibrated limits, zo5 approval provenance, NOT-deployed-truth framing; reference.md surface + fixture catalog; integrate.md Recipe 3 extension; status.md dated bullet with pre-existing limitation sentences kept verbatim. AGENT-EXECUTED — human pass supersedes)
 
 ## 7. Final gate
 
-- [ ] 7.1 `just spec-check` ALL GATES PASSED; frozen 0.2 validator still PASS 11; measurement/fixture churn reverted.
+- [x] 7.1 `just spec-check` ALL GATES PASSED; frozen 0.2 validator still PASS 11; measurement/fixture churn reverted. (sunset-xzy.9 gate: spec-check ALL GATES PASSED — 0.19 --all --strict + spk lint + 1.14.2 --all --strict + composition regression; validator.py test PASS 11; pytest 533 passed + 18 subtests; all sibling tickets .1-.8 closed; git tree clean of fixture/measurement churn; no conformance-label broadening — conformance.py diff empty. Gate executed by lead.)
