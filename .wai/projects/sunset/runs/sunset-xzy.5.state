@@ -1,0 +1,13 @@
+{
+  "ticket": "sunset-xzy.5",
+  "branch": "main",
+  "head": "5a608b8",
+  "brief": ".wai/projects/sunset/briefs/sunset-xzy.5.md",
+  "history": [
+    "claim:5a608b8",
+    "gates:5a608b8",
+    "brief:pending-commit"
+  ],
+  "agent": "",
+  "log": ".wai/projects/sunset/logs/sunset-xzy.5.log"
+}
