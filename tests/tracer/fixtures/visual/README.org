@@ -1,0 +1,61 @@
+#+TITLE: Mutation fixtures provenance — sunset-xzy.5 (tasks.md 5.1)
+
+All carriers are synthetic, seed-free, hand-computed geometry: a white page
+plus fill-only black rectangles (=draw_rect(rect, fill=(0,0,0), color=None,
+width=0)= — no stroke halo, per the sunset-xzy.3/.4 gotcha), built once with
+=pymupdf= *1.28.2* via =/usr/bin/python3= and committed as bytes. At the
+pinned 72 dpi (=1 pt = 1 px=) poppler renders user space directly, so raw ink
+lands at integer-exact pixels: no anti-aliasing spill. Descriptor space is
+canonical (origin bottom-left, x-right, y-up); pymupdf draws top-left y-down,
+so descriptor =(x, y)= is drawn at fitz =(x, 792 - y)=.
+
+Rendered through the pinned =RenderConfig= (pdftoppm 26.01.0, 72 dpi,
+fixed-threshold 128, =ink-dilation-2px=, lineages pymupdf/poppler =
+=independent=). Rebuild command shape is recorded in
+=sunset-xzy.5-report.org=; byte-identity of the committed fixtures is what
+the suite consumes (the tests never rebuild them).
+
+* Portrait family (carrier id =visual-strip=)
+
+612×792 pt page. Ink strip over descriptor rect x 100..400, y 300..324
+(300×24 pt) = fitz Rect(100, 468, 400, 492) = raster px x 100..400,
+y 468..492. Pristine whole-page ink fraction ≈ 0.018 (fill 7200 px of
+484704; ≥ the recorded 0.01 coverage floor).
+
+- =visual-strip.pdf= — *pristine baseline*. One strip, as above.
+- =visual-strip-shift.pdf= — *seeded shift* (claimed by region-alignment).
+  The strip is drawn 12 px shifted in +x and +y: descriptor
+  (112, 312)-(412, 336) = fitz Rect(112, 456, 412, 480). Region claims are
+  unchanged; ≥12 px per spec scenario "Seeded shift detected". Post-dilation
+  fraction inside the claimed rect ≈ 0.56 < recorded min 0.95 ⇒ =differ=.
+- =visual-strip-omission.pdf= — *seeded omission* (claimed by ink-coverage).
+  Blank 612×792 page: the ink block is absent. Claimed-ink fraction = 0 <
+  floor 0.01 ⇒ =differ=, region-attributed.
+- =visual-strip-duplication.pdf= — *seeded duplication* (claimed by
+  ink-coverage). The SAME 300×24 ink block copied elsewhere on the page,
+  exactly over the region claiming "no-ink": descriptor (100, 60)-(400, 84)
+  = fitz Rect(100, 708, 400, 732). The no-ink region's fraction lifts to
+  ~1.0 > floor ⇒ =differ=, region-attributed; the original strip is intact
+  (detection attributable to the copy).
+
+* Rotated family (carrier id =visual-strip-rot=)
+
+- =visual-strip-rot90.pdf= — landscape 792×612 raster carrying the
+  90°-clockwise view of the same descriptor page (the sunset-xzy.3/.4
+  landscape trick: ink drawn exactly where the DECLARED rot90 frame maps the
+  descriptor box — descriptor (x, y) → raster (y, x) — never pymupdf
+  =set_rotation=). The strip maps to raster x 300..324, y 100..400 =
+  fitz Rect(300, 100, 324, 400).
+- =geometry-rotated-strip.json= — the frame record. =page-1-rot90= is the
+  TRUE declared frame (baseline control agrees through it); =page-1-rot180=
+  is the *seeded wrong frame* (claimed by region-alignment): the same raster
+  evaluated under it maps every rect elsewhere ⇒ =differ=,
+  region-attributed.
+
+* Calibration windows used by the suite (recorded in-test, not files)
+
+- region-alignment: ={"min": 0.95, "max": 1.0}= — a claimed rect must sit on
+  ≥95% simplified ink; pristine rects exactly cover their fill (1.0).
+- ink-coverage: ={"min": 0.01, "max": 1.0}= — whole page ≥1% ink (pristine
+  ≈1.8%); claimed ink regions up to 100%; omission drops to 0; duplication
+  lifts the no-ink region to ~1.0.

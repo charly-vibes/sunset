@@ -20,7 +20,7 @@
 
 ## 5. Mutation validation and calibration
 
-- [ ] 5.1 TDD: seeded-mutation fixtures (shift, omission, duplication, wrong frame) over committed carriers; each oracle detects exactly the defect classes it claims; claiming classes without a passing mutation demonstration keeps the property `uncalibrated`.
+- [x] 5.1 TDD: seeded-mutation fixtures (shift, omission, duplication, wrong frame) over committed carriers; each oracle detects exactly the defect classes it claims; claiming classes without a passing mutation demonstration keeps the property `uncalibrated`. (sunset-xzy.5: tests/tracer/test_visual_mutations.py + tests/tracer/fixtures/visual/ — pinned class→oracle mapping [alignment claims shift+wrong frame, coverage claims omission+duplication], 4 seeded demonstrations at full severity each with unmutated baseline control ending agree, differ with region attribution, uncalibrated no-gate path pinned; AGENT-EXECUTED demonstration, human pass supersedes; 10 tests)
 - [ ] 5.2 Calibration sheet: thresholds derived from recorded runs over varied pages (native text, image-only scan, mixed, rotated, faint); per-page outcomes with `unknown` cases surfaced; no corpus-wide aggregate pass masks unknown pages. The sheet records the design.md calibration-record fields (property, defect classes exercised, carriers, per-page outcomes, thresholds, render configuration).
 
 ## 6. Integration and documentation
