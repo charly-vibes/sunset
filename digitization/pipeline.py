@@ -43,14 +43,23 @@ def _preflight(source_path, pages, config_path, output):
         if config['version'] != '1' or config['source_sha256'] != digest(source):
             raise ValueError('unsupported configuration or source hash mismatch')
         provider = config['provider']
-        if (provider['kind'] != 'recorded' or not isinstance(provider['id'], str)
-                or not provider['id'] or not isinstance(provider['version'], str) or not provider['version']):
-            raise ValueError('only identified recorded providers are enabled')
+        if provider['kind'] not in ('recorded', 'local'):
+            raise ValueError('only identified recorded or local providers are enabled')
+        if (not isinstance(provider['id'], str) or not provider['id']
+                or not isinstance(provider.get('version'), str) or not provider['version']):
+            raise ValueError('providers must pin id and version')
+        if provider['kind'] == 'local':
+            if not isinstance(provider.get('language'), str) or not provider['language']:
+                raise ValueError('local provider requires a pinned language')
+            if provider.get('route', 'regional') not in ('regional', 'baseline'):
+                raise ValueError('local route must be regional or baseline')
+            if 'budget' not in config:
+                raise ValueError('local route requires a durable budget policy')
         model = provider.get('model', {'id': provider['id'], 'revision': None})
         if (not isinstance(model, dict) or not isinstance(model.get('id'), str) or not model['id']
                 or model.get('revision') is not None and not isinstance(model['revision'], str)):
             raise ValueError('invalid model identity/revision availability')
-        if not isinstance(config.get('recognition', {}), dict):
+        if provider['kind'] == 'recorded' and not isinstance(config.get('recognition', {}), dict):
             raise ValueError('recognition request parameters must be an object')
         if 'budget' in config:
             config['budget'] = validate_policy(config['budget'])
@@ -58,6 +67,11 @@ def _preflight(source_path, pages, config_path, output):
         if type(dpi) is not int or not 36 <= dpi <= 300:
             raise ValueError('DPI must be an integer between 36 and 300')
         frames = page_frames(source, pages)
+        if provider['kind'] == 'local':
+            # proposals come from the image-based detector, not the config:
+            # no OCR prerequisite, so recorded per-page observations are absent
+            json_bytes(config)
+            return source, config_raw, config
         for page in pages:
             observations = config['pages'][str(page)]
             detections, recognitions = observations['detections'], observations['recognitions']
@@ -91,14 +105,33 @@ def _preflight(source_path, pages, config_path, output):
         raise InputError(str(error)) from error
 
 
-def run(source_path, pages, config_path, output, *, cache_dir=None, fresh=(), selections=None):
+def run(source_path, pages, config_path, output, *, cache_dir=None, fresh=(), selections=None,
+        runner=None):
     _, _, config = _preflight(source_path, pages, config_path, output)
+    if config['provider']['kind'] == 'local':
+        from digitization.local_route import run_local
+        return run_local((source_path, pages, config_path), output, runner=runner)
     if 'refinement' in config:
         from digitization.refinement import refine_run
         return refine_run(source_path, pages, config_path, output, cache_dir=cache_dir,
                           fresh=fresh, selections=selections)
     return _run_once(source_path, pages, config_path, output, cache_dir=cache_dir,
                      fresh=fresh, selections=selections)
+
+
+def _resume_uncertain(root, ledger_path):
+    """Report a provider-failure stop: only the durable ledger was preserved."""
+    from digitization.inspection import IntegrityError
+    try:
+        ledger = BudgetLedger.open(ledger_path)
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        raise IntegrityError('invalid durable budget state: ' + str(error)) from error
+    unresolved = [attempt for attempt in ledger.attempts
+                  if attempt['state'] in ('reserved', 'dispatch-uncertain')]
+    return {'manifest': str(root / 'manifest.json'),
+            'status': 'stopped-with-unresolved-work',
+            'reason': 'dispatch-uncertain', 'provider_calls': 0,
+            'unresolved_attempts': [attempt['id'] for attempt in unresolved]}
 
 
 def resume(run_directory):
@@ -109,6 +142,13 @@ def resume(run_directory):
     root = Path(run_directory).resolve()
     if not root.is_dir():
         raise InputError('run directory does not exist')
+    ledger_path = root / 'budget-state.json'
+    if not (root / 'manifest.json').is_file():
+        # a provider-failure stop preserves exactly the durable ledger; report
+        # the unreconciled attempts instead of failing inspection
+        if not ledger_path.is_file():
+            raise InputError('run directory has neither manifest nor budget state')
+        return _resume_uncertain(root, ledger_path)
     report = inspect_run(root)
     if report.get('mode') == 'native':
         return {'manifest': str(root / 'manifest.json'), 'status': report['status'],
