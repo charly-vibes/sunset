@@ -1,0 +1,233 @@
+{
+  "version": "0.3",
+  "id": "fixture-cta-cte-review",
+  "source": {
+    "format": "application/pdf",
+    "sha256": "e92bc5df88d39a95c910ba7d9f23ca52e7d6673cd4788a7c9461511b08d2235b",
+    "locator": "../../../../fixtures/carriers/cta-cte-propietario-redacted.pdf"
+  },
+  "views": [
+    {
+      "id": "physical",
+      "kind": "physical",
+      "root": "document"
+    },
+    {
+      "id": "logical",
+      "kind": "logical",
+      "root": "logical-root"
+    }
+  ],
+  "regions": [
+    {
+      "id": "document",
+      "view_id": "physical",
+      "kind": "document"
+    },
+    {
+      "id": "logical-root",
+      "view_id": "logical",
+      "kind": "document"
+    },
+    {
+      "id": "page-1",
+      "view_id": "physical",
+      "kind": "page"
+    },
+    {
+      "id": "page-2",
+      "view_id": "physical",
+      "kind": "page"
+    },
+    {
+      "id": "claim-1",
+      "view_id": "physical",
+      "kind": "text-block",
+      "geometry": {
+        "profile_id": "geometry",
+        "space": "page-1-pt",
+        "x": 54,
+        "y": 700,
+        "width": 200,
+        "height": 40
+      }
+    },
+    {
+      "id": "claim-2",
+      "view_id": "physical",
+      "kind": "text-block",
+      "geometry": {
+        "profile_id": "geometry",
+        "space": "page-2-pt",
+        "x": 60,
+        "y": 640,
+        "width": 180,
+        "height": 60
+      }
+    }
+  ],
+  "contents": [
+    {
+      "id": "image-1",
+      "kind": "image",
+      "value": "fixtures/carriers/cta-cte-propietario-redacted.pdf#1"
+    },
+    {
+      "id": "image-2",
+      "kind": "image",
+      "value": "fixtures/carriers/cta-cte-propietario-redacted.pdf#2"
+    },
+    {
+      "id": "text-claim-1",
+      "kind": "text",
+      "value": "saldo reconocido pagina 1"
+    },
+    {
+      "id": "text-claim-2",
+      "kind": "text",
+      "value": "saldo reconocido pagina 2"
+    }
+  ],
+  "relations": [
+    {
+      "id": "contains-page-1",
+      "kind": "contains",
+      "from": "document",
+      "to": "page-1"
+    },
+    {
+      "id": "contains-page-2",
+      "kind": "contains",
+      "from": "document",
+      "to": "page-2"
+    },
+    {
+      "id": "contains-claim-1",
+      "kind": "contains",
+      "from": "page-1",
+      "to": "claim-1"
+    },
+    {
+      "id": "contains-claim-2",
+      "kind": "contains",
+      "from": "page-2",
+      "to": "claim-2"
+    },
+    {
+      "id": "has-image-1",
+      "kind": "has-content",
+      "from": "page-1",
+      "to": "image-1"
+    },
+    {
+      "id": "has-image-2",
+      "kind": "has-content",
+      "from": "page-2",
+      "to": "image-2"
+    },
+    {
+      "id": "has-text-claim-1",
+      "kind": "has-content",
+      "from": "claim-1",
+      "to": "text-claim-1"
+    },
+    {
+      "id": "has-text-claim-2",
+      "kind": "has-content",
+      "from": "claim-2",
+      "to": "text-claim-2"
+    },
+    {
+      "id": "derived-claim-1",
+      "kind": "derived-from",
+      "from": "evidence-claim-1",
+      "to": "evidence-image-1"
+    },
+    {
+      "id": "derived-claim-2",
+      "kind": "derived-from",
+      "from": "evidence-claim-2",
+      "to": "evidence-image-2"
+    }
+  ],
+  "annotations": [],
+  "evidence": [
+    {
+      "id": "evidence-image-1",
+      "origin": "source",
+      "source_ref": "sha256:e92bc5df88d39a95c910ba7d9f23ca52e7d6673cd4788a7c9461511b08d2235b#page:1",
+      "content_ids": [
+        "image-1"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evidence-image-2",
+      "origin": "source",
+      "source_ref": "sha256:e92bc5df88d39a95c910ba7d9f23ca52e7d6673cd4788a7c9461511b08d2235b#page:2",
+      "content_ids": [
+        "image-2"
+      ],
+      "selector_ids": []
+    },
+    {
+      "id": "evidence-claim-1",
+      "origin": "extracted",
+      "source_ref": "sha256:e92bc5df88d39a95c910ba7d9f23ca52e7d6673cd4788a7c9461511b08d2235b#page:1",
+      "content_ids": [
+        "text-claim-1"
+      ],
+      "selector_ids": [],
+      "transform": {
+        "id": "fixture-recognition",
+        "version": "1",
+        "config_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "dependencies": [
+          "fixture-extractor@0"
+        ],
+        "inputs": [
+          "image-1"
+        ],
+        "outputs": [
+          "text-claim-1"
+        ]
+      }
+    },
+    {
+      "id": "evidence-claim-2",
+      "origin": "extracted",
+      "source_ref": "sha256:e92bc5df88d39a95c910ba7d9f23ca52e7d6673cd4788a7c9461511b08d2235b#page:2",
+      "content_ids": [
+        "text-claim-2"
+      ],
+      "selector_ids": [],
+      "transform": {
+        "id": "fixture-recognition",
+        "version": "1",
+        "config_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "dependencies": [
+          "fixture-extractor@0"
+        ],
+        "inputs": [
+          "image-2"
+        ],
+        "outputs": [
+          "text-claim-2"
+        ]
+      }
+    }
+  ],
+  "selectors": [],
+  "interpretations": [],
+  "coverage": [],
+  "vocabularies": [],
+  "profiles": [
+    {
+      "id": "geometry",
+      "kind": "geometry",
+      "uri": "geometry.json",
+      "version": "1",
+      "sha256": "adab84febb3847647292bfe78ee75bb73a113ba03270a27a0fc0ce4d3d277db0"
+    }
+  ]
+}

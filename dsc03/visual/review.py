@@ -8,7 +8,9 @@
 #   class into the offline review SPA template
 #   (hitl/visual-review/templates/visual-review-spa.html). Walks every
 #   unique render target recorded in fixtures/visual/calibration.json for
-#   the all-examples bundle. Missing renderers and unresolvable frames stay
+#   the all-examples bundle, and walks every page of a DSC 0.3 descriptor
+#   (as produced by `python3 -m digitization run`) for the
+#   descriptor-sourced bundle. Missing renderers and unresolvable frames stay
 #   typed (unavailable / unknown); regions are never silently dropped and
 #   verdicts are never fabricated. `python -m dsc03.visual.review` builds
 #   and optionally serves the bundle over loopback.
@@ -22,6 +24,7 @@
 import argparse
 import base64
 import json
+import re
 import shutil
 import sys
 from dataclasses import replace
@@ -99,7 +102,13 @@ def _page_record(page_number, regions, config, rendered, geometry, frame_name,
         rendered.data).decode("ascii")
     record["width"] = width
     record["height"] = height
-    mapping = frame_mapping(geometry, frame_name, config, (width, height))
+    if not regions:
+        return record  # nothing claimed on this page; no frame question
+    if frame_name is None:
+        mapping = UnknownMapping(
+            "invalid_geometry_frame", "page has no single declared space")
+    else:
+        mapping = frame_mapping(geometry, frame_name, config, (width, height))
     if isinstance(mapping, UnknownMapping):
         record["unavailable"] = (
             f"frame unknown: {mapping.reason}: {mapping.detail}")
@@ -198,6 +207,120 @@ def build_calibration_review_bundle(out_path, record_path=None, config=None):
             "pages": entries[carrier],
         })
     record = _bundle_record(carriers)
+    _write_bundle(out_path, record)
+    return record
+
+
+_PAGE_ID_RE = re.compile(r"^(?:pg|page-)(\d+)$")
+
+
+def _descriptor_geometry(descriptor, base_dir):
+    """Load the descriptor's declared geometry profile artifact (or None).
+
+    The profile uri resolves relative to the descriptor file, exactly like
+    the digitization run layout (blobs/, carrier/). A declared-but-unreadable
+    profile returns None — every frame then stays typed unknown downstream,
+    never a guessed convention.
+    """
+    for profile in descriptor.get("profiles", []):
+        if profile.get("kind") != "geometry":
+            continue
+        try:
+            return json.loads((Path(base_dir) / profile["uri"]).read_text())
+        except (OSError, ValueError, KeyError):
+            return None
+    return None
+
+
+def _descriptor_page_targets(descriptor):
+    """Enumerate (page_region, regions, spaces) targets from a descriptor.
+
+    Pages are the descriptor's ``kind: page`` regions, ordered by their
+    derivable page number (``pgN``/``page-N``); claimed regions attach
+    through ``contains`` relations and keep their ids verbatim. ``spaces``
+    are each region's declared geometry ``space`` — the frame name the
+    declared geometry profile must resolve.
+    """
+    region_by_id = {r["id"]: r for r in descriptor.get("regions", [])}
+    contained = {}
+    for rel in descriptor.get("relations", []):
+        if rel.get("kind") == "contains":
+            contained.setdefault(rel["from"], []).append(rel["to"])
+
+    pages = [r for r in descriptor.get("regions", []) if r.get("kind") == "page"]
+    pages.sort(key=lambda p: (
+        (int(m.group(1)), 0) if (m := _PAGE_ID_RE.match(p["id"])) else (10**9, 0)))
+
+    targets = []
+    for page in pages:
+        regions, spaces = [], []
+        for rid in contained.get(page["id"], []):
+            region = region_by_id.get(rid)
+            if region is None or "geometry" not in region:
+                continue
+            box = region["geometry"]
+            regions.append({
+                "id": region["id"],
+                "x": box["x"],
+                "y": box["y"],
+                "w": box.get("w", box.get("width")),
+                "h": box.get("h", box.get("height")),
+            })
+            spaces.append(box.get("space"))
+        targets.append((page, regions, spaces))
+    return targets
+
+
+def build_descriptor_review_bundle(descriptor_path, out_path, config=None):
+    """Render every page of a digitization descriptor for human review.
+
+    ``descriptor_path`` is a DSC 0.3 descriptor as produced by
+    ``python3 -m digitization run`` (artifact ``descriptor.json``, whose
+    ``source.locator`` resolves relative to the descriptor's directory).
+    One page entry per descriptor page — never truncated; a page whose
+    claimed regions declare no single resolvable space stays typed unknown
+    with regions kept (rect_px null), through the same declared-frame math
+    the oracles use. Returns the embedded v2 record.
+    """
+    config = config or _default_config()
+    descriptor_path = Path(descriptor_path)
+    descriptor = json.loads(descriptor_path.read_text(encoding="utf-8"))
+    base_dir = descriptor_path.parent
+    source = base_dir / descriptor["source"]["locator"]
+    geometry = _descriptor_geometry(descriptor, base_dir)
+
+    page_records = []
+    for page, regions, spaces in _descriptor_page_targets(descriptor):
+        frame_name = spaces[0] if spaces and len(set(spaces)) == 1 else None
+        matched = _PAGE_ID_RE.match(page["id"])
+        if matched is None:
+            page_records.append({
+                "page": None, "file": descriptor["source"]["locator"],
+                "unavailable": (
+                    f"page number not derivable from region id {page['id']!r}"),
+                "regions": [
+                    {"id": r["id"], "rect_px": None, "expected": None}
+                    for r in regions],
+                "image": None, "width": None, "height": None,
+                "frame": None,
+            })
+            continue
+        entry_config = replace(config, page=int(matched.group(1)))
+        try:
+            rendered = render.render_page(entry_config, source)
+        except render.RenderCommandError as exc:
+            rendered = render.RenderUnavailable(config=entry_config,
+                                                reason=str(exc))
+        page_records.append(_page_record(
+            entry_config.page, regions, entry_config, rendered, geometry,
+            frame_name, file=descriptor["source"]["locator"]))
+
+    record = _bundle_record([{
+        "carrier": descriptor["id"],
+        "evidence_class": config.evidence_class,
+        "render_config": config.to_dict(),
+        "pages": page_records,
+    }])
     _write_bundle(out_path, record)
     return record
 

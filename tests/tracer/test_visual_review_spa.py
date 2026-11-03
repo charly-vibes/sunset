@@ -34,13 +34,14 @@ from pathlib import Path
 import pytest
 
 from dsc03.visual import Binarization, RenderConfig, render
-from dsc03.visual.review import build_review_bundle
+from dsc03.visual.review import build_descriptor_review_bundle, build_review_bundle
 
 REPO = Path(__file__).resolve().parents[2]
 TEMPLATE_PATH = REPO / "hitl" / "visual-review" / "templates" / "visual-review-spa.html"
 GEOMETRY = json.loads((REPO / "tests/tracer/profiles/geometry-page-pt.json").read_text())
 CARRIER_PDF = REPO / "fixtures/carriers/bank-statement-ca-excerpt.pdf"
 CALIBRATION = json.loads((REPO / "fixtures/visual/calibration.json").read_text())
+DESCRIPTOR_FIXTURE = REPO / "tests/tracer/fixtures/descriptor-review/cta-cte-descriptor.json"
 
 
 def _regions_for(carrier_id):
@@ -400,3 +401,74 @@ def test_cli_builds_the_all_examples_bundle_without_serving(tmp_path):
     assert r.returncode == 0, r.stderr
     html = (tmp_path / "index.html").read_text()
     assert "visual-review-bundle" in html and "ledger-block" in html
+
+
+# ---------------------------------------------------------------------------
+# descriptor-sourced bundles (sunset-ayj)
+# ---------------------------------------------------------------------------
+
+
+def test_descriptor_fixture_is_validator_passing():
+    from dsc03 import validator
+
+    descriptor = json.loads(DESCRIPTOR_FIXTURE.read_text())
+    assert validator.validate(descriptor) == []
+
+
+def test_descriptor_bundle_has_one_entry_per_page_with_verbatim_ids(tmp_path):
+    """A multi-page descriptor walks EVERY page target — no silent truncation.
+
+    Pins the descriptor→targets adapter on a committed multi-page fixture:
+    pages come from the descriptor's ``kind: page`` regions, claimed regions
+    attach through ``contains`` relations, ids are preserved verbatim, and
+    page 1's rect is hand-computed through the declared frame (595x842 pt
+    page at dpi 72, frame page-1-pt: box (54, 700, 200, 40) pt bottom-left
+    y-up → px [54, 842-740, 200, 40]).
+    """
+    out = tmp_path / "descriptor-review.html"
+    record = build_descriptor_review_bundle(DESCRIPTOR_FIXTURE, out)
+    assert record["kind"] == "visual-review-bundle" and record["version"] == 2
+    (carrier,) = record["carriers"]
+    assert carrier["carrier"] == "fixture-cta-cte-review"
+    assert carrier["evidence_class"] == "independent"
+    pages = carrier["pages"]
+    assert [p["page"] for p in pages] == [1, 2]  # no silent truncation
+    assert all(p["file"] == "../../../../fixtures/carriers/cta-cte-propietario-redacted.pdf"
+               for p in pages)
+    page1, _page2 = pages
+    assert page1["image"].startswith("data:image/png;base64,")
+    assert page1["width"] == 595 and page1["height"] == 842
+    assert [r["id"] for r in page1["regions"]] == ["claim-1"]
+    # hand-computed through the declared frame (see docstring)
+    assert page1["regions"][0]["rect_px"] == [54, 102, 200, 40]
+    assert out.is_file() and "fixture-cta-cte-review" in out.read_text()
+
+
+def test_descriptor_bundle_missing_declared_profile_stays_typed(tmp_path):
+    """An unreadable declared geometry profile maps nothing — typed unknown.
+
+    The generator must not crash and must not guess a coordinate
+    convention: every page keeps its regions with rect_px null.
+    """
+    descriptor = json.loads(DESCRIPTOR_FIXTURE.read_text())
+    carrier = REPO / "fixtures/carriers/cta-cte-propietario-redacted.pdf"
+    descriptor["source"]["locator"] = str(carrier)  # absolute: resolvable from tmp
+    descriptor["profiles"][0]["uri"] = "absent-profile.json"  # declared but unreadable
+    broken = tmp_path / "descriptor.json"
+    broken.write_text(json.dumps(descriptor), encoding="utf-8")
+
+    record = build_descriptor_review_bundle(broken, tmp_path / "out.html")
+    for page in record["carriers"][0]["pages"]:
+        assert page["unavailable"], page["page"]
+        assert page["unavailable"].startswith("frame unknown:")
+        assert page["regions"], page["page"]
+        assert all(r["rect_px"] is None for r in page["regions"])
+
+
+def test_descriptor_bundle_unknown_frame_page_keeps_regions(tmp_path):
+    out = tmp_path / "descriptor-review.html"
+    record = build_descriptor_review_bundle(DESCRIPTOR_FIXTURE, out)
+    page2 = record["carriers"][0]["pages"][1]
+    assert page2["unavailable"] and page2["unavailable"].startswith("frame unknown:")
+    assert [r["id"] for r in page2["regions"]] == ["claim-2"]
+    assert page2["regions"][0]["rect_px"] is None
