@@ -1,13 +1,18 @@
 {
   "ticket": "sunset-xzy.6",
   "branch": "main",
-  "head": "5f05edb",
+  "head": "0a00c35",
   "brief": ".wai/projects/sunset/briefs/sunset-xzy.6.md",
   "history": [
     "claim:5f05edb",
     "gates:5f05edb",
-    "brief:pending-commit"
+    "brief:4704d42",
+    "spawn:died-credit-wall",
+    "spawn:respawn-done",
+    "verify:REVIEW_REQUIRED-lead-side",
+    "ship:f747f4f",
+    "stop:0a00c35"
   ],
-  "agent": "",
+  "agent": "pi/openrouter/z-ai/glm-5.3-flash session (log .wai/projects/sunset/logs/sunset-xzy.6.log; attempt 1 died on OpenRouter credit wall — maxTokens 131072 vs 60022 affordable at balance -$0.02; fixed via ~/.pi/agent/models.json modelOverrides maxTokens 48000; fresh respawn DONE exit 0)",
   "log": ".wai/projects/sunset/logs/sunset-xzy.6.log"
 }

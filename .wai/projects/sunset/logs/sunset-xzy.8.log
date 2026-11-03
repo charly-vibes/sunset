@@ -1,0 +1,17 @@
+**sunset-xzy.8 complete.** Summary:
+
+**Baseline (recorded pre-edit):** `just spec-check` → ALL GATES PASSED, PASS 11 descriptor fixtures · pytest `533 passed, 18 subtests` · tests/docs `10 passed`
+
+**Changes (exactly the brief's set):**
+- **Created `docs/src/visual-oracles.md`** — the 8-requirement oracle contract, evidence-class rules (`correlated` = sensitivity-only, `independent` = poppler-vs-PyMuPDF), calibrated limits (thresholds only for the five recorded carriers; faint fixture honestly uncalibrated by design → `unknown` → aggregate blocks), conformance inertness (`record` + `non_substitution`, `classify` never reads the section), provenance (active change link, `sunset-zo5` approval 2026-11-02, `eeac8b0` amendments, AGENT-EXECUTED caveat), honest boundary. No accuracy/completeness/semantic/OCR claims; change specs explicitly NOT described as deployed.
+- **`docs/src/reference.md`** — five `dsc03/visual/*` machinery rows, active-change cross-ref, new visual-oracle fixture-catalog subsection.
+- **`docs/src/integrate.md`** — Recipe 3 extended with the `reports.record(...)` example (`pass`/`blocked` aggregate, `mixed` label, `non_substitution`); labels-invariant statement; four-reports framing intact.
+- **`docs/src/status.md`** — new dated bullet (sections 3–6 done, docs+final gate open in tasks.md, labels inert); both pre-existing OCR/visual limitation sentences kept verbatim (still true — not made stale).
+
+**Post-edit gates:** pytest `533 passed, 18 subtests` (unchanged) · tests/docs `10 passed` · `just spec-check` ALL GATES PASSED, PASS 11 · all introduced links resolve (`BROKEN: none`) · tree shows only the three docs pages + report + pre-existing noise.
+
+**Deviations:** none material (status.md stale-wording scope and status bullet phrasing documented in the report). **No commit, no push.**
+
+Report: `.wai/projects/sunset/research/sunset-xzy.8-report.org`
+
+DONE exit 0

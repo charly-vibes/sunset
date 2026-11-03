@@ -1,0 +1,5 @@
+---
+tags: [pipeline-run:epic-orchestrator-2026-11-02-sunset-xzy-3-ink-coverage-oracle, pipeline-step:claim]
+---
+
+ORIENT: selected sunset-xzy.3 (tasks 4.1 binarized ink-coverage oracle level B; only ready xzy child after .2 shipped cb9487e). Scope per ticket metadata: dsc03/visual/coverage.py + tests/tracer/test_visual_coverage.py. Builds on xzy.1 render surface (Rendered/RenderConfig incl. Binarization now APPLIED — level B is the binarized ink mask, D3) and D4 like-with-like source simplification (ink dilation tolerance, recorded in render config). Outcomes per page/property agree/differ/unknown/unavailable with property field 'ink-coverage' (Scoped property claims), evidence class correlated/independent (Labeled evidence class), thresholds from recorded calibration else property 'uncalibrated' + aggregate never passes over unknown/unavailable/uncalibrated (Calibrated thresholds). Numeric calibration entries themselves land in xzy.6 — this slice needs the mechanism + typed uncalibrated path. Spawn: openrouter/z-ai/glm-5.3-flash via owner BYOK (credit gate bypassed for zai, verified live). Base ec2b298.

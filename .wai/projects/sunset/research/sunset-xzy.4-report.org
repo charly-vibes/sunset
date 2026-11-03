@@ -1,0 +1,174 @@
+* sunset-xzy.4 — Geometry-mask alignment oracle (representation level C) — REPORT
+
+Ticket: sunset-xzy.4 (tasks.md 4.2, openspec/changes/add-raster-visual-oracles)
+Base: d615125 (xzy.1 25eb25b, .2 cb9487e, .3 0492882 shipped)
+Status: COMPLETE — all completion criteria met, exit 0. No commits, no push.
+
+** Files changed (exact, per brief)
+
+- CREATED  =dsc03/visual/masks.py= (293 lines) — level-C oracle: PROPERTY =
+  "region-alignment", SCOPED_CLAIM, INK_OUTSIDE_RECT = "ink-outside-rect",
+  AlignmentOutcome, masks_outcome(), aggregate() (thin delegation to the
+  shared coverage.aggregate rule), supports_accuracy_claim() (delegating to
+  render.py semantics). EXEC-004 header present. Pinned docstring covers the
+  exact calibration rule (ink: min <= measured <= max; no-ink:
+  measured <= min, trivially <= max) and the ink-outside-rect attribution
+  rule (single threshold = the recorded dilation N).
+- CREATED  =tests/tracer/test_visual_masks.py= (345 lines) — 15 tests,
+  EXEC-004 header present.
+- No other files touched. render.py / frames.py / coverage.py /
+  profiles.py / openspec bundle / validator.py untouched. Private helpers
+  reused from coverage.py by explicit import (never duplicated, coverage.py
+  never edited): _decode_grayscale, _dilate, _ink_table, _parse_dilation,
+  _pixel_rect, _region_fraction.
+- =git status --short=: only the two new files + pre-existing
+  .whisper/.wai/pba-judicial noise. No measurement/fixture churn.
+
+** RED (verbatim)
+
+=/usr/bin/python3 -m pytest tests/tracer/test_visual_masks.py -q= before
+implementation existed:
+
+#+begin_example
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/tracer/test_visual_masks.py ________________
+ImportError while importing test module '/var/home/sasha/para/areas/dev/gh/charly/sunset/tests/tracer/test_visual_masks.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib64/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/tracer/test_visual_masks.py:44: in <module>
+    from dsc03.visual import frames, masks, render
+E   ImportError: cannot import name 'masks' from 'dsc03.visual' (/var/home/sasha/para/areas/dev/gh/charly/sunset/dsc03/visual/__init__.py)
+=========================== short test summary info ============================
+ERROR tests/tracer/test_visual_masks.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.25s
+#+end_example
+
+(Deviation, cosmetic, same as xzy.3: brief predicted ModuleNotFoundError;
+the observed RED gate is the equivalent ImportError for the absent
+submodule — same failure class: module does not exist.)
+
+** GREEN (verbatim)
+
+After implementing =masks.py= (and one test-geometry correction — see
+Deviations):
+
+#+begin_example
+...............                                                          [100%]
+15 passed in 1.69s
+#+end_example
+
+Coverage of the brief's test matrix: (a) aligned ink region agree;
+(b) ink-outside-rect differ with region id + reason retained, plus the
+blank-neighbourhood control (same rect shape over blank paper = plain
+differ, no reason); (c) no-ink over blank agree / over ink differ;
+(d) rot90 declared frame agree with hand-checked mapping
+(descriptor (60,360) -> (360,60)); same raster under the wrong rot180 frame
+flips corner-blank to differ (verdict follows the declared frame);
+(e) RenderUnavailable -> unavailable, reason carried; (f) unknown matrix:
+invalid_geometry_frame / uncalibrated (missing, other-property,
+other-carrier) / binarization-not-configured / source-simplification-missing;
+(g) aggregate: all-agree -> pass; uncalibrated page blocks with reasons;
+empty -> blocked; (h) every outcome carries property="region-alignment" +
+evidence class, SCOPED_CLAIM + docstring disclaim text correctness /
+reading order / semantic grouping / visual completeness, correlated config
+-> supports_accuracy_claim False. Real pinned carrier
+(bank-statement-ca-excerpt.pdf, poppler, independent) runs end-to-end ->
+agree under wide bounds [0.0, 1.0].
+
+** Full suite tail (verbatim)
+
+=/usr/bin/python3 -m pytest tests -q=:
+
+#+begin_example
+509 passed, 1 warning, 18 subtests passed in 189.97s (0:03:09)
+#+end_example
+
+Baseline 494 passed + 18 subtests + 15 new = 509 + 18. Exit 0.
+=/usr/bin/python3 -m compileall dsc03/visual= -> OK.
+
+** Gate tail (verbatim)
+
+=just spec-check= (exit 0):
+
+#+begin_example
+Totals: 13 passed, 0 failed (13 items)
+==> tracer suite (0.3 machinery, not real-carrier conformance)
+509 passed, 1 warning, 18 subtests passed in 183.71s (0:03:03)
+==> frozen 0.2 reference validator
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+#+end_example
+
+** Pinned semantics recorded (module docstring + code)
+
+- Comparison surface (D4): simplified source only — grayscale decode, ink
+  iff gray strictly below recorded threshold, dilated per recorded
+  =ink-dilation-<N>px= (8-connected, same parser semantics as coverage.py).
+  =none=/unparseable -> unknown =source-simplification-missing=; disabled/
+  non-pinned binarization -> unknown =binarization-not-configured=;
+  undecodable bytes -> unknown =render-decode-failed=; missing/unmapped
+  frame -> unknown with the frame reason.
+- Exact region rule: ink agrees iff min <= measured <= max; no-ink agrees
+  iff measured <= min (floor = complement bound; min <= max makes it
+  trivially <= max). Mirrors coverage.py's pinned per-region semantics.
+- ink-outside-rect (pinned refinement, verdict STAYS differ): fires only on
+  a failing "ink" claim whose rect has no RAW ink while the raw mask has
+  ink within the recorded dilation N px (Chebyshev) outside the boundary —
+  misplaced, not missing. The oracle never elects to move/grow the region;
+  the reason is attribution only ("No silent resolution"). Single threshold
+  = the recorded dilation; a blank-neighbourhood control proves missing ink
+  stays a plain differ.
+- Page agrees iff every region agrees (region-scoped: deliberately NO
+  whole-page fraction requirement); empty claims + usable calibration =
+  documented vacuous agree. Malformed/out-of-bounds/vocabulary-violating
+  claims are retained differs.
+- Aggregate = shared rule via coverage.aggregate: pass only if every page
+  agrees (agree implies usable recorded calibration); unknown/unavailable/
+  differ/empty -> blocked + reasons.
+
+** Deviations
+
+1. RED failure class ImportError vs ModuleNotFoundError — same gate, noted
+   above.
+2. Test-geometry correction during GREEN (test-only fix, implementation was
+   already correct): REGION_MISPLACED first placed at descriptor x 401..403
+   and hand-measured as 0.5 dilated. Reality: pymupdf draw_rect with
+   color+fill strokes the boundary (1pt stroke straddles it by 0.5pt), so
+   raw ink reaches raster col 400 and the 2px dilation reaches col 402 —
+   the rect measured 1.0 and agreed under min 0.9. Moved the rect to
+   x 402..404 (measured 0.5, differ) with the raw ring [400,402) still
+   inked, so the attribution control is honest. Diagnosed by measuring the
+   actual mask bbox (exactly x 100..400, y 192..492); an intermediate
+   column probe had used height as the row stride and produced bogus
+   numbers — bbox measurement settled it.
+3. masks.aggregate delegates to coverage.aggregate (identical pinned rule,
+   duck-typed over outcomes) rather than duplicating it; masks adds only
+   its own docstring. AlignmentOutcome/AggregateOutcome/PROPERTY stay
+   module-local; the calibration validator is masks-owned because it must
+   bind property="region-alignment" (coverage's validator binds
+   "ink-coverage" and was therefore NOT reused).
+
+** Findings (for the lead / future slices)
+
+1. pymupdf draw_rect(color=..., fill=...) STROKES by default: raw ink
+   extends 0.5pt beyond the fill rect on every side. xzy.3's "rects
+   integer-exact" note holds for the fill but the stroke adds a 1px halo at
+   72dpi. Any future hand-computed fixture that places a rect ADJACENT to
+   an ink block must budget for this +1px halo (or draw fill-only via
+   draw_rect(rect, fill=..., color=None, width=0)). Worth folding into the
+   mutation-fixture work (5.1) where seeded shifts will be sized in pixels.
+2. The ink-outside-rect refinement is reconcilable with D4 and shipped as
+   attribution-only: dilation bleed within N px can lift a displaced region
+   to agree through the normal calibration path (that IS the D4 tolerance);
+   the reason only fires when the primary test fails anyway. No spec-level
+   ambiguity requiring the follow-up threshold — no STOP.
+3. Reusing coverage.py private helpers by import worked cleanly and kept
+   the two oracles' parsing/dilation/rect semantics literally identical;
+   if a third oracle repeats the pattern, consider promoting those helpers
+   to a shared private module (not done here — out of scope, no edits to
+   coverage.py allowed).

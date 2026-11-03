@@ -1,0 +1,98 @@
+* sunset-xzy.1 report — Pinned rendering infrastructure
+
+- Executor: glm-5.3-flash spawn (brief sunset-xzy.1), 2026-11-02
+- Base commit: 5073793 (contains 5ee0e1d); branch main
+- Verdict: COMPLETE — all completion criteria hold
+
+** Files changed (exactly the three designated files; all CREATE)
+
+- ~dsc03/visual/render.py~ — RenderConfig (frozen record: renderer name/executable/version, DPI, 1-based page selection, Binarization, source simplification, extractor/renderer lineages) + to_dict/from_dict round-trip; typed outcomes Rendered(bytes+config) / RenderUnavailable(reason); RenderCommandError for a renderer that exists but fails; pdftoppm runner (−r −f −l −singlefile −png); detect_renderer_version via ~pdftoppm -v~; evidence_class lineage labeling + supports_accuracy_claim predicate (correlated ⇒ never accuracy claims). Purpose/Responsibilities/Rationale header per EXEC-004.
+- ~dsc03/visual/__init__.py~ — package init, re-exports the public surface.
+- ~tests/tracer/test_visual_render.py~ — 4 tests pinning spec scenarios: Reproducible render (byte-identical), Renderer unavailable (typed unavailable, never bytes/agree), config round-trip + frozen-ness, evidence-class labeling (correlated/independent + accuracy predicate).
+
+** RED (before implementation)
+
+#+begin_example
+$ /usr/bin/python3 -m pytest tests/tracer/test_visual_render.py -q
+tests/tracer/test_visual_render.py:22: in <module>
+    from dsc03.visual import render
+E   ModuleNotFoundError: No module named 'dsc03.visual'
+=========================== short test summary info ============================
+ERROR tests/tracer/test_visual_render.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.26s
+EXIT=2
+#+end_example
+
+** GREEN (after implementing dsc03/visual/)
+
+#+begin_example
+$ /usr/bin/python3 -m compileall -q dsc03/visual && echo COMPILE-OK
+COMPILE-OK
+$ /usr/bin/python3 -m pytest tests/tracer/test_visual_render.py -q
+....                                                                     [100%]
+4 passed in 0.31s
+EXIT=0
+#+end_example
+
+Byte-identity empirically confirmed: two renders from one recorded config over
+fixtures/carriers/bank-statement-ca-excerpt.pdf at 72 DPI produced equal bytes
+(pdftoppm 26.01.0 at /usr/bin/pdftoppm).
+
+** Full suite tail
+
+Brief's command said ~pytest tests/tracer/~ but the 455-baseline is the whole
+tree (justfile: ~pytest tests -q~); ran both:
+
+#+begin_example
+$ /usr/bin/python3 -m pytest tests/tracer/ -q
+381 passed, 1 warning in 118.33s (0:01:58)
+EXIT=0
+$ /usr/bin/python3 -m pytest tests -q
+459 passed, 1 warning, 18 subtests passed in 216.58s (0:03:36)
+EXIT=0
+#+end_example
+
+459 = 455 baseline + 4 new tests. No regressions.
+
+** Gate tail
+
+#+begin_example
+$ just spec-check
+...
+==> frozen 0.2 reference validator
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+...
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+EXIT=0
+#+end_example
+
+** Tree state
+
+~git status --short~ vs baseline: adds only ~dsc03/visual/~ and
+~tests/tracer/test_visual_render.py~ (three files; ~__pycache__~ ignored).
+Pre-existing at baseline and left untouched: ~.whisper/~ churn, ~.wai/~
+artifacts, untracked ~pba-judicial-2026-07-29.pdf~. No ~measurement.json~ or
+fixture churn occurred — nothing to revert. No commits, no push.
+
+** Deviations
+
+1. Interpreter: bare ~python3~ (linuxbrew) lacks pytest; used the repo-pinned
+   interpreter ~SUNSET_PYTHON=/usr/bin/python3~ from ~.env~ (justfile-declared
+   override, sunset-5jo). Same commands, pinned interpreter.
+2. Full-suite scope: brief's "455 baseline" matches ~pytest tests~ (whole
+   tree), not ~tests/tracer/~ (381); ran both — both green.
+
+** Findings
+
+- F1: Baseline said "2 skips"; current run shows 0 skipped / 459 passed. The
+  skips in the baseline evidence appear environment-conditional (this env
+  satisfies them); not a regression — all collected tests pass.
+- F2 (design note, no action): ~pdftoppm -v~ prints to stderr and exits 0 on
+  poppler 26.01; ~detect_renderer_version~ tolerates nonzero exits and parses
+  the combined banner, so future poppler behavior changes won't break version
+  recording.
+- F3 (scope boundary respected): Binarization is recorded in the config but
+  not applied to pixels — application belongs to the ink-mask oracle
+  (tasks 4.x), per the module docstring. Frame mapping untouched (sunset-xzy.2).

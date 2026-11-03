@@ -1,0 +1,18 @@
+Slice complete. Summary:
+
+**Files created (exactly the three designated):**
+- `dsc03/visual/render.py` — frozen `RenderConfig` (renderer name/executable/version, DPI, page selection, binarization, source simplification, lineages) with `to_dict`/`from_dict`; typed outcomes `Rendered` (bytes+config) / `RenderUnavailable` (reason) + `RenderCommandError`; `pdftoppm` runner; `detect_renderer_version`; `evidence_class` labeling + `supports_accuracy_claim` predicate; EXEC-004 file header
+- `dsc03/visual/__init__.py` — re-exports the public surface
+- `tests/tracer/test_visual_render.py` — 4 tests pinning the spec scenarios
+
+**TDD evidence:**
+- **RED**: `ModuleNotFoundError: No module named 'dsc03.visual'` → exit 2
+- **GREEN**: `4 passed in 0.31s` — byte-identity confirmed empirically over `fixtures/carriers/bank-statement-ca-excerpt.pdf` @ 72 DPI with pdftoppm 26.01.0
+- **Full suite**: `459 passed, 18 subtests passed` (= 455 baseline + 4 new), exit 0
+- **Gate**: `just spec-check` → `ALL GATES PASSED`, frozen `PASS 11 descriptor fixtures`
+
+**Deviations** (recorded in report): used repo-pinned `SUNSET_PYTHON=/usr/bin/python3` (bare `python3` lacks pytest — justfile-declared override); the 455 baseline corresponds to the whole `tests/` tree, ran both scopes green.
+
+**Report**: `.wai/projects/sunset/research/sunset-xzy.1-report.org` — includes RED/GREEN outputs, suite/gate tails, findings (F1: baseline's 2 skips are environment-conditional here; F2: `-v` banner parsing tolerance; F3: binarization recorded-not-applied per tasks 4.x boundary).
+
+No commits, no push, no churn to revert — `git status` shows only the three new files plus pre-existing `.whisper`/`.wai`/stray-PDF noise from baseline.

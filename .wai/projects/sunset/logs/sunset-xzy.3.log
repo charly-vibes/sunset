@@ -1,0 +1,16 @@
+**sunset-xzy.3 COMPLETE — exit 0.** Test-first executed, report at `.wai/projects/sunset/research/sunset-xzy.3-report.org`.
+
+**Files (exact per brief, nothing else touched):**
+- `dsc03/visual/coverage.py` — level-B oracle: `PROPERTY`, `SCOPED_CLAIM`, `DILATION_CONNECTIVITY=8` (pinned in docstring), `CoverageOutcome`/`AggregateOutcome`, `coverage_outcome()`, `aggregate()`, `supports_accuracy_claim()` delegating to render.py. EXEC-004 headers on both files.
+- `tests/tracer/test_visual_coverage.py` — 17 tests covering the full (a)–(g) matrix + real pinned carrier.
+
+**Evidence chain:**
+- **RED**: `ImportError: cannot import name 'coverage' from 'dsc03.visual'` (1 error in 0.34s) — brief predicted ModuleNotFoundError; same absent-module gate, noted as cosmetic deviation.
+- **GREEN**: `17 passed in 1.87s`
+- **Full suite**: `494 passed, 18 subtests passed` (baseline 477+18 + 17 new)
+- **`just spec-check`**: `ALL GATES PASSED`, openspec strict 13/13, spk lint clean, frozen validator **PASS 11**
+- **`git status`**: only the two new files + pre-existing `.whisper`/`.wai`/PDF noise; no fixture/measurement churn; no commits, no push.
+
+**Key pins:** ink = gray < recorded threshold; `ink-dilation-<N>px` → 8-connected dilation (`0px` valid no-op, `none` → `source-simplification-missing`); ink-claim agrees iff min ≤ measured ≤ max, no-ink iff measured ≤ min, page agrees iff all regions agree AND page fraction in bounds; out-of-bounds/malformed claims → region `differ` retained; aggregate pass only when every page agrees (empty set → blocked).
+
+**Notable findings for the lead:** (1) pymupdf `set_rotation` + poppler produced ink placements mismatching naive derivation during probing — rotated fixture built instead as a landscape raster with ink at hand-computed rot90-frame pixels; wrong-frame (rot180) run flipping the verdict proves the declared frame drives comparison. (2) Dilation test margins measured: 0.82 dilated vs 0.725 undilated against bounds [0.8, 1.0] — deterministic with headroom. (3) The single `[min,max]` calibration entry must admit both region-scale and page-scale fractions — relevant to xzy.6's sheet design. Context use well under the 15% ceiling.

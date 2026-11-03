@@ -1,0 +1,66 @@
+* sunset-xzy.2 — Declared frame mapping (pixel↔descriptor resolution): implementation report
+- Ticket: sunset-xzy.2 (tasks.md 3.2, add-raster-visual-oracles)
+- Base: 1f0b6b5; implementor: glm-5.3-flash via pi (fresh context, test-first)
+- Result: DONE — RED→GREEN→full suite→gate all pass; tree contains only designated files.
+
+** Files changed
+- CREATE =dsc03/visual/frames.py= — PixelMapping / UnknownMapping, =resolve_pixel_mapping(frame, render_config, page_px)=, =frame_mapping(artifact, frame_name, ...)= via =profiles.resolve_frame=. EXEC-004 header. No edits to =profiles.py= or =render.py= (imports only).
+- CREATE =tests/tracer/test_visual_frames.py= — 18 tests.
+- CREATE =tests/tracer/profiles/geometry-rotated-page.json= (rot90+rot180 frames), =tests/tracer/profiles/geometry-cropped-page.json= (crop {"x":36,"y":72}). Allowed by brief.
+
+** RED (test-first)
+#+begin_example
+$ /usr/bin/python3 -m pytest tests/tracer/test_visual_frames.py -q
+ERRORS ______________________ ERROR collecting tests/tracer/test_visual_frames.py ____
+ImportError while importing test module 'tests/tracer/test_visual_frames.py'.
+tests/tracer/test_visual_frames.py:22: in <module>
+    from dsc03.visual import frames
+E   ImportError: cannot import name 'frames' from 'dsc03.visual' (.../dsc03/visual/__init__.py)
+=========================== short test summary info ============================
+ERROR tests/tracer/test_visual_frames.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.29s
+#+end_example
+Module absent ⇒ import-time failure (ImportError class of ModuleNotFoundError). Recorded as RED.
+
+** GREEN
+#+begin_example
+$ /usr/bin/python3 -m pytest tests/tracer/test_visual_frames.py -q
+..................                                                       [100%]
+18 passed in 0.30s
+$ /usr/bin/python3 -m compileall -q dsc03/visual   # exit 0
+#+end_example
+
+** Full suite tail
+#+begin_example
+$ /usr/bin/python3 -m pytest tests -q
+477 passed, 1 warning, 18 subtests passed in 203.10s (0:03:23)
+#+end_example
+Baseline at 1f0b6b5: 459 passed + 18 subtests. +18 new tests, zero regressions.
+
+** Gate tail
+#+begin_example
+$ just spec-check
+✓ change/add-raster-visual-oracles … ✓ spec/document-structure …
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+$ python3 spec/document-model-specodelic-v3/validator.py test
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance   (exit=0)
+#+end_example
+
+** Tree
+=git status --short= shows only: the 4 new files above + pre-existing noise (=.whisper= mods, =.wai/*=, =pba-judicial-2026-07-29.pdf=). A transient = M= on =openspec/changes/add-raster-visual-oracles/tasks.md= appeared in one status sample; =git diff HEAD= on it was empty (mtime-only racy entry) and it cleared on refresh. No churn caused or reverted; no openspec/spec-bundle content touched. No commits, no push (lead ships).
+
+** Declared conventions (documented in frames.py header — declared, not guessed)
+1. Descriptor space = canonical PDF user space (bottom-left, x-right y-up, pt); pixel space = raster top-left y-down at =config.dpi=.
+2. =rotation= = clockwise degrees the rendered raster is rotated vs the descriptor page (PDF /Rotate); raster dims swap for 90/270, derived from the caller-supplied raster extent.
+3. =crop= non-null = ={"x","y"}= pt added in descriptor space before unit conversion (exactly invertible).
+4. =PINNED_PIXEL_TOLERANCE_PX = 1e-6= pins round-trip recovery; rotation expected pixels are hand-computed in tests, never code-re-derived.
+
+** Deviations
+- API naming: brief offered "or a similarly explicit API" — =resolve_pixel_mapping= takes =page_px= (raster width,height) explicitly because RenderConfig records no page dimensions; the extent comes from the render, never assumed.
+- Unknown reason vocabulary: =invalid_geometry_frame= (unresolved via profiles), =unsupported_unit=, =unsupported_axes=, =unsupported_rotation=, =malformed_frame= (scale/crop structure), =unresolvable_source_scope= (missing/unparseable/mismatched page binding), =invalid_render_config=, =invalid_page_extent=.
+- =__init__.py= NOT modified (not in the brief's exact-files list); tests import the submodule directly.
+
+** Findings
+- None blocking. No spec-level geometry ambiguity encountered; rotation direction was reconciled by declaring the CW convention in the module header and hand-pinning tests to it. =UnknownMapping= exposes no transform methods (asserted), so an unresolvable frame cannot be silently used as any convention. Outcome vocabulary exported as =OUTCOME_STATUSES = {"resolved","unknown"}= — =agree=/=differ= structurally absent (tested).

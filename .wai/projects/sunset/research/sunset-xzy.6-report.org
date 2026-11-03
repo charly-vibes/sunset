@@ -1,0 +1,132 @@
+* sunset-xzy.6 — Calibration sheet: thresholds over varied pages with per-page outcomes
+
+Status: COMPLETE (exit 0) · AGENT-EXECUTED — human pass supersedes · date 2026-11-03
+Base commit 5f05edb, branch main. No commits, no push. Sole authority: brief
+=.wai/projects/sunset/briefs/sunset-xzy.6.md=. Oracles and render/frame
+machinery untouched =dsc03/visual/*= byte-identical.
+
+** RED (recorded verbatim, record absent)
+
+#+begin_example
+$ /usr/bin/python3 -m pytest tests/tracer/test_visual_calibration.py -q
+___________ ERROR collecting tests/tracer/test_visual_calibration.py ___________
+tests/tracer/test_visual_calibration.py:59: in <module>
+    RECORD = json.loads(RECORD_PATH.read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib64/python3.14/pathlib/__init__.py:787: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib64/python3.14/pathlib/__init__.py:771: in open
+    return io.open(self, mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+E   FileNotFoundError: [Errno 2] No such file or directory: '/var/home/sasha/para/areas/dev/gh/charly/sunset/fixtures/visual/calibration.json'
+=========================== short test summary info ============================
+ERROR tests/tracer/test_visual_calibration.py - FileNotFoundError: [Errno 2] ...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.35s
+#+end_example
+
+** GREEN (targeted suite, verbatim)
+
+#+begin_example
+$ /usr/bin/python3 -m pytest tests/tracer/test_visual_calibration.py -q
+.......                                                                  [100%]
+7 passed in 6.61s
+#+end_example
+
+** Gates
+
+- =/usr/bin/python3 -m compileall tests/tracer/test_visual_calibration.py= → OK
+- Full suite: =526 passed, 1 warning, 18 subtests passed in 221.42s (0:03:41)=
+  (baseline 519+18 + 7 new)
+- =just spec-check= → =Totals: 13 passed, 0 failed (13 items)= / =ALL GATES PASSED=;
+  validator: =PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance=
+- Tree: only deliverable paths + pre-existing noise (see Files)
+
+** Files changed (exactly the brief's 'Exact files')
+
+- CREATE =fixtures/visual/calibration.json= — the committed D6 calibration record
+- CREATE =tests/tracer/test_visual_calibration.py= — 7-test assertion suite
+- KEEP =tests/tracer/fixtures/visual/visual-strip-faint.pdf= — faint fixture from
+  the earlier aborted attempt, *inspected and reused* (bar met, see Findings)
+- KEEP =tests/tracer/fixtures/visual/README.org= — the faint-fixture provenance
+  section (+15 lines, uncommitted from the aborted attempt; brief says the README
+  provenance update applies either way)
+- CREATE =.wai/projects/sunset/research/sunset-xzy.6-report.org= — this report
+
+** Final carrier → variety mapping (all verified by rendering/measuring)
+
+| variety         | carrier                     | file                                            | page_dil | ink-region | no-ink-region | window (both props)   |
+|-----------------+-----------------------------+-------------------------------------------------+----------+------------+---------------+-----------------------|
+| native text     | bank-statement-ca-excerpt   | fixtures/carriers/bank-statement-ca-excerpt.pdf | 0.008201 | 0.216286   | 0.0           | [0.0041, 1.0] derived |
+| image-only scan | diario-de-poesia-excerpt   | fixtures/carriers/diario-de-poesia-excerpt.pdf  | 0.463995 | 0.905754   | 0.147454      | [0.232, 1.0] derived  |
+| mixed           | budgeting-basics-excerpt    | fixtures/carriers/budgeting-basics-excerpt.pdf  | 0.253832 | 0.632716   | 0.0           | [0.1269, 1.0] derived |
+| rotated         | visual-strip-rot            | tests/tracer/fixtures/visual/visual-strip-rot90.pdf | 0.017561 | 1.0     | 0.0           | COV [0.01,1.0] / ALN [0.95,1.0] reused xzy.5, re-confirmed |
+| faint           | visual-strip-faint          | tests/tracer/fixtures/visual/visual-strip-faint.pdf | 0.0    | n/a        | n/a           | none — uncalibrated by record |
+| (extra baseline)| visual-strip                | tests/tracer/fixtures/visual/visual-strip.pdf   | 0.017561 | 1.0        | 0.0           | COV [0.01,1.0] / ALN [0.95,1.0] reused xzy.5, re-confirmed |
+
+Mixed pick rationale (recorded in the record): budgeting-basics over
+invoice-arca-redacted — image-dense bands (≥0.6) vs text rows (~0.2–0.3) with
+guaranteed all-zero margins; invoice-arca measured viable (page 0.1641) but
+busier. Derived-window rule (deterministic, recorded):
+=min = max(page_dil/2, noink_dil·1.25)= (4 dp), =max = 1.0= — admits region- AND
+page-scale fractions (xzy.2 finding).
+
+** Derivation vs detection split (ALIGN-001, explicit)
+
+- Derivation files: the 3 real carriers + =visual-strip.pdf= +
+  =visual-strip-rot90.pdf= + =visual-strip-faint.pdf=. 12 derivation runs
+  (2 properties × 6 carriers): 10 agree, 2 unknown (faint, =uncalibrated=).
+- Detection files: =visual-strip-shift.pdf=, =visual-strip-omission.pdf=,
+  =visual-strip-duplication.pdf= (detection-only) + =visual-strip-rot90.pdf=
+  (declared overlap). 2 detection runs, both =differ= with region attribution:
+  omission (ink-coverage, carrier =visual-strip=, =ink-strip= differ /
+  =blank-lower= agree) and wrong-frame (region-alignment, carrier
+  =visual-strip-rot=, frame =page-1-rot180=, =ink-strip= differ /
+  =blank-lower= agree).
+- Overlap note (in record): rot90 raster derived under the TRUE frame
+  (=page-1-rot90=, agrees) and detected under the seeded wrong frame
+  (=page-1-rot180=, differs); calibration marked from the derivation run only.
+  =threshold_provenance= pins each entry's =derivation_file= inside the
+  derivation set. No property is marked calibrated from a detection run.
+- Class-demonstration split (recorded in the record): this slice's own runs
+  exercise omission + wrong-frame; shift + duplication are claimed from the
+  committed xzy.5 suite (=test_visual_mutations.py=, stays green).
+
+** Faint mechanism (pinned, real page)
+
+Gray-200 strip ink (page gray set measured {200, 255} — fill-only, no halo),
+strictly lighter than pinned fixed-threshold-128 → page fraction identically
+0.0 under the pinned render → no honest window exists → NO threshold entry for
+=visual-strip-faint= → both oracle outcomes =unknown= reason =uncalibrated=
+(typed mechanism, not faked) → =aggregate()= =blocked= with the faint page
+listed (exactly 2 reasons in the derivation aggregate). Positive control:
+the 10 calibrated derivation pages alone aggregate to =pass= — the rule is
+not vacuously blocking.
+
+** Deviations / notes
+
+1. *Aborted-attempt residue adopted, not regenerated*: the faint fixture
+   (README bar: deterministic, pymupdf-built, fill-only rects, gray near/above
+   binarization threshold) was byte-verified (uniform gray 200, zero page
+   fraction) and reused; the pre-existing =test_visual_calibration.py= was
+   line-by-line verified against the brief (all six D6 fields, real-faint
+   aggregate rule, detection-outside-derivation, unknown surfacing) before
+   adoption; the record itself was authored fresh this session. Nothing was
+   weakened to fit the record; every assertion passes against re-run reality.
+2. Timings: suite wall-clocks above are agent-measured (AGENT-EXECUTED).
+3. Out-of-scope untouched: =dsc03/**=, =openspec/**=, =justfile=, existing
+   fixtures, =fixtures/**= outside =fixtures/visual/calibration.json=. No
+   commits, no push. Measurement harness lived in /tmp and was removed.
+4. Pre-existing uncommitted noise in the tree (=.whisper/*=, =.wai/*= state/
+   logs, =pba-judicial-2026-07-29.pdf=) predates this slice and was left alone.
+
+** Findings
+
+- None contradicting oracle semantics. The degraded scan's lightest stable
+  margin measures 0.147 dilated fraction — the diario window honestly bounds
+  it (=min= 0.232, 1.57× margin) rather than pretending a clean floor; this is
+  calibration over a degraded carrier, not a weakened window (page headroom 2×,
+  ink headroom 3.9×).
+- For the follow-up integration slice (.7): =per_page_outcomes= entries are
+  directly replayable via the record's =carriers= (regions) +
+  =thresholds= (oracle-consumed entries) + =geometry=/=frame= fields.

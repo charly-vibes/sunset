@@ -1,0 +1,115 @@
+#+title: Repository storage: generated bundles and an optional pinned corpus
+#+date: 2026-10-31
+#+filetags: :repository-storage:fixtures:proposal:
+
+* Status and scope
+
+Recommendation documented for later consideration. The owner authorized this
+note only; implementation is on hold. No assets have been moved or removed,
+no corpus published, no tests or storage configuration changed, and no history
+rewritten. This note does not authorize a commit, push or release.
+
+The proposed direction is to keep canonical assets once, generate distribution
+bundles, and make the large real-document corpus an explicitly fetched dependency.
+Small synthetic fixtures stay in ordinary Git.
+
+* Evidence from the current checkout
+
+Measured after native-PDF shipment (main at aa4cb78). Sizes are approximate MiB,
+not compressed clone-transfer estimates.
+
+| Tracked content                      | Size |
+|--------------------------------------+------|
+| All tracked files                    | 28.9 |
+| fixtures/                            | 16.7 |
+| hitl/                                | 10.4 |
+| Everything else                      |  1.8 |
+| Byte-identical copies over 100 KB     |  4.6 |
+| Tracked reader ZIP                   |  3.4 |
+
+The identical copies include the Diario PDF in both fixtures and the reader
+bundle, another carrier PDF, and two copies of the offline observation SPA.
+The ZIP is stored alongside its unpacked bundle. It also has multiple historical
+versions. Removing duplicate checkout files and generating the ZIP targets about
+8 MiB of current tracked bytes; this is not a promise of equivalent clone savings.
+
+Local .git was about 38 MB and the Beads database/backups about 38 MB. Most Beads
+storage is local and is not part of the tracked branch. Those local storage
+concerns are separate from relocating tracked assets.
+
+* Recommended storage layout
+
+- Ordinary Git retains source code, small generated/synthetic test fixtures,
+  corpus manifests, source provenance, licensing/access declarations, expected
+  results, schemas and independent review evidence.
+- Each canonical asset has one authoritative source. Reader bundle directories
+  and ZIPs are build outputs generated from those sources and pinned templates.
+- Larger real-document fixtures become a versioned corpus fetched explicitly
+  when real-carrier tests or human-review workflows need them. A release asset
+  is a possible transport, subject to permission to distribute every file.
+- The tracked corpus manifest binds each file's relative path, byte size, SHA256,
+  source/provenance and corpus version. A changed corpus gets a new version;
+  published bytes must not be silently replaced.
+- A future command, illustratively =just fetch-corpus=, downloads into an ignored
+  location and checks every required file before exposing the corpus. This command
+  does not exist yet. Corrupt or incomplete downloads fail explicitly.
+- Once fetched and verified, the corpus remains usable offline. Ordinary unit
+  tests run offline without fetching it. Explicit real-corpus test jobs require
+  it and fail clearly when it is missing; they must not silently skip the gate.
+
+* Alternatives considered
+
+| Option             | Benefit                             | Limitation / decision |
+|--------------------+-------------------------------------+-----------------------|
+| Generated bundles  | Removes redundant checkout outputs  | First cleanup to consider; history is unchanged |
+| Pinned corpus      | Small ordinary checkout; opt-in data | Recommended longer-term; requires fetch/cache and test separation |
+| Git LFS            | Git stores pointers to binary data  | Downloaded PDFs still occupy disk; reasonable if most users need all fixtures |
+| Git submodule      | Separate repository and history     | Extra clone/update/CI lifecycle; use if corpus becomes independently maintained |
+
+A submodule would move the corpus into another Git repository rather than
+eliminate binary storage. Git LFS is a valid alternative if retaining current
+fixture paths and normal full-corpus checkouts matters more than a small default
+checkout. Neither mechanism by itself fixes redundant generated bundles.
+
+* Constraints before implementation
+
+Current real-carrier tests directly reference =fixtures/carriers/=. Reader tests
+also reference the bundle carrier and both copies of the SPA. A migration must
+update those consumers and regenerate required bundles; deleting duplicate files
+alone would break the test/review workflow.
+
+Preserve raw review sheets, annotations, comparison evidence, provenance and
+existing conformance labels. Determine which files are canonical source inputs
+and which are regenerable outputs before removing anything. The preserved
+research bundle and frozen 0.2 validator remain untouched. The untracked owner
+judicial PDF is not a corpus-distribution candidate without separate permission.
+
+Test shapes for any future migration: a clean offline unit-test run without the
+corpus; a successful verified fetch; explicit refusal of wrong hashes or missing
+files; a complete real-carrier gate with the pinned corpus; and a generated
+reader bundle whose files match its manifest. Reproduce the current test baseline
+before changing storage, then use failing behavioral tests before implementation.
+Any optional refactor belongs in a separate ticket from storage behavior changes.
+
+* Possible sequence, not scheduled work
+
+First classify and manifest canonical assets, then replace tracked reader bundle
+copies and ZIPs with verified generation. Separately introduce corpus fetching and
+explicit unit/real-carrier test entry points before relocating the large inputs.
+Only after the layout is stable should historical size reduction be considered.
+Implementation tickets and an applicable OpenSpec change can be created when the
+owner authorizes that work; none are created by this note.
+
+Deleting or moving files in a new commit does not remove historical Git blobs.
+A history rewrite is a separate decision requiring explicit authorization,
+backup, coordination and updated historical references. Existing tickets and
+wai records pin commit IDs and asset paths, so account for those references
+before any rewrite. No rewrite or force-push is part of this recommendation's
+initial implementation.
+
+* References
+
+- [[https://git-scm.com/docs/gitsubmodules][Git submodules: separate repositories and histories]]
+- [[https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage][GitHub: Git LFS pointer storage]]
+- [[https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases][GitHub: releases and binary assets]]
+- [[https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History][Git: rewriting history]]

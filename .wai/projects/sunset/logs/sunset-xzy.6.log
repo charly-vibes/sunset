@@ -1,0 +1,12 @@
+Report written to `.wai/projects/sunset/research/sunset-xzy.6-report.org`.
+
+**Slice summary** (sunset-xzy.6, red→green→refactor per brief):
+
+- **RED** recorded verbatim: `FileNotFoundError: .../fixtures/visual/calibration.json` (collection error).
+- **Record** `fixtures/visual/calibration.json`: all six D6 fields, 6 carriers (native text, image-only scan, mixed = budgeting-basics, rotated = rot90 strip, faint, + pristine-strip baseline), 12 derivation + 2 detection per-page outcomes, 10 oracle-consumed threshold entries with provenance, explicit ALIGN-001 derivation/detection split with the rot90 raster overlap declared, full pinned render configuration per carrier.
+- **Faint fixture**: aborted-attempt `visual-strip-faint.pdf` inspected and *reused* — byte-verified uniform gray 200 (page gray set {200,255}, no halo), page fraction identically 0.0 under the pinned render → honest `uncalibrated` → `unknown` mechanism, aggregate blocks; README provenance section stands.
+- **GREEN**: targeted suite 7 passed; full suite **526 passed, 18 subtests** (519+18 baseline + 7 new); `just spec-check` → ALL GATES PASSED, **PASS 11 descriptor fixtures**; compileall OK.
+- **Tree**: only deliverable paths + pre-existing noise (`pba-judicial-2026-07-29.pdf`, `.whisper`/`.wai`). `dsc03/**`, `openspec/**`, justfile, existing fixtures untouched. No commits, no push.
+- Findings: none contradicting oracle semantics; degraded-scan floor honestly bounded (min 0.232 vs measured margin noise 0.147), not weakened. All measurements AGENT-EXECUTED — human pass supersedes.
+
+DONE exit 0

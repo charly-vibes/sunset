@@ -1,0 +1,24 @@
+**sunset-xzy.4 complete — exit 0.**
+
+## Deliverables
+
+- **`dsc03/visual/masks.py`** (created) — level-C geometry-mask alignment oracle: `PROPERTY = "region-alignment"`, `SCOPED_CLAIM`, `AlignmentOutcome`, `masks_outcome()`, `aggregate()` (delegates to the shared coverage rule), `supports_accuracy_claim()`. Compares descriptor region rects (mapped only through the declared frame) against the **simplified source** — binarized ink dilated per recorded `ink-dilation-<N>px` (D4: never naive mask-vs-pixels). Pinned in the docstring: exact calibration rule (ink: `min ≤ measured ≤ max`; no-ink: `measured ≤ min`), and the `ink-outside-rect` attribution — failing ink-claims with raw-empty rects but raw ink within the dilation ring are `differ` with reason `ink-outside-rect` (misplaced ≠ missing; **never elected into agreement**). Reuses coverage.py private helpers by explicit import; coverage.py untouched. EXEC-004 headers on both files.
+
+- **`tests/tracer/test_visual_masks.py`** (created) — 15 tests covering the full brief matrix (a)–(h) + real-carrier smoke.
+
+## Evidence
+
+| Gate | Result |
+|---|---|
+| RED (pre-impl) | `ImportError: cannot import name 'masks'` — module absent (verbatim in report) |
+| GREEN targeted | `15 passed in 1.69s` |
+| Full suite | `509 passed, 1 warning, 18 subtests` (494+18 baseline + 15 new), exit 0 |
+| `just spec-check` | `ALL GATES PASSED`, `PASS 11 descriptor fixtures`, exit 0 |
+| `git status` | only the two new files + pre-existing `.whisper`/`.wai` noise |
+
+## Notable deviations (detailed in report)
+
+- One **test-geometry correction** during GREEN: pymupdf `draw_rect(color=..., fill=...)` strokes the boundary, so raw ink reaches 1px past the fill rect — the misplaced-rect fixture moved from x 401..403 to x 402..404 (measured 0.5 < min 0.9; ring still inked). Diagnosed by measuring the actual mask bbox.
+- No spec-level ambiguity found — the ink-outside-rect rule is reconcilable with D4 as attribution-only; no STOP triggered.
+
+Report written to `.wai/projects/sunset/research/sunset-xzy.4-report.org` with verbatim RED/GREEN/suite/gate outputs.

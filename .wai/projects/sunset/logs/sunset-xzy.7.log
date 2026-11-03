@@ -1,0 +1,12 @@
+DONE
+
+**Summary** — sunset-xzy.7 executed per brief:
+
+- **RED (verbatim recorded)**: `ImportError: cannot import name 'reports' from 'dsc03.visual'` — collection interrupted, module absent. Prior session's surviving RED test file verified against real `CoverageOutcome`/`AlignmentOutcome`/`calibration.json` shapes and adopted unchanged.
+- **GREEN**: `dsc03/visual/reports.py` — pure `record(report, visual_results)` adding a distinct `visual_oracles` section (verbatim statuses/reasons, evidence-class labels, real `coverage.aggregate` pass/blocked + reasons, `non_substitution` note); never mutates input or other sections. EXEC-004 header.
+- **Commands**: targeted pytest `7 passed` (exit 0) · full suite `533 passed, 18 subtests passed` (526 baseline + 7 new) · `just spec-check` → `ALL GATES PASSED`, `PASS 11 descriptor fixtures` · compileall exit 0.
+- **Inertness proven without touching `conformance.py`**: classify output identical with/without the section; passing-oracles/no-readers suite stays `incomplete`; labels identical across agree/blocked/unknown outcomes. Follow-up threshold not triggered.
+- **Tree**: only `dsc03/visual/reports.py`, `tests/tracer/test_visual_integration.py`, `+ report file`; no commits, no push.
+- **Report**: `.wai/projects/sunset/research/sunset-xzy.7-report.org` (RED/GREEN/suite/gate pastes, deviations, AGENT-EXECUTED label).
+
+exit 0

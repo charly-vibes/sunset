@@ -1,0 +1,17 @@
+{
+  "ticket": "sunset-xzy.3",
+  "branch": "main",
+  "head": "ec2b298",
+  "brief": ".wai/projects/sunset/briefs/sunset-xzy.3.md",
+  "history": [
+    "claim:ec2b298",
+    "gates:ec2b298",
+    "brief:306a7bc",
+    "spawn",
+    "verify:REVIEW_REQUIRED-lead-side",
+    "ship:d615125",
+    "stop:d615125"
+  ],
+  "agent": "pi/openrouter/z-ai/glm-5.3-flash session 01a19e6f",
+  "log": ".wai/projects/sunset/logs/sunset-xzy.3.log"
+}

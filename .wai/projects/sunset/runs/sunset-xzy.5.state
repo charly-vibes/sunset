@@ -1,13 +1,17 @@
 {
   "ticket": "sunset-xzy.5",
   "branch": "main",
-  "head": "5a608b8",
+  "head": "5f05edb",
   "brief": ".wai/projects/sunset/briefs/sunset-xzy.5.md",
   "history": [
     "claim:5a608b8",
     "gates:5a608b8",
-    "brief:pending-commit"
+    "brief:0a18fe4",
+    "spawn",
+    "verify:REVIEW_REQUIRED-lead-side",
+    "ship:ef1d864",
+    "stop:5f05edb"
   ],
-  "agent": "",
+  "agent": "pi/openrouter/z-ai/glm-5.3-flash session (log .wai/projects/sunset/logs/sunset-xzy.5.log)",
   "log": ".wai/projects/sunset/logs/sunset-xzy.5.log"
 }

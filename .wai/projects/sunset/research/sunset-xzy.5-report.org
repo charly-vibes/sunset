@@ -1,0 +1,140 @@
+#+TITLE: sunset-xzy.5 implementation report — mutation-validation fixtures
+#+DATE: 2026-11-02
+#+PROPERTY: ticket sunset-xzy.5 (tasks.md 5.1, openspec change add-raster-visual-oracles)
+#+PROPERTY: base-commit 5a608b8, branch main · no commits made, no push
+#+PROPERTY: agent-executed demonstration — human pass supersedes
+
+* Status: DONE (all completion criteria met)
+
+1. Targeted pytest exits 0 — RED output recorded FIRST, verbatim (below).
+2. Full suite exits 0: =519 passed, 1 warning, 18 subtests passed= (509+18 baseline + 10 new).
+3. =just spec-check= exits 0: =ALL GATES PASSED=, =PASS 11 descriptor fixtures=.
+4. =git status --short= shows ONLY the two deliverable paths plus pre-existing
+   =.whisper=/=.wai=/=pba-judicial-2026-07-29.pdf= noise. No render churn: no
+   measurement.json, no snapshot changes. =/usr/bin/python3= used for every
+   test/gate command.
+
+* Files changed (exactly the brief's deliverables)
+
+- =tests/tracer/test_visual_mutations.py= — CREATED (mutation-validation suite; 10 tests)
+- =tests/tracer/fixtures/visual/= — CREATED:
+  - =visual-strip.pdf= (pristine baseline), =visual-strip-shift.pdf= (12 px seeded shift),
+    =visual-strip-omission.pdf=, =visual-strip-duplication.pdf=,
+    =visual-strip-rot90.pdf= (landscape rot90 carrier),
+    =geometry-rotated-strip.json= (true =page-1-rot90= + seeded-wrong =page-1-rot180=),
+    =README.org= (per-file provenance: pymupdf 1.28.2, fill-only rects, hand-computed
+    integer-exact 72 dpi geometry)
+- =.wai/projects/sunset/research/sunset-xzy.5-report.org= — CREATED (this file)
+
+Nothing under =dsc03/**=, =openspec/**=, =justfile=, or any existing fixture was touched.
+
+* Pinned class→oracle mapping (test module docstring, mirrored here)
+
+- *region-alignment (masks) CLAIMS shift*: its comparison surface is claimed rects
+  (mapped ONLY through the declared frame) vs the simplified source; 12 px displaced
+  ink is an alignment disagreement; the pinned =ink-outside-rect= attribution exists
+  precisely for misplaced ink. Spec scenario "Seeded shift detected" runs the
+  ALIGNMENT oracle on a 12 px-shifted fixture ⇒ =differ=. Demonstrated:
+  =visual-strip-shift.pdf= → =differ=, attributed to region id =ink-strip=.
+- *region-alignment CLAIMS wrong frame*: verdicts derive exclusively from the declared
+  frame; seeded =page-1-rot180= where =page-1-rot90= is true ⇒ =differ=,
+  region-attributed. Demonstrated: =visual-strip-rot90.pdf= under the seeded wrong
+  frame → =differ=, attributed to =ink-strip=.
+- *region-alignment does NOT claim omission/duplication* (ink-quantity defects; scoped
+  claim covers alignment only) → no-gate path pinned: missing calibration ⇒ =unknown=
+  (=uncalibrated=); =aggregate()= never =pass= over unknown/uncalibrated.
+- *ink-coverage CLAIMS omission*: measured fractions vs recorded [0.01, 1.0]; absent
+  ink ⇒ fraction 0 < floor ⇒ =differ=, region-attributed (=ink-strip=). Demonstrated:
+  =visual-strip-omission.pdf=.
+- *ink-coverage CLAIMS duplication*: copied 300×24 block lands in the =no-ink= region
+  ⇒ fraction ~1.0 > floor ⇒ =differ=, region-attributed (=blank-lower=); original
+  region still agrees (detection attributable to the copy). Demonstrated:
+  =visual-strip-duplication.pdf=.
+- *ink-coverage does NOT claim shift/wrong frame* (position/declaration defects; it
+  measures HOW MUCH ink, not WHERE) → same pinned no-gate path.
+- Every mutation test carries an unmutated baseline control (pristine fixture,
+  identical claims/calibration) asserting =agree=.
+
+* RED output (verbatim, recorded BEFORE fixtures existed)
+
+#+BEGIN_EXAMPLE
+        path = FIXTURES_DIR / fixture_name
+>       assert path.is_file(), f"missing committed mutation fixture: {path}"
+E       AssertionError: missing committed mutation fixture: /var/home/sasha/para/areas/dev/gh/charly/sunset/tests/tracer/fixtures/visual/visual-strip.pdf
+E       assert False
+E        +  where False = is_file()
+E        +  where is_file = PosixPath('/var/home/sasha/para/areas/dev/gh/charly/sunset/tests/tracer/fixtures/visual/visual-strip.pdf').is_file
+
+tests/tracer/test_visual_mutations.py:146: AssertionError
+=========================== short test summary info ============================
+FAILED tests/tracer/test_visual_mutations.py::test_shift_baseline_control_agrees
+FAILED tests/tracer/test_visual_mutations.py::test_seeded_shift_12px_detected_by_alignment_oracle
+FAILED tests/tracer/test_visual_mutations.py::test_wrong_frame_baseline_control_true_rot90_frame_agrees
+FAILED tests/tracer/test_visual_mutations.py::test_seeded_wrong_frame_rot180_declared_detected
+FAILED tests/tracer/test_visual_mutations.py::test_omission_baseline_control_agrees
+FAILED tests/tracer/test_visual_mutations.py::test_seeded_omission_detected_by_coverage_oracle
+FAILED tests/tracer/test_visual_mutations.py::test_duplication_baseline_control_agrees
+FAILED tests/tracer/test_visual_mutations.py::test_seeded_duplication_detected_by_coverage_oracle
+FAILED tests/tracer/test_visual_mutations.py::test_undemonstrated_class_uncalibrated_cannot_gate_coverage
+FAILED tests/tracer/test_visual_mutations.py::test_undemonstrated_class_uncalibrated_cannot_gate_alignment
+10 failed in 0.22s
+#+END_EXAMPLE
+
+* GREEN output (verbatim)
+
+#+BEGIN_EXAMPLE
+..........                                                               [100%]
+10 passed in 0.58s
+#+END_EXAMPLE
+
+* Full suite tail (verbatim)
+
+#+BEGIN_EXAMPLE
+519 passed, 1 warning, 18 subtests passed in 181.20s (0:03:01)
+#+END_EXAMPLE
+
+* Gate tail (verbatim)
+
+=just spec-check= (grep of recorded output):
+
+#+BEGIN_EXAMPLE
+==> frozen 0.2 reference validator
+python3 spec/document-model-specodelic-v3/validator.py test
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+==> openspec 1.x strict (same corpus, validator pinned by versions.ddl.toml)
+...
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+#+END_EXAMPLE
+
+=/usr/bin/python3 -m compileall tests/tracer/test_visual_mutations.py= → =COMPILE-OK=.
+
+* Deviations
+
+- None of substance. One process note: the attempt to capture the FULL pytest RED
+  output to a file was run in parallel with fixture creation and caught a mid-write
+  state (=..FF......=, 2 failures — fixtures half-created); the verbatim RED record
+  above is the tail of the FIRST clean run, which completed entirely before any
+  fixture file existed. RED ordering is intact.
+- Calibration windows: region-alignment =[0.95, 1.0]= (tighter than the xzy.4 tests'
+  =[0.9, 1.0]= — required because a 12 px shift of a 300×24 strip leaves ≈0.56 of the
+  rect, but the 2 px dilation on a 300×180 shape would mask detection; 0.95 keeps the
+  pristine measurement at exactly 1.0 with margin on every mutation) and ink-coverage
+  =[0.01, 1.0]= (page floor 1%: pristine whole-page fraction ≈1.8% > 0.01; omission
+  drops to 0; xzy.3's 0.1 floor is unreachable with a tiny committed strip). Both are
+  realistic recorded-shape entries (property/carrier/page/min≤max), not weakened
+  comparisons; no mutation magnitude was softened (shift is exactly 12 px).
+
+* Findings
+
+- *AGENT-EXECUTED demonstration — human pass supersedes.* The scripted machinery and
+  this demonstration corpus were agent-executed; the recorded demonstrations (4
+  claimed classes × committed fixtures × baseline controls) are honest outputs of the
+  shipped oracles under the pinned render config, but a human pass supersedes.
+- No detection gap found: every claimed class was detected =differ= with region
+  attribution at full mutation severity; no oracle needed patching; STOP threshold
+  not reached.
+
+* Handoff
+
+Tree left clean per brief: no commits, no push. Next: 5.2 calibration sheet.

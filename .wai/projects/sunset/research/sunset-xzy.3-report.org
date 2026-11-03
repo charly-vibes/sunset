@@ -1,0 +1,171 @@
+* sunset-xzy.3 — Binarized ink-coverage oracle (representation level B) — REPORT
+
+Ticket: sunset-xzy.3 (tasks.md 4.1, openspec/changes/add-raster-visual-oracles)
+Base: ec2b298 (xzy.1 25eb25b, xzy.2 cb9487e shipped)
+Status: COMPLETE — all completion criteria met, exit 0. No commits, no push.
+
+** Files changed (exact, per brief)
+
+- CREATED  =dsc03/visual/coverage.py= (249 lines) — level-B oracle: PROPERTY,
+  SCOPED_CLAIM, DILATION_CONNECTIVITY=8, CoverageOutcome, AggregateOutcome,
+  coverage_outcome(), aggregate(), supports_accuracy_claim() (delegating to
+  render.py semantics). EXEC-004 header present.
+- CREATED  =tests/tracer/test_visual_coverage.py= (436 lines) — 17 tests,
+  EXEC-004 header present.
+- No other files touched. No modifications to render.py / frames.py /
+  profiles.py / openspec / spec/ / validator.py. Optional fixture profile NOT
+  needed — reused =geometry-rotated-page.json= and =geometry-page-pt.json=
+  from xzy.2. =git diff= on tracked files shows only pre-existing
+  =.whisper= session noise.
+
+** RED (verbatim)
+
+=/usr/bin/python3 -m pytest tests/tracer/test_visual_coverage.py -q= before
+implementation existed:
+
+#+begin_example
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/tracer/test_visual_coverage.py _____________
+ImportError while importing test module '/var/home/sasha/para/areas/dev/gh/charly/sunset/tests/tracer/test_visual_coverage.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib64/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/tracer/test_visual_coverage.py:38: in <module>
+    from dsc03.visual import coverage, frames, render
+E   ImportError: cannot import name 'coverage' from 'dsc03.visual' (/var/home/sasha/para/areas/dev/gh/charly/sunset/dsc03/visual/__init__.py)
+=========================== short test summary info ============================
+ERROR tests/tracer/test_visual_coverage.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.34s
+#+end_example
+
+(Deviation, cosmetic: brief predicted ModuleNotFoundError; the observed RED
+gate was the equivalent ImportError for the absent submodule — same failure
+class: module does not exist.)
+
+** GREEN (verbatim)
+
+After implementing =coverage.py= (and fixing test-helper bugs — see
+Deviations):
+
+#+begin_example
+.................                                                        [100%]
+17 passed in 1.75s
+#+end_example
+
+Final state after REFACTOR (dead-code removal only):
+
+#+begin_example
+.................                                                        [100%]
+17 passed in 1.87s
+#+end_example
+
+Coverage of the brief's test matrix (a)-(g): (a) ink-region agree;
+(b) blank-area-claiming-ink differ with region id retained; D4 dilation
+proof (ink-dilation-2px agrees where ink-dilation-0px differs on the same
+carrier); (c) rot90 declared frame — hand-checked mapping, agree; same
+raster under rot180 flips corner region to differ (verdict follows the
+declared frame); (d) RenderUnavailable → unavailable with reason carried;
+(e) unknown matrix: invalid_geometry_frame / uncalibrated (missing,
+other-property, other-carrier) / binarization-not-configured /
+source-simplification-missing; (f) aggregate: all-agree → pass; faint-scan
+uncalibrated page blocks with reasons; blank page under ink-bearing bounds
+→ differ → blocked; empty → blocked; (g) SCOPED_CLAIM + docstring disclaim
+text correctness / reading order / semantic grouping / visual completeness;
+every outcome carries property="ink-coverage" + evidence class; correlated
+config → supports_accuracy_claim False. Real pinned carrier
+(bank-statement-ca-excerpt.pdf, poppler, independent) runs end-to-end →
+agree under recorded bounds [0.0, 1.0].
+
+** Full suite tail (verbatim)
+
+=/usr/bin/python3 -m pytest tests -q=:
+
+#+begin_example
+494 passed, 1 warning, 18 subtests passed in 188.17s (0:03:08)
+#+end_example
+
+Baseline 477 passed + 18 subtests + 17 new = 494 + 18. Exit 0.
+
+** Gate tail (verbatim)
+
+=just spec-check=:
+
+#+begin_example
+==> openspec strict validation (deployed specs + active changes, incl. deployed 0.3)
+Totals: 13 passed, 0 failed (13 items)
+==> spk lint (Specodelic layer of openspec/changes, incl. archive)
+==> tracer suite (0.3 machinery, not real-carrier conformance)
+494 passed, 1 warning, 18 subtests passed in 190.34s (0:03:10)
+==> frozen 0.2 reference validator
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+==> openspec 1.x strict (same corpus, validator pinned by versions.ddl.toml)
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+#+end_example
+
+Exit 0. Also: =/usr/bin/python3 -m compileall dsc03/visual= → OK.
+
+** Pinned semantics recorded (module docstring + code)
+
+- Ink iff gray value strictly below recorded threshold (fixed-threshold);
+  disabled/unapplicable binarization → unknown =binarization-not-configured=.
+- Source simplification parsed as =ink-dilation-<N>px= → 8-connected
+  (square/Chebyshev) dilation of the ink mask, =ink-dilation-0px= valid
+  no-op; =none= or unparseable → unknown =source-simplification-missing=.
+- Regions: descriptor points, (x,y) minimal corner; ink-claim agrees iff
+  min ≤ measured ≤ max; no-ink agrees iff measured ≤ min; page agrees iff
+  all regions agree AND whole-page fraction within [min, max]; out-of-bounds
+  or malformed claims → region =differ=, id retained.
+- Pinned unknown-check order: unavailable → binarization → decode
+  (=render-decode-failed=, new documented reason) → simplification → frame
+  (carries frames.py reason) → calibration (=uncalibrated=).
+- Aggregate: pass only if every outcome agree; empty set → blocked
+  (=no-page-outcomes=); blocked reasons list carrier/page/status/reason.
+
+** Deviations (all within brief discretion)
+
+1. RED failure class ImportError vs ModuleNotFoundError — same gate, noted above.
+2. Rotated-carrier fixture: built as a plain landscape 792×612 synthetic PDF
+   with ink drawn at the hand-computed rot90-frame-predicted pixels
+   (descriptor box (50,350)-(450,750) → raster (350,50)-(750,450)) instead of
+   pymupdf =set_rotation=. Reason: probing showed =set_rotation(90)= +
+   pymupdf drawing + poppler produced ink placements that did not match
+   naive derivation (blob center offset −28px vs prediction), and pymupdf
+   drawing coordinates change meaning when rotation is set before drawing.
+   The oracle-under-test only sees (raster bytes, declared frame), so the
+   provenance of the raster is irrelevant; the wrong-frame (rot180) run
+   flipping the verdict proves the frame is what drives the comparison.
+3. =_evaluate= helper needed a non-None sentinel for "no calibration" (an
+   explicit =calibration=None= must reach the oracle); also carrier helper
+   gained =white_rects= / =blank_pages_after= (white hole punched after black
+   fill; genuinely blank page 2 of the same document). Test-only fixes.
+4. SCOPED_CLAIM-in-docstring asserted with whitespace-normalized containment
+   (catches wording drift, tolerates line wrapping).
+
+** Findings (for the lead / xzy.4)
+
+1. pymupdf =set_rotation= drawing-coordinate ambiguity (finding 2 above) is
+   worth remembering when xzy.4 builds rotated geometry-mask fixtures:
+   either draw before set_rotation and verify empirically, or place ink at
+   frame-predicted pixels in a pre-rotated raster as done here.
+2. Determinism margins measured on carrier C (black page + white hole,
+   bounds [0.8, 1.0]): straddle region measured 0.82 dilated vs 0.725
+   undilated; interior 0.0; page fraction 0.9525. Comfortable headroom;
+   poppler renders are byte-identical per xzy.1, rects integer-exact.
+3. Real carrier measured @72dpi thr128: page ink fraction ≈0.0017; header
+   band region (50,700,512×60) ≈0.0139 → agree under recorded [0.0, 1.0].
+   Real calibration sheets (sunset-xzy.6) will need per-carrier bounds; the
+   single [min,max] entry must admit BOTH region-scale and page-scale
+   fractions — flag for the calibration-sheet design.
+4. Context budget: ≪150K tokens; ceiling respected.
+
+** Completion criteria
+
+1. =pytest tests/tracer/test_visual_coverage.py -q= exit 0 (17 passed) ✓
+2. =pytest tests -q= exit 0 (494 + 18 subtests ≥ 477+18 + new) ✓
+3. =just spec-check= exit 0, ALL GATES PASSED, PASS 11 ✓
+4. =git status --short=: only the two new files + pre-existing
+   .whisper/.wai/pba-judicial noise; no fixture or measurement churn ✓

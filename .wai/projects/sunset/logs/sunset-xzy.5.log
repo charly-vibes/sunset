@@ -1,0 +1,16 @@
+**Implementation complete — sunset-xzy.5.**
+
+**Deliverables** (only these paths touched):
+- `tests/tracer/test_visual_mutations.py` — 10 tests: pinned class→oracle mapping in the module docstring, 4 seeded-mutation demonstrations each paired with an unmutated baseline control, and the "Undemonstrated class" no-gate pins (uncalibrated ⇒ `unknown`; `aggregate()` never passes).
+- `tests/tracer/fixtures/visual/` — 5 committed pymupdf-built carriers (fill-only rects, integer-exact 72 dpi geometry), the rotated-frame JSON with the true `rot90` + seeded-wrong `rot180` frames, and `README.org` provenance.
+- `.wai/projects/sunset/research/sunset-xzy.5-report.org` — RED/GREEN verbatim outputs, suite/gate tails, pinned mapping, deviations, AGENT-EXECUTED-labeled findings.
+
+**Verification:**
+- RED recorded first: `10 failed in 0.22s` (all missing-fixture failures), then GREEN: `10 passed`
+- Full suite: `519 passed, 18 subtests passed` (509+18 baseline + 10 new)
+- `just spec-check`: `ALL GATES PASSED`, `PASS 11 descriptor fixtures`
+- `compileall`: OK; `git status` clean apart from pre-existing noise; no commits, no push
+
+**Pinned mapping:** masks/`region-alignment` claims **shift + wrong frame** (alignment through the declared frame; spec scenario); coverage/`ink-coverage` claims **omission + duplication** (ink quantity vs recorded fraction bounds); non-claimed classes pinned to the `uncalibrated`/no-gate path. No detection gaps found — no oracle edits needed.
+
+DONE exit 0

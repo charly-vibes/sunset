@@ -1,0 +1,5 @@
+---
+tags: [pipeline-run:epic-orchestrator-2026-11-02-sunset-xzy-2-declared-frame-mapping, pipeline-step:verify]
+---
+
+VERIFY sunset-xzy.2 (step-5 record, lead-side degradation): implementor died on OpenRouter credit wall post-GREEN pre-gates; cross-family verifier unavailable (mistral 429, glm credits) — verdict REVIEW_REQUIRED, human pass supersedes. Commands run: command=/usr/bin/python3 -m pytest tests/tracer/test_visual_frames.py -q → 18 passed in 0.15s (fresh, exit 0); command=just spec-check → exit 0 ALL GATES PASSED 477 tests + 18 subtests, frozen PASS 11, strict 13/13. Verified: tests pass. Checks: EXEC-004 headers on dsc03/visual/frames.py; typed PixelMapping/UnknownMapping only, no agree/differ; declared-fields-only mapping via profiles.resolve_frame; git log zero implementor commits; tree additions = 4 designated files. Artifacts read: .wai/projects/sunset/research/sunset-xzy.2 lead-side verify record, frames.py, test_visual_frames.py, both fixture JSONs, spec deltas document-visual-oracles.

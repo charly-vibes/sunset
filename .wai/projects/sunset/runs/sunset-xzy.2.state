@@ -1,0 +1,17 @@
+{
+  "ticket": "sunset-xzy.2",
+  "branch": "main",
+  "head": "1f0b6b5",
+  "brief": ".wai/projects/sunset/briefs/sunset-xzy.2.md",
+  "history": [
+    "claim:1f0b6b5",
+    "gates:1f0b6b5",
+    "brief:033eac7",
+    "spawn:BLOCKED-openrouter-credits",
+    "verify:REVIEW_REQUIRED-lead-side",
+    "ship:ec2b298",
+    "stop:ec2b298"
+  ],
+  "agent": "pi/openrouter/z-ai/glm-5.3-flash session 01a19e52 (BLOCKED: openrouter credits)",
+  "log": ".wai/projects/sunset/logs/sunset-xzy.2.log"
+}

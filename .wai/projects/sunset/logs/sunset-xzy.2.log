@@ -1,0 +1,16 @@
+This request requires more credits, or fewer max_tokens. You requested up to 131072 tokens, but can only afford 60022. To increase, visit https://openrouter.ai/settings/credits and add more credits
+**sunset-xzy.2 complete — all completion criteria met (exit 0).**
+
+Summary:
+- **RED**: `/usr/bin/python3 -m pytest tests/tracer/test_visual_frames.py -q` → `ImportError: cannot import name 'frames'` (module absent), collection interrupted.
+- **GREEN**: `dsc03/visual/frames.py` implemented → **18 passed in 0.30s**; `compileall` OK.
+- **Full suite**: `477 passed, 18 subtests` (baseline 459+18, +18 new, zero regressions).
+- **Gate**: `just spec-check` → `ALL GATES PASSED (13 items)`; frozen validator `PASS 11 descriptor fixtures`.
+- **Tree**: only the 4 designated new files + pre-existing noise. A transient `M tasks.md` was mtime-only (`git diff HEAD` empty) and cleared — nothing touched outside scope. No commits, no push.
+
+Design notes (declared in the module header, hand-pinned in tests):
+- Mapping derived solely from declared fields: `pt`→`dpi/72` scale (anything else ⇒ `unsupported_unit`), canonical `bottom-left`/`x-right-y-up` only, rotation ∈ {0,90,180,270} (CW raster convention, dims derived from caller-supplied raster extent), crop = declared pt offset, `source_scope` page binding checked.
+- `frame_mapping` acquires via `profiles.resolve_frame` — unresolved ⇒ `UnknownMapping("invalid_geometry_frame")`, no identity fallback (and `UnknownMapping` exposes no transforms, asserted).
+- `PINNED_PIXEL_TOLERANCE_PX = 1e-6` pins round-trips; rotated expected pixels hand-computed (90: (650,100), 180: (512,650)); `OUTCOME_STATUSES = {"resolved","unknown"}` — no `agree`/`differ`.
+
+Report written to `.wai/projects/sunset/research/sunset-xzy.2-report.org` with RED/GREEN/suite/gate outputs, deviations, and findings. Ready for the lead's verify/ship step.
