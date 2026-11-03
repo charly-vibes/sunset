@@ -1,12 +1,33 @@
 #+title: Difficult-page pilot references and bounded configuration (sunset-rmx.10)
 
 #+begin_quote
-STATUS: DRAFT — nothing here is approved. =pilot.json= does not exist yet;
-the stage manifest below is a proposal embedded as documentation, so
-=digitization evaluate= refuses until the owner pins it with
-=approved: true= and a real =reference_sha256=. No candidate inference has
-run. Reader passes have not run.
+STATUS: ENGINEERING-ONLY RULING RECORDED 2026-11-03. Owner quote:
+"with the new workflow of OCR from pdf-to-image we can skip the human
+requirement". No reader pass ran; =reference.json= does not exist and the
+final =pilot.json= will carry =mode: engineering-only=,
+=reference_sha256: null= and nonempty =missing_scopes=. Per tasks.md 3.1a /
+design.md:80: every quality/economy metric reports evaluation-incomplete;
+NO positive quality/economy/scaling conclusion is claimable from this
+pilot (negative/rejection decisions remain possible). Unmeasured
+correction effort stays UNKNOWN. No candidate inference has run.
 #+end_quote
+
+* Ruling record (sunset-rmx.10 closure basis)
+
+- Owner ruling, 2026-11-03, this session: skip the human reference
+  requirement; proceed on the OCR (rasterize -> pinned tesseract -> eval)
+  machinery without reviewed transcription references.
+- Fact of record: all six Diario excerpt pages are image-only (native text
+  layer absent), so the 9op mechanical-truth loop (OCR vs native text) has
+  no truth side here. Engineering-only is the only no-human path for the
+  Diario pages; OCR-vs-OCR is circular and is not used as truth.
+- Available fork (NOT ordered): a measured stage on a native-text difficult
+  page (e.g. the pba page 1 — 7 decorative-ink FPs already measured) using
+  the 9op loop as mechanical truth, zero humans, real quality numbers.
+  Owner may add this later; it does not resurrect Diario quality claims.
+- Consequence for the chain: =rmx.16= (six-page gate) gets the same
+  engineering-only treatment when reached; =rmx.14= cannot conclude positive
+  scaling from this pilot.
 
 * Scope and traceability
 
@@ -15,7 +36,7 @@ closed). Checkpoint: =openspec/changes/add-iterative-document-digitization/
 tasks.md: 3.1a=. Six-page references are =sunset-rmx.16= and never block this
 gate. Local providers only; no paid service or remote upload is authorized.
 
-* Proposed page selection (owner to confirm)
+* Proposed page selection (owner-confirmed scope: unchanged, pages [2, 5])
 
 Source: =fixtures/carriers/diario-de-poesia-excerpt.pdf=
 (sha256 =42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4=,
@@ -35,11 +56,11 @@ archive provenance per =fixtures/carriers/MANIFEST.org=).
 Stage =pages: [2, 5]= covers the entire difficult page plus the required
 image/caption feature page, per design.md:78.
 
-* Reader protocol (independent reference judgments)
+* Reader protocol — SUPERSEDED 2026-11-03 by the engineering-only ruling
 
-References are new judgments; existing region sheets (905.3, r68 carrier
-annotations) are NOT transcription gold and are not repurposed. Two
-independent readers, different model families where available, each produce:
+Kept for the record: had the owner ordered a measured stage, references
+were to be two independent readers (different model families where
+available), each producing:
 
 1. Full region inventory with coverage dispositions (text / handwriting /
    image / caption / decoration / page furniture); nothing silently dropped.
@@ -56,8 +77,8 @@ Disputed items stay explicit: the agreement matrix records AGREE / COMPATIBLE
 =exclusions= with counts and reasons. No winner election, no smoothing.
 Reviewer identity, scope, per-reader sheet digest and agreement matrix are
 recorded here before any candidate run. Agent-executed readers are a recorded
-deviation: a human pass supersedes, and the owner explicitly rules whether
-this reference supports assessment mode or only engineering-only execution.
+deviation: a human pass supersedes. None of this ran; it does not apply to
+the engineering-only pilot.
 
 * Proposed bounded local configuration (owner to set numbers)
 
@@ -85,17 +106,21 @@ this reference supports assessment mode or only engineering-only execution.
   with counts and reasons). Setup/reference effort recorded separately;
   unmeasured correction effort stays UNKNOWN.
 
-* Draft stage manifest (proposal only — DO NOT write to pilot.json yet)
+* Final stage manifest shape (to be written to =pilot.json= by =rmx.15=)
+
+=pilot.json= is finalized by =sunset-rmx.15= once the whole-page and crop
+OCR route configs exist (their sha256 digests are mandatory manifest
+fields), BEFORE the .15 real smoke and any .11 inference. Shape:
 
 #+begin_src json
 {
   "version": "1",
   "stage_id": "diario-difficult-page-r1",
-  "mode": "assessment",
-  "approval": {"approved": false, "owner": "PENDING — charly must record explicit approval"},
+  "mode": "engineering-only",
+  "approval": {"approved": true, "owner": "charly — ruling 2026-11-03: skip human reference requirement (OCR loop machinery instead)"},
   "source_sha256": "42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4",
   "pages": [2, 5],
-  "reference_sha256": "PENDING — digest of reference.json after reader pass + agreement",
+  "reference_sha256": null,
   "baseline_configuration_sha256": "PENDING — digest of the approved rmx.15 whole-page OCR config",
   "candidate_configuration_sha256": "PENDING — digest of the approved rmx.15 crop-OCR config",
   "engine": {"id": "tesseract-ocr", "version": "PENDING — pinned report from ocr_config",
@@ -113,7 +138,9 @@ this reference supports assessment mode or only engineering-only execution.
                                  "continuation-relationships"],
              "thresholds": {"PENDING-OWNER": 0}},
   "exclusions": [],
-  "missing_scopes": []
+  "missing_scopes": ["regions", "text-cer", "line-boundary",
+                     "stanza-boundary", "indentation",
+                     "continuation-relationships"]
 }
 #+end_src
 
@@ -121,19 +148,17 @@ Notes: =baseline/candidate_configuration_sha256= cannot be pinned before
 =sunset-rmx.15= builds the public whole-page and crop OCR routes and commits
 their configs; the gate records engine/policy/budget approval now and the
 config digests at =pilot.json= finalization, still before any inference.
+Thresholds stay pinned even in engineering-only mode (gates compute, but
+the report is evaluation-incomplete and forbids positive conclusions).
 =max_request_bytes= / =max_output_bytes= = 0 are placeholders to be replaced
-with real caps at approval (0 is a valid-but-meaningless policy value; the
-final manifest must carry deliberate numbers).
+with real caps at =pilot.json= finalization.
 
 * What closes this gate
 
-1. Owner confirms page selection [2, 5] (or redirects).
-2. Owner rules on reader path: agent-executed readers (deviation, human
-   supersedes) vs human sheets vs engineering-only mode (missing scopes
-   listed; evaluation-incomplete; no quality/economy claims).
-3. Reader pass runs; agreement matrix recorded here; =reference.json=
-   written with per-reader + merged provenance; disputed items become
-   exclusions.
-4. Owner approves the final numbers; =pilot.json= written with
-   =approved: true= and all digests; this file records the approval quote,
-   date and manifest digest.
+1. [x] Owner ruling recorded (engineering-only, no human references).
+2. [x] Engine/limits/budget pinned (above digests; exact byte caps at
+   finalization).
+3. [ ] =rmx.15= builds the route configs; =pilot.json= written with
+   =approved: true=, real config digests, nonempty =missing_scopes=.
+4. [ ] Gate ticket closed with this ruling as its approval record; smoke
+   and inference stay bounded by the pinned policy.
