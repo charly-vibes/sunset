@@ -20,9 +20,11 @@
   .navlabel { color:#777; font-size:.78rem; margin-right:.2rem; }
   .views { margin-left:auto; display:flex; gap:.4rem; align-items:center; }
   main { display:flex; gap:1rem; padding:0 1rem 1rem; align-items:flex-start; flex-wrap:wrap; }
-  .pane { background:#fff; border:1px solid #ddd; padding:.5rem; position:relative; }
+  .pane { background:#fff; border:1px solid #ddd; padding:.5rem; position:relative;
+          max-width:calc(50vw - 1.5rem); max-height:85vh; overflow:auto; }
   .pane h2 { font-size:.9rem; margin:.1rem 0 .4rem; font-weight:600; color:#444; }
-  .pane img { display:block; max-width:100%; height:auto; image-rendering: pixelated; }
+  .pane img { display:block; max-width:100%; height:auto; image-rendering: pixelated;
+              border:1px solid #c9c9c9; background:#fff; }
   .wrap { position:relative; }
   .box { position:absolute; border:1.5px solid var(--accent); background:rgba(11,98,214,.12); }
   .box.expected-no-ink { border-color: var(--bad); background: rgba(198,40,40,.08); }
@@ -66,6 +68,13 @@
   <span class="navlabel">pages:</span>
   <span id="page-pills"></span>
   <span id="progress"></span>
+  <span class="navlabel">zoom:</span>
+  <span id="zoombar">
+    <button class="pill zoom active" data-zoom="fit">fit</button>
+    <button class="pill zoom" data-zoom="1">1&times;</button>
+    <button class="pill zoom" data-zoom="2">2&times;</button>
+    <button class="pill zoom" data-zoom="4">4&times;</button>
+  </span>
   <span class="views">
     <input type="radio" name="view" id="view-side" value="side-by-side" checked>
     <label for="view-side">side-by-side</label>
@@ -268,6 +277,18 @@ function imageFor(p) {
   return img;
 }
 
+let zoom = "fit";   // "fit" = capped by pane; "1"/"2"/"4" = natural-width multiple
+
+function applyZoom(img, p) {
+  if (zoom !== "fit" && p.width) {
+    img.style.width = Math.round(p.width * parseFloat(zoom)) + "px";
+    img.style.maxWidth = "none";   // zoom exceeds the pane; panes scroll
+  } else {
+    img.style.width = "";
+    img.style.maxWidth = "";
+  }
+}
+
 function pctBox(rect_px, p) {
   return {
     left: (rect_px[0] / p.width * 100) + "%",
@@ -289,8 +310,11 @@ function renderPanes() {
   clean.innerHTML = ""; ann.innerHTML = "";
   const overlayMode = document.getElementById("view-overlay").checked;
   document.getElementById("pane-clean").style.display = overlayMode ? "none" : "block";
-  clean.appendChild(imageFor(p));
+  const cleanImg = imageFor(p);
+  applyZoom(cleanImg, p);
+  clean.appendChild(cleanImg);
   const img = imageFor(p);
+  applyZoom(img, p);
   ann.appendChild(img);
   (p.regions || []).forEach(r => {
     if (!r.rect_px) return;
@@ -406,6 +430,14 @@ function renderAll() {
 function wireChrome() {
   document.getElementById("view-side").addEventListener("change", renderPanes);
   document.getElementById("view-overlay").addEventListener("change", renderPanes);
+  document.querySelectorAll("#zoombar .zoom").forEach(b => {
+    b.addEventListener("click", () => {
+      zoom = b.dataset.zoom;
+      document.querySelectorAll("#zoombar .zoom")
+        .forEach(x => x.classList.toggle("active", x === b));
+      renderPanes();
+    });
+  });
   document.getElementById("reviewer").addEventListener("input", save);
   document.getElementById("download").addEventListener("click", () => {
     const payload = buildVerdictJson(

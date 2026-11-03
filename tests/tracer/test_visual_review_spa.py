@@ -16,6 +16,10 @@ It must:
   the pinned render, pixel-mapped regions, render configuration and
   evidence class; missing renderers and unknown frames stay typed
   (unavailable / unknown), never silently dropped,
+- keep the pinned render readable: a visible page boundary, zoom
+  controls (fit / 1x / 2x / 4x) that scale the render while the
+  %-positioned overlays track it, and scrollable panes so zoomed pages
+  stay reachable,
 - walk every recorded calibration example through
   build_calibration_review_bundle (all carriers, all unique render
   targets incl. both rotated-strip frames), and
@@ -86,6 +90,25 @@ def test_review_spa_is_offline_only():
         if src:
             assert src.group(1).startswith("data:") or src.group(1).startswith("#"), tag
     assert "application/json" in html, "embedded data island missing"
+
+
+def test_review_spa_provides_zoom_controls_and_page_boundary():
+    """Renders must stay reviewable: page outline + zoom + scrollable panes.
+
+    Owner-reported defect (2026-11-03): a mostly-blank carrier page displayed
+    at natural size in a white-on-white pane looks broken and cannot be
+    inspected. The render gets a visible boundary; zoom pills scale it while
+    the %-positioned region overlays track the scaling (pctBox is relative
+    to the image extent), and panes scroll so zoomed pages stay reachable.
+    """
+    src = TEMPLATE_PATH.read_text()
+    assert 'id="zoombar"' in src
+    assert 'data-zoom="fit"' in src
+    assert 'data-zoom="2"' in src and 'data-zoom="4"' in src
+    assert "style.width" in src and "style.maxWidth" in src
+    assert "image-rendering: pixelated" in src
+    assert ".pane img" in src and "border:1px solid" in src
+    assert "overflow:auto" in src and "max-height" in src
 
 
 def test_review_spa_pins_interaction_affordances():
