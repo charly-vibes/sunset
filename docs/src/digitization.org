@@ -12,18 +12,20 @@ source-hash and page attribution; it does not produce word-location mappings.
 The recorded-input commands later in this reference render PDF pages and import
 supplied, source-pinned region/OCR observations into valid DSC, searchable text and an
 inspection report. They do not extract those observations automatically.
-Run from the repository root with Python 3 and PyMuPDF 1.28.2, pinned in
-[[../../requirements-native.txt][requirements-native.txt]]. Native operations invoke no
-OCR, model or network service.
+Run from the repository root. The Python layer is pinned by =uv.lock=
+(PyMuPDF 1.28.2, mirrored in
+[[../../requirements-native.txt][requirements-native.txt]]); =uv sync=
+reproduces the runtime from it. Native operations invoke no OCR, model or
+network service.
 
 * Native extraction, inspection and replay
 
 #+begin_src bash
-python3 -m pip install -r requirements-native.txt
-python3 -m digitization native --source input.pdf --output native-run
-python3 -m digitization inspect --run native-run --json
-python3 -m digitization resume --run native-run
-python3 -m digitization replay --run native-run --output replayed-run
+uv sync
+uv run python -m digitization native --source input.pdf --output native-run
+uv run python -m digitization inspect --run native-run --json
+uv run python -m digitization resume --run native-run
+uv run python -m digitization replay --run native-run --output replayed-run
 #+end_src
 
 The output directory must not already exist. Native extraction returns 0 when

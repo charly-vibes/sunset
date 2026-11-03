@@ -11,6 +11,13 @@ __pycache__/
 .pytest_cache/
 .hypothesis/
 
+# uv-managed virtualenv (recreate with `uv sync` from the committed uv.lock)
+.venv/
+
+# devenv.sh state (see devenv.nix, tambor/DDL-irv pattern)
+.devenv/
+.devenv.flake.nix
+
 # OS
 .DS_Store
 

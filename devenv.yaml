@@ -1,0 +1,7 @@
+# devenv.sh — pin the dev-environment inputs (tambor/DDL-irv fleet pattern).
+# Usage (requires Nix, pending install on this machine): `devenv shell` drops
+# into the repo toolchain. Python-layer reproducibility already works without
+# Nix via uv (uv.lock is committed; `uv sync` reproduces .venv).
+inputs:
+  nixpkgs:
+    url: github:cachix/devenv-nixpkgs/rolling

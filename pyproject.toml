@@ -1,0 +1,27 @@
+# Purpose: Define sunset's reproducible Python runtime for uv and devenv.
+# Responsibilities: Pin the native extractor (PyMuPDF) and test tooling; keep
+#   requirements-native.txt as the pin record asserted by the tracer contract.
+# Rationale: sunset-jbb.4 binds run artifacts to the extractor version;
+#   sunset-olu adopts uv.lock + devenv (tambor/DDL-irv fleet pattern) so the
+#   same bytes in produce the same wheels and interpreter everywhere.
+# Verify: uv sync && just spec-check
+
+[project]
+name = "sunset"
+version = "0.3.0"
+description = "DSC specification corpus with an executable 0.3 baseline and a local source-linked digitization workflow"
+requires-python = ">=3.11"
+dependencies = [
+    # Keep in lockstep with requirements-native.txt (contract-asserted pin).
+    "PyMuPDF==1.28.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+]
+
+[tool.uv]
+# The suite also runs under any python3 with pytest+pymupdf (see justfile
+# SUNSET_PYTHON); the lockfile is the supported path.
+package = false
