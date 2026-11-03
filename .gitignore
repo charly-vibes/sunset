@@ -37,3 +37,4 @@ __pycache__/
 *.gate.lock*
 .env
 .visual-review/
+.pretender/
