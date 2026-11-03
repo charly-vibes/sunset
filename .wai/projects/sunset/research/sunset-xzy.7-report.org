@@ -1,0 +1,119 @@
+#+title: sunset-xzy.7 report — visual results as separate evidence class; conformance labels unchanged (AGENT-EXECUTED — human pass supersedes)
+
+* Ticket
+sunset-xzy.7 (tasks.md 6.1, add-raster-visual-oracles). PLUMBING slice:
+record visual-oracle results into report dicts as a DISTINCT evidence
+class; prove the wiring is inert with respect to conformance labels.
+Base commit: d18d62c (0a00c35 + brief doc). Spawn model
+openrouter/z-ai/glm-5.3-flash.
+
+* Files changed (complete list — nothing else touched)
+- ~dsc03/visual/reports.py~ :: NEW. Pure ~record(report, visual_results)~
+  → new report dict with a ~visual_oracles~ section: per-outcome entries
+  (property/carrier/page, verbatim status, verbatim reason, evidence-class
+  label, retained region verdicts), shared aggregate (the REAL
+  ~dsc03.visual.coverage.aggregate~ rule: ~pass~ only when every page
+  agrees; blocked reasons listed; empty set → ~blocked~
+  ~no-page-outcomes~), section evidence-class label (single / ~mixed~ /
+  ~None~ when empty), and the explicit ~non_substitution~ note naming the
+  four conformance inputs this section does NOT provide. Never mutates
+  input; never touches other sections. EXEC-004 header present.
+- ~tests/tracer/test_visual_integration.py~ :: NEW (7 tests, brief
+  items a–d).
+- ~.wai/projects/sunset/research/sunset-xzy.7-report.org~ :: this report.
+
+* RED (verbatim)
+Test file present, ~dsc03/visual/reports.py~ absent (TDD red):
+
+#+begin_example
+==================================== ERRORS ====================================
+___________ ERROR collecting tests/tracer/test_visual_integration.py ___________
+ImportError while importing test module '/var/home/sasha/para/areas/dev/gh/charly/sunset/tests/tracer/test_visual_integration.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib64/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/tracer/test_visual_integration.py:38: in <module>
+    from dsc03.visual import coverage, masks, reports
+E   ImportError: cannot import name 'reports' from 'dsc03.visual' (/var/home/sasha/para/areas/dev/gh/charly/sunset/dsc03/visual/__init__.py)
+=========================== short test summary info ============================
+ERROR tests/tracer/test_visual_integration.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.23s
+#+end_example
+
+* GREEN (verbatim)
+~`/usr/bin/python3 -m pytest tests/tracer/test_visual_integration.py -q`~:
+
+#+begin_example
+.......                                                                  [100%]
+7 passed in 0.16s
+PYTEST_EXIT=0
+#+end_example
+
+* Full suite (verbatim tail)
+~`/usr/bin/python3 -m pytest tests -q`~:
+
+#+begin_example
+533 passed, 1 warning, 18 subtests passed in 187.04s (0:03:07)
+#+end_example
+
+Baseline 526 + 7 new tests; 18 subtests unchanged. The single warning is
+the pre-existing measurement-only wall-time warning (no perf claim).
+
+* Gates (verbatim tails)
+~`just spec-check`~:
+
+#+begin_example
+533 passed, 1 warning, 18 subtests passed in 187.95s (0:03:07)
+==> frozen 0.2 reference validator
+python3 spec/document-model-specodelic-v3/validator.py test
+PASS 11 descriptor fixtures; this is not actual PDF/EPUB extraction conformance
+==> openspec 1.x strict (same corpus, validator pinned by versions.ddl.toml)
+✓ change/add-raster-visual-oracles
+✓ spec/document-conformance
+[... 13 items ...]
+Totals: 13 passed, 0 failed (13 items)
+ALL GATES PASSED
+#+end_example
+
+~`/usr/bin/python3 -m compileall dsc03/visual/reports.py tests/tracer/test_visual_integration.py`~ → exit 0.
+
+* How inertness is proven (brief 2c/2d)
+- ~dsc03/conformance.py~ was NOT edited (zero edits to any forbidden
+  file; ~git status~ shows only the two deliverable paths).
+- Structural reason labels cannot move: ~classify~ copies the suite dict
+  and reads only its documented keys via ~.get~; the added
+  ~visual_oracles~ key is invisible to it. Tests assert equality of the
+  full classify output with vs. without the section, a full
+  passing-oracles / zero-independent-readers suite (stays ~incomplete~,
+  readers still in ~missing~), and identical labels across
+  agree/blocked/unknown oracle outcomes (including on a ~complete~
+  suite, both directions). No substitution note lists the four conformance
+  inputs by suite-dict key name.
+
+* Deviations
+- The untracked test file already existed on disk from a prior session
+  of this ticket (beads lease had expired; module still absent, i.e. a
+  surviving RED state). I verified every helper and assertion against
+  the real typed classes (~CoverageOutcome~, ~AlignmentOutcome~,
+  ~coverage.aggregate~, ~render.evidence_class~) and the committed
+  ~fixtures/visual/calibration.json~ record (faint page honestly
+  ~unknown~/~uncalibrated~; visual-strip derivation entries agree on
+  ~ink-strip~/~blank-lower~), then adopted it as-is for RED. No
+  assertion was weakened.
+- RED failure shape is ~ImportError: cannot import name 'reports'~ (not
+  literally ~ModuleNotFoundError~) — same collection-time failure class,
+  recorded verbatim above.
+
+* Findings
+- None adverse. Label inertness held exactly as specified; no forbidden
+  edit was ever needed; follow-up threshold NOT triggered.
+- ~coverage.aggregate~'s blocked reason strings embed carrier/page and
+  the verbatim reason (e.g. ~visual-strip-faint page 1: unknown
+  (uncalibrated)~) — recorded as-is; nothing masked.
+
+* AGENT-EXECUTED
+All outputs above are machine-executed pytest/validator/openspec runs.
+Nothing here produces human evidence; a human pass supersedes.
