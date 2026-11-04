@@ -98,6 +98,29 @@ def test_full_width_rules_do_not_bridge_column_gaps(tmp_path):
     assert max(widths) < 250  # no single region spans the whole page width
 
 
+def test_vertical_crease_in_gutter_does_not_merge_columns(tmp_path):
+    """Fold/shadow creases run down true gutters (Diario p.2 scan: thin
+    vertical lines with hundreds of ink rows). A thin crease is scan dirt,
+    not a column: it must not extend a region across the gutter."""
+    source = tmp_path / 'creased.pdf'
+    with pymupdf.open() as pdf:
+        page = pdf.new_page(width=300, height=400)
+        page.insert_text((30, 40), 'Texto izquierdo')
+        page.insert_text((210, 40), 'Texto derecho')
+        page.draw_line((160, 20), (160, 140), width=2)  # crease mid-gutter
+        page.insert_text((30, 100), 'Mas texto a la izquierda')
+        page.insert_text((210, 100), 'Y texto a la derecha')
+        pdf.save(source)
+    png, meta = rendered(source, dpi=96)
+    detections = detect_regions(png, meta)
+    assert detections, 'expected proposals'
+    spans = [(d['bbox'][0], d['bbox'][0] + d['bbox'][2]) for d in detections]
+    crossing = [(a, b) for a, b in spans if a < 150 < b]
+    assert not crossing, f'regions span the gutter: {crossing}'
+    assert any(b <= 150 for a, b in spans), 'left column missing'
+    assert any(a >= 155 for a, b in spans), 'right column missing'
+
+
 def test_detector_runs_no_ocr_no_subprocess(tmp_path, monkeypatch):
     def explode(*args, **kwargs):
         raise AssertionError('detector must not invoke any subprocess/OCR')
