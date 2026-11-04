@@ -121,6 +121,51 @@ def test_vertical_crease_in_gutter_does_not_merge_columns(tmp_path):
     assert any(a >= 155 for a, b in spans), 'right column missing'
 
 
+def test_column_content_splits_at_large_vertical_gaps(tmp_path):
+    """XY-cut, Y axis: when dense ink elsewhere keeps the band connected
+    (like a photo column in the Diario scan), a column with large internal
+    gaps must still split into stacked regions hugging each block."""
+    source = tmp_path / 'stacked.pdf'
+    with pymupdf.open() as pdf:
+        page = pdf.new_page(width=300, height=400)
+        page.insert_text((30, 40), 'Bloque arriba del todo')
+        page.insert_text((30, 170), 'Bloque al medio')
+        page.insert_text((30, 300), 'Bloque abajo, lejos')
+        # dense ink in the right column bridges the band top-level
+        page.draw_rect(pymupdf.Rect(210, 40, 260, 320), fill=(0, 0, 0))
+        pdf.save(source)
+    png, meta = rendered(source, dpi=96)
+    detections = detect_regions(png, meta)
+    left = [d for d in detections if d['bbox'][0] < 150]
+    assert len(left) >= 3, f'left column should split into blocks: {left}'
+    for d in left:
+        assert d['bbox'][3] < 60, f"left region spans the vertical gaps: {d['bbox']}"
+
+
+def test_staggered_blocks_intersect_without_empty_cells(tmp_path):
+    """XY-cut intersection: left column has text top and bottom, right
+    column only at top. Regions must be the three inked blocks — no region
+    may cover the empty right-bottom cell."""
+    source = tmp_path / 'staggered.pdf'
+    with pymupdf.open() as pdf:
+        page = pdf.new_page(width=300, height=400)
+        page.insert_text((30, 40), 'Izquierda arriba')
+        page.insert_text((30, 300), 'Izquierda abajo')
+        page.insert_text((210, 40), 'Derecha arriba')
+        pdf.save(source)
+    png, meta = rendered(source, dpi=96)
+    detections = detect_regions(png, meta)
+    assert len(detections) >= 3
+    spans = [(d['bbox'][0], d['bbox'][1], d['bbox'][0] + d['bbox'][2],
+              d['bbox'][1] + d['bbox'][3]) for d in detections]
+    crossing = [box for box in spans if box[2] > 150
+                and box[1] < 250 and box[3] > 150]
+    assert not crossing, f"regions cover the empty right-bottom cell: {crossing}"
+    assert any(a < 150 and b < 100 for a, b, _r, _t in spans)
+    assert any(a < 150 and b > 250 for a, b, _r, _t in spans)
+    assert any(a >= 150 and b < 100 for a, b, _r, _t in spans)
+
+
 def test_detector_runs_no_ocr_no_subprocess(tmp_path, monkeypatch):
     def explode(*args, **kwargs):
         raise AssertionError('detector must not invoke any subprocess/OCR')

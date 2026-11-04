@@ -33,6 +33,8 @@ RULE_FRACTION = 0.5   # row ink share at or above this, with a small max
 RULE_MAX_GAP = 0.12   # rules are contiguous: longest ink-free run <= this
                       # share of the width (wide two-column text rows have a
                       # big central gutter and must not count as rules)
+ROW_GAP_PX = 20      # blank rows bridged when cutting columns vertically
+MAX_CUT_DEPTH = 6    # recursion bound for pathological XY-cut layouts
 
 
 def _decode(png_bytes):
@@ -115,35 +117,34 @@ def _ink_bands(pix):
     return bands
 
 
-def _column_ink(pix, first_row, last_row):
-    """Boolean per-pixel-column list over the given pixel row range."""
+def _ink_matrix(pix):
+    """Per-row bytearrays: 1 where the pixel is ink, else 0.
+
+    Built once per page; every axis count below sums C-speed byte slices
+    instead of re-walking samples.
+    """
     width, n, samples = pix.width, pix.n, pix.samples
     stride = width * n
-    columns = [False] * width
-    for row in range(first_row, last_row + 1):
-        base = row * stride
-        for column in range(width):
-            offset = base + column * n
-            if any(samples[offset + channel] <= INK_LEVEL
-                   for channel in range(n)):
-                columns[column] = True
-    return columns
-
-
-def _column_counts(pix, first_row, last_row):
-    """Ink row count per pixel column over the given row range."""
-    width, n, samples = pix.width, pix.n, pix.samples
-    stride = width * n
-    counts = [0] * width
-    for row in range(first_row, last_row + 1):
-        base = row * stride
+    matrix = []
+    for base in range(0, len(samples), stride):
+        row = bytearray(width)
         for c in range(width):
-            if min(samples[base + c * n: base + c * n + n]) <= INK_LEVEL:
-                counts[c] += 1
-    return counts
+            off = base + c * n
+            if min(samples[off:off + n]) <= INK_LEVEL:
+                row[c] = 1
+        matrix.append(row)
+    return matrix
 
 
-def _column_cells(pix, first_row, last_row):
+def _axis_counts(matrix, box, along_x):
+    """Ink counts along one axis within the window (columns if along_x)."""
+    x0, x1, y0, y1 = box
+    if along_x:
+        return list(map(sum, zip(*(row[x0:x1 + 1] for row in matrix[y0:y1 + 1]))))
+    return [sum(row[x0:x1 + 1]) for row in matrix[y0:y1 + 1]]
+
+
+def _column_cells(matrix, box):
     """Column presence cells after noise-floor and thin-crease rejection.
 
     Scan gutters carry low-level dirt (fold shadows, speckle) in almost
@@ -151,10 +152,36 @@ def _column_cells(pix, first_row, last_row):
     floor requires ink in a real share of the band's rows. Solid thin
     creases that clear the floor are removed by the thin-run drop.
     """
-    rows = last_row - first_row + 1
-    floor = max(3, int(rows * COLUMN_NOISE_FRACTION))
-    present = [count >= floor for count in _column_counts(pix, first_row, last_row)]
+    x0, x1, y0, y1 = box
+    floor = max(3, int((y1 - y0 + 1) * COLUMN_NOISE_FRACTION))
+    present = [count >= floor for count in _axis_counts(matrix, box, True)]
     return _drop_thin_runs(_cell_flags(present), max(1, MIN_COLUMN_PX // CELL_PX))
+
+
+def _row_cut(matrix, box):
+    """(y0, y1) pixel sub-bands within the window, bridging line gaps.
+
+    Rows need ink across COLUMN_NOISE_FRACTION of the window's width, so
+    line leading (near-blank rows) still reads as gaps when the gap exceeds
+    ROW_GAP_PX.
+    """
+    x0, x1, y0, y1 = box
+    floor = max(3, int((x1 - x0 + 1) * COLUMN_NOISE_FRACTION))
+    presence = [count >= floor for count in _axis_counts(matrix, box, False)]
+    bands, start, blank = [], None, 0
+    for i, p in enumerate(presence + [False]):
+        if p:
+            if start is None:
+                start = i
+            blank = 0
+        elif start is not None:
+            blank += 1
+            if blank > ROW_GAP_PX:
+                bands.append((y0 + start, y0 + i - blank))
+                start = None
+    if start is not None:
+        bands.append((y0 + start, y0 + y1 - y0 - blank))
+    return bands
 
 
 def _segments(flags, gap):
@@ -221,21 +248,51 @@ def _pt_box(x0_px, y0_px, x1_px, y1_px, meta):
 def detect_regions(png_bytes, meta):
     """Propose ink regions for a rendered page as recorded-config detections.
 
-    Returns a list of {'id', 'kind', 'bbox': [x, y, width, height]} dicts in
+    Recursive XY-cut: rule-separated ink bands, then columns within each
+    band, then sub-bands within each column, alternating until boxes hug
+    ink that no clean cut divides further (MAX_CUT_DEPTH bounds pathological
+    layouts). Returns {'id', 'kind', 'bbox': [x, y, width, height]} dicts in
     reading order (top-to-bottom, then left-to-right). bboxes are nonnegative
     integer page points (y-down), nonzero width/height, inside the page frame.
     """
     pix = _decode(png_bytes)
-    height_px, width_px = pix.height, pix.width
-    proposals = []
-    for first_row, last_row in _ink_bands(pix):
-        column_cells = _segments(_column_cells(pix, first_row, last_row), GAP_CELLS)
-        for col_first, col_last in column_cells:
-            x0_px = col_first * CELL_PX
-            y0_px = first_row
-            x1_px = min(width_px, (col_last + 1) * CELL_PX)
-            y1_px = min(height_px, last_row + 1)
-            proposals.append(_pt_box(x0_px, y0_px, x1_px, y1_px, meta))
-    proposals.sort(key=lambda box: (box[1], box[0]))
-    return [{'id': f'det-{number}', 'kind': 'ink-block', 'bbox': box}
-            for number, box in enumerate(proposals, 1)]
+    matrix = _ink_matrix(pix)
+    boxes = []
+    for y0, y1 in _ink_bands(pix):
+        boxes.extend(_cut_region(matrix, (0, pix.width - 1, y0, y1), 0))
+    boxes.sort(key=lambda box: (box[2], box[0]))
+    return [{'id': f'det-{number}', 'kind': 'ink-block',
+             'bbox': _pt_box(x0, y0, x1 + 1, y1 + 1, meta)}
+            for number, (x0, x1, y0, y1) in enumerate(boxes, 1)]
+
+
+def _cut_region(matrix, box, depth):
+    """Alternate column and row cuts; leaves hug ink, never the raw window.
+
+    Hugging (tightening to the single segment) happens even below the cut
+    threshold; the guard only forbids FURTHER splitting of small windows.
+    """
+    x0, x1, y0, y1 = box
+    segments = _segments(_column_cells(matrix, box), GAP_CELLS)
+    if segments:
+        children = [(x0 + cx0 * CELL_PX, min(x1, x0 + (cx1 + 1) * CELL_PX - 1), y0, y1)
+                    for cx0, cx1 in segments]
+    else:
+        children = [box]
+    if depth >= MAX_CUT_DEPTH or x1 - x0 < CELL_PX or y1 - y0 < ROW_GAP_PX:
+        return children
+    if len(children) > 1:
+        boxes = []
+        for child in children:
+            boxes.extend(_cut_region(matrix, child, depth + 1))
+        return boxes
+    x0, x1, y0, y1 = children[0]
+    rows = _row_cut(matrix, (x0, x1, y0, y1))
+    if len(rows) > 1:
+        boxes = []
+        for ry0, ry1 in rows:
+            boxes.extend(_cut_region(matrix, (x0, x1, ry0, ry1), depth + 1))
+        return boxes
+    if len(rows) == 1:
+        children = [(x0, x1, rows[0][0], rows[0][1])]
+    return children
