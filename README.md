@@ -41,7 +41,7 @@ DSC keeps source observations, logical structure and semantic interpretation
 separately addressable. It supports the extraction tool and other consumers
 such as indexers, comparators and archival pipelines. Existing deployed
 requirements remain authoritative; the
-[native-PDF proposal](openspec/changes/add-native-pdf-extraction/proposal.md)
+[native-PDF change record](openspec/changes/archive/2026-11-04-add-native-pdf-extraction/proposal.md)
 records the design source for the implemented local workflow.
 
 | Available now | Planned baseline |

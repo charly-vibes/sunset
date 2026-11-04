@@ -115,7 +115,7 @@ embedded PDF text with word/line mappings, verifies retained artifacts during
 inspection and supports offline replay. The native route is local and does not
 invoke OCR. Scanned/textless pages, visual completeness, OCR and installable
 packaging remain outside this baseline; see [status](status.md) and the
-[native extraction proposal](../../openspec/changes/add-native-pdf-extraction/proposal.md).
+[native extraction change record](../../openspec/changes/archive/2026-11-04-add-native-pdf-extraction/proposal.md).
 
 Other tools can still implement DSC independently and use the conformance suite.
 The extraction tool does not change the core wire contract or establish broader
