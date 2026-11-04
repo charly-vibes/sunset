@@ -20,6 +20,134 @@ from digitization.artifacts import validate_response
 SEMANTIC_EXCLUSIONS = {'ledger.json'}
 
 
+def _verify_recorded_selections(run):
+    """Validate every selected recorded attempt against its bound artifact."""
+    for operation in run['report']['operations'].values():
+        outcome = _verify_recorded_operation(operation, run)
+        if outcome is not None:
+            return outcome
+    return None
+
+
+def _verify_recorded_operation(operation, run):
+    """One recorded operation: versioned request, available selection, outputs."""
+    if (not isinstance(operation, dict) or not isinstance(operation.get('request'), dict)
+            or operation['request'].get('version') != '1'):
+        return {'status': 'unsupported-version', 'reason': 'unsupported-version',
+                'provider_calls': 0}
+    attempts = operation.get('attempts')
+    selected = operation.get('selected_attempt')
+    if (not isinstance(attempts, list) or any(not isinstance(a, dict) for a in attempts)
+            or not any(a.get('id') == selected for a in attempts)):
+        raise IntegrityError('selected response attempt is unavailable')
+    for attempt in attempts:
+        outcome = _verify_recorded_attempt(attempt, run)
+        if outcome is not None:
+            return outcome
+    return None
+
+
+def _verify_recorded_attempt(attempt, run):
+    """One recorded attempt: pinned output must hold a valid response."""
+    if attempt.get('version') != '1':
+        return {'status': 'unsupported-version', 'reason': 'unsupported-version',
+                'provider_calls': 0}
+    try:
+        output = attempt['output']
+        ref = run['manifest']['artifacts'][output['path']]
+        if ref['sha256'] != output['sha256']:
+            raise ValueError('response artifact reference mismatch')
+        validate_response(validator.load(run['root'] / output['path']))
+    except (OSError, ValueError, KeyError, TypeError, validator.Duplicate) as error:
+        raise IntegrityError('invalid recorded response artifact') from error
+    return None
+
+
+def _verify_local_selections(run):
+    """Cross-bind local selections: manifest summary, region, history, blob.
+
+    A completed local run records operation_key and selected_attempt on the
+    manifest summary and on the matching region record; freshly dispatched
+    operations additionally carry one recognize revision in history whose raw
+    output blob is digest-bound in the manifest artifacts. Cache-served
+    operations leave no fresh blob — their selection rests on the region
+    record and the hash-bound usage ledger. Replaying never re-dispatches.
+    """
+    artifacts = run['manifest']['artifacts']
+    for name in ('history.json', 'regions.json'):
+        reference = artifacts.get(name)
+        if not isinstance(reference, dict) or reference.get('path') != name:
+            raise IntegrityError('unbound replay artifact: ' + name)
+    fresh = _local_fresh_selections(run['root'], artifacts)
+    _verify_local_operations(run['report'], fresh)
+    return None
+
+
+def _local_history_record(entry):
+    """Validated (key, attempt, revision, blob) of a local recognize entry."""
+    if (not isinstance(entry, dict) or entry.get('operation') != 'recognize'
+            or entry.get('mode') != 'local'):
+        return None
+    fields = (entry.get('operation_key'), entry.get('selected_attempt'),
+              entry.get('revision'), entry.get('artifact'))
+    if any(not isinstance(value, str) or not value for value in fields):
+        raise IntegrityError('invalid local history record')
+    return fields
+
+
+def _local_fresh_selections(root, artifacts):
+    """Map operation_key to (attempt, revision) for freshly dispatched ops."""
+    try:
+        history = json.loads((root / 'history.json').read_text(encoding='utf-8'))
+    except (OSError, ValueError) as error:
+        raise IntegrityError('invalid local history') from error
+    if not isinstance(history, list):
+        raise IntegrityError('invalid local history')
+    fresh = {}
+    for entry in history:
+        record = _local_history_record(entry)
+        if record is None:
+            continue
+        key, attempt, revision, blob = record
+        if not any(reference['sha256'] == blob for reference in artifacts.values()):
+            raise IntegrityError('unbound local response artifact')
+        fresh[key] = (attempt, revision)
+    return fresh
+
+
+def _local_selection_record(operation):
+    """A local manifest selection: bool cache_hit plus nonempty key strings."""
+    if not isinstance(operation, dict):
+        raise IntegrityError('invalid local operation selection record')
+    if not isinstance(operation.get('cache_hit'), bool):
+        raise IntegrityError('invalid local operation selection record')
+    fields = (operation.get('operation_key'), operation.get('selected_attempt'))
+    if any(not isinstance(value, str) or not value for value in fields):
+        raise IntegrityError('invalid local operation selection record')
+
+
+def _region_agrees(region, operation):
+    """True when the region record carries the manifest's selection."""
+    return (region is not None and region.get('operation_key') == operation['operation_key']
+            and region.get('selected_attempt') == operation['selected_attempt']
+            and isinstance(region.get('revision'), str))
+
+
+def _verify_local_operations(report, fresh):
+    """Every local operation selection must agree with region and history."""
+    regions = {region['region_id']: region for region in report['regions']}
+    for operation_id, operation in report['operations'].items():
+        _local_selection_record(operation)
+        region = regions.get(operation_id)
+        if not _region_agrees(region, operation):
+            raise IntegrityError('local selection disagrees with region records')
+        if operation['cache_hit']:
+            continue
+        if fresh.get(operation['operation_key']) != (operation['selected_attempt'],
+                                                     region['revision']):
+            raise IntegrityError('local selection history is unverifiable')
+
+
 def _load_run(directory):
     root = Path(directory).resolve()
     if not root.is_dir():
@@ -43,7 +171,8 @@ def _load_run(directory):
     if manifest.get('version') != '1':
         return {'status': 'unsupported-version', 'reason': 'unsupported-version',
                 'provider_calls': 0}
-    if manifest.get('mode') != 'recorded' or not isinstance(manifest.get('artifacts'), dict):
+    mode = manifest.get('mode')
+    if mode not in ('recorded', 'local') or not isinstance(manifest.get('artifacts'), dict):
         return {'status': 'unsupported-version', 'reason': 'unsupported-version',
                 'provider_calls': 0}
     artifacts = manifest['artifacts']
@@ -93,30 +222,14 @@ def _load_run(directory):
     operations = report['operations']
     if not isinstance(operations, dict):
         raise IntegrityError('invalid operation selections')
-    for operation in operations.values():
-        if not isinstance(operation, dict):
-            raise IntegrityError('invalid operation selection record')
-        if (not isinstance(operation.get('request'), dict)
-                or operation['request'].get('version') != '1'):
-            return {'status': 'unsupported-version', 'reason': 'unsupported-version',
-                    'provider_calls': 0}
-        attempts = operation.get('attempts')
-        selected = operation.get('selected_attempt')
-        if (not isinstance(attempts, list) or any(not isinstance(a, dict) for a in attempts)
-                or not any(a.get('id') == selected for a in attempts)):
-            raise IntegrityError('selected response attempt is unavailable')
-        for attempt in attempts:
-            if attempt.get('version') != '1':
-                return {'status': 'unsupported-version', 'reason': 'unsupported-version',
-                        'provider_calls': 0}
-            try:
-                output = attempt['output']
-                ref = artifacts[output['path']]
-                if ref['sha256'] != output['sha256']:
-                    raise ValueError('response artifact reference mismatch')
-                validate_response(validator.load(root / output['path']))
-            except (OSError, ValueError, KeyError, TypeError, validator.Duplicate) as error:
-                raise IntegrityError('invalid recorded response artifact') from error
+    recorded = {'root': root, 'manifest': manifest, 'paths': paths,
+                'report': report, 'config': config}
+    if mode == 'local':
+        _verify_local_selections(recorded)
+    else:
+        outcome = _verify_recorded_selections(recorded)
+        if outcome is not None:
+            return outcome
 
     ledger_path = root / 'budget-state.json'
     if config.get('budget') is not None and not ledger_path.is_file():
@@ -131,8 +244,7 @@ def _load_run(directory):
             raise IntegrityError('invalid durable budget state') from error
         if budget.state['policy'] != config.get('budget'):
             raise IntegrityError('durable budget policy mismatch')
-    return {'root': root, 'manifest': manifest, 'paths': paths,
-            'report': report, 'config': config}
+    return recorded
 
 
 def _comparison(recorded, fresh):

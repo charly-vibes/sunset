@@ -6,14 +6,88 @@
 import copy
 import hashlib
 import json
+import contextlib
 from pathlib import Path
+import socket
 import subprocess
 import sys
 
 import pymupdf
 import pytest
 
+from digitization.pipeline import run
+from digitization.replay import replay as replay_run
+
 ROOT = Path(__file__).resolve().parents[2]
+
+LOCAL_POLICY = {'version': '1', 'currency': 'USD', 'max_refinement_rounds': 2,
+                'max_provider_attempts': 8, 'max_estimated_cost_microunits': 100,
+                'max_request_bytes': 1 << 20, 'max_output_bytes': 1 << 20,
+                'price_schedule_sha256': 'c' * 64}
+
+LOCAL_IDENTITY = {'kind': 'local', 'id': 'tesseract-ocr', 'version': '5.5.1',
+                  'language': 'spa', 'route': 'regional'}
+
+
+def fake_engine(texts):
+    """Runner writing one txt per invocation; records every invocation."""
+    calls = []
+    counter = {'n': 0}
+
+    def runner(cmd, timeout):
+        counter['n'] += 1
+        payload = Path(cmd[1]).read_bytes()
+        calls.append({'payload': payload, 'argv': list(cmd)})
+        Path(cmd[2] + '.txt').write_bytes(texts[counter['n'] - 1])
+        return '', 0
+    runner.calls = calls
+    return runner
+
+
+@contextlib.contextmanager
+def forbid_engines():
+    """Context failing the test on any engine or network attempt."""
+    mp = pytest.MonkeyPatch()
+
+    def forbidden(name):
+        def trip(*args, **kwargs):
+            pytest.fail(f'{name} must not happen during replay')
+        return trip
+    mp.setattr(subprocess, 'Popen', forbidden('real engine'))
+    mp.setattr(subprocess, 'run', forbidden('real engine'))
+    mp.setattr(socket, 'socket', forbidden('network'))
+    try:
+        yield
+    finally:
+        mp.undo()
+
+
+@pytest.fixture
+def local_setup(tmp_path):
+    """A two-block source page plus a builder producing completed local runs."""
+    source = tmp_path / 'two-blocks.pdf'
+    with pymupdf.open() as pdf:
+        page = pdf.new_page(width=300, height=400)
+        page.insert_text((30, 40), 'Primer parrafo con contenido real')
+        page.insert_text((30, 300), 'Segundo parrafo distante abajo')
+        pdf.save(source)
+
+    def build(texts, name):
+        runner = fake_engine(texts)
+        config_path = tmp_path / f'{name}-config.json'
+        config_path.write_text(json.dumps(local_config(source)))
+        output = tmp_path / name
+        result = run(source, [1], config_path, output, runner=runner)
+        assert result['status'] == 'completed' and result['provider_calls'] == len(texts), result
+        return output, runner
+    return build
+
+
+def local_config(source):
+    return {'version': '1',
+            'source_sha256': hashlib.sha256(Path(source).read_bytes()).hexdigest(),
+            'provider': LOCAL_IDENTITY, 'render': {'dpi': 96}, 'pages': {},
+            'budget': LOCAL_POLICY}
 
 
 def cli(*args):
@@ -133,3 +207,64 @@ def test_original_envelope_is_retained_and_fresh_change_is_reported(make_run, tm
     assert report['fresh_comparison']['differences'] == [
         {'region_id': 'page-1-p1', 'recorded': 'luna', 'fresh': 'una', 'status': 'different'}]
     assert files(original) == before
+
+
+def test_local_run_replays_without_inference(local_setup, tmp_path):
+    original, runner = local_setup([b'  primer bloque\n', b'\nsegundo bloque\n'], 'local-original')
+    invocations = len(runner.calls)
+    before = files(original)
+    replayed = tmp_path / 'local-replayed'
+    with forbid_engines():
+        result = replay_run(original, replayed)
+    assert result['status'] == 'replayed' and result['reason'] == 'replay-verified'
+    assert result['provider_calls'] == 0
+    manifest = json.loads((original / 'manifest.json').read_text())
+    for relative in manifest['artifacts']:
+        assert (replayed / relative).read_bytes() == (original / relative).read_bytes()
+    report = json.loads((replayed / 'replay-report.json').read_text())
+    assert report['status'] == 'replayed'
+    assert report['execution_envelope']['origin'] == 'original-run'
+    assert report['execution_envelope']['fresh_measurement'] is False
+    assert report['execution_envelope']['usage']['mode'] == 'local'
+    assert 'ledger.json' not in report['semantic_artifacts']
+    assert report['semantic_sha256'] == result['semantic_sha256']
+    assert files(original) == before
+    assert len(runner.calls) == invocations
+
+
+def test_local_replay_reports_fresh_differences_separately(local_setup, tmp_path):
+    recorded_run, _ = local_setup([b'  primer bloque\n', b'\nsegundo bloque\n'], 'local-a')
+    fresh_run, _ = local_setup([b'otra lectura\n', b'\nlectura distinta\n'], 'local-b')
+    before = files(recorded_run)
+    replayed = tmp_path / 'local-comparison'
+    with forbid_engines():
+        result = replay_run(recorded_run, replayed, compare=fresh_run)
+    assert result['status'] == 'replayed' and result['provider_calls'] == 0
+    differences = result['fresh_comparison']['differences']
+    assert {difference['region_id'] for difference in differences} == {'page-1-det-1', 'page-1-det-2'}
+    assert all(difference['status'] == 'different' for difference in differences)
+    assert sorted(difference['recorded'] for difference in differences) == ['\nsegundo bloque\n', '  primer bloque\n']
+    assert sorted(difference['fresh'] for difference in differences) == ['\nlectura distinta\n', 'otra lectura\n']
+    report = json.loads((replayed / 'replay-report.json').read_text())
+    assert report['fresh_comparison']['fresh_run_manifest'] == str((fresh_run / 'manifest.json').resolve())
+    assert files(recorded_run) == before
+
+
+def test_local_corrupt_artifact_is_integrity_failure(local_setup, tmp_path):
+    original, _ = local_setup([b'  primer bloque\n', b'\nsegundo bloque\n'], 'local-corrupt')
+    blob = next((original / 'artifacts').iterdir())
+    blob.write_bytes(b'tampered')
+    output = tmp_path / 'local-corrupt-replay'
+    code, result = cli('replay', '--run', original, '--output', output)
+    assert code == 5 and result['reason'] == 'integrity-failure'
+    assert result['provider_calls'] == 0 and not output.exists()
+
+
+def test_local_missing_artifact_is_incomplete(local_setup, tmp_path):
+    original, _ = local_setup([b'  primer bloque\n', b'\nsegundo bloque\n'], 'local-missing')
+    blob = next((original / 'artifacts').iterdir())
+    blob.unlink()
+    output = tmp_path / 'local-missing-replay'
+    code, result = cli('replay', '--run', original, '--output', output)
+    assert code == 2 and result['status'] == 'incomplete-artifacts'
+    assert result['provider_calls'] == 0 and not output.exists()
