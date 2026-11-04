@@ -33,13 +33,45 @@ supersedes.
   ruling is the explicit owner authorization this ticket's acceptance
   requires; no fresh approval is invented here.
 
+* Amendment r1 → r2 (2026-11-04, same engineering-only authorization)
+
+The r1 freeze (stage digest =9c2e492a0263dbcdcfd0f6f2cc09fb92dce63403f5b3ea3be35f6c589051702c=)
+proved budget-infeasible for the six-page candidate route at preflight:
+
+#+begin_example
+$ python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+    --pages 1,2,3,4,5,6 --config fixtures/digitization/local-regional.json \
+    --output fixtures/digitization/six-page-runs/loop-1
+{"detail": "attempt-limit-exceeded", "provider_calls": 0, "reason": "invalid-input", "status": "invalid-input"}  # exit 3
+#+end_example
+
+Reason: =local-regional.json= carries =max_provider_attempts: 160=,
+sized for the two-page difficult stage (which used 121 calls). Six
+pages need ~360 regional attempts (~3× the 2-page stage). The baseline
+run was unaffected (6 whole-page calls, exit 0). Difficult-page pins
+are untouched — =local-regional.json= is NOT modified; the amendment
+adds a separate candidate config and re-freezes the stage BEFORE any
+candidate inference:
+
+- =fixtures/digitization/local-regional-sixpage.json= — identical to
+  =local-regional.json= except =max_provider_attempts: 512= (output cap
+  stays 1 MiB: the 2-page regional descriptor is 167 KiB, six pages
+  project ~500 KiB, so the attempt cap is the only binding limit).
+- Stage re-frozen as =diario-six-page-r2=, digest
+  =31bf682e0e99ec8ca5c3cfb040fb6ba66580ea158c66a58c2eaa36fcec443e35=
+  (=candidate_configuration_sha256= → the six-page config; stage budget
+  attempts 512; all other pins unchanged, still engineering-only,
+  reference_sha256 null, six missing scopes). The budget refusal above
+  is preserved evidence, not a silent loosening: the cap raise is
+  recorded here with both digests, under the same 2026-11-03 ruling.
+
 * Frozen stage manifest
 
 Digest of =fixtures/digitization/six-page-pilot.json= (sha256 over the
-committed bytes, single-line sorted-key JSON):
+committed bytes, single-line sorted-key JSON) — CURRENT revision r2:
 
 #+begin_example
-9c2e492a0263dbcdcfd0f6f2cc09fb92dce63403f5b3ea3be35f6c589051702c
+31bf682e0e99ec8ca5c3cfb040fb6ba66580ea158c66a58c2eaa36fcec443e35
 #+end_example
 
 Pinned values (inherited from the approved difficult-page stage unless
@@ -53,7 +85,7 @@ noted; engine pin recorded in =fixtures/digitization/references.org=):
 | candidate config           | =local-regional.json= sha256 =29c031bf…80c25=                      |
 | engine                     | tesseract-ocr 5.5.3, spa, invocation-config digest =ee2c4d8e…b3db4= |
 | price schedule             | local-zero (USD, all rates 0) =357e4136…4bba9f=                    |
-| budget                     | 3 refinement rounds, 160 provider attempts, 0 microunits, 16 MiB request / 1 MiB output caps |
+| budget                     | 3 refinement rounds, 512 provider attempts (r1: 160, refused at preflight), 0 microunits, 16 MiB request / 1 MiB output caps |
 | normalization / tie-break  | identity / canonical-geometry-then-recorded-id                     |
 | region IoU threshold       | 0.5                                                                |
 | thresholds                 | {} — empty; every metric reports UNKNOWN + evaluation-incomplete   |

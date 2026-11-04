@@ -1,0 +1,149 @@
+#+title: Six-page measurement: runs, replay and evaluation (sunset-rmx.12)
+
+#+begin_quote
+STATUS: ENGINEERING-ONLY (stage =diario-six-page-r2=, frozen in
+=fixtures/digitization/six-page-references.org= under the recorded
+2026-11-03 ruling). =status: evaluation-incomplete=,
+=positive_conclusions_allowed: false=, =quality_conclusion: UNKNOWN=,
+correction/setup effort UNKNOWN. NO positive quality/economy/scaling
+conclusion is claimable from this evidence (negative/rejection
+decisions remain possible and are exercised below). Runs executed
+2026-11-04 by the agent lead; the human pass supersedes.
+#+end_quote
+
+* Scope and traceability
+
+- Beads: =sunset-rmx.12= (claimed; blocked-by =sunset-rmx.11= and
+  =sunset-rmx.16=, both closed). Checkpoint: tasks.md 3.3 measurement
+  half (3.3 also binds =sunset-rmx.14= and stays unticked until that
+  decision ticket closes).
+- Stage: =diario-six-page-r2=, manifest digest
+  =31bf682e0e99ec8ca5c3cfb040fb6ba66580ea158c66a58c2eaa36fcec443e35=,
+  pages =[1, 2, 3, 4, 5, 6]= — the complete excerpt
+  =fixtures/carriers/diario-de-poesia-excerpt.pdf= (sha256
+  =42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4=).
+- r1→r2 amendment: the r1 freeze (attempts cap 160) was refused at
+  preflight for the six-page regional candidate; the amendment added
+  =local-regional-sixpage.json= (attempts 512, all else identical) and
+  is recorded with both digests in six-page-references.org.
+  Difficult-page evidence untouched.
+- Pinned stack (same as rmx.15/.11): tesseract 5.5.3 spa, PyMuPDF
+  1.28.2 renderer, python 3.15.2.
+
+* Executed commands (real pinned engine, uncached)
+
+All runs omit =--cache=; each starts from an empty cache, so
+run-to-run comparison is uncached by construction.
+
+#+begin_example
+python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+  --pages 1,2,3,4,5,6 --config fixtures/digitization/local-baseline.json \
+  --output fixtures/digitization/six-page-runs/baseline       # exit 0
+python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+  --pages 1,2,3,4,5,6 --config fixtures/digitization/local-regional-sixpage.json \
+  --output fixtures/digitization/six-page-runs/loop-1         # exit 0
+python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+  --pages 1,2,3,4,5,6 --config fixtures/digitization/local-regional-sixpage.json \
+  --output fixtures/digitization/six-page-runs/loop-2         # exit 0
+python3 -m digitization replay --run fixtures/digitization/six-page-runs/loop-1 \
+  --output fixtures/digitization/six-page-runs/replay-loop-1 \
+  --compare fixtures/digitization/six-page-runs/loop-2        # exit 0
+python3 -m digitization evaluate --baseline fixtures/digitization/six-page-runs/baseline --candidate fixtures/digitization/six-page-runs/loop-1 --reference fixtures/digitization/six-page-reference.json --policy fixtures/digitization/six-page-pilot.json --output fixtures/digitization/six-page-evaluation  # exit 2 (evaluation-incomplete)
+#+end_example
+
+Exit 2 is the documented evaluate exit for =evaluation-incomplete=;
+the report is still written and digest-bound.
+
+* Runs (all six pages completed, zero estimated charge)
+
+| run      | route    | provider calls | runtime (s) | regions | manifest sha256 (prefix) |
+|----------+----------+----------------+-------------+---------+--------------------------|
+| baseline | baseline |              6 |        26.2 |       6 | =f5d0188fae85a668…=      |
+| loop-1   | regional |            341 |       204.1 |     341 | =444af98e444362d3…=      |
+| loop-2   | regional |            341 |       199.2 |     341 | =e2878d9616ec3ecc…=      |
+
+All six source pages are accounted for in every run manifest
+(=pages: [1,2,3,4,5,6]=); zero failed runs, zero pages unexamined at
+the run level. Every descriptor still carries the typed coverage note
+=unresolved.coverage: unexamined-outside-recorded-regions= — region
+coverage is partial by construction and is reported as such, per page.
+Budget caps (512 attempts / 1 MiB output, zero-price schedule) never
+refused these runs; charges stay 0 microunits.
+
+* Zero-inference replay and fresh-run variation
+
+- Replay of loop-1: =status: replayed=, =provider_calls: 0=, semantic
+  sha256 =895e4bf966bbb26d…=.
+- Fresh comparison (replay =--compare loop-2=): =differences: []= —
+  the two uncached loop runs are identical across all 341 regions;
+  fresh-run variation under the pinned stack is *measured zero* (a
+  real measurement, not an UNKNOWN).
+
+* Evaluation (shared .9 evaluate operation)
+
+Machine-readable report:
+=fixtures/digitization/six-page-evaluation/evaluation.json=
+(digest-bound to stage =31bf682e…=, reference =44136fa3…= — sha256 of
+the empty absence record =six-page-reference.json= ={}=, baseline
+manifest =f5d0188f…=, candidate manifest =444af98e…=).
+
+- =status: evaluation-incomplete=,
+  =positive_conclusions_allowed: false=, =gates: {}= (owner numeric
+  thresholds never supplied — recorded in the stage manifest),
+  =quality_conclusion: UNKNOWN=.
+- Degenerate reference (no reviewed references exist): region
+  precision/recall degenerate (reference count 0); CER, line, stanza,
+  indentation metrics all UNKNOWN; denominator 0 everywhere except
+  unmatched units (baseline 6 and candidate 341 regions recorded as
+  unmatched with full IDs preserved in the report).
+- Continuation witnesses: reference count 0, missing_rate null, and
+  the candidate emitted 0 continuation edges across the six pages
+  (=structure.json= carries no continues-to relations) — recorded as a
+  witness count of 0, not scored as quality.
+- Usage from verified ledgers: baseline 6 calls / 26.2 s, candidate
+  341 calls / 204.1 s, 0 microunits; =correction_effort=,
+  =setup_effort=, =total-cost= stay UNKNOWN (=unknown_claims:=
+  correction-effort, setup-effort, total-cost).
+- Reference/setup costs, reported separately as required: reference
+  cost = none incurred (no reviewed references exist; the engineering
+  path deliberately skips them), setup effort UNKNOWN — no human
+  reference setup was performed, so the dominant real-world digitization
+  cost is unmeasured here by design.
+
+* Scaling recommendation (grounded, including rejection)
+
+**Recommendation: REJECT full-issue scaling on this evidence.** The
+statement is grounded in the recorded numbers, not in enthusiasm:
+
+1. *Quality is UNKNOWN* — evaluation-incomplete with no reviewed
+   references; the only quality signal (degenerate region metrics) has
+   reference count 0 and cannot support any pass claim.
+2. *Budget scaling is adverse* — the six-page candidate consumed 341
+   attempts (2.8× the two-page stage's 121). Extrapolated to the
+   36-page issue: ~2000+ attempts, which the r1 freeze (160) would
+   have refused outright; even the r2 cap (512) covers only this
+   bounded stage. Raising caps further without reviewed references
+   would only scale unmeasured OCR.
+3. *Cost is UNKNOWN* — 0 microunits reflects the local zero-price
+   schedule, not the real correction effort that dominates
+   digitization economics; correction/setup effort remain UNKNOWN by
+   the ruling.
+
+Full-issue processing therefore requires either (i) reviewed
+references → assessment mode (the normal HITL path), or (ii) an
+explicit owner decision accepting evaluation-incomplete labels at
+scale. Neither exists today. This recommendation does not decide
+=sunset-rmx.14=; it feeds it.
+
+* Known limitations on record
+
+- OCR-vs-OCR is circular and is NOT used as truth (rmx.10 ruling
+  record); the Diario excerpt is image-only, so no mechanical truth
+  side exists for these six pages.
+- The baseline route's whole-page OCR (6 regions) and the regional
+  route's 341 regions are never compared against gold; the
+  baseline-vs-candidate difference is a route difference, not a
+  quality difference, under this stage.
+- Region sheets from the difficult-page exercise are NOT transcription
+  gold and were not used as references here.
+- Agent-executed run + record; a human pass supersedes.
