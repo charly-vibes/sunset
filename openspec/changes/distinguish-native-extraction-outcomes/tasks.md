@@ -5,7 +5,7 @@
 - [ ] 1.1 Deploy pending `add-native-pdf-extraction` deltas (archive that
       change) so this change's base requirements exist in
       `openspec/specs/document-adapters/spec.md`
-- [ ] 1.2 Land beads `sunset-9lp` corpus verification; paste the measured
+- [x] 1.2 Land beads `sunset-9lp` corpus verification; paste the measured
       fixture → outcome table into design.md
 
 ## 2. Outcome computation

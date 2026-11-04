@@ -50,11 +50,52 @@ define a script-consumable outcome vocabulary.
    deltas are the base text this change extends) and after beads `sunset-9lp`
    supplies the measured per-fixture outcome table recorded below.
 
-## Measured baseline (from sunset-9lp — placeholder until filled)
+## Measured baseline (from sunset-9lp — filled 2026-11-05)
 
-| Fixture | Status today | Coverage distinctions visible |
-|---|---|---|
-| (pending corpus re-run) | | |
+Measured over all 11 committed carriers (`fixtures/carriers/*.pdf`) with
+`.venv/bin/python -B -m digitization native --source <pdf> --output <tmp>`,
+base commit `37bf0bb` + proposal commit `bfc16ba`. Outcome column is the
+proposed vocabulary applied mechanically (glyphs `approximated` never
+downgrades; glyph rows `unexamined` do; empty contents ⇒ `no-text-read`).
+
+| Fixture | Exit today | Status today | Glyph rows | Approximated non-text | Text contents | Proposed outcome |
+|---|---|---|---|---|---|---|
+| accounting-made-simple-excerpt | 2 | `partial` | 5×`preserved`, **1×`unexamined`** | 2 img, 6 vec | 10 entries | `text-with-gaps` |
+| agentic-patterns-excerpt | 2 | `partial` | 6×`preserved` | 1 vec | 12 entries | `text-complete` |
+| bank-statement-ca-excerpt | 2 | `partial` | 1×`preserved` | 1 vec | 2 entries | `text-complete` |
+| bank-transfer-redacted | 2 | `partial` | 1×`preserved` | 1 img, 1 vec | 2 entries | `text-complete` |
+| budgeting-basics-excerpt | 2 | `partial` | 3×`preserved` | 3 img, 3 vec | 6 entries | `text-complete` |
+| cta-cte-propietario-redacted | 2 | `partial` | 2×`preserved` | 2 img, 2 vec | 4 entries | `text-complete` |
+| diario-de-poesia-excerpt | 2 | `partial` | 6×`unexamined` | 6 img, 1 vec | **0** | `no-text-read` |
+| estado-deuda-abl-redacted | 2 | `partial` | 1×`preserved` | 1 img, 1 vec | 2 entries | `text-complete` |
+| invoice-arca-redacted | 2 | `partial` | 3×`preserved` | 3 img | 6 entries | `text-complete` |
+| lab-result-redacted | 2 | `partial` | 6×`unexamined` | 6 img, 1 vec | **0** | `no-text-read` |
+| resumen-periodical-excerpt | **3** | `invalid-input` | — (no manifest written) | — | — | outside vocabulary (`invalid-input`) |
+
+Measured findings (denominators for the outcome split):
+
+1. **Collapse confirmed**: 10/11 fixtures return byte-identical
+   `status: partial` / `reason: native-extraction-partial` / exit 2. The
+   review claim was accurate per-document, not just in aggregate.
+2. **The three-way split exists today, only in coverage rows**: of the 10
+   `partial`s, 7 are clean-text-plus-non-text (would be `text-complete`),
+   1 has a glyph row `unexamined` despite text elsewhere (`text-with-gaps`),
+   and 2 read zero text — scan and rasterized carriers whose glyph rows are
+   all `unexamined` (`no-text-read`, 20% of the partial population). The
+   `preserved` vs `unexamined` glyph row is the discriminator; no other
+   signal distinguishes them.
+3. **`visual_completeness` is uniformly `not-established`** across all 10
+   manifests — consistent with it staying an independent field that never
+   drives exit codes.
+4. **Exit 3 (`invalid-input`) writes no manifest**: resumen-periodical fails
+   pre-manifest ("native extractor word does not align with raw text on
+   page 1"), emitting only an error JSON on stdout. Scripts therefore face
+   three observable shapes today — manifest+exit 2, no-manifest+exit 3 — and
+   the outcome field must exist only in the manifest shape.
+5. **Contents are page-unanchored** (`id`/`kind`/`value` only): per-page text
+   retention is NOT derivable from `contents`; it must come from glyph/coverage
+   rows scoped per page. The classifier in task 2.1 must key on glyph-row
+   scope, not on contents page anchors.
 
 ## Risks
 
