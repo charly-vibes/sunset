@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "adopted_at": "2026-11-04T14:16:07Z",
+  "adopted_at": "2026-11-04T15:25:09Z",
   "finding_ids": [
     ".wai/projects/sunset/research/2026-10-28-digitization-review-repros.py::rule::params_max",
     "digitization/__main__.py::main::abc_max",
@@ -322,6 +322,7 @@
     "tests/tracer/test_digitization_detect.py::make_pdf::params_max",
     "tests/tracer/test_digitization_detect.py::test_boxes_are_nonnegative_integer_ydown_points_inside_frame::cyclomatic_max",
     "tests/tracer/test_digitization_detect.py::test_staggered_blocks_intersect_without_empty_cells::cyclomatic_max",
+    "tests/tracer/test_digitization_evaluation.py::test_empty_thresholds_stay_unknown_and_incomplete::abc_max",
     "tests/tracer/test_digitization_evaluation.py::test_public_evaluate_scores_verified_runs_without_provider_calls::abc_max",
     "tests/tracer/test_digitization_first_page.py::test_inspection_rejects_manifest_ledger_disagreement::params_max",
     "tests/tracer/test_digitization_first_page.py::test_invalid_inputs_never_dispatch_or_overwrite::cognitive_max",
