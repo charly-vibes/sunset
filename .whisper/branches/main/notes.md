@@ -513,3 +513,7 @@
   - Gates: just spec-check ALL GATES PASSED after each fix; pretender 0 new at every commit. beads exported (124 issues), board: 0 P0s left, 0 in_progress.
   - 4 commits local, NOT pushed (awaiting explicit authorization per standing pattern).
   - **Next:** owner authorizes push of the 4 P0 commits; then automatable queue: sunset-9xt (archive distinguish-native-extraction-outcomes), sunset-pkj/12h, sunset-qdy (CLI defects, partially preempted by 1uv), sunset-doc/2uo. Owner gates open: rmx.16 six-page approval, 5ay, elx.
+- 2026-11-04T19:53:00Z [id:028343adf217ca99ee054ef3e7237fd649794467cb8aba449e9f30cea8891a3c] ### 2026-11-04 15:55 — snap (quick stash via /next)
+  - P0 hardening batch shipped and PUSHED (9a65b32..a49c655 on origin/main): sunset-gks (RecursionError → parse_error:nesting_too_deep), sunset-90h (geometry.profile_id type phase → invalid_shape), sunset-vcn (run_pinned raises CalledProcessError with captured stderr), sunset-1uv (native aligner failure → page-level unexamined partial; resumen repro exit 2; 9lp design table re-measured). Board: 0 P0s, 0 in_progress; all gates green.
+  - Lessons recorded: pretender function_lines counts docstrings (run_pinned flatten); native inspect cross-checks relaxed to aligned-subsequence invariants.
+  - **Next:** /renew sunset → claim sunset-9xt (archive distinguish-native-extraction-outcomes, deploy 3 document-adapters deltas) or sunset-pkj/sunset-12h; owner gates open: rmx.16, 5ay, elx. Fresh session recommended (wai close + /clear).
