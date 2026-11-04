@@ -35,7 +35,10 @@ def inspect_native(run_directory):
         if manifest.get('mode') != 'native':
             raise ValueError('not a native run')
         artifacts = manifest.get('artifacts')
-        if not isinstance(artifacts, dict) or not NATIVE_ARTIFACTS <= set(artifacts):
+        # carrier/geometry.json is required only when a geometry profile is
+        # declared; the profile-binding check below enforces that binding.
+        required = NATIVE_ARTIFACTS - {'carrier/geometry.json'}
+        if not isinstance(artifacts, dict) or not required <= set(artifacts):
             raise ValueError('incomplete native artifact set')
         if not isinstance(manifest.get('pages'), list) or not isinstance(manifest.get('source'), dict):
             raise ValueError('invalid native manifest mappings')
@@ -128,7 +131,12 @@ def inspect_native(run_directory):
         for item in lines:
             if item['page'] not in frame_by_page or item['frame'] != frame_by_page[item['page']]['frame']:
                 raise ValueError('native line frame mismatch')
-        if len(frames) != len(manifest['pages']) or [frame['page'] for frame in frames] != manifest['pages']:
+        frame_pages = [frame['page'] for frame in frames]
+        # Aligner-failed selected pages ship no frame (sunset-1uv): frames are
+        # the aligned subset of the selected pages, in selection order.
+        if (len(frame_pages) != len(set(frame_pages))
+                or not set(frame_pages) <= set(manifest['pages'])
+                or frame_pages != [p for p in manifest['pages'] if p in set(frame_pages)]):
             raise ValueError('native page frame mismatch')
         for frame in frames:
             if (frame['frame'] != f"page-{frame['page']}-pt"
@@ -147,7 +155,8 @@ def inspect_native(run_directory):
                                    if item['scope'].startswith('page:')
                                    and item['feature'] == 'pdf:glyphs'
                                    and item['status'] == 'unexamined'
-                                   and item['reason'].startswith('no native text observed')
+                                   and (item['reason'].startswith('no native text observed')
+                                        or item['reason'].startswith('native word alignment failed'))
                                    and int(item['scope'][5:]) not in excluded_pages})
         textless = set(unexamined_pages)
         expected_status = classify_outcome({page: page not in textless

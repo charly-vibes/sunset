@@ -72,6 +72,13 @@ downgrades; glyph rows `unexamined` do; empty contents ⇒ `no-text-read`).
 | lab-result-redacted | 2 | `partial` | 6×`unexamined` | 6 img, 1 vec | **0** | `no-text-read` |
 | resumen-periodical-excerpt | **3** | `invalid-input` | — (no manifest written) | — | — | outside vocabulary (`invalid-input`) |
 
+Re-measured after sunset-1uv (2026-11-04, aligner failures become page-level
+unexamined scopes): the resumen row now exits **2** with
+`native-extraction-text-with-gaps` — page 1 glyph row `unexamined`
+(`native word alignment failed; glyphs unexamined`), pages 2–6 `preserved`,
+manifest written, inspect exit 0. The `invalid-input` row above is the
+historical 9lp measurement at base `37bf0bb` and no longer reproduces.
+
 Measured findings (denominators for the outcome split):
 
 1. **Collapse confirmed**: 10/11 fixtures return byte-identical
@@ -91,7 +98,9 @@ Measured findings (denominators for the outcome split):
    pre-manifest ("native extractor word does not align with raw text on
    page 1"), emitting only an error JSON on stdout. Scripts therefore face
    three observable shapes today — manifest+exit 2, no-manifest+exit 3 — and
-   the outcome field must exist only in the manifest shape.
+   the outcome field must exist only in the manifest shape. *(Superseded for
+   resumen by sunset-1uv: aligner failures are page-level unexamined scopes
+   inside a manifest-bearing partial run; see the re-measured row above.)*
 5. **Contents are page-unanchored** (`id`/`kind`/`value` only): per-page text
    retention is NOT derivable from `contents`; it must come from glyph/coverage
    rows scoped per page. The classifier in task 2.1 must key on glyph-row

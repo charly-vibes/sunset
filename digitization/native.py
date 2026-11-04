@@ -120,8 +120,9 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
                                     'target_frame': item['target_frame'],
                                     'source_to_target': item['source_to_page']}
                                    for item in page_maps]}
-    geometry_bytes = _json(geometry_profile)
-    (root / 'geometry.json').write_bytes(geometry_bytes)
+    if page_maps:  # all pages aligner-failed: no frames, no native selectors
+        geometry_bytes = _json(geometry_profile)
+        (root / 'geometry.json').write_bytes(geometry_bytes)
     desc = describe_pdf(root.parent / 'source.pdf', root)
     desc['source']['locator'] = 'source.pdf'
     next(r for r in desc['regions'] if r['id'] == 'r-log')['kind'] = 'document'
@@ -129,8 +130,9 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
         profile['uri'] = 'carrier/' + profile['uri']
     desc['profiles'].append({'id': 'selector', 'kind': 'selector', 'uri': 'carrier/selector.json',
                              'version': '1', 'sha256': _sha(selector_bytes)})
-    desc['profiles'].append({'id': 'geometry', 'kind': 'geometry', 'uri': 'carrier/geometry.json',
-                             'version': '1', 'sha256': _sha(geometry_bytes)})
+    if page_maps:
+        desc['profiles'].append({'id': 'geometry', 'kind': 'geometry', 'uri': 'carrier/geometry.json',
+                                 'version': '1', 'sha256': _sha(geometry_bytes)})
     # Keep the full independent inventory, but remove source text observations
     # outside the requested extraction scope. Page structure and coverage remain.
     excluded = {e['id'] for e in desc['evidence']
@@ -157,10 +159,15 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
             if page not in pages:
                 item['status'] = 'unexamined'
                 item['reason'] = 'page excluded by native extraction selection'
+            elif item['feature'] == 'pdf:glyphs' and page not in raw_pages:
+                item['status'] = 'unexamined'
+                item['reason'] = 'native word alignment failed; glyphs unexamined'
             elif item['feature'] == 'pdf:glyphs' and not raw_pages[page].strip():
                 item['status'] = 'unexamined'
                 item['reason'] = 'no native text observed; page not established blank'
     for page in pages:
+        if page not in raw_pages:
+            continue
         pid = f'pg{page}'
         base = next((e for e in desc['evidence'] if f'#page:{page}' in e['source_ref']), None)
         source_text = next((cid for cid in base['content_ids']), None) if base else None
@@ -215,6 +222,16 @@ def extract(source, output, pages=None):
             raw = page.get_text('text', sort=OPTIONS['sort'], flags=OPTIONS['text_flags'])
             if not raw.endswith('\n'):
                 raw += '\n'
+            grouped = {}
+            extracted_words = page.get_text('words', sort=OPTIONS['sort'], flags=OPTIONS['text_flags'])
+            try:
+                spans = _align_raw_words(raw, [item[4] for item in extracted_words], page_num)
+            except ValueError:
+                # Aligner failure is a tool limitation, not user error (sunset-1uv):
+                # the page stays selected but contributes nothing — raw_pages and
+                # page_maps omit it so no extracted text is claimed and the raw
+                # offsets of later pages never advance past unaligned text.
+                continue
             raw_pages[page_num] = raw
             matrix = page.rotation_matrix
             page_maps.append({'page': page_num, 'rotation': page.rotation,
@@ -225,9 +242,6 @@ def extract(source, output, pages=None):
                               'source_frame': 'unrotated-crop-page-pt',
                               'target_frame': 'rotated-visible-page-pt',
                               'source_to_page': _matrix(matrix)})
-            grouped = {}
-            extracted_words = page.get_text('words', sort=OPTIONS['sort'], flags=OPTIONS['text_flags'])
-            spans = _align_raw_words(raw, [item[4] for item in extracted_words], page_num)
             for item, (position, end) in zip(extracted_words, spans):
                 x0, y0, x1, y1, token, bno, lno, _ = item
                 mapped_box = _map_box([x0, y0, x1, y1], matrix)
@@ -254,7 +268,7 @@ def extract(source, output, pages=None):
         artifacts = {}
         source_ref = {'path': 'source.pdf', 'sha256': source_hash}
         _put(stage, 'source.pdf', data, artifacts)
-        raw_text = ''.join(raw_pages[p] for p in selected)
+        raw_text = ''.join(raw_pages[p] for p in selected if p in raw_pages)
         _put(stage, 'raw.txt', raw_text.encode(), artifacts)
         search_text = ' '.join(unicodedata.normalize('NFC', word['text']) for word in words)
         _put(stage, 'search.txt', search_text.encode(), artifacts)
@@ -277,7 +291,7 @@ def extract(source, output, pages=None):
         errors = validator.validate(desc)
         if errors:
             raise ValueError('native export violates DSC: ' + ', '.join(errors))
-        status = classify_outcome({page: bool(raw_pages[page].strip()) for page in selected})
+        status = classify_outcome({page: bool(raw_pages.get(page, '').strip()) for page in selected})
         reason = 'native-extraction-' + status
         semantic_artifacts = {name: artifacts[name]['sha256'] for name in sorted(artifacts)}
         semantic_digest = _sha(_json(semantic_artifacts))

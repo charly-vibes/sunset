@@ -184,3 +184,25 @@ def test_invalid_pdf_inputs_selections_and_outputs_are_refused_without_traceback
     code, result = cli('native', '--source', valid, '--output', linked_output)
     assert code == 3 and result['reason'] == 'output-already-exists'
     assert list(linked_target.iterdir()) == []
+
+
+def test_aligner_failure_page_is_unexamined_partial_not_invalid_input(tmp_path):
+    # sunset-1uv: page 1 of the resumen excerpt carries glyphs the native
+    # word aligner cannot map. That tool limitation must surface as a
+    # partial run with the page unexamined (pdf:glyphs reason), never as
+    # invalid-input — a genuine user error class.
+    source = ROOT / 'fixtures' / 'carriers' / 'resumen-periodical-excerpt.pdf'
+    output = tmp_path / 'run'
+    code, result = cli('native', '--source', source, '--output', output, '--pages', '1')
+    assert code == 2 and result['status'] == 'no-text-read'
+    assert result['reason'] == 'native-extraction-no-text-read'
+    manifest = json.loads((output / 'manifest.json').read_text())
+    descriptor = validator.load(output / manifest['descriptor']['path'])
+    assert validator.validate(descriptor) == []
+    by_scope = {(c['feature'], c['scope']): c for c in descriptor['coverage']}
+    assert by_scope['pdf:glyphs', 'page:1']['status'] == 'unexamined'
+    assert 'alignment failed' in by_scope['pdf:glyphs', 'page:1']['reason']
+    assert not [w for w in descriptor['evidence'] if w['id'].startswith('native-')]
+    code, report = cli('inspect', '--run', output, '--json')
+    assert code == 0 and report['status'] == 'no-text-read'
+    assert report['coverage']['unexamined_pages'] == [1]
