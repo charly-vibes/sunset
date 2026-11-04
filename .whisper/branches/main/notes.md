@@ -548,3 +548,39 @@
   - Scaling recommendation in six-page-results.org: REJECT full-issue (quality UNKNOWN; 341 attempts = 2.8x the 2-page stage -> ~2000+ for 36pp exceeds frozen caps without references; cost UNKNOWN). Feeds sunset-rmx.14, does not decide it. tasks.md 3.3 unticked (binds rmx.14).
   - Commits: 817673b (rmx.16 freeze) + 394a121 (whisper) + 3cd246d (rmx.12 measurement) — NOT pushed, awaiting authorization. rmx.13 (final checks incl. interrupted-run + fresh-process resume) now ready; rmx.14 behind it.
   - **Next:** claim sunset-rmx.13 -> rmx.14 (owner decision, cannot be positive per ruling); push 5 commits on authorization.
+- 2026-11-04T22:20:00Z [id:8809879fcd6e12ffcd85866e4c5f67bb2b32462d442f8bc12cde6e44c3dd6702] (#resume-sunset-rmx.13) Format: 1
+  Timestamp: 2026-11-04T22:19:46Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD ae6178e
+  Session: 01a1a875-ffff-7765-8a14-1bdc7fb67134
+  Task: finish the sunset-rmx digitization pilot — next slice sunset-rmx.13, then owner decision sunset-rmx.14
+  
+  ## Objective
+  Close the rmx epic honestly: rmx.13 (full pilot verification incl. interrupted run + fresh-process public resume) -> rmx.14 (scaling decision; per ruling it CANNOT be positive).
+  
+  ## Current phase
+  green shipped. Both predecessors closed this session: sunset-rmx.16 (six-page stage frozen engineering-only, commit 817673b) and sunset-rmx.12 (six-page measurement, commit 3cd246d). whisper snaps 394a121/ae6178e.
+  
+  ## State
+  - 7 commits ahead of origin/main (8ab7d37..ae6178e), NOT pushed — push awaits explicit owner authorization. Working tree otherwise clean except by-design untracked: .wai handoff template, .wai/projects/sunset/runs/sunset-rmx.10.state, pba-judicial-2026-07-29.pdf (owner PDF; possible future difficult-page measured-stage fork per rmx.10 state).
+  - Gates green at close: just spec-check ALL GATES PASSED; full pytest 630 passed + 2 skipped + 18 subtests.
+  
+  ## Exact next action
+  /renew sunset, then: bd update sunset-rmx.13 --claim; read the ticket (acceptance: strict proposal/spec checks, frozen 0.2 PASS 11, interrupted run followed by the documented fresh-process public resume invocation, inspect attribution/loss reports, no conformance broadening). TDD red->green per repo rules.
+  
+  ## Decisions/constraints (do not violate)
+  - Stage diario-six-page-r2 digest 31bf682e… is frozen engineering-only: reference_sha256 null, 6 missing scopes; NO positive quality/economy/scaling conclusions anywhere.
+  - rmx.14 cannot be positive (owner ruling 2026-11-03, recorded in rmx.10 state file + six-page-references.org). rmx.12's record already recommends REJECT full-issue.
+  - tasks.md 3.3 stays UNTICKED until rmx.14 closes (checkpoint binds both).
+  - Never modify fixtures/digitization/local-regional.json (difficult-page pin); six-page candidate config is local-regional-sixpage.json (attempts 512). Difficult-page evidence immutable.
+  - Tickets authorize no commit/push; commits need explicit owner word (this session's were owner-authorized).
+  - CLI notes: run refuses pre-existing output dir (mkdir parent only); evaluate exits 2 for evaluation-incomplete; pretender commit gate enforces cyclomatic<=3 on new code — keep tests flat/parametrized.
+  
+  ## Key artifacts
+  fixtures/digitization/six-page-pilot.json (.r2), six-page-reference.json ({}), six-page-references.org (freeze+amendment record), six-page-results.org (measurement+REJECT recommendation), six-page-runs/{baseline,loop-1,loop-2,replay-loop-1}, six-page-evaluation/evaluation.json, tests/tracer/test_digitization_six_page_{stage,measurement}.py (10 tests).
+  
+  ## Blockers / unknowns
+  None for rmx.13 (deps .11/.12 closed). rmx.14 is an owner decision ticket. Owner HITL gates still open elsewhere: sunset-5ay, sunset-elx; sunset-12h needs owner SPA verdicts.
+  
+  ## Validation
+  just spec-check ALL GATES PASSED (2026-11-04, HEAD ae6178e).
