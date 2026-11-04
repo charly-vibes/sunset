@@ -12,8 +12,11 @@
 - Develops local source-linked extraction alongside the DSC specification corpus.
 - Product direction: PDF → searchable text with source locations → inspection.
   The local PyMuPDF native baseline now retains word/line mappings, supports
-  read-only inspection/resume and verified offline replay. OCR and visual
-  completeness remain separate work. See [current commands](digitization.org).
+  read-only inspection/resume and verified offline replay, and reports distinct
+  native outcomes (`text-complete` / `text-with-gaps` / `no-text-read`) per the
+  deployed [document-adapters](../../openspec/specs/document-adapters/spec.md)
+  outcome requirements. OCR and visual completeness remain separate work. See
+  [current commands](digitization.org).
 - Orientation: [What is DSC and why](what-is-dsc.md) — the docs entry point.
 - Frozen DSC 0.2 baseline — `spec/document-model-specodelic-v3/validator.py`
   (frozen at 0.2), `PASS 11 descriptor fixtures`.
@@ -21,7 +24,8 @@
   `tests/tracer/`, gate `just spec-check`). The 0.3 capability deltas were
   deployed to the openspec specs on 2026-10-15 from the archived change
   [`openspec/changes/archive/2026-10-14-add-dsc-03/`](../../openspec/changes/archive/2026-10-14-add-dsc-03/proposal.md)
-  (now 7 deployed capabilities). No real-carrier conformance is claimed:
+  (8 deployed capabilities as of 2026-11-03, when `document-visual-oracles`
+  deployed). No real-carrier conformance is claimed:
   `dsc03/conformance.py` labels remain honest and scoped.
 - **Substrate gates (sunset-7hs, 2026-10-15):** the
   [restore-document-substrate](../../openspec/changes/restore-document-substrate/proposal.md)
