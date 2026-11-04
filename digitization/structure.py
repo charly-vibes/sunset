@@ -107,7 +107,7 @@ def collect(config, pages, regions, mappings, source_sha256):
             'selector_id': region['selector_id'], 'frame': region['frame'],
             'operation_key': region['operation_key'], 'selected_attempt': region['selected_attempt']})
     for page in pages:
-        supplied = config['pages'].get(str(page), {}).get('structure', [])
+        supplied = config.get('pages', {}).get(str(page), {}).get('structure', [])
         if not isinstance(supplied, list):
             supplied = [supplied]  # Record an invalid envelope as a diagnostic too.
             envelope_invalid = True

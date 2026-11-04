@@ -211,3 +211,25 @@ def test_inspect_maps_local_regions_to_sources(two_blocks, tmp_path, no_engines)
     assert usage['estimated_charge_microunits'] == 0
     assert report['unresolved'] == []
     assert report['coverage'] == 'unexamined-outside-recorded-regions'
+
+
+@pytest.mark.parametrize('route,calls', [('regional', 2), ('baseline', 1)])
+def test_shipped_stage_config_has_no_pages_key(two_blocks, tmp_path, no_engines,
+                                               route, calls):
+    """The committed smoke configs bind only source/provider/render/budget.
+
+    The local route is the no-OCR-prerequisite journey: it ships no recorded
+    per-page observations, so conclude() must not require the recorded
+    'pages' envelope (caught by the real smoke, sunset-rmx.15).
+    """
+    config = local_config(two_blocks, route=route)
+    del config['pages']
+    config_path = tmp_path / 'stage.json'
+    config_path.write_text(json.dumps(config))
+    output = tmp_path / 'run'
+    runner = fake_engine([b'texto %d\n' % n for n in range(1, calls + 1)])
+    result = run(two_blocks, [1], config_path, output, runner=runner)
+    assert result['status'] == 'completed' and result['provider_calls'] == calls
+    descriptor = json.loads((output / 'descriptor.json').read_text())
+    texts = [c['value'] for c in descriptor['contents'] if c['kind'] == 'text']
+    assert texts

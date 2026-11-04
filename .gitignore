@@ -38,3 +38,11 @@ __pycache__/
 .env
 .visual-review/
 .pretender/
+
+# local-smoke real-run directories: heavy derivable blobs (renders/crops/source
+# copy) stay local; every digest is recorded in local-smoke/manifest.json and
+# the runs are reproducible from the committed configs + pinned stack.
+fixtures/digitization/local-smoke/baseline/artifacts/
+fixtures/digitization/local-smoke/regional/artifacts/
+fixtures/digitization/local-smoke/*/source.pdf
+fixtures/digitization/local-smoke/*/budget-state.json.lock

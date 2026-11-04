@@ -1,0 +1,126 @@
+#+title: Real local smoke — public run → attributed DSC → inspect (sunset-rmx.15)
+
+#+begin_quote
+STATUS: EXECUTED 2026-11-04. Engineering-only stage per
+=fixtures/digitization/pilot.json= (sha256 =d7bd9a97365c0b68…ac98a=, owner
+ruling 2026-11-03 recorded in =fixtures/digitization/references.org=).
+Smoke proves *wiring only*: no reference exists, all six quality scopes are
+missing (=evaluation-incomplete=), and NO positive quality/economy/scaling
+conclusion is claimable. Machine record: =local-smoke/manifest.json=.
+Agent-executed (recorded deviation; a human pass supersedes).
+#+end_quote
+
+* What ran (exact commands, exits)
+
+Both approved pages of the Diario excerpt
+(=fixtures/carriers/diario-de-poesia-excerpt.pdf=, sha256
+=42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4=),
+separate run directories for regional and baseline per the ticket.
+
+| route    | command (cwd = repo root, =.venv/bin/python -B -m=)                                                                                     | exit | wall |
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------+------+------|
+| baseline | =digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf --pages 2,5 --config fixtures/digitization/local-baseline.json --output fixtures/digitization/local-smoke/baseline= |    0 | ~10s |
+| regional | =digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf --pages 2,5 --config fixtures/digitization/local-regional.json --output fixtures/digitization/local-smoke/regional= |    0 | ~85s |
+| inspect  | =digitization inspect --run fixtures/digitization/local-smoke/{baseline,regional}= (both)                                               |    0 |      |
+
+* Stage and configuration digests
+
+- Stage manifest: =pilot.json= =d7bd9a97365c0b689c8951a1ccff146d757b4ac58a8b397f26e50de9944ac98a=
+  (=engineering-only=, =reference_sha256: null=, 6 =missing_scopes=, =approved: true=)
+- Baseline (whole-page) config: =local-baseline.json=
+  =30f5df7adb18af012010e641c489c00bddbddb2df43ecd3edbafcfaed3f1c679=
+- Candidate (regional crop) config: =local-regional.json=
+  =29c031bfafa21b61fec01fb70b420d940ec3615ce8c07f03cebf3d12d2b80c25=
+- Budget pinned in both configs and the stage: request ≤ 16777216 B,
+  output ≤ 1048576 B, ≤160 provider attempts, ≤3 refinement rounds,
+  charge cap 0 microunits (local-zero price schedule =357e4136…=).
+
+* Engine stack (pinned)
+
+- Recognizer: tesseract 5.5.3, =-l spa=; traineddata sha256
+  =6f2e04d02774a18f01bed44b1111f2cd7f3ba7ac9dc4373cd3f898a40ea6b464=
+  (system and =~/.local/share= copies identical — no resolution ambiguity).
+- Renderer: =PyMuPDF@1.28.2= at 200 dpi (=digitization.render.render_page=).
+  *Deviation of record:* =references.org= proposed =pdftoppm=; the shipped
+  pipeline pins PyMuPDF for recorded and local routes alike (part of the
+  recorded reuse decision in =docs/src/digitization.org=). pdftoppm 26.01.0
+  is installed but unused here.
+- Python 3.15.2 (repo =.venv=).
+
+* Results
+
+| route    | status    | provider calls | attempts | charge | regions | unresolved | descriptor sha256                        | runtime |
+|----------+-----------+----------------+----------+--------+---------+------------+------------------------------------------+---------|
+| baseline | completed |              2 |        2 |      0 |       2 |          0 | =ceb180c669e9930da66356f661cf89edaba634ca08aacde654a72c83e23ca076= |  9.41 s |
+| regional | completed |            121 |      121 |      0 |     121 |          0 | =20f002e78f82ed39c214c54b1a6aacd294e4018f43b17185882a6bf0c0e62943= | 85.27 s |
+
+- Regional crops =121= match the detector count exactly (65 on excerpt
+  page 2, 56 on page 5) — every proposed region was dispatched and
+  attributed, none dropped.
+- =inspect= on both runs: exit 0, =completed: local-inputs-consumed=,
+  coverage =unexamined-outside-recorded-regions=, producers pinned
+  =tesseract-ocr@5.5.3 route={baseline,regional}=, selectors
+  =page:N rect:…= source-linked, attempts =attempt-1..N= from the
+  durable ledgers (=budget-state.json=, tracked).
+- DSC validity: each run's =finish()= refuses to export a descriptor that
+  fails =dsc03.validator.validate=; both exported, so both descriptors
+  pass the deployed 0.3 validator.
+- Raw/layout text preserved verbatim (e.g. baseline page 5 keeps the
+  Dossier Juanele poem line breaks; search index joins separately).
+
+* Incidents of record (the smoke doing its job)
+
+1. *Attempt-limit refusal.* The first regional dispatch was refused
+   =attempt-limit-exceeded=: =max_provider_attempts= was initially pinned
+   at 2 (the references.org placeholder sized for whole-page OCR). The
+   detector measured 121 crops on the approved pages, so the stage was
+   re-pinned to 160 *before any regional recognition completed*, and the
+   baseline was re-run so both recorded runs bind to the final shipped
+   configs. Residue: a budget refusal discards the stage directory
+   including the durable ledger (completed attempts are lost; the refusal
+   itself is pre-I/O so no dispatch-uncertainty exists). Hardening ticket
+   filed: =sunset-chs=.
+2. *Pageless-config crash.* The real smoke surfaced =KeyError('pages')=
+   in =digitization/structure/collect= for local configs, which
+   deliberately carry no recorded per-page observations. TDD red→green:
+   =test_shipped_stage_config_has_no_pages_key= (parametrized over both
+   routes) + =config.get('pages', {})= fix.
+3. *Replay does not know local mode.* =digitization replay --run= on these
+   runs exits 4 =unsupported-version= (=replay.py= requires manifest mode
+   =recorded=). Out of rmx.15 scope; zero-inference replay of local-mode
+   runs is an explicit sunset-rmx.11 acceptance requirement and is noted
+   in that ticket.
+
+* Reproducibility and what is tracked
+
+- The run directories keep their heavy derivable blobs locally
+  (=artifacts/= renders+crops, =source.pdf= copy; gitignored, ~13 MB +
+  ~14 MB). All JSON/text records, ledgers and the smoke summary
+  (=local-smoke/manifest.json=) are tracked under
+  =fixtures/digitization/local-smoke/=.
+- Re-running the recorded argv on the pinned stack reproduces the runs
+  byte-for-byte (PyMuPDF render and tesseract crop OCR are deterministic
+  for the pinned versions); the digests above are the check.
+
+* Acceptance mapping (sunset-rmx.15)
+
+- [X] Real local smoke after .7 and .10: documented public =run= invoked on
+  the approved pages under =pilot.json= (approved, engineering-only) with
+  the pinned engine; DSC validated; =inspect= invoked.
+- [X] Actual commands/exit statuses, source/config/renderer/engine/
+  traineddata digests, crop/selected output digests (run manifests,
+  tracked), attempts/runtime/ledger (=budget-state.json=, =ledger.json=)
+  and diagnostics (incidents above) recorded in =local-smoke.org= +
+  =local-smoke/manifest.json=.
+- [X] Whole-page baseline and regional mode use the same approved
+  engine/version/language data with separately recorded configurations;
+  no OCR prerequisite for initial image-based regions (detector proposes
+  from pixels; configs carry no recorded observations).
+- [X] Missing executable/language data, timeout and nonzero exit produce
+  provider-failure without empty success (typed =LocalProviderFailure=
+  suite, fake-seamed contract tests; real runs all succeeded).
+- [X] Raw/layout whitespace preserved; external routes disabled (local
+  configs have no external provider identity; default suite never opens a
+  socket or launches an engine).
+- [X] No default test dependency on the installed engine; smoke stayed
+  within .10-approved source/pages/limits; no pilot or scaling claims.

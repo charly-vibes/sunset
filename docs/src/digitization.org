@@ -2,8 +2,9 @@
 
 Sunset's implemented native workflow is PDF → searchable text with source
 locations → integrity inspection or offline replay. It handles embedded text
-locally and retains word and line mappings. OCR dispatch inside =digitization
-run= and measured visual completeness for scanned pages remain separate work;
+locally and retains word and line mappings. Run-time OCR dispatch for scanned
+pages exists as the local routes (see =sunset-rmx.15= below); measured visual
+completeness and reviewed-reference quality evaluation remain separate work;
 recorded OCR configs over rasterized image PDFs exist for review loops (see
 the derived-configs section below).
 
@@ -488,9 +489,58 @@ No missing response is synthesized, and the source run remains unchanged.
 
 Optional =--compare FRESH_RUN= compares selected raw text with another already
 recorded run and lists differences such as =luna= → =una=. It does not invoke
-inference or alter either run. Real local crop OCR and whole-page baseline mode
-belong to =sunset-rmx.15=, after budget and stage configuration approval.
-Refinement is a later slice.
+inference or alter either run. Real local crop OCR and whole-page baseline
+mode are documented in the local-routes section below (=sunset-rmx.15=);
+=replay= does not accept local-mode manifests yet. Refinement is a later
+slice.
+
+* Real local routes: run-time OCR dispatch (sunset-rmx.15)
+
+A config whose =provider.kind= is =local= dispatches real recognition at
+run time through the durable budget boundary. Two routes exist, selected by
+the pinned =provider.route=:
+
+- =regional= (default): the image-based detector proposes regions from the
+  200 dpi render pixels — no OCR prerequisite, and the config carries no
+  recorded observations — then recognizes each proposal with one pinned
+  =tesseract= invocation over the crop pixels. Every proposed region is
+  dispatched and attributed; none is dropped.
+- =baseline=: one =tesseract= invocation per page over the whole-page
+  render; the single attributed region covers the page.
+
+Both routes share the approved engine identity (=tesseract-ocr@<version>=,
+=spa=) and renderer (=PyMuPDF@1.28.2= at 200 dpi) and differ only in the
+pinned configuration. A local config binds =version=, =source_sha256=,
+=provider= (kind/id/version/language/route), =render.dpi= and the durable
+=budget= policy; byte and attempt caps are enforced at dispatch and charges
+settle at zero under the local-zero price schedule. Missing engine, timeout
+and nonzero exit are typed provider failures that stop the run without an
+empty success while preserving the durable ledger for =resume=.
+
+The difficult-page stage ships =fixtures/digitization/local-baseline.json=
+and =fixtures/digitization/local-regional.json= (they pin the Diario excerpt
+digest) under the approved engineering-only stage manifest
+=fixtures/digitization/pilot.json=. The real smoke record — exact commands,
+exit statuses, digests, attempts, ledger and incidents — lives in
+=fixtures/digitization/local-smoke.org=.
+
+Reuse decision of record: the per-crop adapter adapts the
+=dsc03.demo.run_pinned= process-safety pattern (file-backed stdout, WNOHANG
+polling, timeout kill) with one deliberate difference — the child exit
+status is surfaced, because a nonzero tesseract exit must be a provider
+failure rather than a silent empty result — and it keeps raw =txt= bytes
+verbatim instead of inheriting the demo's text cleanup, so poem layout
+survives. The whole-corpus demo path is never invoked for a crop. Rendering
+reuses the pipeline's PyMuPDF =render_page= (the recorded routes' renderer),
+not the poppler =pdftoppm= named in the stage references; the deviation is
+recorded in the smoke record.
+
+Known limitations: =replay= rejects local-mode manifests
+(=unsupported-version=; zero-inference local replay is sunset-rmx.11 scope),
+and a mid-run budget refusal currently discards the stage directory
+including its ledger (sunset-chs). The shipped smoke is engineering-only:
+no reviewed reference exists, so no quality/economy/scaling conclusion is
+claimable from those runs.
 
 * Derived configs and the review loops (sunset-bv4, sunset-9op)
 

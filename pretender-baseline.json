@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "adopted_at": "2026-11-04T13:31:51Z",
+  "adopted_at": "2026-11-04T14:16:07Z",
   "finding_ids": [
     ".wai/projects/sunset/research/2026-10-28-digitization-review-repros.py::rule::params_max",
     "digitization/__main__.py::main::abc_max",
@@ -340,6 +340,7 @@
     "tests/tracer/test_digitization_local_route.py::test_local_regions_are_proposed_without_any_configured_detections::params_max",
     "tests/tracer/test_digitization_local_route.py::test_local_route_pins_provider_identity_transforms_and_raw_bytes::params_max",
     "tests/tracer/test_digitization_local_route.py::test_provider_failure_stops_without_manifest_and_preserves_ledger::params_max",
+    "tests/tracer/test_digitization_local_route.py::test_shipped_stage_config_has_no_pages_key::params_max",
     "tests/tracer/test_digitization_native_basic.py::test_native_cli_extracts_and_inspects_source_attributed_words::abc_max",
     "tests/tracer/test_digitization_native_basic.py::test_native_cli_extracts_and_inspects_source_attributed_words::cognitive_max",
     "tests/tracer/test_digitization_native_basic.py::test_native_cli_extracts_and_inspects_source_attributed_words::cyclomatic_max",
