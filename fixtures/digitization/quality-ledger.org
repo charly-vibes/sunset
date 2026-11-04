@@ -1,0 +1,54 @@
+# -*- org -*-
+#+TITLE: Digitization pilot quality ledger
+#+DATE: 2026-11-05
+#+TICKET: sunset-rmx.13 (openspec checkpoint 3.4)
+
+* Stage identity
+
+- Stage: diario-difficult-page-r1 — pages [2, 5] of the diario excerpt,
+  source sha256 42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4.
+- Mode: engineering-only (ruling 2026-11-03: skip the human reference
+  requirement, OCR loop machinery instead). reference_sha256 null,
+  6 missing scopes — evaluation is structurally evaluation-incomplete.
+- Engine pin: tesseract-ocr 5.5.3, configuration ee2c4d8e… inherited
+  verbatim from the approved difficult-page stage. Configs pinned:
+  fixtures/digitization/local-baseline.json (baseline route) and
+  fixtures/digitization/local-regional.json (regional route), attempts cap 160.
+
+* Stubbed pilot journey (public CLI, recorded provider, no inference)
+
+- run: exit 0, status completed; manifest/history/ledger/descriptor bound.
+- Interrupt: a fresh process dispatched request-1 into the run's durable
+  budget ledger and died (exit 73) — attempt-1 left dispatch-uncertain.
+- Resume (fresh process, =python3 -m digitization resume --run RUN_DIR=):
+  exit 2, stopped-with-unresolved-work, dispatch-uncertain,
+  provider_calls: 0 — no duplicate dispatch. manifest.json, history.json,
+  ledger.json, descriptor.json and budget-state.json byte-identical
+  across the interrupt; the run stays inspectable (status completed).
+- Evaluate (shared .9 operation over baseline/regional fakes): exit 2,
+  status evaluation-incomplete, quality UNKNOWN, report digest-bound to
+  stage/reference/baseline/candidate; execution provider_calls 0 on both
+  routes; unknown claims: correction-effort, setup-effort, total-cost.
+- Inspection: attribution retained per region (producer, revision,
+  alternatives, selector); loss report lists unresolved regions with
+  reasons; coverage stays unexamined-outside-recorded-regions.
+
+* Real local smoke evidence (.15) — inspected only, never re-run
+
+- fixtures/digitization/local-smoke/baseline: completed, pages [2, 5],
+  mode local, estimated charge 0, 2 regions, unresolved [].
+- fixtures/digitization/local-smoke/regional: completed, pages [2, 5],
+  mode local, estimated charge 0, 121 regions, unresolved [].
+- Both bind the same pinned source and stage configurations; this suite
+  performs no real inference and makes no provider calls.
+
+* Conformance posture
+
+- No positive quality, economy or scaling conclusions from this pilot:
+  the stage is engineering-only, evaluation-incomplete, and every
+  positive_*_conclusion_allowed flag is false in the journey report.
+- Conformance labels unchanged; the frozen 0.2 validator still rejects
+  0.3 descriptors (separate gate).
+- Gate: the journey regression runs inside =just spec-check= (tracer
+  suite, =tests/tracer/test_digitization_pilot.py=); strict proposal,
+  deployed-spec and frozen-validator gates are unchanged.
