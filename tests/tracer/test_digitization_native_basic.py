@@ -41,11 +41,12 @@ def test_native_cli_extracts_and_inspects_source_attributed_words(tmp_path):
     source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
 
     code, result = cli('native', '--source', source, '--output', output)
-    assert code == 0 and result['status'] == 'complete', result
+    assert code == 0 and result['status'] == 'text-complete', result
     assert result['provider_calls'] == 0
     manifest = json.loads((output / 'manifest.json').read_text())
     assert manifest['source']['sha256'] == source_hash
     assert manifest['mode'] == 'native'
+    assert manifest['version'] == '2'
     descriptor = validator.load(output / manifest['descriptor']['path'])
     assert validator.validate(descriptor) == []
     assert descriptor['source']['sha256'] == source_hash
@@ -89,7 +90,7 @@ def test_native_cli_extracts_and_inspects_source_attributed_words(tmp_path):
 
     selected_output = tmp_path / 'selected-run'
     code, selected = cli('native', '--source', source, '--pages', '2', '--output', selected_output)
-    assert code == 2 and selected['status'] == 'partial'
+    assert code == 0 and selected['status'] == 'text-complete'
     selected_manifest = json.loads((selected_output / 'manifest.json').read_text())
     assert selected_manifest['pages'] == [2]
     assert [word['page'] for word in json.loads((selected_output / 'word-map.json').read_text())] == [2, 2]

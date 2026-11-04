@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
 import pymupdf
 
 from dsc03 import validator
@@ -40,8 +41,8 @@ def test_partial_native_result_keeps_scopes_and_inspects_without_claiming_comple
     source, output = tmp_path / 'mixed.pdf', tmp_path / 'run'
     fixture(source)
     code, result = cli('native', '--source', source, '--output', output)
-    assert code == 2 and result['status'] == 'partial'
-    assert result['reason'] == 'native-extraction-partial' and result['provider_calls'] == 0
+    assert code == 2 and result['status'] == 'text-with-gaps'
+    assert result['reason'] == 'native-extraction-text-with-gaps' and result['provider_calls'] == 0
     manifest = json.loads((output / 'manifest.json').read_text())
     descriptor = validator.load(output / manifest['descriptor']['path'])
     assert validator.validate(descriptor) == []
@@ -54,37 +55,63 @@ def test_partial_native_result_keeps_scopes_and_inspects_without_claiming_comple
     assert by_scope['pdf:images', 'page:1']['status'] == 'approximated'
     assert by_scope['pdf:images', 'page:2']['status'] == 'approximated'
     code, report = cli('inspect', '--run', output, '--json')
-    assert code == 0 and report['status'] == 'partial'
+    assert code == 0 and report['status'] == 'text-with-gaps'
     assert report['coverage']['visual_completeness'] == 'not-established'
     assert report['coverage']['unexamined_pages'] == [2, 3]
     assert [w['text'] for w in report['words']] == ['native', 'words']
 
 
-def test_zero_text_only_run_is_partial_and_inspectable(tmp_path):
+def test_zero_text_only_run_reads_no_text_and_stays_inspectable(tmp_path):
     source, output = tmp_path / 'textless.pdf', tmp_path / 'run'
     with pymupdf.open() as doc:
         doc.new_page(width=300, height=400)
         doc.save(source)
     code, result = cli('native', '--source', source, '--output', output)
-    assert code == 2 and result['status'] == 'partial'
+    assert code == 2
+    assert result['status'] == 'no-text-read'
+    assert result['reason'] == 'native-extraction-no-text-read'
     code, report = cli('inspect', '--run', output, '--json')
-    assert code == 0 and report['status'] == 'partial'
+    assert code == 0
+    assert report['status'] == 'no-text-read'
     assert report['words'] == [] and report['lines'] == []
     assert report['coverage']['unexamined_pages'] == [1]
     assert report['coverage']['visual_completeness'] == 'not-established'
 
 
-def test_supported_native_text_is_complete_within_native_scope_only(tmp_path):
+def test_logo_only_approximation_stays_text_complete(tmp_path):
     source, output = tmp_path / 'native-only.pdf', tmp_path / 'run'
     with pymupdf.open() as doc:
         page = doc.new_page(width=300, height=400)
         page.insert_text((30, 60), 'native text')
+        pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 3, 3), False)
+        pix.clear_with(200)
+        page.insert_image(pymupdf.Rect(200, 200, 230, 230), stream=pix.tobytes('png'))
         doc.save(source)
     code, result = cli('native', '--source', source, '--output', output)
-    assert code == 0 and result['status'] == 'complete'
+    assert code == 0
+    assert result['status'] == 'text-complete'
+    manifest = json.loads((output / 'manifest.json').read_text())
+    assert manifest['version'] == '2'
+    descriptor = validator.load(output / manifest['descriptor']['path'])
+    approximated = [c for c in descriptor['coverage'] if c['status'] == 'approximated']
+    assert approximated
+    assert all(c['feature'] != 'pdf:glyphs' for c in approximated)
     code, report = cli('inspect', '--run', output, '--json')
-    assert code == 0 and report['status'] == 'complete'
+    assert code == 0
+    assert report['status'] == 'text-complete'
     assert report['coverage']['visual_completeness'] == 'not-established'
+
+
+def test_outcome_classifier_is_pure_over_page_retention():
+    from digitization.native import classify_outcome
+    assert classify_outcome({1: True}) == 'text-complete'
+    assert classify_outcome({1: True, 2: True, 3: True}) == 'text-complete'
+    assert classify_outcome({1: True, 2: False}) == 'text-with-gaps'
+    assert classify_outcome({1: False, 2: True}) == 'text-with-gaps'
+    assert classify_outcome({1: False}) == 'no-text-read'
+    assert classify_outcome({1: False, 2: False}) == 'no-text-read'
+    with pytest.raises(ValueError):
+        classify_outcome({})
 
 
 def test_page_selection_excludes_unselected_text_but_preserves_inventory(tmp_path):
@@ -95,7 +122,7 @@ def test_page_selection_excludes_unselected_text_but_preserves_inventory(tmp_pat
             page.insert_text((30, 60), text)
         doc.save(source)
     code, result = cli('native', '--source', source, '--pages', '2', '--output', output)
-    assert code == 2 and result['status'] == 'partial'
+    assert code == 0 and result['status'] == 'text-complete'
     manifest = json.loads((output / 'manifest.json').read_text())
     descriptor = validator.load(output / manifest['descriptor']['path'])
     assert validator.validate(descriptor) == []

@@ -36,12 +36,20 @@ uv run python -m digitization resume --run native-run
 uv run python -m digitization replay --run native-run --output replayed-run
 #+end_src
 
-The output directory must not already exist. Native extraction returns 0 when
-all selected pages have native text and 2 for partial scope (textless, excluded,
-mixed or unsupported content). Input refusal returns 3. Inspection returns 0
-for intact runs, including partial runs. Resume returns 0 for complete native
-runs and 2 for partial runs. Both return 4 for an unsupported
-manifest version and 5 for integrity failure. Resume verifies and reports
+The output directory must not already exist. Native extraction reports exactly
+one outcome as the manifest status: =text-complete= when every selected page
+contributed retained native text, =text-with-gaps= when some selected pages or
+regions are unexamined or failed while others contributed text, and
+=no-text-read= when no selected page contributed text. Non-text observations
+(images, vectors, annotations) are recorded as =approximated= coverage rows and
+never change the outcome. The CLI returns 0 for =text-complete= and 2 for
+=text-with-gaps= and =no-text-read=; =visual_completeness: not-established= is
+reported independently and never influences the exit code. Input refusal
+returns 3. Inspection returns 0 for intact runs, including gap-bearing runs.
+Resume returns 0 for =text-complete= native runs and 2 for the gap outcomes.
+Both return 4 for an unsupported manifest version — including legacy version 1
+manifests, which carry only the =partial= status — and 5 for integrity failure.
+Resume verifies and reports
 retained native status without mutation or extraction. Replay returns 0 when it
 verifies and copies a run offline, 4 for an unsupported manifest version, and
 5 for integrity failure. A replay includes the original manifest and semantic
@@ -51,17 +59,17 @@ context. Identical PDF bytes under the same pinned settings produce identical
 semantic files regardless of source filename or output directory.
 
 #+begin_example
-$ python3 -m digitization native --source /tmp/sunset-native-example.pdf --output /tmp/sunset-native-example-run-v2
-{"manifest": "/tmp/sunset-native-example-run-v2/manifest.json", "provider_calls": 0, "reason": "native-extraction-complete", "status": "complete"}
+$ python3 -m digitization native --source /tmp/sunset-native-example.pdf --output /tmp/sunset-native-example-run-v3
+{"manifest": "/tmp/sunset-native-example-run-v3/manifest.json", "provider_calls": 0, "reason": "native-extraction-text-complete", "status": "text-complete"}
 exit: 0
-$ python3 -m digitization inspect --run /tmp/sunset-native-example-run-v2 --json
-{"mode": "native", "status": "complete", "extractor": {"id": "pymupdf", "mupdf_version": "1.28.2", "version": "1.28.2"}, ...}
+$ python3 -m digitization inspect --run /tmp/sunset-native-example-run-v3 --json
+{"mode": "native", "status": "text-complete", "extractor": {"id": "pymupdf", "mupdf_version": "1.28.2", "version": "1.28.2"}, ...}
 exit: 0
-$ python3 -m digitization resume --run /tmp/sunset-native-example-run-v2
-{"manifest": "/tmp/sunset-native-example-run-v2/manifest.json", "provider_calls": 0, "reason": "native-extraction-complete", "status": "complete"}
+$ python3 -m digitization resume --run /tmp/sunset-native-example-run-v3
+{"manifest": "/tmp/sunset-native-example-run-v3/manifest.json", "provider_calls": 0, "reason": "native-extraction-text-complete", "status": "text-complete"}
 exit: 0
-$ python3 -m digitization replay --run /tmp/sunset-native-example-run-v2 --output /tmp/sunset-native-example-replayed-v2
-{"manifest": "/tmp/sunset-native-example-replayed-v2/manifest.json", "provider_calls": 0, "reason": "replay-verified", "semantic_sha256": "92725d7785d83a74f682e121a7f369e548b5bd38aba6961e7d387173a7bf4bcf", "status": "replayed"}
+$ python3 -m digitization replay --run /tmp/sunset-native-example-run-v3 --output /tmp/sunset-native-example-replayed-v3
+{"manifest": "/tmp/sunset-native-example-replayed-v3/manifest.json", "provider_calls": 0, "reason": "replay-verified", "semantic_sha256": "ec702d96f821211ea450e7ed353cf5383c04b8034b8ebfc439fc43c2a0368167", "status": "replayed"}
 exit: 0
 #+end_example
 
@@ -195,8 +203,9 @@ and neither total operating cost nor transcription quality is measured.
 | 0 | inspect success | Evidence verified and report returned |
 | 0 | replayed / replay-verified | Verified artifacts copied offline; semantic digest and original envelope retained |
 | 2 | stopped-with-unresolved-work / recorded-unresolved; incomplete-artifacts | Results retained with uncertainty, or replay lacks a required artifact |
+| 2 | text-with-gaps or no-text-read / native-extraction-* | Native text retention has gaps or no selected page read text; inspect the report, the status field carries the distinction |
 | 3 | invalid-input | Invalid page/config/source/box/provider or existing output; no provider calls |
-| 4 | unsupported-version | Replay schema version is not supported |
+| 4 | unsupported-version | Replay schema version or native outcome vocabulary is not supported (legacy native version 1 manifests included) |
 | 5 | inspection-failed / integrity-failure | Corrupt or inconsistent local evidence; no repair inference |
 
 A page outside the PDF, a source hash mismatch, a missing recognition, duplicate
@@ -204,6 +213,21 @@ IDs, malformed PDF, unavailable configuration, or a non-recorded provider is
 refused. Correct the inputs and select a new output directory. A nonempty output
 directory is never overwritten. Missing/corrupt evidence must be restored from
 its original copy before inspection can succeed.
+
+Migration note for the native outcome vocabulary (sunset-1ry): native manifests
+now carry =version: 2= and one of =text-complete= / =text-with-gaps= /
+=no-text-read=; the single legacy =partial= status is gone. Scripts keying on
+the literal status =partial= must parse the JSON =status= field instead of the
+exit code: exit 2 still means "inspect the report", and only the status field
+distinguishes a textless selection (=no-text-read=) from a cosmetic gap
+(=text-with-gaps=). Version 1 manifests are refused as =unsupported-version=
+(exit 4) by =inspect= and =replay=; outcome semantics are never inferred from
+coverage rows.
+
+The =--pages= convention: =native= keeps =--pages= optional and defaults to all
+pages, because a fresh extraction has a natural whole-document default. The
+recorded =run= keeps =--pages= required, because a recorded run must prove
+which selection produced it.
 
 * Reuse verified region outputs
 

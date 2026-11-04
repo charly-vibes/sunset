@@ -37,7 +37,7 @@ def test_native_layout_maps_every_normalized_token_and_explicit_page_frame(tmp_p
     source, output = tmp_path / 'layout.pdf', tmp_path / 'run'
     layout_pdf(source)
     code, result = cli('native', '--source', source, '--output', output)
-    assert code == 0 and result['status'] == 'complete', result
+    assert code == 0 and result['status'] == 'text-complete', result
 
     raw = (output / 'raw.txt').read_text(encoding='utf-8')
     search = (output / 'search.txt').read_text(encoding='utf-8')

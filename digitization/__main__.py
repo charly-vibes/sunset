@@ -57,6 +57,7 @@ def main(argv=None):
         elif args.operation == 'resume':
             result = resume_run(args.run)
             code = {'stopped-with-unresolved-work': 2, 'partial': 2,
+                    'text-with-gaps': 2, 'no-text-read': 2,
                     'unsupported-version': 4}.get(result['status'], 0)
         elif args.operation == 'inspect':
             result = inspect_run(args.run)
@@ -74,7 +75,7 @@ def main(argv=None):
             except ValueError as error:
                 raise InputError('pages must be comma-separated integer PDF indices') from error
             result = extract_native(args.source, args.output, pages)
-            code = 2 if result['status'] == 'partial' else 0
+            code = 0 if result['status'] == 'text-complete' else 2
         else:
             try:
                 pages = [int(p) for p in args.pages.split(',')]

@@ -27,7 +27,7 @@ def inspect_run(run_directory):
     if not isinstance(early_manifest, dict):
         raise IntegrityError('invalid manifest')
     if early_manifest.get('mode') == 'native':
-        from digitization.native import inspect_native
+        from digitization.native_inspection import inspect_native
         return inspect_native(root)
     try:
         manifest = validator.loads((root / 'manifest.json').read_text())

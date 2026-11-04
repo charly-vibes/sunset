@@ -146,7 +146,7 @@ def test_native_resume_is_read_only_and_preserves_complete_or_partial_status(tmp
     before = {p.relative_to(run): p.read_bytes() for p in run.rglob('*') if p.is_file()}
     code, result = cli('resume', '--run', run)
     assert code == (2 if partial else 0)
-    assert result['status'] == ('partial' if partial else 'complete')
+    assert result['status'] == ('no-text-read' if partial else 'text-complete')
     assert before == {p.relative_to(run): p.read_bytes() for p in run.rglob('*') if p.is_file()}
 
 
@@ -162,13 +162,14 @@ def test_native_replay_does_not_call_extractor_or_open_pdf(tmp_path, monkeypatch
     assert replay(run, tmp_path / 'replayed')['status'] == 'replayed'
 
 
-def test_native_unknown_manifest_version_is_unsupported(tmp_path):
+@pytest.mark.parametrize('version', ['1', 'future', '3'])
+def test_native_legacy_and_unknown_manifest_versions_are_unsupported(tmp_path, version):
     source, run = tmp_path / 'source.pdf', tmp_path / 'run'
     pdf_fixture(source)
     assert cli('native', '--source', source, '--output', run)[0] == 0
     manifest_path = run / 'manifest.json'
     manifest = json.loads(manifest_path.read_text())
-    manifest['version'] = 'future'
+    manifest['version'] = version
     manifest_path.write_text(json.dumps(manifest))
     code, result = cli('inspect', '--run', run, '--json')
     assert code == 4 and result['status'] == 'unsupported-version'

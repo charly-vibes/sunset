@@ -162,7 +162,7 @@ def _load_run(directory):
     if not isinstance(manifest, dict):
         raise IntegrityError('invalid replay manifest')
     if manifest.get('mode') == 'native':
-        from digitization.native import inspect_native
+        from digitization.native_inspection import inspect_native
         report = inspect_native(root)
         if report.get('status') == 'unsupported-version':
             return {'status': 'unsupported-version', 'reason': 'unsupported-version', 'provider_calls': 0}
