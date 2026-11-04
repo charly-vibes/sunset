@@ -38,3 +38,11 @@ def test_tracer_malformed_json_raises_for_parse_error_outcome():
     import pytest
     with pytest.raises((validator.Duplicate, ValueError, json.JSONDecodeError)):
         validator.loads('{"version": "0.3", "id": "x"} malformed')
+
+
+def test_run_reports_parse_error_on_recursion_limit_nesting(tmp_path):
+    # sunset-gks: ~100k-deep nesting must surface as parse_error, never escape run().
+    p = tmp_path / "deep.json"
+    p.write_text("[" * 100000 + "]" * 100000, encoding="utf-8")
+    result = validator.run(p)
+    assert result == ["parse_error:nesting_too_deep"]

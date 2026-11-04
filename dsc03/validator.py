@@ -672,6 +672,8 @@ def validate(d):
 def run(path):
     try:
         result = validate(load(path))
+    except RecursionError:
+        result = ["parse_error:nesting_too_deep"]
     except (Duplicate, ValueError, json.JSONDecodeError, UnicodeError) as e:
         result = ["parse_error:" + str(e)]
     return result
