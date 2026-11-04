@@ -229,9 +229,10 @@ def evaluate(baseline_run, candidate_run, reference_path, policy_path, output):
             passes = measured >= limit if name in ('region_precision', 'region_recall') else measured <= limit
             gates[name] = 'pass' if passes else 'reject'
     result['thresholds'] = gates
-    complete = stage_info['positive_conclusions_allowed'] and all(v != 'UNKNOWN' for v in gates.values())
+    complete = (stage_info['positive_conclusions_allowed'] and bool(gates)
+                and all(v != 'UNKNOWN' for v in gates.values()))
     result['status'] = 'measured' if complete else 'evaluation-incomplete'
-    result['quality_conclusion'] = ('pass' if all(v == 'pass' for v in gates.values()) else
+    result['quality_conclusion'] = ('pass' if complete and all(v == 'pass' for v in gates.values()) else
                                     'reject' if complete else 'UNKNOWN')
     result['positive_economy_conclusion_allowed'] = False
     result['positive_scaling_conclusion_allowed'] = False

@@ -1,0 +1,143 @@
+#+title: Difficult-page baseline, loop runs, replay and evaluation (sunset-rmx.11)
+
+#+begin_quote
+STATUS: ENGINEERING-ONLY (sunset-rmx.10 ruling 2026-11-03). The stage
+manifest =fixtures/digitization/pilot.json= carries =mode:
+engineering-only=, =reference_sha256: null= and nonempty
+=missing_scopes=. Every quality metric below reports
+evaluation-incomplete; NO positive quality/economy/scaling conclusion
+is claimable from this evidence (negative/rejection decisions remain
+possible). Unmeasured correction effort stays UNKNOWN. Runs were
+executed 2026-11-04 by the agent lead; the human pass supersedes.
+#+end_quote
+
+* Scope and traceability
+
+- Beads: =sunset-rmx.11= (claimed; blocked-by =sunset-rmx.10=,
+  =sunset-rmx.15=, both closed). Checkpoint:
+  =openspec/changes/add-iterative-document-digitization/tasks.md: 3.2=.
+- Difficult page: excerpt page 5 ("DOSSIER JUANELE" / "La sonata del
+  claro de luna": three-column poem, refrains, indentation geometry);
+  feature page 2 (image/caption). Stage =pages: [2, 5]= per
+  =pilot.json= (=stage_id diario-difficult-page-r1=, sha256
+  =d7bd9a97365c0b689c8951a1ccff146d757b4ac58a8b397f26e50de9944ac98a=).
+- Source: =fixtures/carriers/diario-de-poesia-excerpt.pdf= (sha256
+  =42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4=).
+- Pinned stack (same as the =sunset-rmx.15= smoke): tesseract 5.5.3
+  (spa traineddata 6f2e04d0…), PyMuPDF 1.28.2 renderer, python
+  3.15.2. Configs: baseline =local-baseline.json= (sha256
+  =30f5df7adb18af012010e641c489c00bddbddb2df43ecd3edbafcfaed3f1c679=),
+  candidate/loop =local-regional.json= (sha256
+  =29c031bfafa21b61fec01fb70b420d940ec3615ce8c07f03cebf3d12d2b80c25=)
+  — both match the stage manifest pins.
+
+* Executed commands (real pinned engine, uncached)
+
+All runs omit =--cache=; each fresh run starts from an empty cache, so
+run-to-run comparison is uncached by construction. Region detection is
+deterministic (no engine involvement); recognition dispatches the
+pinned tesseract per crop/page.
+
+#+begin_example
+python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+  --pages 2,5 --config fixtures/digitization/local-baseline.json \
+  --output fixtures/digitization/difficult-page/baseline        # exit 0
+python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+  --pages 2,5 --config fixtures/digitization/local-regional.json \
+  --output fixtures/digitization/difficult-page/loop-1          # exit 0
+python3 -m digitization run --source fixtures/carriers/diario-de-poesia-excerpt.pdf \
+  --pages 2,5 --config fixtures/digitization/local-regional.json \
+  --output fixtures/digitization/difficult-page/loop-2          # exit 0
+python3 -m digitization replay --run fixtures/digitization/difficult-page/loop-1 \
+  --output fixtures/digitization/difficult-page/replay-loop-1 \
+  --compare fixtures/digitization/difficult-page/loop-2         # exit 0
+python3 -m digitization evaluate \
+  --baseline fixtures/digitization/difficult-page/baseline \
+  --candidate fixtures/digitization/difficult-page/loop-1 \
+  --reference fixtures/digitization/difficult-page/reference-null.json \
+  --policy fixtures/digitization/pilot.json \
+  --output fixtures/digitization/difficult-page-evaluation      # exit 2 (evaluation-incomplete)
+#+end_example
+
+Exit 2 is the documented evaluate exit for =evaluation-incomplete=;
+the report is still written and digest-bound.
+
+* Runs (all completed, zero estimated charge)
+
+| run       | route     | provider calls | runtime (s) | regions | manifest sha256 (prefix) |
+|-----------+-----------+----------------+-------------+---------+--------------------------|
+| baseline  | baseline  |              2 |        20.0 |       2 | =a032baa3418c56d6…=      |
+| loop-1    | regional  |            121 |        88.3 |     121 | =e11268171fb0511d…=      |
+| loop-2    | regional  |            121 |        89.0 |     121 | =301cc09e34f33ec4…=      |
+
+Difficult page 5: 56 of the 121 regional regions, 39 with nonempty
+=raw_text=. Budget caps (160 attempts / 1 MiB output) never refused
+these runs; charges stay 0 microunits under the zero-price local
+provider schedule.
+
+* Zero-inference replay and fresh-run variation
+
+- Replay of loop-1: =status: replayed=, =provider_calls: 0=, semantic
+  sha256 =0bb08a7641f07c5eaff04316cd3b52f538a5133d4a0790c318cfc3d86a28707e=
+  (92 bound artifacts, ledger excluded per =SEMANTIC_EXCLUSIONS=).
+- Fresh comparison (replay =--compare loop-2=): =differences: []= —
+  the two uncached loop runs are text-identical across all 121
+  regions, and their =descriptor.json= bytes are identical (sha256
+  =20f002e78f82ed39…=). Fresh-run variation under the pinned stack is
+  therefore *measured zero* for this stage — a real measurement, not
+  an UNKNOWN.
+- Replay equality (loop-1 vs its reconstruction) and fresh variation
+  (loop-1 vs loop-2) are reported separately by the replay report, as
+  required by design.md:60.
+
+* Evaluation (shared .9 evaluate operation)
+
+Machine-readable report:
+=fixtures/digitization/difficult-page-evaluation/evaluation.json=
+(digest-bound to stage =d7bd9a97…=, reference =ca3d163b…=, baseline
+manifest =a032baa3…=, candidate manifest =e11268171…=). Recorded
+deviation: the ticket proposed a flat
+=fixtures/digitization/difficult-page-evaluation.json=; the public CLI
+writes =evaluation.json= inside its =--output= directory, so the
+directory form is the canonical artifact.
+
+- =status: evaluation-incomplete=,
+  =positive_conclusions_allowed: false=, gates ={}= (owner numeric
+  thresholds never supplied — recorded in =pilot.json=),
+  =quality_conclusion: UNKNOWN=.
+- Degenerate reference: =reference-null.json= is the empty object ={}=
+  (sha256 =ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356=)
+  — the engineering-only ruling skips reviewed references, so region
+  precision/recall are degenerate (reference count 0) and CER, line,
+  stanza, indentation and continuation metrics report UNKNOWN.
+- Usage from verified ledgers: baseline 2 calls, candidate 121 calls,
+  0 microunits; =correction_effort=, =setup_effort=,
+  =total-cost= stay UNKNOWN.
+
+* Evaluation hardening shipped with this evidence (TDD)
+
+Empty =policy.thresholds= previously produced vacuous
+=complete=True/=quality_conclusion 'pass' (=all()= over an empty gate
+set). Contract test
+=test_empty_thresholds_stay_unknown_and_incomplete= pins: empty gates
+now force =status: evaluation-incomplete= and
+=quality_conclusion: UNKNOWN=. The committed evaluation above is the
+post-fix output.
+
+* Known limitations on record
+
+- OCR-vs-OCR is circular and is NOT used as truth (rmx.10 ruling
+  record); image-only pages leave no mechanical truth side for the
+  9op loop.
+- Detector limitations inherited from =sunset-rmx.15= are recorded in
+  =digitization/detect.py= (dirty gutters, fold shadows).
+- Heavy blobs (renders, crops, source copies) stay local per
+  .gitignore; every digest is bound by the committed manifests, and
+  re-running the recorded argv on the pinned stack reproduces them.
+
+* Chain
+
+rmx.11 evidence complete → close =sunset-rmx.11= → =sunset-rmx.16=
+(six-page gate, engineering-only treatment) → =sunset-rmx.12= (six-page
+measure) → =sunset-rmx.13= (pilot verify) → =sunset-rmx.14= (scaling
+decision; cannot conclude positive).

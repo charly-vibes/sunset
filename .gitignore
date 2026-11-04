@@ -46,3 +46,10 @@ fixtures/digitization/local-smoke/baseline/artifacts/
 fixtures/digitization/local-smoke/regional/artifacts/
 fixtures/digitization/local-smoke/*/source.pdf
 fixtures/digitization/local-smoke/*/budget-state.json.lock
+# difficult-page real-run directories (sunset-rmx.11): same policy — heavy
+# derivable blobs stay local; digests recorded in difficult-page-results.org
+# and difficult-page-evaluation/evaluation.json. Runs reproducible from the
+# committed configs + pinned stack.
+fixtures/digitization/difficult-page/*/artifacts/
+fixtures/digitization/difficult-page/*/source.pdf
+fixtures/digitization/difficult-page/*/budget-state.json.lock

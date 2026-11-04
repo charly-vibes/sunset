@@ -182,3 +182,46 @@ def test_public_evaluate_scores_verified_runs_without_provider_calls(stage, tmp_
     assert report['quality_conclusion'] == 'pass'
     assert report['positive_economy_conclusion_allowed'] is False
     assert report['execution']['candidate_usage']['provider_calls'] == 0
+
+
+def test_empty_thresholds_stay_unknown_and_incomplete(stage, tmp_path):
+    source = tmp_path / 'source.pdf'
+    with pymupdf.open() as pdf:
+        pdf.new_page(width=300, height=400)
+        pdf.save(source)
+    config = {'version': '1', 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+              'provider': {'kind': 'recorded', 'id': 'fixture', 'version': '1',
+                           'model': {'id': 'alias', 'revision': None}}, 'render': {'dpi': 72},
+              'pages': {'1': {'detections': [{'id': 'p1', 'kind': 'text',
+                                               'bbox': [20, 30, 120, 100]}],
+                              'recognitions': {'p1': {'raw_text': 'ab', 'unresolved': []}}}}}
+    config_path = tmp_path / 'config.json'
+    config_path.write_text(json.dumps(config))
+    baseline = tmp_path / 'baseline'
+    candidate = tmp_path / 'candidate'
+    command = ['--source', str(source), '--pages', '1', '--config', str(config_path)]
+    first = subprocess.run([sys.executable, '-m', 'digitization', 'run', *command,
+                            '--output', str(baseline)], cwd=ROOT, capture_output=True, text=True)
+    second = subprocess.run([sys.executable, '-m', 'digitization', 'run', *command,
+                             '--output', str(candidate)], cwd=ROOT, capture_output=True, text=True)
+    assert first.returncode == 0 and second.returncode == 0
+    manifests = [json.loads((path / 'manifest.json').read_text()) for path in (baseline, candidate)]
+    stage.update(source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(), pages=[1],
+                 baseline_configuration_sha256=manifests[0]['configuration']['sha256'],
+                 candidate_configuration_sha256=manifests[1]['configuration']['sha256'],
+                 policy={**stage['policy'], 'thresholds': {}})
+    reference_path = tmp_path / 'reference.json'
+    reference_path.write_text('{}')
+    stage['reference_sha256'] = hashlib.sha256(reference_path.read_bytes()).hexdigest()
+    policy_path = tmp_path / 'policy.json'
+    policy_path.write_text(json.dumps(stage))
+    output = tmp_path / 'evaluation'
+    completed = subprocess.run([sys.executable, '-m', 'digitization', 'evaluate',
+        '--baseline', str(baseline), '--candidate', str(candidate), '--reference',
+        str(reference_path), '--policy', str(policy_path), '--output', str(output)],
+        cwd=ROOT, capture_output=True, text=True)
+    assert completed.returncode == 2, completed.stdout + completed.stderr
+    report = json.loads((output / 'evaluation.json').read_text())
+    assert report['status'] == 'evaluation-incomplete'
+    assert report['quality_conclusion'] == 'UNKNOWN'
+    assert report['positive_economy_conclusion_allowed'] is False
