@@ -46,3 +46,19 @@ def test_run_reports_parse_error_on_recursion_limit_nesting(tmp_path):
     p.write_text("[" * 100000 + "]" * 100000, encoding="utf-8")
     result = validator.run(p)
     assert result == ["parse_error:nesting_too_deep"]
+
+
+def test_geometry_profile_id_type_swap_yields_invalid_shape():
+    # sunset-90h: unhashable profile_id must fail in the type phase as
+    # invalid_shape, never escape as TypeError from the semantic key lookup.
+    for bad in ([], {}, ["p-1"]):
+        d = validator.load(TRACER)
+        d["regions"][0]["geometry"] = {
+            "profile_id": bad,
+            "space": "page",
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1,
+        }
+        assert validator.validate(d) == ["invalid_shape"], bad

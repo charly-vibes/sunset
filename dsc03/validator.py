@@ -162,7 +162,7 @@ def type_phase(d):
                 g = item["geometry"]
                 if not _shape_errors(errors, g, ["profile_id", "space", "x", "y", "width", "height"]):
                     continue
-                if not _is_str(g["space"]):
+                if not _is_str(g["space"]) or not _is_str(g["profile_id"]):
                     errors.add("invalid_shape")
                 for f in int_fields:
                     if type(g.get(f)) is not int or g[f] < 0:
