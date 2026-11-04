@@ -1,0 +1,102 @@
+#+title: Six-page stage freeze: references record and bounded engineering-only configuration (sunset-rmx.16)
+
+#+begin_quote
+STATUS: ENGINEERING-ONLY (owner ruling 2026-11-03, recorded extension to
+this stage). The stage manifest
+=fixtures/digitization/six-page-pilot.json= carries
+=mode: engineering-only=, =reference_sha256: null= and six nonempty
+=missing_scopes=. Assessment mode is BLOCKED: it would require
+independently reviewed text/layout/region/coverage references for all
+six pages plus at least one reviewed cross-page continuation pair with
+both endpoints — none exist. Any execution under this stage stays
+evaluation-incomplete and blocks positive quality/economy/scaling
+conclusions (negative/rejection decisions remain possible). This gate
+never blocks the difficult-page trial (rmx.11 evidence preserved
+unchanged). Recorded 2026-11-04 by the agent lead; the human pass
+supersedes.
+#+end_quote
+
+* Scope and traceability
+
+- Beads: =sunset-rmx.16= (claimed 2026-11-04; blocked-by =sunset-rmx.1=
+  and =sunset-rmx.11=, both closed). Checkpoint:
+  =openspec/changes/add-iterative-document-digitization/tasks.md: 3.1b=.
+- Stage =pages: [1, 2, 3, 4, 5, 6]= — the complete
+  =fixtures/carriers/diario-de-poesia-excerpt.pdf= excerpt (6 pages,
+  sha256 =42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4=;
+  same source as the approved difficult-page stage =pilot.json=).
+- Owner authorization record: ruling 2026-11-03 — "with the new
+  workflow of OCR from pdf-to-image we can skip the human requirement".
+  The =sunset-rmx.10= state file records the downstream extension:
+  "rmx.16 same treatment" (engineering-only, no reference.json,
+  =missing_scopes= = all reference-dependent scopes). That recorded
+  ruling is the explicit owner authorization this ticket's acceptance
+  requires; no fresh approval is invented here.
+
+* Frozen stage manifest
+
+Digest of =fixtures/digitization/six-page-pilot.json= (sha256 over the
+committed bytes, single-line sorted-key JSON):
+
+#+begin_example
+9c2e492a0263dbcdcfd0f6f2cc09fb92dce63403f5b3ea3be35f6c589051702c
+#+end_example
+
+Pinned values (inherited from the approved difficult-page stage unless
+noted; engine pin recorded in =fixtures/digitization/references.org=):
+
+| Pin                        | Value                                                              |
+|----------------------------+--------------------------------------------------------------------|
+| source_sha256              | =42292cc6…93ad4= (diario excerpt, all 6 pages)                     |
+| pages                      | =[1, 2, 3, 4, 5, 6]= (excerpt-relative, matches run manifests)     |
+| baseline config            | =local-baseline.json= sha256 =30f5df7a…1c679=                      |
+| candidate config           | =local-regional.json= sha256 =29c031bf…80c25=                      |
+| engine                     | tesseract-ocr 5.5.3, spa, invocation-config digest =ee2c4d8e…b3db4= |
+| price schedule             | local-zero (USD, all rates 0) =357e4136…4bba9f=                    |
+| budget                     | 3 refinement rounds, 160 provider attempts, 0 microunits, 16 MiB request / 1 MiB output caps |
+| normalization / tie-break  | identity / canonical-geometry-then-recorded-id                     |
+| region IoU threshold       | 0.5                                                                |
+| thresholds                 | {} — empty; every metric reports UNKNOWN + evaluation-incomplete   |
+| exclusions                 | [] — empty; all six pages stay in every denominator                |
+
+* Missing scopes and what assessment would have required
+
+Missing (all six reference-dependent scopes; =reference_sha256= is
+=null= because no reviewed reference exists):
+
+- =regions= — independently reviewed region/coverage reference per page
+- =text-cer= — independently reviewed text transcription per page
+- =line-boundary=, =stanza-boundary=, =indentation= — reviewed layout
+  reference per page
+- =continuation-relationships= — at least one reviewed cross-page
+  continuation pair with both endpoints
+
+Reviewers: none (no human reference sheets exist for these six pages;
+the difficult-page region sheets are explicitly NOT transcription gold
+and are not reused as references). Setup effort: UNKNOWN — no reference
+setup was performed. Reviewer identity: none on record; owner identity:
+charly via the recorded 2026-11-03 ruling.
+
+* Verification log (2026-11-04)
+
+- TDD red→green: =tests/tracer/test_digitization_six_page_stage.py=
+  written first; 5/6 RED (fixtures absent) → fixtures created → 6/6
+  GREEN. The sixth test (difficult-page preservation) passed before and
+  after: =pilot.json= still validates (diario-difficult-page-r1, pages
+  [2, 5]), =difficult-page-results.org= and the baseline/loop-1/loop-2/
+  replay-loop-1 runs are untouched.
+- .9 manifest validation: =validate_stage= on the committed manifest
+  returns mode engineering-only, missing_scopes = the six scopes above,
+  =positive_conclusions_allowed: False=. Negative controls: unapproved
+  manifest and assessment-mode mutant both raise =invalid-stage-manifest=.
+- Gate check: =sunset-rmx.12= (six-page measurement) depends on
+  =sunset-rmx.16= and was NOT ready while this ticket was open (absent
+  from =bd ready=). Closing this ticket is what readies .12; .12 remains
+  bound to this frozen manifest because =evaluate()= refuses any run
+  whose source/configuration/page selection digests differ
+  (stage-source-digest-mismatch / stage-configuration-digest-mismatch /
+  stage-page-selection-mismatch).
+- No six-page inference was executed by this ticket — stage approval
+  only. rmx.12 performs the runs under =fixtures/digitization/six-page/=
+  and invokes the shared evaluate operation.
+- No commit/push authorization is claimed or inferred by this record.
