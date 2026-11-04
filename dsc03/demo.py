@@ -81,36 +81,59 @@ def _wait4(popen):
 
 
 PINNED_CHILD_TIMEOUT_S = 120
+_STDERR_CAPTURE_CAP = 2000  # chars kept in CalledProcessError.stderr
+
+
+def _read_text(path):
+    with open(path, "rb") as r_f:
+        return r_f.read().decode("utf-8", "replace")
+
+
+def _raise_if_failed(p, cmd, err_path):
+    """Nonzero child exit raises with truncated captured stderr (sunset-vcn)."""
+    if p.returncode == 0:
+        return
+    stderr_text = _read_text(err_path)[:_STDERR_CAPTURE_CAP]
+    raise subprocess.CalledProcessError(p.returncode, cmd, stderr=stderr_text)
+
+
+def _kill_overdeadline(p, cmd, timeout):
+    """Kill a child that outlived its timeout; a hung extractor never stalls."""
+    p.kill()
+    _wait4(p)
+    raise subprocess.TimeoutExpired(cmd, timeout)
 
 
 def run_pinned(cmd, timeout=PINNED_CHILD_TIMEOUT_S):
     """Run a pinned child command safely and measure its peak RSS (KiB).
 
-    stdout goes to a temp file, never a pipe: reaping via os.wait4 before
-    draining a pipe deadlocks once the child's output exceeds the pipe
-    buffer (the child blocks writing, the parent blocks in wait4). A child
-    that outlives `timeout` is killed and subprocess.TimeoutExpired raised
-    so a hung extractor can never stall the suite.
+    stdout and stderr go to temp files, never pipes: reaping via os.wait4
+    before draining a pipe deadlocks once child output exceeds the pipe
+    buffer. A child outliving `timeout` is killed (TimeoutExpired); a
+    child exiting nonzero raises CalledProcessError with truncated
+    captured stderr — a crashed extractor can never silently become an
+    empty reading (sunset-vcn).
     """
     fd, out_path = tempfile.mkstemp(suffix=".out")
     os.close(fd)
+    err_fd, err_path = tempfile.mkstemp(suffix=".err")
+    os.close(err_fd)
     try:
-        with open(out_path, "wb") as out_f:
-            p = subprocess.Popen(cmd, stdout=out_f, stderr=subprocess.DEVNULL)
+        with open(out_path, "wb") as out_f, open(err_path, "wb") as err_f:
+            p = subprocess.Popen(cmd, stdout=out_f, stderr=err_f)
             deadline = time.monotonic() + timeout
             while True:
                 pid, status, ru = os.wait4(p.pid, os.WNOHANG)
                 if pid:
                     p.returncode = os.waitstatus_to_exitcode(status)
-                    with open(out_path, "rb") as r_f:
-                        return r_f.read().decode("utf-8", "replace"), ru.ru_maxrss
+                    _raise_if_failed(p, cmd, err_path)
+                    return _read_text(out_path), ru.ru_maxrss
                 if time.monotonic() > deadline:
-                    p.kill()
-                    _wait4(p)
-                    raise subprocess.TimeoutExpired(cmd, timeout)
+                    _kill_overdeadline(p, cmd, timeout)
                 time.sleep(0.05)
     finally:
         os.unlink(out_path)
+        os.unlink(err_path)
 
 
 def _pdftotext_pages(data_path):

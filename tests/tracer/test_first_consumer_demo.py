@@ -209,3 +209,26 @@ class TestPinnedRunner(unittest.TestCase):
             pages, peak = demo._pymupdf_pages(str(CARRIER))
         self.assertEqual(set(pages), set(range(1, 7)))
         self.assertGreater(peak, 0)
+
+    def test_nonzero_exit_raises_with_captured_stderr(self):
+        # sunset-vcn: a crashed extractor must raise with its stderr context,
+        # never silently degrade to an empty reading.
+        with self.assertRaises(subprocess.CalledProcessError) as cm:
+            demo.run_pinned(
+                ["python3", "-c",
+                 "import sys; sys.stderr.write('E' * 500); sys.exit(3)"],
+                timeout=60,
+            )
+        self.assertEqual(cm.exception.returncode, 3)
+        self.assertIn("E" * 100, cm.exception.stderr)
+
+    def test_stderr_larger_than_pipe_buffer_does_not_deadlock(self):
+        # sunset-vcn: stderr is file-backed like stdout — a child that floods
+        # stderr must be reaped (wait4 semantics kept) and still raise.
+        with self.assertRaises(subprocess.CalledProcessError) as cm:
+            demo.run_pinned(
+                ["python3", "-c",
+                 "import sys; sys.stderr.write('y' * 300000); sys.exit(1)"],
+                timeout=60,
+            )
+        self.assertEqual(cm.exception.returncode, 1)
