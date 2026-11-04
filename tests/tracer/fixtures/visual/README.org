@@ -74,3 +74,37 @@ y 468..492. Pristine whole-page ink fraction ≈ 0.018 (fill 7200 px of
 - ink-coverage: ={"min": 0.01, "max": 1.0}= — whole page ≥1% ink (pristine
   ≈1.8%); claimed ink regions up to 100%; omission drops to 0; duplication
   lifts the no-ink region to ~1.0.
+
+* BORA-like content-class fixture family (carrier ids =bora-like*=, sunset-pkj)
+
+Synthetic 612×792 pt page, /Rotate 0, built once with =pymupdf= *1.28.2*
+(fitz top-left y-down; descriptor (x, y) drawn at fitz (x, 792 - y)) and
+committed as bytes — the suite never rebuilds them. Composition (all four
+content classes present, hand-computable geometry):
+
+- *native text* — 4 Helvetica 11 pt lines at x=72, descriptor baselines
+  y = 700/680/660/640 (=insert_text=; get_text sees exactly 4 spans).
+- *vector rule* — stroked line width 1, descriptor (72, 600)->(540, 600)
+  (=draw_line=; get_drawings sees one 's' path, rect area exactly 0).
+- *raster placement* — 24×16 black pixmap inserted at descriptor
+  (72, 470)-(96, 486) (=insert_image=; get_image_info sees one placement).
+- *decorative band* — 200×40 black rect with two white cutouts placed via
+  =show_pdf_page= (form XObject; INVISIBLE to native text extraction — the
+  BORA 2024-page effect — while its fills stay vector-visible on pymupdf
+  1.28.2), descriptor (72, 520)-(272, 560).
+
+Variants (pristine = =bora-like.pdf=):
+- =bora-like-minus-line.pdf= — fourth text line deleted (seeded omission;
+  text class 4->3 spans, morphology components 11->9).
+- =bora-like-band-shift.pdf= — band drawn at x=84 (+12 pt) (seeded shift;
+  band fill rect and the class-4 candidate both move exactly +12).
+
+Hand checks recorded at build time: =get_text_length= widths 117.380999 /
+122.913999 / 116.775999 / 111.891999 pt (sum of span bbox areas
+7087.903728 pt²; minus-line 5396.768747 pt²); vector fill areas
+8000 + 720 + 720 = 9440 pt²; raster 24×16 = 384 pt²; page 484704 pt².
+Class-4 candidates under the pinned render (pdftoppm 26.01.0 @ 72 dpi,
+threshold 128, dilation 2 px, 8-connected, min area 4 px): 11 components,
+band candidate rect_px (70, 230, 274, 274) area 7936, attribution
+vector = 1.0 (attribution counts only ink matching >= 1 class mask).
+AGENT-EXECUTED (human pass supersedes).
