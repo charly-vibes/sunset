@@ -18,7 +18,7 @@ import pytest
 FIXTURES = Path(__file__).resolve().parents[2] / 'fixtures' / 'digitization'
 SOURCE_SHA = '42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4'
 BASELINE_SHA = '30f5df7adb18af012010e641c489c00bddbddb2df43ecd3edbafcfaed3f1c679'
-CANDIDATE_SHA = '29c031bfafa21b61fec01fb70b420d940ec3615ce8c07f03cebf3d12d2b80c25'
+CANDIDATE_SHA = '1a1ae286e597a248cd37b5a452c916225d82aa0470d246274185c1f9ae6483a4'
 ENGINE_CONFIG_SHA = 'ee2c4d8ee6d1e5066343397ebdd686937af09901deea3e44dfd3d7b7ad883db4'
 PRICE_SCHEDULE_SHA = '357e4136d0bea16484bf016363d7c3f7295e39fb09276d7e7ab39143664bba9f'
 REFERENCE_SCOPES = {'regions', 'text-cer', 'line-boundary', 'stanza-boundary',
@@ -35,7 +35,7 @@ def test_six_page_stage_manifest_is_frozen_engineering_only():
     result = validate_stage(FIXTURES / 'six-page-pilot.json')
     stage = result['stage']
     assert stage['version'] == '1'
-    assert stage['stage_id'] == 'diario-six-page-r1'
+    assert stage['stage_id'] == 'diario-six-page-r2'
     assert stage['mode'] == 'engineering-only'
     assert result['positive_conclusions_allowed'] is False
     assert stage['pages'] == [1, 2, 3, 4, 5, 6]
@@ -56,7 +56,8 @@ def test_six_page_config_and_engine_pins_match_committed_records():
         FIXTURES / 'local-baseline.json')
     assert stage['candidate_configuration_sha256'] == CANDIDATE_SHA
     assert stage['candidate_configuration_sha256'] == _sha_file(
-        FIXTURES / 'local-regional.json')
+        FIXTURES / 'local-regional-sixpage.json')
+    assert stage['budget']['max_provider_attempts'] == 512
     engine = stage['engine']
     assert engine['id'] == 'tesseract-ocr'
     assert engine['version'] == '5.5.3'
