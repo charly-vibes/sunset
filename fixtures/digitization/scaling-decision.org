@@ -1,0 +1,151 @@
+# -*- org -*-
+#+TITLE: Owner scaling decision: DEFER full-issue digitization (sunset-rmx.14)
+#+DATE: 2026-11-05
+#+TICKET: sunset-rmx.14 (openspec checkpoint 3.3 decision half)
+#+STAGE: diario-six-page-r2 (digest 31bf682e…), engineering-only freeze per the 2026-11-03 ruling
+
+* Purpose / Responsibilities / Rationale
+
+Record the owner decision on whether measured Diario results justify full-issue
+scaling, cite the evidence digests the decision rests on, and pin the condition
+under which the question reopens. Rationale: the pilot produced no reviewed
+references and no numeric gates, so the admissible outcomes were reject or
+defer only; this file makes that boundary explicit instead of leaving it in
+prose reports.
+
+* Ruling
+
+*DEFER.* Full-issue (36-page) processing is NOT authorized. No positive
+quality, economy or scaling conclusion is claimed anywhere in this record.
+
+- Owner statement (session 2026-11-05, repo =sunset=, branch =main=): the ruling
+  was given as =defer= with no conditions attached.
+- The re-entry conditions in [[Re-entry]] are the agent's proposal derived from
+  the recorded evidence; they are NOT owner-approved commitments. Until the
+  owner assents or amends them, read the deferral as unqualified: full-issue
+  stays blocked, nothing is scheduled.
+- This ticket records a decision; it authorizes no commit, push, deploy, paid
+  service or external document upload.
+
+* Cited evidence
+
+| artifact                                     | sha256 (full)                                                       |
+|----------------------------------------------+---------------------------------------------------------------------|
+| six-page stage manifest =six-page-pilot.json | 31bf682e0e99ec8ca5c3cfb040fb6ba66580ea158c66a58c2eaa36fcec443e35   |
+| six-page report =six-page-results.org        | 07fcec0146f7d7e92ccedbde07086b78a4a894020b08d7471d06d05f3f3ba86c   |
+| six-page evaluation =evaluation.json         | 09c10095ac05a437dc21350a9eba71afbc22bdea996008c749af2f0305cf1b6f   |
+| reviewed reference =six-page-reference.json  | 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a (= { } =) |
+| baseline run manifest                        | f5d0188fae85a668749722bcc17d944728a0576a28f8c2f1716d420da0ee59c0   |
+| candidate (loop-1) run manifest              | 444af98e444362d303e6e12def61808e1acb096ee02c94134bbccff24f94c850   |
+| difficult-page stage =pilot.json             | d7bd9a97365c0b689c8951a1ccff146d757b4ac58a8b397f26e50de9944ac98a   |
+| difficult-page report                        | 47e7dd91b0f7a797e9f9f5ef2ddfed6516d53aadccdbbf37a478a6a7489af8b9   |
+| source =diario-de-poesia-excerpt.pdf=        | 42292cc690f4c10f88f8b9768eb491e7accb31704c897d47769ea54758093ad4   |
+| tasks.md at decision time                    | ca0642b503598729e5e3908111d06db4024707987eff0616d5bc0ab14709b224   |
+
+Evaluated digests bound inside =evaluation.json=: stage 31bf682e…, reference
+44136fa3…, baseline f5d0188f…, candidate 444af98e….
+
+* Thresholds, failures and omissions (as required by acceptance)
+
+- =thresholds: {}= and =gates: null= in the report: the owner never supplied
+  numeric acceptance thresholds. Consequence recorded honestly: *no measured
+  rejection exists*. Per design.md ("a complete reference with a threshold
+  failure produces a measured rejection, not UNKNOWN"), the deferral is
+  precautionary under UNKNOWN, not a scored failure.
+- =status: evaluation-incomplete=, =quality_conclusion: UNKNOWN=,
+  =positive_conclusions_allowed: false=,
+  =positive_scaling_conclusion_allowed: false=.
+- Six missing reviewed scopes: regions, text-cer, line-boundary,
+  stanza-boundary, indentation, continuation-relationships. All metric
+  denominators 0 except unmatched units (baseline 6, candidate 341 regions).
+- Run-level failures: none (all six pages completed on every route, zero
+  estimated charge, caps 512 attempts / 1 MiB never refused).
+- Coverage omissions: every descriptor retains
+  =unresolved.coverage: unexamined-outside-recorded-regions=; the candidate
+  emitted 0 continuation edges across the six pages (witness count, not a score).
+- Measured reproducibility (the one positive-grade measurement): zero-inference
+  replay =status: replayed=, 0 provider calls, fresh-run variation across 341
+  regions measured *zero*.
+
+* Reference and setup effort
+
+- Reference cost: *none incurred* — no reviewed references exist; the
+  engineering-only path deliberately skipped them.
+- Setup effort: *UNKNOWN* (=unknown_claims: correction-effort, setup-effort,
+  total-cost=). No human reference setup was performed, so the dominant
+  real-world digitization cost is unmeasured by construction. Provider cost
+  0 microunits reflects the pinned local zero-price schedule and is reported
+  separately from total cost, never as economy evidence.
+
+* Attempts projection (arithmetic, explicitly a projection)
+
+341 attempts / 6 pages ≈ 56.8 attempts per page → ≈ *2046 attempts for the
+36-page issue* (linear extrapolation, uncached, same pinned stack: tesseract
+5.5.3 spa, PyMuPDF 1.28.2, python 3.15.2). The r2 cap (512) covers only this
+bounded stage; the r1 cap (160) belonged to a two-page stage and is not a
+36-page comparison. No attempt at scale has been measured.
+
+* Re-entry
+
+=Agent-proposed; owner assent pending.= Reopen the scaling question only when
+all three exist:
+1. Independently reviewed references for pages 1-6 (text/layout/coverage plus
+   at least one cross-page continuation pair with both endpoints), i.e. the
+   HITL path via sunset-12h / sunset-5ay landing real verdicts.
+2. A new stage manifest in =assessment= mode with owner-supplied numeric
+   thresholds pinned before candidate inference.
+3. Measured correction/setup effort or an explicit owner waiver that UNKNOWN
+   human cost is acceptable for the decision.
+
+Not scheduled, not dated, no ticket created by this record.
+
+* Digest re-anchoring (recorded drift)
+
+`sunset-rmx.14` metadata recorded tasks.md as
+`ac0717e956cb43a274b1587beb2281f1ff63770e0b2d6dd5a627fad9bbc938cc`. That file
+moved to `7fed6930824c197c9123d798327a947cbb7be5bc9abe1f3e337240a42fabecb0`
+when checkpoint 3.4 was ticked in `d82ebc1` (no prior record cited that value),
+then to `ca0642b503598729e5e3908111d06db4024707987eff0616d5bc0ab14709b224` with
+the decision-time ticks and the checkpoint-status notes. proposal.md
+(`fbe1194f…`), design.md (`a0233c59…`) and the digitization spec delta
+(`bb53444c…`) digests are unchanged and still match ticket metadata. The ticket
+base_commit was `3f09292` (10 commits behind HEAD at decision time); it is now
+re-anchored to `2bf9268`.
+
+* Decision chain for audit
+
+- `sunset-rmx.13` CLOSED at commit `d82ebc1` ticked tasks.md checkpoint 3.4,
+  moving that file's digest to `7fed6930…` while the rmx tickets still recorded
+  `ac0717e9…` — the drift was created there and surfaced by review.
+- Rule of 5 review of this change raised CORR-001 (stale recorded digest),
+  CORR-002 (stale checkpoint ticks against closed slices), CORR-003 (empty
+  thresholds ⇒ no measured rejection available), DRAFT-001 (capability still
+  undeployed), DRAFT-003 (no decision-record contract existed), EDGE-001 (a
+  bounded-scope approval is outside this change's envelope), EDGE-003 (a
+  deferral needs its own trigger). CRITICAL/HIGH findings were verified with
+  jev-1.14.0 (one ≥0.8 gate, four kept below gate).
+- This document is the artifact those findings called for. It records the owner
+  ruling that closes `sunset-rmx.14` and, with `sunset-rmx.12` CLOSED, lets
+  checkpoint 3.3 be honestly ticked.
+
+* What DEFER does not decide
+
+- Epic =sunset-rmx= closure: its acceptance needs remaining evidence gates
+  "completed or explicitly dispositioned by owner". Checkpoint 3.1a stays
+  unticked (reviewed difficult-page references were never obtained). Owner
+  call: close the epic on this deferral or keep it open as the standing record.
+- Archiving =add-iterative-document-digitization= into =openspec/specs/= — the
+  capability is still a pending change while its machinery ships on =main=;
+  deployment of its requirements is an owner decision, not a side effect.
+- Commit and push of the pending 10 commits plus this record.
+
+* Validation
+
+- =just spec-check= → ALL GATES PASSED at HEAD `2bf9268` plus this
+documentation-only change (=openspec validate --all --strict --no-interactive=
+12/12 passed incl. =change/add-iterative-document-digitization=; frozen 0.2
+validator gate unchanged). No test or source file was modified by this ticket;
+decision tickets are not test-bearing, so no red→green cycle applies here.
+- Recorded deviation: the review that framed this decision was agent-produced
+(Rule of 5 pass, CRITICAL/HIGH findings verified with jev-1.14.0); a human pass
+supersedes.

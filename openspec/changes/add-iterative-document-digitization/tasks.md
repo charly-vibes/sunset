@@ -14,13 +14,30 @@ These are OpenSpec execution checkpoints; Beads remains the task tracker. Before
 - [x] 2.2 (Beads: sunset-rmx.6, sunset-rmx.7) Define and fail ID-independent A→B→A oscillation, immediate fixed-point, changed-newline nonrepeat, retry, unknown-price, pre-dispatch budget, crash-before-send, crash-after-send, duplicate receipt and unreconcilable-provider fixtures; implement stop states and persistent reservation/settlement; wire the documented public resume operation and verify it from a fresh subprocess after interruption, retaining run identity/history/ledger with no reset, double dispatch or settlement; unreconcilable requests return dispatch-uncertain without redispatch. Temporary unsupported resume from 1.1 must be replaced.
 - [x] 2.3 (Beads: sunset-rmx.8) Define and fail no-inference replay, missing artifact, hash mismatch and unsupported-version cases; implement canonical semantic reconstruction; verify zero provider/network calls and byte-identical semantic outputs.
 
-- [ ] 2.4 (Beads: sunset-rmx.15; depends on sunset-rmx.7 and sunset-rmx.10) Define and fail local adapter invocation/crop/failure fixtures; reuse/adapt existing rendering/Tesseract paths into public run → image-based region detection → real crop OCR → attributed DSC/text → inspect and whole-page baseline mode. Verify fake adapters in the default suite, then record a separately bounded real local smoke run with approved engine/configuration, provenance, attempts/ledger and diagnostics. External routes disabled; smoke is integration evidence, not a quality claim.
+- [x] 2.4 (Beads: sunset-rmx.15; depends on sunset-rmx.7 and sunset-rmx.10) Define and fail local adapter invocation/crop/failure fixtures; reuse/adapt existing rendering/Tesseract paths into public run → image-based region detection → real crop OCR → attributed DSC/text → inspect and whole-page baseline mode. Verify fake adapters in the default suite, then record a separately bounded real local smoke run with approved engine/configuration, provenance, attempts/ledger and diagnostics. External routes disabled; smoke is integration evidence, not a quality claim.
 
 ## 3. Diario pilot and decision
 
-- [ ] 3.1 (Beads: sunset-rmx.9) Define and fail concrete evaluator fixtures (CER 1/2 vs 0/2, region precision/recall 1/2, line-boundary error 1/2, missing/spurious directed relationship witnesses, missing scopes/zero denominator UNKNOWN); implement the design's exact local evaluate operation and manifest validation with input/report digests, raw counts, denominators and exclusions. Pin stage scope and thresholds before inference; block unsupported positive conclusions.
+- [x] 3.1 (Beads: sunset-rmx.9) Define and fail concrete evaluator fixtures (CER 1/2 vs 0/2, region precision/recall 1/2, line-boundary error 1/2, missing/spurious directed relationship witnesses, missing scopes/zero denominator UNKNOWN); implement the design's exact local evaluate operation and manifest validation with input/report digests, raw counts, denominators and exclusions. Pin stage scope and thresholds before inference; block unsupported positive conclusions.
 - [ ] 3.1a (Beads: sunset-rmx.10) Obtain owner approval for difficult-page engine/baseline/policy, numerical limits/thresholds and reviewed full difficult-page references (text/coverage, poem layout and image/caption; extra page if needed). Six-page references are not prerequisites. Explicit engineering-only approval may allow bounded execution with missing scopes reported evaluation-incomplete; no quality/economy pass. Acquire external-service authorization separately if needed.
 - [x] 3.1b (Beads: sunset-rmx.16; after sunset-rmx.11, before sunset-rmx.12) Freeze separate six-page manifest and independently reviewed text/layout/coverage references for all six pages and continuation endpoints; approve stage settings/denominators/exclusions before six-page candidate inference. Preserve difficult-page evidence. Missing references permit only explicitly approved evaluation-incomplete engineering execution, never positive conclusions.
-- [ ] 3.2 (Beads: sunset-rmx.11) After local integration sunset-rmx.15 and difficult-page gate sunset-rmx.10, execute the difficult-page baseline and loop, at least two uncached loop runs and recorded replay; invoke the shared evaluate operation and retain command/config/output digests; report quality, cost, omissions and variation without treating existing region sheets as transcription gold.
-- [ ] 3.3 (Beads: sunset-rmx.12, sunset-rmx.14) After sunset-rmx.11 and sunset-rmx.16, evaluate the six-page excerpt including continuations with the same evaluate operation and retained command/config/output digests; publish measured correction effort or UNKNOWN, reference/setup costs, failures and the owner decision on full-issue scaling.
+- [x] 3.2 (Beads: sunset-rmx.11) After local integration sunset-rmx.15 and difficult-page gate sunset-rmx.10, execute the difficult-page baseline and loop, at least two uncached loop runs and recorded replay; invoke the shared evaluate operation and retain command/config/output digests; report quality, cost, omissions and variation without treating existing region sheets as transcription gold.
+- [x] 3.3 (Beads: sunset-rmx.12, sunset-rmx.14) After sunset-rmx.11 and sunset-rmx.16, evaluate the six-page excerpt including continuations with the same evaluate operation and retained command/config/output digests; publish measured correction effort or UNKNOWN, reference/setup costs, failures and the owner decision on full-issue scaling.
 - [x] 3.4 (Beads: sunset-rmx.13) Run strict proposal/deployed-spec checks, frozen 0.2 PASS 11, new focused tests and full just spec-check; inspect attribution and loss reports; include an interrupted run followed by the documented fresh-process public resume invocation in the complete stubbed pilot journey. Do not broaden conformance labels from this pilot.
+
+## Checkpoint status notes (decision-time re-anchoring, sunset-rmx.14)
+
+- 2.4, 3.1, 3.2, 3.3 and 3.4 were ticked at decision time to match closed,
+  evidenced Beads slices: sunset-rmx.15 (real bounded local smoke,
+  `fixtures/digitization/local-smoke/` + `local-smoke.org`), sunset-rmx.9
+  (shared evaluate operation + numeric known-answer fixtures,
+  `tests/tracer/test_digitization_evaluation.py`), sunset-rmx.11 (baseline,
+  two uncached loop runs, replay, shared evaluate,
+  `fixtures/digitization/difficult-page*/`), sunset-rmx.12 + sunset-rmx.14
+  (six-page measurement plus the recorded owner ruling in
+  `fixtures/digitization/scaling-decision.org`).
+- 3.1a stays deliberately UNTICKED: its wording requires reviewed full
+  difficult-page references, which were never obtained. The stage proceeded
+  under the recorded 2026-11-03 engineering-only ruling with
+  `reference_sha256: null` and six missing scopes; ticking 3.1a would overstate
+  evidence the owner never supplied.
