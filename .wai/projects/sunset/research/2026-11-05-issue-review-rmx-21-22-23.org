@@ -1,0 +1,69 @@
+#+TITLE: Issue review: sunset-rmx.21/.22/.23 (Rule of 5, five passes + Beads preflight)
+#+DATE: 2026-11-05
+#+TICKETS: sunset-rmx.21, sunset-rmx.22, sunset-rmx.23 (epic sunset-rmx; source: add-iterative-document-digitization spec delta + scaling-decision.org)
+#+REVIEWER: agent session (owner requested "fix all"; amendments applied same session)
+
+* Verdict
+
+NEEDS_UPDATES → amendments applied immediately on owner word ("fix all").
+Re-review not yet run; tickets are now claim-ready subject to the notes below.
+
+* Findings and disposition (8 total: 0 CRITICAL, 1 HIGH, 5 MEDIUM, 2 LOW)
+
+- CLRT-001 HIGH (rmx.22) — gap was misstated: missing/non-numeric/negative
+  thresholds are ALREADY refused in all modes (digitization/evaluation.py
+  ~55-58); sole gap = =policy.thresholds == {}= accepted in assessment mode
+  (iterates to zero gates, ~216-231). Test at
+  tests/tracer/test_digitization_evaluation.py:110 omits =thresholds= from its
+  invalid table despite its name. FIXED: body rewritten; RED case = assessment
+  + empty dict; engineering-only + {} pinned as valid regression row.
+- CLRT-002 MEDIUM (rmx.21) — code path unnamed. FIXED: trace route recorded
+  (structure.py collect/_validate → evaluation.py observed_edges →
+  relationship_metrics) + four drop-point hypotheses incl. "config never
+  proposes".
+- CLRT-003 MEDIUM (rmx.23) — no non-empty reference example exists
+  (six-page-reference.json = {}); normative regions-scope source is the
+  evaluate parser (evaluation.py ~197-199). FIXED: named as normative source;
+  known-answer fixture must double as the repo's first golden reference
+  example under fixtures/digitization/.
+- ALIGN-001 MEDIUM (rmx.23) — FIXED: file-header acceptance criterion added
+  (Purpose/Responsibilities/Rationale on the new module).
+- EXEC-001 MEDIUM = PRE-001 (all) — FIXED: metadata.files + base_commit set
+  (base = HEAD at amendment time).
+- EXEC-002 MEDIUM (all) — FIXED: lanes 21=afk/M, 22=afk/S, 23=design/M
+  (schema semantics need review; converter implementation AFK after).
+- EXEC-003 LOW (rmx.21) — FIXED: Meter = pinned test; diagnosis note demoted
+  to supporting artifact; full pytest + just spec-check added to gates.
+- DEP-001 LOW (rmx.23 ↔ sunset-12h) — FIXED: schema relation recorded in
+  metadata.related on both + note on 12h. Deliberately NOT a blocks-dep
+  (12h's calibration-record ingest stays unblocked).
+
+* Preflight
+
+PRE-001 ×3 (fixed above). PRE-002: none (evaluation.py shared by 2 tickets <
+3 threshold; co-modification caution noted). PRE-003/004: n/a. No dep cycles.
+
+* Convergence
+
+Pass 2 CONVERGED on scope (0 findings); counts rose through pass 5
+(0→1→2→3, all MEDIUM/LOW metadata-class) — substantively converged, pass 6
+degenerate (all content read, all lenses applied). Estimated FP ~12% (1/8:
+EXEC-002 lane labels vs repo no-label convention — applied anyway as review
+recommended).
+
+* Verified ground truth (evidence for findings)
+
+- evaluation.py:55-58 thresholds dict/numeric enforcement; :216-231 gate
+  iteration; :197-199 regions-scope parser; :204-209 observed_edges.
+- test_digitization_evaluation.py:110 invalid-field table omits thresholds.
+- structure.py RELATIONS incl. 'continues-to'; collect/_validate pipeline.
+- SPA VERDICTS = ["agree","differ","unknown"]; buildVerdictJson; file://-safe.
+- six-page-reference.json sha 44136fa3… = {} (empty JSON object).
+
+* Open follow-ups (not ticketed)
+
+- Re-run issue-review on the amended trio if the owner wants a clean
+  READY_TO_WORK verdict on record.
+- Converter ownership choice (digitization/references.py vs
+  dsc03/visual/verdicts_to_reference.py) still open — decide before claiming
+  rmx.23.
