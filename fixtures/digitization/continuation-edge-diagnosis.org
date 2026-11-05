@@ -1,0 +1,133 @@
+#+title: Continuation-edge diagnosis: why the six-page candidate emitted 0 continues-to edges (sunset-rmx.21)
+
+#+begin_quote
+STATUS: ENGINEERING-ONLY diagnosis note. sunset-rmx.21. Evidence is read
+exclusively from the frozen six-page run outputs
+(=fixtures/digitization/six-page-runs/=) and the frozen evaluation report;
+nothing was re-run against the carrier and no stage was modified. No
+positive quality/economy/scaling conclusions are made or implied.
+#+end_quote
+
+* Verdict
+
+*Hypothesis (a) holds*: the frozen six-page configurations never propose
+structure observations, so no =continues-to= edge can exist anywhere
+downstream. =structure.collect= generates no proposals itself — by design
+(sunset-rmx.4) proposals must be *supplied* via =pages.<n>.structure= in
+the run configuration, and none are. Hypotheses (b) and (c) are ruled out
+by pinned tests (see *Machinery ruling* below). Hypothesis (d) is the
+downstream consequence under the frozen inputs: the candidate route has
+no continuation proposal or detection stage, so the absence is genuine
+observation, not a pipeline defect. No code fix is warranted; the
+deliverable is the pinned observation test
+(=tests/tracer/test_digitization_continuations.py=, 11 tests, green from
+first run) and this note. =digitization/= is untouched.
+
+* Code path traced (per ticket route)
+
+1. =digitization/local_route.py::=LocalRun.conclude= calls
+   =structure.collect(self.config, self.pages, self.regions,
+   self.mappings, digest(self.source))=. The in-memory =self.config= is
+   the validated raw user config (=pipeline._preflight=); the run
+   artifact =config.json= stores those same bytes
+   (=LocalRun.finish= → =save('config.json', self.config_raw)=).
+2. =digitization/structure.py::=collect=: input
+   =config.get('pages', {})= → ={=}= (no =pages= key in any frozen
+   config, all runs) → per page =supplied = []= → zero proposals
+   validated, zero diagnostics; output observations = one =raw-<region>=
+   OCR observation per region with =relations: []=.
+3. =digitization/evaluation.py::=evaluate= (~lines 204-209):
+   =observed_edges= is built verbatim from the candidate run's
+   =structure.observations[].relations= → =[=]=;
+   =relationship_metrics(reference.get('relationships', []), [], map)=
+   with the empty reference (={=}=, engineering-only,
+   =reference_sha256: null=) → =reference_count: 0, missing_rate: null,
+   spurious_count: 0=, =matched: 0=. The join loses nothing — there is
+   nothing to lose. ='continuation-relationships'= is listed in
+   =missing_scopes= and =thresholds= is ={=}= (no continuation gate).
+
+* Per-page code-path evidence (frozen candidate =loop-1=)
+
+Function =collect(config, pages=[1..6], regions, mappings, sha)=;
+input =config.get('pages', {})= → absent; output =supplied= per page →
+=[]=; diagnostics → =[]=. Region counts from =regions.json=; observation
+counts from =structure.json= (every observation =raw-= OCR, =relations
+[]=):
+
+| page | regions | structure proposals supplied | relations in structure.json | diagnostics |
+|------+---------+------------------------------+-----------------------------+-------------|
+|    1 |     104 |                            0 |                           0 |           0 |
+|    2 |      65 |                            0 |                           0 |           0 |
+|    3 |      23 |                            0 |                           0 |           0 |
+|    4 |      40 |                            0 |                           0 |           0 |
+|    5 |      56 |                            0 |                           0 |           0 |
+|    6 |      53 |                            0 |                           0 |           0 |
+|------+---------+------------------------------+-----------------------------+-------------|
+|  all |     341 |                            0 |                           0 |           0 |
+
+Identical inputs/outputs for =loop-2= and =replay-loop-1= (341
+observations, 0 relations each). Baseline (whole-page route) = 6
+observations (1/page), 0 relations, 0 diagnostics. All four frozen
+=structure.json= outputs carry zero observations with relations across
+all six pages — pinned by
+=test_frozen_six_page_structures_record_zero_continuation_edges=.
+
+* Designed-around continuation witnesses (frozen outputs only)
+
+The six-page stage was scoped around the excerpt's cross-page
+continuations (=six-page-references.org=: "at least one reviewed
+cross-page continuation pair with both endpoints"). Both frozen routes
+recorded explicit printed continuation markers, yet emitted 0 edges:
+
+- Baseline whole-page route: =text-page-1-baseline= ends its lead
+  paragraph with =(Sigue en pág. 2)= — page 1 → page 2, inside the
+  excerpt.
+- Candidate regional route: =text-page-1-det-71= contains =(sigue en
+  pág. 37)= — page 1 → page 37, outside the six-page excerpt. (The
+  candidate did not recover the page-1 lead =(Sigue en pág. 2)= text at
+  all: no regional text on page 1 contains =Sigue en pág= or
+  =inconferen=.)
+
+So the frozen candidate route observed a continuation marker but had no
+configured mechanism to propose =continues-to=. Both witnesses are
+pinned by
+=test_frozen_six_page_runs_record_explicit_continuation_markers_without_edges=.
+
+* Machinery ruling (b) and (c) ruled out
+
+Pinned by
+=test_proposed_continuation_edge_survives_collect_and_counts_in_evaluation=
+(minimal synthetic two-page recorded descriptor, source pages built with
+pymupdf, recognitions + a =pages.1.structure= proposal with
+=continues-to= page-1-p1 → page-2-p1):
+
+- (b) =structure._validate= keeps the proposed relation: observation
+  =cont-page-1= lands in =structure.observations= with =relations=
+  intact and =status: 'unresolved'= (cross-page targets are valid — the
+  region index spans all pages). Pre-existing corroboration:
+  =test_digitization_structure.py::=test_competing_caption_and_cross_page_continuations_are_not_selected=.
+- (c) the evaluation join keeps it: the evaluator's exact
+  =observed_edges= construction over the run's structure observations
+  yields the edge, and =relationship_metrics= scores a matching
+  reference as =matched: 1, missing_rate: 0.0, spurious_count: 0=.
+  (Metric math itself was already pinned in =test_digitization_evaluation.py=;
+  the proposed-edge→join wiring was not pinned anywhere before this
+  ticket.)
+
+Red→green does not apply: the defect branch of sunset-rmx.21 is empty —
+the pinned tests document correct current behavior and passed on their
+first run. No behavior change was made.
+
+* Decision implication (bounded, engineering-only)
+
+Deciding whether a continuation review stage is worth building first
+requires proposal existence: either config-supplied structure
+observations or a new detection feature — both outside this ticket's
+non-goals (no new detection features, no threshold invention, no
+reference authoring). Under the frozen stage =diario-six-page-r2=
+(digest =31bf682e…=, engineering-only, reference count 0) the
+=continuation-relationships= scope remains missing and
+=relationship_metrics= stays honestly degenerate. The candidate route
+also failed to recover the page-1 lead continuation text regionally
+(witness section), which any future proposal mechanism must treat as an
+open detection question, not a scoring one.
