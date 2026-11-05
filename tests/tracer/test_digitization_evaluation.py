@@ -121,6 +121,11 @@ def test_stage_validation_requires_pinned_approval_engine_budget_and_thresholds(
         path.write_text(json.dumps(invalid))
         with pytest.raises(ValueError, match='invalid-stage-manifest'):
             validate_stage(path)
+    invalid = dict(stage)
+    invalid['policy'] = {**stage['policy'], 'thresholds': {}}
+    path.write_text(json.dumps(invalid))
+    with pytest.raises(ValueError, match='invalid-stage-manifest: thresholds'):
+        validate_stage(path)
 
 
 def test_engineering_only_stage_can_be_validated_but_not_promoted(stage, tmp_path):
@@ -133,6 +138,9 @@ def test_engineering_only_stage_can_be_validated_but_not_promoted(stage, tmp_pat
     result = validate_stage(path)
     assert result['positive_conclusions_allowed'] is False
     assert set(result['missing_scopes']) == {'text', 'lines'}
+    stage['policy'] = {**stage['policy'], 'thresholds': {}}
+    path.write_text(json.dumps(stage))
+    assert validate_stage(path)['positive_conclusions_allowed'] is False
 
 
 def test_public_evaluate_scores_verified_runs_without_provider_calls(stage, tmp_path):
@@ -209,10 +217,10 @@ def test_empty_thresholds_stay_unknown_and_incomplete(stage, tmp_path):
     stage.update(source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(), pages=[1],
                  baseline_configuration_sha256=manifests[0]['configuration']['sha256'],
                  candidate_configuration_sha256=manifests[1]['configuration']['sha256'],
+                 mode='engineering-only', reference_sha256=None, missing_scopes=['text'],
                  policy={**stage['policy'], 'thresholds': {}})
     reference_path = tmp_path / 'reference.json'
     reference_path.write_text('{}')
-    stage['reference_sha256'] = hashlib.sha256(reference_path.read_bytes()).hexdigest()
     policy_path = tmp_path / 'policy.json'
     policy_path.write_text(json.dumps(stage))
     output = tmp_path / 'evaluation'
@@ -225,3 +233,4 @@ def test_empty_thresholds_stay_unknown_and_incomplete(stage, tmp_path):
     assert report['status'] == 'evaluation-incomplete'
     assert report['quality_conclusion'] == 'UNKNOWN'
     assert report['positive_economy_conclusion_allowed'] is False
+    assert report['missing_scopes'] == ['text']

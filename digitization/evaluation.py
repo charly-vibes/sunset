@@ -57,6 +57,8 @@ def validate_stage(path):
         if any(not isinstance(k, str) or type(v) not in (int, float) or not math.isfinite(v)
                or v < 0 for k, v in policy['thresholds'].items()):
             raise ValueError
+        if stage['mode'] == 'assessment' and not policy['thresholds']:
+            raise ValueError('thresholds')
         if not isinstance(stage['exclusions'], list):
             raise ValueError
         missing = stage.get('missing_scopes', [])
@@ -70,7 +72,8 @@ def validate_stage(path):
                 'missing_scopes': missing,
                 'positive_conclusions_allowed': stage['mode'] == 'assessment' and not missing}
     except (OSError, json.JSONDecodeError, TypeError, KeyError, ValueError) as error:
-        raise ValueError('invalid-stage-manifest') from error
+        detail = ': thresholds' if str(error) == 'thresholds' else ''
+        raise ValueError('invalid-stage-manifest' + detail) from error
 
 
 def character_error(reference, candidate):
