@@ -584,3 +584,75 @@
   
   ## Validation
   just spec-check ALL GATES PASSED (2026-11-04, HEAD ae6178e).
+- 2026-11-04T23:12:23Z [id:485c82b60a107d04602fe5c023801c5a997a265e25c76273d1d0d264e11ac9db] (#resume-sunset-rmx.14) Format: 1
+  Timestamp: 2026-11-04T23:12:04Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD 2bf9268
+  Session: 01a1a8ad-cbf2-7765-8a14-1bdf864d5bb1
+  Task: finish the sunset-rmx digitization pilot — rmx.13 shipped+closed; remaining: owner decision sunset-rmx.14, then push authorization
+  
+  ## Objective
+  Close the rmx epic honestly: sunset-rmx.13 (pilot verification) is DONE; sunset-rmx.14 (scaling decision) is an owner decision ticket that per the recorded 2026-11-03 ruling CANNOT be positive.
+  
+  ## Current phase
+  commit. rmx.13 executed and closed this session (TDD red->green, 8/8 focused, pretender 0 new, just spec-check ALL GATES PASSED). tasks.md 3.4 ticked; 3.3 stays unticked (binds rmx.14).
+  
+  ## State
+  - 10 commits ahead of origin/main (8ab7d37..2bf9268), NOT pushed — push awaits explicit owner authorization.
+  - New this session: d82ebc1 (pilot journey tests + quality-ledger.org + tasks.md tick + beads export), e4c4ffc (six-page stage test re-pinned to frozen r2 manifest — the hunk 3cd246d had left uncommitted), 2bf9268 (whisper snap).
+  - Tree clean except by-design untracked: .wai/.../2026-11-04-session-end.md (unfilled template), .wai/projects/sunset/runs/sunset-rmx.10.state (owner artifact), pba-judicial-2026-07-29.pdf (owner-dropped, untriaged).
+  
+  ## Exact next action
+  Owner rules on sunset-rmx.14 (rmx.12's measurement already recommends REJECT full-issue: quality UNKNOWN, ~2000+ attempts for 36pp exceeds frozen caps) and authorizes push of the 10 pending commits. Then automatable queue: sunset-zea / sunset-jix (unblocked by pkj), sunset-12h (needs owner SPA verdicts first), sunset-qdy. Owner HITL gates still open: sunset-5ay, sunset-elx.
+  
+  ## Decisions/constraints (do not violate)
+  - Stage diario-six-page-r2 digest 31bf682e… and diario-difficult-page-r1 are frozen engineering-only: reference_sha256 null, 6 missing scopes; NO positive quality/economy/scaling conclusions anywhere.
+  - Never modify fixtures/digitization/local-regional.json (difficult-page pin); six-page candidate config is local-regional-sixpage.json (attempts 512). Difficult-page evidence immutable.
+  - tasks.md 3.3 stays UNTICKED until rmx.14 closes.
+  - Tickets authorize no commit/push; this session's commits were owner-authorized (.commit), push was NOT.
+  - Pretender commit-gate runs on every commit (hooks): cyclomatic<=3, params<=2, cognitive<=5, abc<=30, lazy_cluster on new code — keep tests flat/parametrized.
+  
+  ## Key artifacts
+  tests/tracer/test_digitization_pilot.py, fixtures/digitization/quality-ledger.org, openspec/changes/add-iterative-document-digitization/tasks.md (3.4 ticked), fixtures/digitization/six-page-results.org (REJECT recommendation for rmx.14).
+  
+  ## Blockers / unknowns
+  None for the automatable queue. rmx.14 is owner-decision-only.
+  
+  ## Validation
+  just spec-check ALL GATES PASSED at HEAD ae6178e (pre-commit) and pretender 0 new on all three commits (hooks).
+- 2026-11-05T12:18:04Z [id:b67c1ff0506c4c693d09d20b2d2c70594cc0d8bb0cf8e00ec2ec02d144835fc3] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-05T12:17:40Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD 2bf9268 (+ this session's decision commit, pushed)
+  Session: 01a1a8da-938f-7765-8a14-1be1713a3c36
+  Task: follow-through after the sunset-rmx.14 DEFER ruling — epic closure, change archive, then the automatable queue
+  Previous entry: 485c82b60a107d04602fe5c023801c5a997a265e25c76273d1d0d264e11ac9db (different session; its next actions — owner ruling on rmx.14 and push authorization — are now both complete, so it is not a continuation candidate. Not superseded via flag because ownership is another session.)
+  
+  ## Objective
+  Close out the sunset-rmx epic honestly after the recorded DEFER, then work the unblocked automatable queue.
+  
+  ## Current phase
+  commit. rmx.14 CLOSED with owner ruling DEFER (full-issue scaling NOT authorized, no positive quality/economy/scaling conclusion anywhere). tasks.md 2.4/3.1/3.2/3.3 ticked to match closed evidenced slices; 3.1a deliberately unticked.
+  
+  ## State
+  - Owner authorized commit AND push this session; decision doc + tasks.md + beads export committed on main and pushed.
+  - fixtures/digitization/scaling-decision.org digest 5b3a3c163656e5de4b842d2577a596381523df9f9eb8c7b88eab20585b6cd7bc (final; earlier 0d31be1c value corrected in ticket notes).
+  - Ticket metadata re-anchored: tasks.md ca0642b5…, base_commit 2bf9268, decision_digests added.
+  
+  ## Exact next action
+  Owner calls first (do not decide for them): (1) close epic sunset-rmx on the deferral or keep it open as the standing record; (2) archive openspec/changes/add-iterative-document-digitization into openspec/specs/ (document-digitization is still an undeployed pending change while its machinery ships on main); (3) assent/amend/strike the agent-proposed §Re-entry conditions in scaling-decision.org. Then queue: sunset-zea, sunset-jix, sunset-qdy, sunset-doc, sunset-2uo (all open, unclaimed, no blockers).
+  
+  ## Decisions/constraints (do not violate)
+  - Stage diario-six-page-r2 (31bf682e…) and diario-difficult-page-r1 are frozen engineering-only: reference_sha256 null, 6 missing scopes; NO positive quality/economy/scaling conclusions.
+  - No measured rejection exists (thresholds {} ⇒ deferral is precautionary under UNKNOWN). Do not upgrade it to a scored failure.
+  - Never modify fixtures/digitization/local-regional.json (difficult-page pin); six-page config is local-regional-sixpage.json (attempts 512).
+  - Do not rewrite preserved research bundle docs; validator.py stays frozen at 0.2.
+  - Commits need owner word (granted this session); push granted this session; deploy/paid services/remote upload NOT granted.
+  - Pretender commit gate: cyclomatic<=3, params<=2, cognitive<=5, lazy_cluster on new code.
+  - .beads/issues.jsonl must be committed with `git add -f` (global gitignore excludes .beads/).
+  
+  ## Validation
+  just spec-check ALL GATES PASSED (openspec strict 12/12 incl. the digitization change, re-run after the doc edit); frozen 0.2 validator PASS 11 descriptor fixtures. No code or test files changed this session.
+  
+  ## Open findings / blockers
+  Rule of 5 review CORR-003 remains open as a spec gap: "pilot manifest SHALL pin numerical thresholds" vs empty thresholds accepted by validate_stage (test name at tests/tracer/test_digitization_evaluation.py:110 overstates — it does not assert thresholds). Needs either a requirement amendment or an invalid-manifest assertion; file as its own ticket rather than folding it into queue work.
