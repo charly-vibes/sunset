@@ -11,7 +11,7 @@ import json
 import re
 from pathlib import Path
 
-IMPLEMENTED_KINDS = {"selector", "geometry", "carrier-inventory", "adapter-manifest"}
+IMPLEMENTED_KINDS = {"selector", "geometry", "carrier-inventory", "adapter-manifest", "identity"}
 OFFSET_UNITS = {"unicode-scalar-values", "utf-8-bytes"}  # grapheme-clusters: unimplemented
 ENDPOINTS = {"half-open", "closed"}
 HALF_OPEN_RE = re.compile(r"\[(\d+),(\d+)\)")
@@ -112,7 +112,7 @@ def resolve(decl, registry):
         return "unsupported_profile", None
     if decl["kind"] not in IMPLEMENTED_KINDS:
         return "unsupported_profile", None
-    if decl["kind"] in ("selector", "geometry") and artifact.get("kind") != decl["kind"]:
+    if decl["kind"] in ("selector", "geometry", "identity") and artifact.get("kind") != decl["kind"]:
         return "unsupported_profile", None
     if decl["kind"] == "selector":
         if artifact.get("offset_unit") not in OFFSET_UNITS:
@@ -122,6 +122,19 @@ def resolve(decl, registry):
     if decl["kind"] == "geometry":
         frames = artifact.get("frames")
         if not (isinstance(frames, list) and frames and all(isinstance(f, dict) and f.get("name") for f in frames)):
+            return "unsupported_profile", None
+    if decl["kind"] == "identity":
+        # the identity artifact pins the derivation itself: SHA-256 truncated
+        # to 128 bits, lowercase hex, ids prefixed "a:" — the form implemented
+        # by dsc03.identity.derive_id; any other declared form is unsupported,
+        # never approximated
+        digest_spec = artifact.get("digest")
+        if not (
+            isinstance(digest_spec, dict)
+            and digest_spec.get("algorithm") == "sha256"
+            and digest_spec.get("truncation_bits") == 128
+            and digest_spec.get("prefix") == "a:"
+        ):
             return "unsupported_profile", None
     if decl["kind"] in ("carrier-inventory", "adapter-manifest"):
         # artifact grammar itself is verified by dsc03.coverage

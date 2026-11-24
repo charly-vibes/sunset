@@ -3,11 +3,13 @@
 #   phase (invalid_shape before reference lookup or graph traversal, NFC walk with
 #   the text-content exception) and a semantic phase (identity, referential
 #   integrity, per-view containment trees, scoped reading order, typed
-#   geometry/selector/interpretation/evidence/coverage/profile bindings) —
+#   geometry/selector/interpretation/evidence/coverage/profile bindings, and
+#   anchor-derived record ids under a declared identity profile) —
 #   returning typed outcome states: valid/invalid with sorted reason codes,
 #   parse_error for malformed JSON.
 # Rationale: add-dsc-03 document-core/structure/evidence/semantics/adapters deltas
-#   supersede the preserved research draft. The frozen 0.2 validator is never
+#   supersede the preserved research draft; add-anchor-derived-identity adds the
+#   opt-in identity profile. The frozen 0.2 validator is never
 #   upgraded in place; this module lives outside the frozen bundle.
 """DSC 0.3 descriptor validator (not a PDF/EPUB extractor).
 
@@ -21,6 +23,8 @@ import sys
 import unicodedata
 from pathlib import Path
 
+from dsc03 import identity
+
 ID_RE = re.compile("[A-Za-z0-9][A-Za-z0-9_.:-]*")
 SHA256_RE = re.compile("[0-9a-f]{64}")
 PAGE_SCOPE_RE = re.compile("page:(0|[1-9][0-9]*)")
@@ -28,7 +32,7 @@ ORIGINS = {"source", "extracted", "inferred", "manual", "external"}
 STATUSES = {"supported", "disputed", "asserted_without_evidence"}
 CONTENT_KINDS = {"text", "image", "number", "structured", "binary-reference"}
 VIEW_KINDS = {"physical", "logical", "carrier"}
-PROFILE_KINDS = {"selector", "geometry", "carrier-inventory", "adapter-manifest", "alignment"}
+PROFILE_KINDS = {"selector", "geometry", "carrier-inventory", "adapter-manifest", "alignment", "identity"}
 SELECTOR_KINDS = {"pdf-area", "pdf-object", "pdf-text-range", "epub-resource", "epub-fragment", "text-range", "external"}
 INTERPRETATION_KINDS = {"reading-order", "segmentation"}
 COVERAGE_STATUSES = {"preserved", "transformed", "approximated", "omitted", "unsupported", "unexamined"}
@@ -49,12 +53,12 @@ TOP_LEVEL = [
 # string_fields, list_of_str_fields, int_fields)
 FIELD_SPECS = {
     "views": (("id", "kind", "root"), (), ("id", "kind", "root"), (), ()),
-    "regions": (("id", "view_id", "kind"), ("geometry",), ("id", "view_id", "kind"), (), ("x", "y", "width", "height")),
-    "contents": (("id", "kind", "value"), (), ("id", "kind", "value"), (), ()),
+    "regions": (("id", "view_id", "kind"), ("geometry", "anchor"), ("id", "view_id", "kind"), (), ("x", "y", "width", "height")),
+    "contents": (("id", "kind", "value"), ("anchor",), ("id", "kind", "value"), (), ()),
     "relations": (("id", "kind", "from", "to"), ("evidence", "interpretation_id"), ("id", "kind", "from", "to", "interpretation_id"), ("evidence",), ()),
     "annotations": (("id", "target", "term", "value", "origin", "status", "evidence", "view_id"), ("alignment_profile_id", "selector_ids"), ("id", "target", "term", "value", "origin", "status", "view_id", "alignment_profile_id"), ("evidence", "selector_ids"), ()),
-    "evidence": (("id", "origin", "source_ref", "content_ids", "selector_ids"), ("transform",), ("id", "origin", "source_ref"), ("content_ids", "selector_ids"), ()),
-    "selectors": (("id", "kind", "profile_id", "source_sha256", "target", "locator"), (), ("id", "kind", "profile_id", "source_sha256", "target", "locator"), (), ()),
+    "evidence": (("id", "origin", "source_ref", "content_ids", "selector_ids"), ("transform", "anchor"), ("id", "origin", "source_ref"), ("content_ids", "selector_ids"), ()),
+    "selectors": (("id", "kind", "profile_id", "source_sha256", "target", "locator"), ("anchor",), ("id", "kind", "profile_id", "source_sha256", "target", "locator"), (), ()),
     "interpretations": (("id", "kind", "view_id", "origin", "status", "evidence"), (), ("id", "kind", "view_id", "origin", "status"), ("evidence",), ()),
     "coverage": (("inventory_id", "manifest_id", "feature", "scope", "status", "reason", "adapter_id", "adapter_version", "config_sha256"), (), ("inventory_id", "manifest_id", "feature", "scope", "status", "reason", "adapter_id", "adapter_version", "config_sha256"), (), ()),
     "profiles": (("id", "kind", "uri", "version", "sha256"), (), ("id", "kind", "uri", "version", "sha256"), (), ()),
@@ -210,9 +214,13 @@ def _nfc_walk(x, errors, text_content=False):
 
 
 def _is_text_content(obj):
+    # "anchor" is the identity profile's wire field on the record itself; the
+    # exact-text NFC exception must survive its presence (add-anchor-derived-
+    # identity §2.4 — the anchor describes where the record is pinned, not its
+    # text value)
     return (
         isinstance(obj, dict)
-        and set(obj) == {"id", "kind", "value"}
+        and set(obj) - {"anchor"} == {"id", "kind", "value"}
         and obj.get("kind") == "text"
     )
 
@@ -558,6 +566,54 @@ def validate(d):
         }
         if df_children.get(eid, set()) != required:
             err("invalid_transform_binding")
+
+    # -- identity profile: anchor-derived ids (add-anchor-derived-identity §2.4) ---
+    # Wire decision: each region/content/selector/evidence record carries an
+    # optional "anchor": {"record_kind", "locator_path"}. The derivation tuple
+    # per design Decision 1 is (source_sha256, record_kind, locator_path,
+    # profile_id, profile_version), assembled as: source_sha256 from the
+    # record's own field where it carries one (selectors), else the
+    # descriptor's declared d["source"]["sha256"]; record_kind is the section
+    # singular (structural membership, not the record's own kind claim);
+    # profile_id/profile_version come from the single declared identity
+    # profile, whose entry pins the derivation. Without an identity profile
+    # this rule is inert: behavior is identical to before its introduction.
+    identity_profiles = [p for p in profile_ids.values() if p.get("kind") == "identity"]
+    if identity_profiles:
+        if len(identity_profiles) > 1:
+            err("invalid_profile")  # the derivation pin is ambiguous
+        else:
+            prof = identity_profiles[0]
+            for rec_kind, records in (
+                ("region", d["regions"]),
+                ("content", d["contents"]),
+                ("selector", d["selectors"]),
+                ("evidence", d["evidence"]),
+            ):
+                for rec in records:
+                    anchor = rec.get("anchor")
+                    if anchor is None:
+                        err("identity_anchor_missing")
+                        continue
+                    if not (
+                        isinstance(anchor, dict)
+                        and set(anchor) == {"record_kind", "locator_path"}
+                        and nonempty_str(anchor["record_kind"])
+                        and nonempty_str(anchor["locator_path"])
+                    ):
+                        err("invalid_shape")  # malformed anchor wire form
+                        continue
+                    source_sha = rec["source_sha256"] if rec_kind == "selector" else d["source"]["sha256"]
+                    status, derived = identity.derive_id(
+                        (source_sha, rec_kind, anchor["locator_path"], prof["id"], prof["version"])
+                    )
+                    if status != "derived":
+                        # unreachable for fields validated above; kept typed,
+                        # never guessed into a comparison
+                        err("invalid_shape")
+                        continue
+                    if rec["id"] != derived:
+                        err("identity_mismatch")
 
     # -- annotations ------------------------------------------------------------------
     for a in d["annotations"]:

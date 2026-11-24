@@ -5,10 +5,10 @@
 
 ## 2. Identity profile
 
-- [ ] 2.1 RED: two independent processes derive identical ids for identical anchors
-- [ ] 2.2 Implement anchor tuple, digest form and `identity` profile kind with pinned version and digest
-- [ ] 2.3 Collision detection with witness naming both tuples
-- [ ] 2.4 Validator: under the profile, reject ids that do not equal the derivation
+- [x] 2.1 RED: two independent processes derive identical ids for identical anchors
+- [x] 2.2 Implement anchor tuple, digest form and `identity` profile kind with pinned version and digest
+- [x] 2.3 Collision detection with witness naming both tuples
+- [x] 2.4 Validator: under the profile, reject ids that do not equal the derivation
 
 ## 3. Canonical order
 
