@@ -172,7 +172,10 @@ def build_review_bundle(
     receives the self-contained HTML bundle. Returns the embedded record.
     """
     config = config or _default_config()
-    rendered = render.render_page(config, pdf_path)
+    # Refusal precedes rendering: a correlated config never invokes a
+    # renderer at all — the crop is absent, typed, before any pixels exist.
+    rendered = (None if config.evidence_class == "correlated"
+                else render.render_page(config, pdf_path))
     page_record = _page_record(config.page, regions, config, rendered,
                                geometry, frame_name)
     record = _bundle_record([{
@@ -211,7 +214,8 @@ def build_calibration_review_bundle(out_path, record_path=None, config=None):
     for (carrier, file_rel, page, geometry_name, frame_name) in targets:
         entry_config = replace(config, page=page)
         geometry = json.loads(_GEOMETRY_ARTIFACTS[geometry_name].read_text())
-        rendered = render.render_page(entry_config, _ROOT / file_rel)
+        rendered = (None if entry_config.evidence_class == "correlated"
+                    else render.render_page(entry_config, _ROOT / file_rel))
         page_record = _page_record(page, _regions_for(calibration, carrier),
                                    entry_config, rendered, geometry,
                                    frame_name, file=file_rel)
@@ -327,7 +331,8 @@ def build_descriptor_review_bundle(descriptor_path, out_path, config=None):
             continue
         entry_config = replace(config, page=int(matched.group(1)))
         try:
-            rendered = render.render_page(entry_config, source)
+            rendered = (None if entry_config.evidence_class == "correlated"
+                        else render.render_page(entry_config, source))
         except render.RenderCommandError as exc:
             rendered = render.RenderUnavailable(config=entry_config,
                                                 reason=str(exc))
