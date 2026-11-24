@@ -880,7 +880,7 @@
   Branch: main
   HEAD: 40cbd3a4ac209f6c8dd1c4b6754392eb0074bf7c
   Session: 01a20edf-ecda-7411-9b3c-6c181590da05
-  Task: Apply issue-review findings for the adopted proposal set (continues a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575)
+  Task: Apply issue-review findings for the adopted proposal set (continues a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575) (superseded by 0362f36a56507757d5e445a792bb37cc8f10090dd5d2645ae0b352561be2caff)
 
   Objective: file the 2 ALIGN-001 tracker-gap tickets, enrich the 7 adopted tickets with metadata, decompose first children of sunset-7b4 and sunset-5vh.
 
@@ -902,3 +902,30 @@
   Validation: bd ready shows both children claimable; sunset-72s blocked-by sunset-5vh and sunset-rmx.24 blocked-by sunset-gpd verified via bd show; metadata visible on spot-checked tickets.
 
   Unresolved/blockers: owner rulings G1-G6 (sunset-gpd) still pending; commit/dolt-sync unauthorized.
+- 2026-11-24T19:36:45Z [id:0362f36a56507757d5e445a792bb37cc8f10090dd5d2645ae0b352561be2caff] (#proposal-set-adoption) Timestamp: 2026-11-24T19:36:45Z
+  Repo: charly-vibes/sunset (~/para/areas/dev/gh/charly/sunset)
+  Branch: main
+  HEAD: f254cb679419f6f85b6c06ce09a0e07d5eb18d4a
+  Session: 01a20edf-ecda-7411-9b3c-6c181590da05
+  Task: Apply issue-review findings for the adopted proposal set (continues a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575)
+  
+  Objective: file the 2 ALIGN-001 tracker-gap tickets, enrich the 7 adopted tickets with metadata, decompose first children of sunset-7b4 and sunset-5vh; land the result.
+  
+  Current phase: complete (commit f254cb6 pushed to origin/main; bd dolt push done; working tree clean except intentionally untracked pba-judicial-2026-07-29.pdf).
+  
+  Current state:
+  - Filed sunset-72s (composition join-law tasks + law catalogue; blocked-by sunset-5vh; complexity:m 360m) and sunset-rmx.24 (digitization §4 model-call determinism tasks 4.1-4.6; parent sunset-rmx; blocked-by sunset-gpd via G5; complexity:m 240m).
+  - Metadata on all 7 adopted tickets: base_commit=40cbd3a, per-change files lists, estimates (2400m epics, 120m gpd), lanes (epics complexity:xl, sunset-gpd hitl).
+  - First children ready to claim: sunset-7b4.1 (render-binding §1 RED baseline re-measurement, 240m), sunset-5vh.1 (identity task 1.1 position-dependence audit, 120m).
+  - .beads/issues.jsonl export refreshed (140 issues); whisper entry recorded; adoption-session report text unrecoverable (transcript pruned) — executed from handoff summary + PROPOSAL-SET.md + tasks.md grounding.
+  
+  Exact next action: claim sunset-7b4.1, sunset-5vh.1, or sunset-gpd (or run /renew to re-orient first).
+  
+  Decisions/constraints:
+  - Owner gates G1-G6 pending via sunset-gpd (hitl); G5 additionally blocks sunset-rmx.24, G1-blocked tasks 2.2+ wait on the same ruling.
+  - Estimates are planning judgment, not from the lost report.
+  - Everything numeric agent-executed until a human pass supersedes (repo honesty convention).
+  
+  Validation: bd ready shows both children claimable; deps verified via bd show (sunset-72s blocked-by sunset-5vh; sunset-rmx.24 blocked-by sunset-gpd); push verified — branch up to date with origin/main.
+  
+  Unresolved/blockers: none in this thread; G1-G6 owner rulings pending on sunset-gpd. (supersedes 642c14ee15a57915ae123ccda63310d877967843bf8a8fa9c7c4877765fc7a02)
