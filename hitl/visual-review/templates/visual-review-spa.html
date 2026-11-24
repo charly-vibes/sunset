@@ -34,6 +34,14 @@
   .box .lbl { position:absolute; top:-1.1em; left:0; font-size:10px; color:var(--accent); white-space:nowrap; }
   .missed-ink { position:absolute; border:1px dashed var(--bad); background:rgba(198,40,40,.10); }
   .missed-ink.ghost { pointer-events:none; }
+  .box.selected { border-width:2.5px; background:rgba(11,98,214,.28); z-index:6; }
+  .box.selected .lbl { font-weight:700; color:var(--ink); background:#fff; padding:0 .2rem; }
+  .verdict-row { cursor:default; }
+  .verdict-row.selected { background:#eaf2fc; outline:1px solid var(--accent); }
+  .verdict-row.draft { outline:1px dashed var(--unknown); }
+  .section-h { font-size:.8rem; font-weight:700; color:#555; text-transform:uppercase;
+               letter-spacing:.03em; margin:.5rem 0 .15rem; }
+  .section-h:first-child { margin-top:0; }
   aside { flex:1 1 320px; min-width:300px; max-width:520px; }
   .card { background:#fff; border:1px solid #ddd; padding:.6rem .8rem; margin-bottom:.8rem; }
   .card h2 { font-size:.95rem; margin:.1rem 0 .5rem; }
@@ -88,7 +96,7 @@
     <div class="wrap" id="wrap-clean"></div>
   </div>
   <div class="pane" id="pane-annotated">
-    <h2>Claimed regions over the render — drag to mark missed ink</h2>
+    <h2>Claimed regions — click a region to select it · drag to mark missed ink</h2>
     <div class="wrap" id="wrap-annotated"></div>
   </div>
   <aside>
@@ -97,8 +105,11 @@
       <input id="reviewer" placeholder="your name (optional)">
     </div>
     <div class="card">
-      <h2>Region verdicts <span class="hint">(unknown is an answer)</span></h2>
+      <h2>Region verdicts <span class="hint">(unknown is an answer · click a row to find its region)</span></h2>
       <div id="region-list"></div>
+      <div class="hint" id="draft-note" style="margin-top:.4rem;">No drafts loaded.</div>
+      <button id="load-drafts" class="v" style="margin-top:.3rem;">Load drafts JSON</button>
+      <input type="file" id="drafts-file" accept=".json,application/json" style="display:none">
     </div>
     <div class="card">
       <h2 id="missed-ink-heading">Missed-ink boxes <span class="hint">(drag on the annotated pane)</span></h2>
@@ -158,6 +169,57 @@ function pushMissedBox(list, box) {
   return list;
 }
 
+function _contains(rect, px) {
+  return px[0] >= rect[0] && px[0] < rect[0] + rect[2] &&
+         px[1] >= rect[1] && px[1] < rect[1] + rect[3];
+}
+
+function _selectableAt(r, px) {
+  return r.rect_px && _contains(r.rect_px, px);
+}
+
+function _smallerThan(r, best) {
+  return !best || r.rect_px[2] * r.rect_px[3] < best.rect_px[2] * best.rect_px[3];
+}
+
+function pickRegionAt(regions, px) {
+  // click-to-select: the most specific (smallest-area) containing region wins
+  let best = null;
+  regions.forEach(r => { if (_selectableAt(r, px) && _smallerThan(r, best)) best = r; });
+  return best ? best.id : null;
+}
+
+function splitByVerdict(regions, answers) {
+  // pending = no verdict yet; ruled = any recorded verdict (unknown counts)
+  const pending = [], ruled = [];
+  regions.forEach(r => { ((answers[r.id] || {}).verdict ? ruled : pending).push(r); });
+  return { pending: pending, ruled: ruled };
+}
+
+function selectRegionAt(env, px) {
+  const id = env.pick(px);
+  if (id) env.select(id);
+}
+
+const DRAFT_VERDICTS = ["agree", "differ"];
+const DRAFT_PREFIX = "[qwen3.8 draft] ";
+
+function mergeDrafts(pa, drafts) {
+  // Lane 1 draft-assist: fill ONLY regions the human has not ruled;
+  // the human verdict always wins; provenance lives in the note prefix.
+  const applied = [];
+  Object.keys(drafts).forEach(rid => {
+    if (!DRAFT_VERDICTS.includes(drafts[rid].verdict)) {
+      throw new Error("draft verdict " + JSON.stringify(drafts[rid].verdict) +
+                      " outside the agree/differ vocabulary");
+    }
+    if ((pa[rid] || {}).verdict) return;
+    pa[rid] = { verdict: drafts[rid].verdict, note: DRAFT_PREFIX + (drafts[rid].note || "") };
+    applied.push(rid);
+  });
+  return applied;
+}
+
 function attachMissedInkHandlers(ann, env) {
   // Idempotent per element: renderPanes() re-invokes this on every re-render,
   // but the wrap element persists — without the guard, listeners accumulate
@@ -183,7 +245,7 @@ function attachMissedInkHandlers(ann, env) {
                  Math.abs(x - start[0]), Math.abs(y - start[1])];
     start = null;
     env.ghost(null);
-    if (box[2] < 4 || box[3] < 4) return;
+    if (box[2] < 4 || box[3] < 4) { selectRegionAt(env, [x, y]); return; }
     env.commit(box);
   });
 }
@@ -196,6 +258,25 @@ const DATA = JSON.parse(document.getElementById("review-data").textContent);
 let cur = { c: 0, p: 0 };
 let answers = {};   // {carrier: {page: {regionId: {verdict, note}}}}
 let missed = {};    // {carrier: {page: [{rect_px:[x,y,w,h]}]}}
+let selectedId = null;   // clicked region: highlighted on overlay + list, both directions
+
+function selectRegion(id) {
+  selectedId = (selectedId === id) ? null : id;   // re-click deselects
+  applySelection();
+}
+
+function applySelection() {
+  document.querySelectorAll("#wrap-annotated .box").forEach(el => {
+    el.classList.toggle("selected", el.dataset.rid === selectedId);
+  });
+  const box = document.querySelector('#wrap-annotated .box[data-rid="' + selectedId + '"]');
+  if (box) box.scrollIntoView({ block: "nearest" });
+  document.querySelectorAll("#region-list .verdict-row").forEach(row => {
+    const on = row.dataset.rid === selectedId;
+    row.classList.toggle("selected", on);
+    if (on) row.scrollIntoView({ block: "nearest" });
+  });
+}
 
 function storageKey() {
   return "visual-review:" + DATA.carriers.map(c => c.carrier).join("+");
@@ -215,10 +296,11 @@ function loadSaved() {
 
 function carrier() { return DATA.carriers[cur.c]; }
 function page() { return carrier().pages[cur.p]; }
-function pageAnswers() {
-  const c = answers[carrier().carrier] = answers[carrier().carrier] || {};
-  return c[page().page] = c[page().page] || {};
+function answersFor(cname, pnum) {
+  const c = answers[cname] = answers[cname] || {};
+  return c[pnum] = c[pnum] || {};
 }
+function pageAnswers() { return answersFor(carrier().carrier, page().page); }
 function pageMissed() {
   const c = missed[carrier().carrier] = missed[carrier().carrier] || {};
   return c[page().page] = c[page().page] || [];
@@ -321,7 +403,9 @@ function renderPanes() {
     const el = document.createElement("div");
     const v = (pageAnswers()[r.id] || {}).verdict;
     el.className = "box" + (r.expected === "no-ink" ? " expected-no-ink" : "") +
-                   (v ? " verdict-" + v : "");
+                   (v ? " verdict-" + v : "") +
+                   (r.id === selectedId ? " selected" : "");
+    el.dataset.rid = r.id;
     applyBox(el, pctBox(r.rect_px, p));
     const lbl = document.createElement("span");
     lbl.className = "lbl"; lbl.textContent = r.id;
@@ -343,6 +427,8 @@ function renderPanes() {
   ann.appendChild(ghost);
   attachMissedInkHandlers(ann, {
     active: () => !!p.width && !p.unavailable,
+    pick: px => pickRegionAt(p.regions || [], px),
+    select: id => selectRegion(id),
     point: ev => {
       const r = ann.getBoundingClientRect();
       return [Math.round((ev.clientX - r.left) / r.width * p.width),
@@ -367,45 +453,69 @@ function renderRegionList() {
   const host = document.getElementById("region-list");
   host.innerHTML = "";
   const pa = pageAnswers();
-  if (!(p.regions || []).length) {
+  if ((p.regions || []).length) {
+    const split = splitByVerdict(p.regions, pa);
+    const appendSection = (title, rows) => {
+      const h = document.createElement("div");
+      h.className = "section-h";
+      h.textContent = title + " (" + rows.length + ")";
+      host.appendChild(h);
+      rows.forEach(r => host.appendChild(buildRegionRow(r, pa)));
+    };
+    appendSection("pending", split.pending);
+    appendSection("ruled", split.ruled);
+  } else {
     host.innerHTML = p.unavailable
       ? "<em>No regions to review: " + p.unavailable + "</em>"
       : "<em>No claimed regions recorded for this page.</em>";
   }
-  (p.regions || []).forEach(r => {
-    const a = pa[r.id] = pa[r.id] || {};
-    const row = document.createElement("div");
-    row.className = "verdict-row";
-    const id = document.createElement("span");
-    id.className = "rid"; id.textContent = r.id;
-    row.appendChild(id);
-    if (r.expected) {
-      const exp = document.createElement("span");
-      exp.className = "exp"; exp.textContent = "(expected: " + r.expected + ")";
-      row.appendChild(exp);
-    }
-    VERDICTS.forEach(v => {
-      const b = document.createElement("button");
-      b.className = "v" + (a.verdict === v ? " selected" : "");
-      b.dataset.v = v; b.textContent = v;
-      b.addEventListener("click", () => {
-        a.verdict = v;
-        renderRegionList(); renderPanes(); renderPills(); save();
-      });
-      row.appendChild(b);
+  renderMissedList();
+}
+
+function rowMeta(r, a) {
+  const sel = (r.id === selectedId) ? " selected" : "";
+  const draft = ((a.note || "").indexOf(DRAFT_PREFIX) === 0) ? " draft" : "";
+  return "verdict-row" + sel + draft;
+}
+
+function buildRegionRow(r, pa) {
+  const a = pa[r.id] = pa[r.id] || {};
+  const row = document.createElement("div");
+  row.className = rowMeta(r, a);
+  row.dataset.rid = r.id;
+  row.addEventListener("click", () => { if (selectedId !== r.id) selectRegion(r.id); });
+  const id = document.createElement("span");
+  id.className = "rid"; id.textContent = r.id;
+  row.appendChild(id);
+  if (r.expected) {
+    const exp = document.createElement("span");
+    exp.className = "exp"; exp.textContent = "(expected: " + r.expected + ")";
+    row.appendChild(exp);
+  }
+  VERDICTS.forEach(v => {
+    const b = document.createElement("button");
+    b.className = "v" + (a.verdict === v ? " selected" : "");
+    b.dataset.v = v; b.textContent = v;
+    b.addEventListener("click", () => {
+      a.verdict = v;
+      renderRegionList(); renderPanes(); renderPills(); save();
     });
-    const note = document.createElement("input");
-    note.className = "note"; note.placeholder = "note (what differs, where)";
-    note.value = a.note || "";
-    note.addEventListener("input", () => { a.note = note.value; save(); });
-    row.appendChild(note);
-    if (!r.rect_px) {
-      const warn = document.createElement("span");
-      warn.className = "exp"; warn.textContent = "(unmapped: unknown frame)";
-      row.appendChild(warn);
-    }
-    host.appendChild(row);
+    row.appendChild(b);
   });
+  const note = document.createElement("input");
+  note.className = "note"; note.placeholder = "note (what differs, where)";
+  note.value = a.note || "";
+  note.addEventListener("input", () => { a.note = note.value; save(); });
+  row.appendChild(note);
+  if (!r.rect_px) {
+    const warn = document.createElement("span");
+    warn.className = "exp"; warn.textContent = "(unmapped: unknown frame)";
+    row.appendChild(warn);
+  }
+  return row;
+}
+
+function renderMissedList() {
   const list = document.getElementById("missed-list");
   list.innerHTML = "";
   const mlist = pageMissed();
@@ -425,6 +535,35 @@ function renderRegionList() {
 
 function renderAll() {
   renderPills(); renderPanes(); renderRegionList();
+}
+
+function wireDrafts() {
+  const file = document.getElementById("drafts-file");
+  document.getElementById("load-drafts").addEventListener("click", () => file.click());
+  file.addEventListener("change", () => {
+    const f = file.files[0];
+    if (!f) return;
+    f.text().then(txt => {
+      try {
+        const applied = applyDraftsAll(JSON.parse(txt));
+        document.getElementById("draft-note").textContent =
+          "drafts applied: " + applied.length + " region(s) — verify each row before download";
+        renderRegionList(); renderPanes(); renderPills(); save();
+      } catch (e) {
+        document.getElementById("draft-note").textContent = "drafts refused: " + e.message;
+      }
+    });
+  });
+}
+
+function applyDraftsAll(data) {
+  const pages = data.pages || {};
+  let applied = [];
+  carrier().pages.forEach(p => {
+    const dp = pages[String(p.page)];
+    if (dp) applied = applied.concat(mergeDrafts(answersFor(carrier().carrier, p.page), dp));
+  });
+  return applied;
 }
 
 function wireChrome() {
@@ -466,6 +605,7 @@ function wireChrome() {
 }
 
 wireChrome();
+wireDrafts();
 renderAll();
 </script>
 </body>

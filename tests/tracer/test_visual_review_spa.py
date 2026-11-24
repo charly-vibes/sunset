@@ -280,7 +280,8 @@ assert.equal(committed.length, 1, "one drag after 5 re-wires must commit exactly
 // tiny drags are rejected, not committed
 const ann2 = stubAnn();
 const tiny = [];
-attachMissedInkHandlers(ann2, { active: () => true, point: () => [3, 3], ghost: () => {}, commit: b => tiny.push(b) });
+attachMissedInkHandlers(ann2, { active: () => true, point: () => [3, 3], ghost: () => {}, commit: b => tiny.push(b),
+                                pick: () => null, select: () => {} });
 ann2.fire("mousedown", {});
 ann2.fire("mouseup", {});
 assert.deepEqual(tiny, []);
@@ -315,6 +316,104 @@ assert.throws(() => buildVerdictJson(data, bad, {}), /verdict/);
 console.log("ok");
 '''.replace("BUNDLE_FIXTURE", json.dumps(_bundle(), ensure_ascii=False))
     assert "ok" in _run_node(script)
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
+def test_pick_region_at_resolves_click_to_smallest_containing_region():
+    """Click-to-select: a click inside overlapping claimed regions must
+    resolve to the most specific (smallest-area) region; a click on empty
+    page space resolves to null; unmapped and zero-extent regions are
+    never selectable. Half-open rects: the right/bottom edge excludes."""
+    script = _review_core_js() + r'''
+const assert = require("assert");
+const regions = [
+  { id: "big", rect_px: [0, 0, 200, 200] },
+  { id: "small", rect_px: [80, 80, 40, 40] },
+  { id: "unmapped" },
+  { id: "degenerate", rect_px: [10, 10, 0, 50] },
+];
+assert.equal(pickRegionAt(regions, [100, 100]), "small");
+assert.equal(pickRegionAt(regions, [5, 5]), "big");
+assert.equal(pickRegionAt(regions, [300, 300]), null);
+assert.equal(pickRegionAt(regions, [11, 11]), "big");
+assert.equal(pickRegionAt(regions, [120, 100]), "big"); // small's edge excludes, big catches
+assert.equal(pickRegionAt(regions, [200, 100]), null);  // outermost right edge excludes
+assert.equal(pickRegionAt([], [1, 1]), null);
+console.log("ok");
+'''
+    assert "ok" in _run_node(script)
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
+def test_split_by_verdict_separates_pending_from_ruled():
+    """The verdict list splits into pending (unruled) and ruled sections;
+    original region order is preserved; any recorded verdict (including
+    unknown) counts as ruled."""
+    script = _review_core_js() + r'''
+const assert = require("assert");
+const regions = [
+  { id: "a", rect_px: [0, 0, 10, 10] },
+  { id: "b", rect_px: [0, 10, 10, 10] },
+  { id: "c", rect_px: [0, 20, 10, 10] },
+];
+const answers = { a: { verdict: "agree", note: "" }, c: { verdict: "unknown" } };
+const split = splitByVerdict(regions, answers);
+assert.deepEqual(split.pending.map(r => r.id), ["b"]);
+assert.deepEqual(split.ruled.map(r => r.id), ["a", "c"]);
+const none = splitByVerdict(regions, {});
+assert.equal(none.ruled.length, 0);
+assert.equal(none.pending.length, 3);
+assert.equal(splitByVerdict([], {}).pending.length, 0);
+console.log("ok");
+'''
+    assert "ok" in _run_node(script)
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
+def test_merge_drafts_fills_only_unruled_and_marks_provenance():
+    """Lane 1 draft-assist (owner-approved 2026-11-11): the checker's drafts
+    may only fill regions the human has NOT ruled; the human verdict always
+    wins; provenance lives in the note prefix; off-vocabulary drafts are
+    refused, never coerced."""
+    script = _review_core_js() + r'''
+const assert = require("assert");
+const pa = {
+  "page-1-det-1": { verdict: "differ", note: "human already ruled" },
+  "page-1-det-2": {},
+};
+const drafts = {
+  "page-1-det-1": { verdict: "agree", note: "model disagrees with human" },
+  "page-1-det-2": { verdict: "agree", note: "clean block" },
+};
+const applied = mergeDrafts(pa, drafts);
+assert.equal(pa["page-1-det-1"].verdict, "differ");
+assert.equal(pa["page-1-det-1"].note, "human already ruled");
+assert.equal(pa["page-1-det-2"].verdict, "agree");
+assert.ok(pa["page-1-det-2"].note.startsWith("[qwen3.8 draft]"));
+assert.deepEqual(applied, ["page-1-det-2"]);
+assert.throws(() => mergeDrafts({}, { x: { verdict: "sort-of", note: "" } }), /vocabulary/);
+console.log("ok");
+'''
+    assert "ok" in _run_node(script)
+
+
+def test_review_spa_template_wires_selection_and_pending_ruled_sections():
+    """Owner-reported UX (2026-11-05): regions were indistinguishable on
+    dense pages. The template must wire click-to-select on the overlay
+    (via the missed-ink click path), row-click highlight on the list, and
+    render the list as pending/ruled sections. jsdom is unavailable, so
+    the DOM wiring is contract-checked here by presence; behavior of the
+    pure helpers is node-tested above; the browser pass is the owner's."""
+    html = TEMPLATE_PATH.read_text()
+    for needle in [
+        "dataset.rid",                 # boxes and rows carry their region id
+        "selectedId",                  # module-level selection state
+        "selectRegionAt(env",          # overlay click path reuses the drag pipeline
+        "splitByVerdict(p.regions",    # list rendered from the pending/ruled split
+        "section-h",                   # section headers exist in CSS + JS
+        "scrollIntoView",              # selection scrolls counterpart into view
+    ]:
+        assert needle in html, needle
 
 
 # ---------------------------------------------------------------------------
