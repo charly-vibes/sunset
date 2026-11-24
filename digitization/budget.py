@@ -42,6 +42,19 @@ def validate_policy(value):
     return dict(value)
 
 
+class BudgetExhausted(ValueError):
+    """Typed refusal: the pinned policy forbids any further provider attempts.
+
+    Unlike budget-exceeded (a transient capacity refusal) this is terminal for
+    the run: callers must stop durably instead of retrying.
+    """
+
+    def __init__(self, reason, *, detail=''):
+        self.reason = reason
+        self.detail = detail
+        super().__init__(reason + (f': {detail}' if detail else ''))
+
+
 class BudgetLedger:
     """A small atomically replaced ledger; callers persist uncertainty before I/O."""
 
@@ -177,7 +190,7 @@ class BudgetLedger:
                     raise ValueError('request-key-already-reserved')
             if (self.state['policy'] is not None
                     and len(self.attempts) >= self.state['policy']['max_provider_attempts']):
-                raise ValueError('attempt-limit-exceeded')
+                raise BudgetExhausted('attempt-limit-exceeded')
             if maximum_charge > self.available:
                 raise ValueError('budget-exceeded')
             attempt = {'id': f"attempt-{len(self.attempts) + 1}", 'request_key': request_key,

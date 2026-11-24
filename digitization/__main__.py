@@ -6,6 +6,8 @@
 #   explicit partial native results and stable expected-failure exits.
 import argparse
 import json
+import os
+import sys
 from pathlib import Path
 
 from digitization.artifacts import CacheIntegrityError
@@ -47,6 +49,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.operation == 'replay':
+            if not Path(args.run).resolve().is_dir():
+                raise InputError('run directory does not exist')
             result = replay_run(args.run, args.output, compare=args.compare)
             code = {'replayed': 0, 'incomplete-artifacts': 2,
                     'unsupported-version': 4}.get(result['status'], 5)
@@ -60,6 +64,8 @@ def main(argv=None):
                     'text-with-gaps': 2, 'no-text-read': 2,
                     'unsupported-version': 4}.get(result['status'], 0)
         elif args.operation == 'inspect':
+            if not Path(args.run).resolve().is_dir():
+                raise InputError('run directory does not exist')
             result = inspect_run(args.run)
             if result.get('status') == 'unsupported-version':
                 code = 4
@@ -73,14 +79,14 @@ def main(argv=None):
             try:
                 pages = None if args.pages is None else [int(p) for p in args.pages.split(',')]
             except ValueError as error:
-                raise InputError('pages must be comma-separated integer PDF indices') from error
+                raise InputError('pages must be unique one-based indices within the PDF') from error
             result = extract_native(args.source, args.output, pages)
             code = 0 if result['status'] == 'text-complete' else 2
         else:
             try:
                 pages = [int(p) for p in args.pages.split(',')]
             except ValueError as error:
-                raise InputError('pages must be comma-separated integer PDF indices') from error
+                raise InputError('pages must be unique one-based indices within the PDF') from error
             selections = {}
             for selection in args.select:
                 if '=' not in selection:
@@ -104,7 +110,13 @@ def main(argv=None):
     except (InputError, OSError, ValueError) as error:
         result = {'status': 'invalid-input', 'reason': 'invalid-input', 'detail': str(error), 'provider_calls': 0}
         code = 3
-    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    try:
+        print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    except BrokenPipeError:
+        # Consumer closed the pipe (e.g. `| head`): exit cleanly instead of
+        # letting the flush raise a traceback at interpreter shutdown.
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, sys.stdout.fileno())
     return code
 
 

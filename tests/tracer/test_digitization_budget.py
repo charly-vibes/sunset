@@ -57,6 +57,21 @@ def test_budget_ledger_refuses_attempt_without_a_safe_charge_bound(tmp_path):
         ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=None)
 
 
+def test_budget_ledger_types_attempt_limit_refusal(tmp_path):
+    from digitization.budget import BudgetExhausted, BudgetLedger
+
+    policy = {**POLICY, 'max_provider_attempts': 1}
+    ledger = BudgetLedger.create(tmp_path / 'ledger.json', cap=100, currency='USD', policy=policy)
+    attempt = ledger.reserve(request_key='request-1', payload_sha256='a' * 64, maximum_charge=10)
+    ledger.settle({'receipt_id': 'receipt-1', 'attempt_id': attempt['id'],
+                   'charge': 0, 'outcome': 'completed'})
+    with pytest.raises(BudgetExhausted) as caught:
+        ledger.reserve(request_key='request-2', payload_sha256='b' * 64, maximum_charge=10)
+    assert caught.value.reason == 'attempt-limit-exceeded'
+    # the refusal must not consume anything: settled charge stays available
+    assert BudgetLedger.open(tmp_path / 'ledger.json').available == 100
+
+
 def test_budget_policy_pins_attempt_round_cost_io_and_price_limits(tmp_path):
     from digitization.budget import BudgetLedger, validate_policy
 

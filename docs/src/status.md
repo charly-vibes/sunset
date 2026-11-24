@@ -147,6 +147,15 @@ be scoped when there is a working product to distribute.
 
 Other recorded deviations:
 
+- **§1 distribution deviation (sunset-f06/sunset-mav, recorded 2026-11-24):**
+  sunset ships Python source in this checkout only — no prebuilt GitHub Release
+  assets, no published wheel or sdist, no package-manager entry. A user without
+  a source checkout cannot install it today; the substitute install path is
+  install-from-source (`git clone https://github.com/charly-vibes/sunset` +
+  `uv sync`, then `uv run python -m digitization …` from the repository root),
+  documented in the [README install section](../../README.md#install) and
+  install/FAQ sections. This is the standardization §1 substitute-path record
+  for the status-list note above that an installable product is not shipped.
 - No CI workflow files (`just ci` arrives with an implementation; the spec
   gates run via `just spec-check` for now)
 - No `book.toml`/theme or book pages
@@ -345,3 +354,17 @@ throwaway script, superseding the RED false-miss record.
   "re-measurement at the fix HEAD" section above — typed refusals everywhere,
   0/405 silent false counts; new owner-flag candidate filed for the
   ceil-vs-round extent convention (sunset ticket).
+- **Region-table size measurement (add-scale-complete-regions task 3.3,
+  agent-executed 2026-11-24):** native extraction of
+  `fixtures/carriers/agentic-patterns-excerpt.pdf` (the carrier whose HEAD
+  line map is the 421-line / 155 KB baseline quoted in
+  `add-scale-complete-regions/proposal.md`) with manifest version 3. The
+  descriptor region table — word/line/block regions plus their interval+box
+  selectors, 8,703 words / 421 lines / 29 blocks — serializes to
+  6,072,829 bytes (192,214 JSON lines); the full `descriptor.json` is
+  7,740,879 bytes (248,163 lines). Byte-identity of the regenerated
+  `line-map.json` and `page-map.json` exports was verified on this carrier.
+  The descriptor region table is roughly 38x the HEAD line-map baseline, so
+  the deferred dense columnar encoding (task 3.4) now has a measured size
+  signal against its "hurts gate runs or review crops" trigger; the decision
+  remains with the owner, and 3.4 stays unticked.

@@ -16,6 +16,11 @@
 #   oracles are consumed as shipped, never edited here. Thresholds and timings
 #   are AGENT-EXECUTED (measured through the pinned render pipeline); a human
 #   pass supersedes.
+# Responsibilities (continued): Tests that re-render pages or compare the
+#   recorded render configuration gate on the pinned poppler 26.01 via
+#   env_pins (sunset-2uo): stock machines skip with reasons, canonical CI
+#   (SUNSET_STRICT_ENV=1) fails on mismatch; the pure-record tests (a) and
+#   the split/provenance declarations (d-split) run everywhere.
 # Rationale: spec "Calibrated thresholds with per-page outcomes" (thresholds
 #   from recorded calibration over varied pinned carriers; per-page AND
 #   per-property outcomes; no aggregate pass while any page is
@@ -48,6 +53,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dsc03.visual import coverage, masks, render
 
 from conftest import render_config as _render_config
+
+import env_pins
 
 ROOT = Path(__file__).resolve().parents[2]
 RECORD_PATH = ROOT / "fixtures" / "visual" / "calibration.json"
@@ -192,6 +199,7 @@ def test_record_carries_all_six_d6_fields():
 
 
 def test_render_configuration_matches_the_pinned_runtime_config():
+    env_pins.require_pinned_poppler()
     config = _render_config()
     recorded = RECORD["render_configuration"]
     live = config.to_dict()
@@ -212,6 +220,7 @@ def test_render_configuration_matches_the_pinned_runtime_config():
 
 
 def test_rerun_reproduces_every_recorded_per_page_outcome():
+    env_pins.require_pinned_poppler()  # re-rendering requires the pinned 26.01
     reproduced = 0
     for run in RECORD["per_page_outcomes"]:
         outcome = _run_outcome(run)
@@ -237,6 +246,7 @@ def test_rerun_reproduces_every_recorded_per_page_outcome():
 
 
 def test_aggregate_never_passes_while_any_page_is_unknown_unavailable_or_uncalibrated():
+    env_pins.require_pinned_poppler()  # re-rendering requires the pinned 26.01
     agree_runs = [r for r in _runs(run="derivation") if r["status"] == "agree"]
     assert len(agree_runs) >= 8  # four calibrated varieties x two properties
     agree_outcomes = [_run_outcome(r) for r in agree_runs]
@@ -320,6 +330,7 @@ def test_detection_pages_are_outside_the_derivation_set_with_recorded_overlap():
 
 
 def test_every_detection_run_reproduces_differ_with_region_attribution():
+    env_pins.require_pinned_poppler()  # re-rendering requires the pinned 26.01
     detection_runs = _runs(run="detection")
     assert len(detection_runs) == len(CLAIMED_CLASSES), detection_runs
     for run in detection_runs:
@@ -334,6 +345,7 @@ def test_every_detection_run_reproduces_differ_with_region_attribution():
 
 
 def test_faint_page_unknown_is_surfaced_by_the_record_and_the_aggregate():
+    env_pins.require_pinned_poppler()  # re-rendering requires the pinned 26.01
     faint = _carrier(FAINT_CARRIER)
     assert faint["variety"] == "faint"
     assert faint["file"] == "tests/tracer/fixtures/visual/visual-strip-faint.pdf"

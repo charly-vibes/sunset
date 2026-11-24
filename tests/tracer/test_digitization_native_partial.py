@@ -55,11 +55,16 @@ def test_partial_native_result_keeps_scopes_and_inspects_without_claiming_comple
     assert validator.validate(descriptor) == []
     source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
     regions = {r['anchor']['locator_path']: r['id'] for r in descriptor['regions']}
-    assert regions == {'page:1': native_id(source_hash, 'region', 'page:1'),
-                       'page:2': native_id(source_hash, 'region', 'page:2'),
-                       'page:3': native_id(source_hash, 'region', 'page:3'),
-                       'doc:root': native_id(source_hash, 'region', 'doc:root'),
-                       'doc:log': native_id(source_hash, 'region', 'doc:log')}
+    # page-level regions stay pinned; page 1's retained words/lines/blocks
+    # appear as kind-scoped interval-anchored descriptor regions
+    assert {k: v for k, v in regions.items() if '/' not in k} == {
+        'page:1': native_id(source_hash, 'region', 'page:1'),
+        'page:2': native_id(source_hash, 'region', 'page:2'),
+        'page:3': native_id(source_hash, 'region', 'page:3'),
+        'doc:root': native_id(source_hash, 'region', 'doc:root'),
+        'doc:log': native_id(source_hash, 'region', 'doc:log')}
+    assert all(k.startswith(('page:1/word:', 'page:1/line:', 'page:1/block:'))
+               for k in regions if '/' in k)
     by_scope = {(c['feature'], c['scope']): c for c in descriptor['coverage']}
     assert by_scope['pdf:glyphs', 'page:2']['status'] == 'unexamined'
     assert 'no native text' in by_scope['pdf:glyphs', 'page:2']['reason']
@@ -104,7 +109,7 @@ def test_logo_only_approximation_stays_text_complete(tmp_path):
     assert code == 0
     assert result['status'] == 'text-complete'
     manifest = json.loads((output / 'manifest.json').read_text())
-    assert manifest['version'] == '2'
+    assert manifest['version'] == '3'
     descriptor = validator.load(output / manifest['descriptor']['path'])
     approximated = [c for c in descriptor['coverage'] if c['status'] == 'approximated']
     assert approximated
@@ -143,10 +148,16 @@ def test_page_selection_excludes_unselected_text_but_preserves_inventory(tmp_pat
     assert all('secret' not in c.get('value', '') for c in descriptor['contents'])
     source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
     regions = {r['anchor']['locator_path']: r['id'] for r in descriptor['regions']}
-    assert regions == {'page:1': native_id(source_hash, 'region', 'page:1'),
-                       'page:2': native_id(source_hash, 'region', 'page:2'),
-                       'doc:root': native_id(source_hash, 'region', 'doc:root'),
-                       'doc:log': native_id(source_hash, 'region', 'doc:log')}
+    # add-scale-complete-regions: words/lines/blocks ship as descriptor
+    # regions anchored at kind-scoped interval locators (never block
+    # ordinals); the page-level map is a subset of the full region table.
+    assert {k: v for k, v in regions.items() if '/' not in k} == {
+        'page:1': native_id(source_hash, 'region', 'page:1'),
+        'page:2': native_id(source_hash, 'region', 'page:2'),
+        'doc:root': native_id(source_hash, 'region', 'doc:root'),
+        'doc:log': native_id(source_hash, 'region', 'doc:log')}
+    assert all(k.startswith(('page:2/word:', 'page:2/line:', 'page:2/block:'))
+               for k in regions if '/' in k)
     # the excluded page's source text is gone; the selected page carries its
     # source observation and the run's extraction chain at distinct anchors
     assert {c['anchor']['locator_path'] for c in descriptor['contents']} == {

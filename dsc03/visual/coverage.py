@@ -6,7 +6,14 @@
 #   simplification (design D4, pinned here as 8-connected ink dilation parsed
 #   from "ink-dilation-<N>px"), map claimed region rects from descriptor
 #   points through the declared frame, and compare measured ink fractions
-#   against the one recorded calibration entry for the carrier+page. Report
+#   against the one recorded calibration entry for the carrier+page. Region
+#   claims may scope themselves to ONE carrier-observation content class (text /
+#   vector / raster) via a "class" key: class-scoped claims are measured
+#   against that class's observed rect-union mask built from a
+#   content_classes record passed as `observations`, under the SAME recorded
+#   bounds — so a decorative raster band no longer reads as [satisfying]
+#   missing text. Claims without a "class" key are measured against the
+#   undifferentiated simplified ink exactly as before. Report
 #   typed per-page/per-property outcomes (agree/differ/unknown/unavailable)
 #   with the evidence class, retain every region-attributed disagreement,
 #   and aggregate page outcomes so one blank/degraded page never yields a
@@ -61,6 +68,31 @@ alone — no defaults, no fallbacks):
   property/carrier/page, or a malformed entry (non-numeric or inverted
   bounds) leaves the page ``unknown`` (reason ``uncalibrated``).
 
+- Per-class claims: a region may scope its claim to ONE carrier-observation
+  content class — ``"class": "text" | "vector" | "raster"``
+  (``CONTENT_CLASSES``, the observation classes of
+  ``dsc03/visual/content_classes.py``). A class-scoped claim is measured
+  against THAT class's observed rect-union mask — built by painting every
+  usable record entry's ``rect_px`` — under the SAME recorded ``[min, max]``
+  bounds (the calibration contract is unchanged; no recalibration). The
+  record arrives as the optional ``observations`` argument and is consumed
+  ONLY when at least one claim is class-scoped: claims without a ``class``
+  key are measured against the undifferentiated simplified ink exactly as
+  before. A class-scoped claim that cannot be evaluated per class is a
+  typed page ``unknown`` — ``class-observations-missing`` (no record
+  passed) or ``class-observations-invalid`` (the record is not a usable
+  ``content-class-observations`` "observed" record for THIS page, frame,
+  dpi and raster extent) — never a silent fall back to the undifferentiated
+  mask. A ``class`` value outside ``CONTENT_CLASSES`` contradicts the claim
+  format and is a retained region ``differ`` (like any out-of-vocabulary
+  claim). When a class-scoped ``"ink"`` claim FAILS its primary test with
+  the claimed class absent from the rect while ANOTHER carrier class's
+  observed rects overlap it, the retained ``differ`` carries the attribution
+  ``"explained-by-<class>"`` (deterministic ``CONTENT_CLASSES`` order): the
+  ink present belongs to another content class — a decorative raster band no
+  longer reads as missing text. Ink attributable to no carrier observation
+  stays a plain ``differ``; attribution is never invented.
+
 - Verdicts: a region claiming "ink" agrees iff its measured ink fraction
   (after simplification, inside the mapped integer pixel rect) lies within
   ``[min, max]``; a region claiming "no-ink" agrees iff its fraction is at
@@ -105,15 +137,27 @@ DILATION_CONNECTIVITY = 8
 # format and is retained as a disagreement, never guessed.
 EXPECTED_VALUES = frozenset({"ink", "no-ink"})
 
+# Carrier-observation content classes a region claim may be scoped to (the
+# observation classes of dsc03/visual/content_classes.py; the pixel-derived
+# "graphic-hypothesis" class is deliberately NOT claimable: hypotheses are
+# never DSC observations, O-A01).
+CONTENT_CLASSES = ("text", "vector", "raster")
+CLASS_OBSERVATIONS_KIND = "content-class-observations"
+CLASS_OBSERVATIONS_MISSING = "class-observations-missing"
+CLASS_OBSERVATIONS_INVALID = "class-observations-invalid"
+
 @dataclass(frozen=True)
 class CoverageOutcome:
     """Typed per-page, per-property oracle outcome (design D5).
 
     ``regions`` retains one ``{"id": ..., "status": "agree"|"differ"}`` entry
     per evaluated claim, in input order — disagreements are attributed to
-    their source regions and never smoothed. For page-level
-    ``unknown``/``unavailable`` outcomes no region verdicts exist, so
-    ``regions`` is empty and ``reason`` explains why.
+    their source regions and never smoothed. Class-scoped claims carry their
+    ``"class"`` verbatim, and a failing class-scoped ink claim whose ink is
+    explained by another carrier class carries ``"reason":
+    "explained-by-<class>"``. For page-level ``unknown``/``unavailable``
+    outcomes no region verdicts exist, so ``regions`` is empty and
+    ``reason`` explains why.
     """
 
     status: str
@@ -215,6 +259,102 @@ def _region_fraction(mask, width: int, rect) -> float:
     return ink / ((x1 - x0) * (y1 - y0))
 
 
+def _any_ink(mask, width: int, rect) -> bool:
+    """Whether the packed 0/1 mask has any ink in the half-open pixel rect."""
+    x0, y0, x1, y1 = rect
+    for y in range(y0, y1):
+        if mask[y * width + x0:y * width + x1].count(1):
+            return True
+    return False
+
+
+def _paint_class_rect(mask, rect, width: int, height: int) -> None:
+    """Paint one observed entry's raster rect into a class mask.
+
+    Degenerate rects (hairline strokes report zero-height ``rect_px``) are
+    painted as a one-pixel line — an observed entry is never silently
+    dropped. Bounds were validated by ``_class_ink_masks``.
+    """
+    x0, y0, x1, y1 = rect
+    if x1 <= x0:
+        x1 = x0 + 1
+    if y1 <= y0:
+        y1 = y0 + 1
+    ones = b"\x01" * (x1 - x0)
+    for y in range(y0, min(y1, height)):
+        base = y * width
+        mask[base + x0:base + min(x1, width)] = ones
+
+
+def _class_ink_masks(observations, *, config, frame_name, width, height):
+    """Validate the content-class observations and build per-class masks.
+
+    Returns ``(masks, None)`` — one packed 0/1 rect-union mask per class in
+    ``CONTENT_CLASSES`` painted from the record's carrier-observation
+    ``rect_px`` entries — or ``(None, reason)`` with the typed unknown
+    reason when no record was passed
+    (``class-observations-missing``) or the record is not a usable
+    observed record for THIS page, frame, dpi and raster extent
+    (``class-observations-invalid``). Nothing is guessed: an unusable
+    record never degrades into partial per-class masks.
+    """
+    if observations is None:
+        return None, CLASS_OBSERVATIONS_MISSING
+    usable = (
+        isinstance(observations, dict)
+        and observations.get("kind") == CLASS_OBSERVATIONS_KIND
+        and observations.get("status") == "observed"
+        and observations.get("page") == config.page
+    )
+    frame = observations.get("frame") if usable else None
+    usable = usable and isinstance(frame, dict) \
+        and frame.get("name") == frame_name and frame.get("status") == "resolved"
+    render_record = observations.get("render") if usable else None
+    render_config = render_record.get("config") if usable and isinstance(
+        render_record, dict) else None
+    usable = usable and isinstance(render_config, dict) \
+        and render_config.get("dpi") == config.dpi
+    classes = observations.get("classes") if usable else None
+    usable = usable and isinstance(classes, dict)
+    if not usable:
+        return None, CLASS_OBSERVATIONS_INVALID
+    masks = {}
+    for name in CONTENT_CLASSES:
+        section = classes.get(name)
+        entries = section.get("entries") if isinstance(section, dict) else None
+        if not isinstance(entries, list):
+            return None, CLASS_OBSERVATIONS_INVALID
+        mask = bytearray(width * height)
+        for entry in entries:
+            rect = entry.get("rect_px") if isinstance(entry, dict) else None
+            if not (
+                isinstance(rect, list) and len(rect) == 4
+                and all(isinstance(v, int) and not isinstance(v, bool)
+                        for v in rect)
+                and 0 <= rect[0] <= rect[2] <= width
+                and 0 <= rect[1] <= rect[3] <= height
+            ):
+                # An entry outside this raster (or malformed) means the
+                # record does not describe THIS render: never painted
+                # partially, never clipped silently.
+                return None, CLASS_OBSERVATIONS_INVALID
+            _paint_class_rect(mask, rect, width, height)
+        masks[name] = mask
+    return masks, None
+
+
+def _explained_by(rect, claimed_class, class_masks, width: int):
+    """Attribution for a failing class-scoped claim: which OTHER carrier
+    class's observed rects overlap the rect, in CONTENT_CLASSES order, or
+    None when no carrier observation explains the ink (never invented)."""
+    for name in CONTENT_CLASSES:
+        if name == claimed_class:
+            continue
+        if _any_ink(class_masks[name], width, rect):
+            return f"explained-by-{name}"
+    return None
+
+
 def coverage_outcome(
     render_result,
     *,
@@ -223,6 +363,7 @@ def coverage_outcome(
     calibration,
     geometry,
     frame_name,
+    observations=None,
 ) -> CoverageOutcome:
     """Evaluate binarized ink coverage of claimed regions on one pinned page.
 
@@ -230,7 +371,9 @@ def coverage_outcome(
     for the page; ``regions`` the page's claimed region rects in descriptor
     points; ``calibration`` the ONE recorded entry for this carrier+page (or
     None); ``geometry``/``frame_name`` name the declared frame the claims are
-    mapped through. See the module docstring for the pinned semantics.
+    mapped through; ``observations`` the page's content-class observations
+    record (consumed only when some claim is class-scoped — see the module
+    docstring). See the module docstring for the pinned semantics.
     """
     config = render_result.config
     carrier = str(carrier)
@@ -255,22 +398,58 @@ def coverage_outcome(
         return _unknown(config, carrier, "uncalibrated")
     low, high = bounds
 
+    # Per-class machinery is built only when some claim is actually scoped
+    # to a carrier class; classless claims never consult (or require) it.
+    class_scoped = any(
+        isinstance(region, dict) and region.get("class") in CONTENT_CLASSES
+        for region in regions
+    )
+    class_masks = None
+    if class_scoped:
+        class_masks, class_reason = _class_ink_masks(
+            observations, config=config, frame_name=frame_name,
+            width=width, height=height,
+        )
+        if class_masks is None:
+            return _unknown(config, carrier, class_reason)
+
     evaluated = []
     all_regions_agree = True
     for region in regions:
         rid = region.get("id") if isinstance(region, dict) else None
+        claimed_class = region.get("class") if isinstance(region, dict) else None
+        entry = {"id": rid}
+        if claimed_class is not None:
+            # Retain the claim's class dimension verbatim — including an
+            # out-of-vocabulary value (a retained disagreement below).
+            entry["class"] = claimed_class
         rect = _pixel_rect(mapping, region)
         if rect is None:
             # Malformed or out-of-bounds claim: a retained disagreement, not
             # something to clip, fix or drop ("No silent resolution").
             status = "differ"
+        elif claimed_class is not None and claimed_class not in CONTENT_CLASSES:
+            # Out-of-vocabulary class: contradicts the claim format, never
+            # guessed into a measurable claim.
+            status = "differ"
         else:
-            measured = _region_fraction(mask, width, rect)
+            surface = class_masks[claimed_class] if claimed_class else mask
+            measured = _region_fraction(surface, width, rect)
             if region["expected"] == "ink":
                 status = "agree" if low <= measured <= high else "differ"
             else:  # "no-ink": no ink beyond the calibration floor
                 status = "agree" if measured <= low else "differ"
-        evaluated.append({"id": rid, "status": status})
+            if status == "differ" and claimed_class is not None \
+                    and region["expected"] == "ink" \
+                    and not _any_ink(surface, width, rect):
+                explained = _explained_by(rect, claimed_class, class_masks,
+                                          width)
+                if explained is not None:
+                    # The ink present belongs to another content class —
+                    # attributed, never silently read as missing.
+                    entry["reason"] = explained
+        entry["status"] = status
+        evaluated.append(entry)
         all_regions_agree = all_regions_agree and status == "agree"
 
     page_fraction = mask.count(1) / (width * height)

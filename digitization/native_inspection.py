@@ -13,7 +13,8 @@ from dsc03 import validator
 from dsc03.substrate.space import quantize_scalar
 
 from digitization.native import (NORMALIZATION, OPTIONS, OUTCOME_MANIFEST_VERSION,
-                                 _json, _map_box, _sha, classify_outcome)
+                                 _json, _map_box, _sha, classify_outcome,
+                                 export_line_map, export_page_map)
 
 NATIVE_ARTIFACTS = {'source.pdf', 'raw.txt', 'search.txt', 'word-map.json',
                     'line-map.json', 'page-map.json', 'configuration.json',
@@ -79,6 +80,16 @@ def inspect_native(run_directory):
                 raise ValueError('native profile cannot be resolved: ' + profile_status)
         raw = (root / 'raw.txt').read_text(encoding='utf-8')
         search = (root / 'search.txt').read_text(encoding='utf-8')
+        # Side files are derived exports of the descriptor
+        # (add-scale-complete-regions 3.2): a run whose line-map or page-map
+        # is not the descriptor's export fails inspection.
+        if export_line_map(descriptor, raw) != (root / 'line-map.json').read_bytes():
+            raise ValueError('line-map is not the descriptor-derived export')
+        geometry = validator.load(root / 'carrier/geometry.json') \
+            if any(p['kind'] == 'geometry' for p in descriptor['profiles']) \
+            else {'kind': 'geometry', 'frames': []}
+        if export_page_map(geometry) != (root / 'page-map.json').read_bytes():
+            raise ValueError('page-map is not the descriptor-derived export')
         words = validator.load(root / 'word-map.json')
         lines = validator.load(root / 'line-map.json')
         frames = validator.load(root / 'page-map.json')

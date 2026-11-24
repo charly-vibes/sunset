@@ -1,0 +1,133 @@
+# Purpose: Canonical CI for sunset (sunset-2uo): ONE pinned-environment job
+#   running the spec-corpus gates through the justfile recipe (`just
+#   spec-check`) on every push to main and on every pull request.
+# Responsibilities: Reproduce the canonical toolchain with explicit version
+#   pins, centralized in the workflow-level SUNSET_* env vars and asserted
+#   (not assumed) by the verify step: poppler 26.01.0 (pdftoppm/pdfinfo/
+#   pdftotext), tesseract 5.3.4 + spa traineddata (Ubuntu 24.04 archive
+#   default), node 26.13.1 (npx openspec), uv 0.13.9 (python via the
+#   committed uv.lock + .python-version), just 1.59.0, specodelic 0.14.0
+#   (spk), playwright 1.65.2 + chromium (reader browser tests). Exports
+#   SUNSET_STRICT_ENV=1 so the tests/tracer/env_pins gates treat any skip
+#   as a hard failure.
+# Rationale: a plain ubuntu-24.04 runner is kept (no container): every tool
+#   is installed with an explicit version pin. Poppler 26.01 exists neither
+#   in the Ubuntu archive (noble: 24.08) nor on conda-forge (starts at
+#   26.02), so it is built from the sha256-pinned freedesktop source tarball
+#   into /usr/local/bin, which precedes /usr/bin on PATH. The test suites
+#   gate on the same pins via tests/tracer/env_pins.py: stock machines skip
+#   with reasons, canonical CI fails on mismatch.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # --- canonical pins (mirrored by tests/tracer/env_pins.py) ---------------
+  SUNSET_POPPLER_VERSION: "26.01.0"
+  SUNSET_POPPLER_SHA256: "1cb944a4b88847f5fb6551683bc799db59f04990f5d8be07aba2acbf38601089"
+  # Ubuntu 24.04 archive default tesseract (verified 2026-11-24); the spa
+  # traineddata pack is pinned to the noble archive version as well.
+  SUNSET_TESSERACT_VERSION: "5.3.4-1build5"
+  SUNSET_TESSERACT_DATA_SPA_VERSION: "1:4.1.0-2"
+  SUNSET_OCR_LANG: "spa"
+  SUNSET_NODE_VERSION: "26.13.1"
+  SUNSET_UV_VERSION: "0.13.9"
+  SUNSET_JUST_VERSION: "1.59.0"
+  SUNSET_SPECODELIC_VERSION: "0.14.0"
+  SUNSET_PLAYWRIGHT_VERSION: "1.65.2"
+  # Strict env contract (sunset-2uo): env_pins skips become failures.
+  SUNSET_STRICT_ENV: "1"
+  # justfile SUNSET_PYTHON: the uv-managed venv (sunset-olu), overriding any
+  # committed .env drift.
+  SUNSET_PYTHON: ".venv/bin/python"
+
+jobs:
+  spec-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out the corpus
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: "Pinned env: node ${{ env.SUNSET_NODE_VERSION }} (npx openspec)"
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.SUNSET_NODE_VERSION }}
+
+      - name: "Pinned env: uv ${{ env.SUNSET_UV_VERSION }} (python via uv.lock + .python-version)"
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          version: ${{ env.SUNSET_UV_VERSION }}
+
+      - name: "Pinned env: tesseract ${{ env.SUNSET_TESSERACT_VERSION }} + spa traineddata (noble archive)"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            "tesseract-ocr=${{ env.SUNSET_TESSERACT_VERSION }}" \
+            "tesseract-ocr-spa=${{ env.SUNSET_TESSERACT_DATA_SPA_VERSION }}"
+
+      - name: "Pinned env: poppler ${{ env.SUNSET_POPPLER_VERSION }} from the sha256-pinned freedesktop tarball"
+        run: |
+          sudo apt-get install -y --no-install-recommends \
+            cmake make g++ pkg-config \
+            libfreetype-dev libfontconfig1-dev libjpeg-dev libpng-dev \
+            zlib1g-dev
+          work="$(mktemp -d)"
+          curl -fsSL -o "$work/poppler.tar.xz" \
+            "https://poppler.freedesktop.org/poppler-${SUNSET_POPPLER_VERSION}.tar.xz"
+          echo "${SUNSET_POPPLER_SHA256}  $work/poppler.tar.xz" | sha256sum -c -
+          mkdir "$work/src" "$work/build"
+          tar -xJf "$work/poppler.tar.xz" -C "$work/src" --strip-components=1
+          # Utils-only build: the pinned CLIs (pdftoppm/pdftotext/pdfinfo)
+          # need freetype/fontconfig; everything else is disabled.
+          cmake -S "$work/src" -B "$work/build" -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_GTK_TESTS=OFF -DBUILD_CPP_TESTS=OFF \
+            -DBUILD_MANUAL_TESTS=OFF -DENABLE_GLIB=OFF -DENABLE_QT5=OFF \
+            -DENABLE_QT6=OFF -DENABLE_LIBCURL=OFF -DENABLE_NSS3=OFF \
+            -DENABLE_LIBOPENJPEG=none -DENABLE_LIBTIFF=OFF -DENABLE_UTILS=ON
+          cmake --build "$work/build" --parallel
+          sudo cmake --install "$work/build"
+
+      - name: "Pinned env: just ${{ env.SUNSET_JUST_VERSION }} release binary"
+        run: |
+          curl -fsSL -o /tmp/just.tar.gz \
+            "https://github.com/casey/just/releases/download/${SUNSET_JUST_VERSION}/just-${SUNSET_JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          tar -xzf /tmp/just.tar.gz -C /tmp just
+          sudo install -m 0755 /tmp/just /usr/local/bin/just
+
+      - name: "Pinned env: specodelic ${{ env.SUNSET_SPECODELIC_VERSION }} (spk, for spk lint)"
+        run: |
+          cargo install "specodelic@${SUNSET_SPECODELIC_VERSION}"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Verify the pinned canonical environment (every pin asserted)
+        run: |
+          command -v pdftoppm pdfinfo pdftotext tesseract just node uv spk
+          command -v pdftoppm | grep -Fx /usr/local/bin/pdftoppm
+          pdftoppm -v 2>&1  | grep -F "version ${SUNSET_POPPLER_VERSION}"
+          pdftotext -v 2>&1 | grep -F "version ${SUNSET_POPPLER_VERSION}"
+          pdfinfo -v 2>&1   | grep -F "version ${SUNSET_POPPLER_VERSION}"
+          tesseract --version 2>&1 | head -1 \
+            | grep -F "${SUNSET_TESSERACT_VERSION%-*}"
+          tesseract --list-langs 2>/dev/null | grep -qx "${SUNSET_OCR_LANG}"
+          node --version | grep -Fx "v${SUNSET_NODE_VERSION}"
+          just --version | grep -Fx "just ${SUNSET_JUST_VERSION}"
+          uv --version   | grep -F "uv ${SUNSET_UV_VERSION}"
+          spk --version  | grep -F "${SUNSET_SPECODELIC_VERSION}"
+
+      - name: "uv sync && just spec-check (canonical, SUNSET_STRICT_ENV=1)"
+        run: |
+          uv sync --locked
+          uv pip install "playwright==${SUNSET_PLAYWRIGHT_VERSION}"
+          .venv/bin/playwright install --with-deps chromium
+          just spec-check

@@ -194,6 +194,29 @@ def test_provider_failure_stops_without_manifest_and_preserves_ledger(
                                               if state == 'dispatch-uncertain']
 
 
+def test_budget_exhaustion_stops_without_manifest_and_preserves_ledger(
+        two_blocks, tmp_path, no_engines):
+    """Incident: a regional dispatch refused by the pinned attempt cap mid-run
+    (smoke incident 1). The refusal is pre-I/O: no dispatch uncertainty, no implicit
+    retry — but the stage ledger and partial artifacts must survive as a typed
+    stopped outcome, not escape as a raw traceback."""
+    from digitization.budget import BudgetExhausted, BudgetLedger
+
+    config = local_config(two_blocks)
+    config['budget'] = {**config['budget'], 'max_provider_attempts': 1}
+    config_path = tmp_path / 'local.json'
+    config_path.write_text(json.dumps(config))
+    output = tmp_path / 'run'
+    result = run(two_blocks, [1], config_path, output, runner=fake_engine([b'a\n']))
+    assert result['status'] == 'stopped-with-unresolved-work'
+    assert result['reason'] == 'budget-exhausted'
+    assert result['attempts_dispatched'] == 1
+    assert not (output / 'manifest.json').exists()  # nothing may look completed
+    ledger = BudgetLedger.open(output / 'budget-state.json')
+    assert {attempt['state'] for attempt in ledger.attempts} == {'completed'}
+    assert len(ledger.attempts) == 1
+
+
 def test_inspect_maps_local_regions_to_sources(two_blocks, tmp_path, no_engines):
     runner = fake_engine([b'  texto uno\n', b'texto dos\n'])
     config_path = tmp_path / 'local.json'

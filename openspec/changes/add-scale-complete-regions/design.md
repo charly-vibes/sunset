@@ -2,6 +2,8 @@
 
 `classify_outcome` already aggregates per-page retention into `text-complete / text-with-gaps / no-text-read`, which is a meet over a status order. `project` in `dsc03/substrate/views.py` already restricts a descriptor to a scope and records excluded links as coverage loss. The pieces exist at page granularity only, and the in-flight `document-views` delta ("Scoped projection and refinement") proposes the general restriction semantics this change applies below page level.
 
+**Division of ownership (task 1.1, aligned with document-views "Scoped projection and refinement"):** `dsc03/substrate/views.py` owns the general projection semantics — scoped projection keeping selected regions and internal edges, excluded links recorded as coverage loss, refinement and link classification. `dsc03/zoom.py` owns the scale ladder (word < line < block < page) and the operations over it: containment checking with the declared geometry tolerance, `zoom_in` as restriction applied to a ladder scope, and `lift`. zoom never re-states projection law: `zoom_in` calls the views-owned `project` and reports the projection's exclusions as coverage loss.
+
 ## Goals / Non-Goals
 
 Goals: one structure from document down to word; zoom operations as pure functions.

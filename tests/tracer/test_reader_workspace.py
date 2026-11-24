@@ -1,6 +1,10 @@
 """Purpose: Exercise the offline reader's persistent workspace in a real browser.
 Responsibilities: Verify layout, drawing continuity, editing, and step checkpoints.
 Rationale: sunset-6ci fixes viewport resets and end-only file saving for readers.
+Sunset-2uo: a missing playwright skips with a reason naming the missing
+dependency (canonical CI pins playwright + chromium); under
+SUNSET_STRICT_ENV=1 the skip becomes a failure — via tests/tracer/env_pins,
+without touching conftest.py.
 """
 
 import json
@@ -8,18 +12,22 @@ from pathlib import Path
 
 import pytest
 
+import env_pins
+
 REPO = Path(__file__).resolve().parents[2]
 ROOT = REPO / 'hitl/sunset-905.3'
 
 
 @pytest.fixture
 def reader_page():
-    playwright = pytest.importorskip('playwright.sync_api')
+    playwright = env_pins.import_playwright()
     with playwright.sync_playwright() as runtime:
         try:
             browser = runtime.chromium.launch(headless=True)
         except playwright.Error as exc:
-            pytest.skip(f'Chromium unavailable: {exc}')
+            env_pins.skip_or_fail(
+                f'chromium unavailable for playwright '
+                f'(canonical CI: playwright install chromium): {exc}')
         page = browser.new_page(viewport={'width': 1440, 'height': 1000})
         page.goto((ROOT / 'templates/observations-spa.html').as_uri())
         page.locator('#welcomeStart').click()

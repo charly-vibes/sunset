@@ -9,6 +9,9 @@
 #   must stay honest: traceability may be demonstrated, speed only when review
 #   time did not increase, and never release conformance.
 # Rationale: add-dsc-03 document-conformance "First-consumer demonstration".
+# Sunset-2uo: classes shelling out to the pinned native toolchain gate through
+#   tests/tracer/env_pins — stock machines skip with reasons, canonical CI
+#   (SUNSET_STRICT_ENV=1) fails on mismatch.
 """First-consumer demo (sunset-r68.13): extractors, snapshots, projection, measurement."""
 import json
 import os
@@ -17,6 +20,8 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+
+import env_pins
 
 from dsc03 import adapters, canonical, conformance, demo
 
@@ -29,6 +34,10 @@ def _empty_path_dir():
 
 
 class TestExtractors(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        env_pins.require_native_toolchain()
+
     def test_both_extractors_read_every_page(self):
         run = demo.run_extractors(CARRIER)
         self.assertEqual(set(run["pages"]), set(range(1, 7)))
@@ -58,6 +67,10 @@ class TestExtractors(unittest.TestCase):
 
 
 class TestSnapshots(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        env_pins.require_native_toolchain()
+
     def test_two_extractor_snapshots_with_canonical_agreement(self):
         run = demo.run_extractors(CARRIER)
         with tempfile.TemporaryDirectory() as tmp:
@@ -86,6 +99,10 @@ class TestSnapshots(unittest.TestCase):
 
 
 class TestProjectionAgainstOracle(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        env_pins.require_native_toolchain()
+
     def test_comparison_passes_against_reviewer_oracle(self):
         run = demo.run_extractors(CARRIER)
         result = demo.compare_extractors(run)
@@ -110,6 +127,7 @@ class TestProjectionAgainstOracle(unittest.TestCase):
 class TestMeasurementSheet(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        env_pins.require_native_toolchain()
         cls.reference_path = Path("fixtures/demo/measurement.json")
         cls.reference_before = cls.reference_path.read_bytes()
         cls.output = tempfile.TemporaryDirectory()

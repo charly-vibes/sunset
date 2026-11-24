@@ -168,6 +168,20 @@ def relationship_metrics(reference, candidate, mapping):
             'spurious_count': len(spurious)}
 
 
+def append_visual_review_summary(result, summary):
+    """Append a visual-review ingest summary to an evaluation record.
+
+    ``summary`` is the ``evaluation_summary`` emitted by
+    dsc03.visual.review.ingest_verdicts. Stored under
+    ``result["visual_review_ingest"]`` with its provenance label
+    (AGENT-INGESTED-HUMAN-VERDICTS) carried through; never touches existing
+    metrics or thresholds.
+    """
+    result["visual_review_ingest"] = {
+        "provenance": "AGENT-INGESTED-HUMAN-VERDICTS", **summary}
+    return result
+
+
 def evaluate(baseline_run, candidate_run, reference_path, policy_path, output):
     stage_info = validate_stage(policy_path); stage = stage_info['stage']
     reference_raw = Path(reference_path).read_bytes(); reference = json.loads(reference_raw)

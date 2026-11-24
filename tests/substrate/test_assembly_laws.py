@@ -27,7 +27,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from dsc03 import identity
-from dsc03.substrate.assembly import canonically_equal, compose, empty_part
+from dsc03.substrate.assembly import (_BY_ID, _COVERAGE_KEY, canonically_equal,
+                                      compose, empty_part)
 from dsc03.substrate.laws import typed_check
 
 # Synthetic carrier digests: two distinct "editions" for conflict fixtures.
@@ -325,6 +326,98 @@ class TestCanonicalOrderUnderIdentityProfile(unittest.TestCase):
         self.assertEqual([r["id"] for r in ba["regions"]],
                          ["r-issue", "r-art-2", "r-art-1"])
         self.assertFalse(canonically_equal(ab, ba))
+
+
+# -- identity-profile join laws (define-document-composition-semantics) --------------
+#
+# The join (A ⊕ B) over ANCHOR-DERIVED parts: commutativity, idempotence and
+# refusal absorption. Ids derive from record anchors (source_sha256,
+# record_kind, locator_path, profile_id, profile_version), never from operand
+# order or array position, so under the declared identity profile the join is
+# a commutative, idempotent, refusal-absorbing operation on canonically
+# emitted parts.
+
+JOIN_MERGED_SECTIONS = _BY_ID  # assembly's merged section list (same convention)
+JOIN_COVERAGE_KEY = _COVERAGE_KEY  # coverage uniqueness triple
+
+
+def _canon_sorted(part):
+    """A part in the identity regime's canonical emission form: every merged
+    section ascending by id, coverage by its uniqueness triple. This is
+    compose()'s fixpoint shape, so the idempotence law compose(x, x) == x is
+    measurable with both independent readers (relations keep array order)."""
+    out = copy.deepcopy(part)
+    for section in JOIN_MERGED_SECTIONS:
+        out[section] = sorted(out[section], key=lambda item: item["id"])
+    out["coverage"] = sorted(
+        out["coverage"], key=lambda c: tuple(c[k] for k in JOIN_COVERAGE_KEY))
+    return out
+
+
+def _conflicting_anchored_pair(page, text_a, text_b):
+    """Two anchored parts with the SAME anchors (hence the same derived ids)
+    but conflicting content claims — the smallest same-id conflict."""
+    return (_id_part(page, "essay", text_a), _id_part(page, "essay", text_b))
+
+
+class TestIdentityProfileJoinLaws(unittest.TestCase):
+    """Join laws over anchor-derived parts under the declared identity
+    profile: commutativity, idempotence, refusal absorption."""
+
+    def test_join_commutativity(self):
+        """join_commutative: canonical(compose(A,B)) == canonical(compose(B,A))
+        for anchor-derived parts — ids come from anchors, not operand order."""
+        for pages, arts in (((1, 2), ("essay", "poem")),
+                            ((3, 7), ("notes", "review")),
+                            ((4, 6), ("essay", "poem"))):  # anchor-distinct parts
+            a = _id_part(pages[0], arts[0], f"first {arts[0]} column")
+            b = _id_part(pages[1], arts[1], f"second {arts[1]} column")
+            self.assertEqual(typed_check(a)[0], "accepted")  # fixture soundness
+            self.assertEqual(typed_check(b)[0], "accepted")
+            ab, ba = compose(a, b), compose(b, a)
+            self.assertEqual(ab["status"], "assembled")
+            self.assertEqual(ba["status"], "assembled")
+            merged_ab, merged_ba = _assembled(ab), _assembled(ba)
+            self.assertTrue(canonically_equal(merged_ab, merged_ba))
+            # the derived ids themselves are order-independent: the merged
+            # region id set is identical in both directions
+            self.assertEqual({r["id"] for r in merged_ab["regions"]},
+                             {r["id"] for r in merged_ba["regions"]})
+
+    def test_join_idempotence(self):
+        """join_idempotent: canonical(compose(A,A)) == canonical(A) for an
+        anchor-derived part, and (A ⊕ B) ⊕ (A ⊕ B) == A ⊕ B."""
+        x = _canon_sorted(_id_part(2, "poem", "second column"))
+        self.assertEqual(typed_check(x)[0], "accepted")  # fixture soundness
+        result = compose(x, x)
+        self.assertEqual(result["status"], "assembled")
+        self.assertTrue(canonically_equal(_assembled(result), x))
+        # idempotence of an assembled result: y ⊕ y == y
+        y = compose(_id_part(1, "essay", "first column"),
+                    _id_part(2, "poem", "second column"))
+        self.assertEqual(y["status"], "assembled")
+        again = compose(y, y)
+        self.assertEqual(again["status"], "assembled")
+        self.assertTrue(canonically_equal(_assembled(again), _assembled(y)))
+
+    def test_refusal_absorption(self):
+        """refusal_absorbing: compose(refusal, X) == compose(X, refusal) ==
+        refusal — the classified refusal envelope verbatim, on either side,
+        against every operand kind (part, empty part, another refusal)."""
+        a, b = _conflicting_anchored_pair(1, "first column", "counterfeit first")
+        self.assertEqual(compose(a, b)["status"], "refused")  # witness setup
+        r1 = compose(a, b)
+        self.assertEqual(r1["rule"], "same_id_conflicting_claims")
+        c, d = _conflicting_anchored_pair(2, "second column", "counterfeit second")
+        r2 = compose(c, d)
+        self.assertNotEqual(r1["smallest"], r2["smallest"])  # distinct refusals
+        p = _id_part(3, "review", "third column")           # well-formed part
+        for label, x, y in (("left-part", r1, p), ("right-part", p, r1),
+                            ("both-same", r1, r1), ("left-distinct", r1, r2),
+                            ("left-empty", r1, empty_part())):
+            out = compose(x, y)
+            self.assertEqual(out, r1, label)  # the envelope itself, verbatim
+            self.assertEqual(out["status"], "refused", label)
 
 
 if __name__ == "__main__":

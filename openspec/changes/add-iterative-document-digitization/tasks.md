@@ -29,12 +29,12 @@ These are OpenSpec execution checkpoints; Beads remains the task tracker. Before
 
 The requirements Pinned model identity, Exact model call key, Schema-validated model output admission, Replay performs zero model calls, and Durable spend boundary for model calls are added to this change rather than a parallel `add-model-record-replay` change (review verdict CORR-005/CORR-004: one capability, no duplicate capability; fresh-run variability remains covered by Fresh inference variability).
 
-- [ ] 4.1 RED: floating model alias refused before dispatch; unavailable revision recorded
-- [ ] 4.2 RED: call-key digest changes on any component change (template, rendered input, schema, decoding params)
-- [ ] 4.3 RED: schema-invalid model output recorded as failed attempt, semantic state unchanged
-- [ ] 4.4 RED: replay of a recorded model run performs zero provider calls; missing record yields incomplete-artifacts
-- [ ] 4.5 RED: uncertain dispatch survives resume without implicit retry; explicit settle recorded
-- [ ] 4.6 Implement the model adapter beside the OCR adapter in `digitization/providers.py`; ledger, replay and artifacts reuse unchanged
+- [x] 4.1 RED: floating model alias refused before dispatch; unavailable revision recorded
+- [x] 4.2 RED: call-key digest changes on any component change (template, rendered input, schema, decoding params)
+- [x] 4.3 RED: schema-invalid model output recorded as failed attempt, semantic state unchanged
+- [x] 4.4 RED: replay of a recorded model run performs zero provider calls; missing record yields incomplete-artifacts
+- [x] 4.5 RED: uncertain dispatch survives resume without implicit retry; explicit settle recorded
+- [x] 4.6 Implement the model adapter beside the OCR adapter in `digitization/providers.py`; ledger, replay and artifacts reuse unchanged
 
 ## Checkpoint status notes (decision-time re-anchoring, sunset-rmx.14)
 

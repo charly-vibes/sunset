@@ -11,17 +11,21 @@ set dotenv-load
 
 python := env_var_or_default("SUNSET_PYTHON", ".venv/bin/python")
 
+# Python source for the page-key extraction shared by the digitization recipes
+# below: print a recorded-config JSON's page keys as a numerically sorted,
+# comma-separated list (argv[1] = config path). Each recipe wraps it in
+# `-c '...'`; it holds no single quotes, so the shell quoting stays literal.
+pages_py := 'import json,sys; print(",".join(sorted(json.load(open(sys.argv[1]))["pages"], key=int)))'
+
 # Run all spec-corpus gates (OpenSpec strict validation + frozen 0.2 validator)
 spec-check:
-    @echo "==> openspec strict validation (deployed specs + active changes, incl. deployed 0.3)"
-    openspec validate --all --strict --no-interactive
     @echo "==> spk lint (Specodelic layer of openspec/changes, incl. archive)"
     spk lint openspec/changes
-    @echo "==> tracer suite (0.3 machinery, not real-carrier conformance)"
+    @echo "==> full test suite (pytest tests)"
     {{python}} -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"
     python3 spec/document-model-specodelic-v3/validator.py test
-    @echo "==> openspec 1.x strict (same corpus, validator pinned by versions.ddl.toml)"
+    @echo "==> openspec 1.x strict validation (deployed specs + active changes, incl. deployed 0.3; validator pinned by versions.ddl.toml)"
     npx -y @fission-ai/openspec@1.14.2 validate --all --strict --no-interactive
     @echo "ALL GATES PASSED"
 
@@ -41,29 +45,33 @@ visual-review port="8123":
 # Recorded digitization of a native-text PDF + its visual-review bundle
 # (sunset-bv4): pymupdf text blocks become recorded detections/recognitions,
 # the tested pipeline renders + exports the descriptor, and the review SPA
-# presents the real extraction claims over pinned renders. `pages` is an
-# optional comma-separated 1-based list. `output` is the run directory
-# (review lands at <output>/review.html). E.g.:
-#   just digitization-review pba-judicial-2026-07-29.pdf /tmp/pba-review 8124
-digitization-review source output port="8124" pages="":
+# presents the real extraction claims over pinned renders. Args:
+# source output [pages] [port]. `pages` is an optional comma-separated 1-based
+# list. `output` is the run directory (review lands at <output>/review.html);
+# a trailing slash is stripped before deriving <output>-recorded.json. E.g.:
+#   just digitization-review fixtures/carriers/cta-cte-propietario-redacted.pdf /tmp/cta-review
+#   just digitization-review fixtures/carriers/cta-cte-propietario-redacted.pdf /tmp/cta-review 1,2 8124
+digitization-review source output pages="" port="8124":
     #!/usr/bin/env bash
     set -euo pipefail
-    src="{{source}}"; out="{{output}}"; cfg="{{output}}-recorded.json"
+    src="{{source}}"; out="{{output}}"
+    out="${out%/}"; cfg="${out}-recorded.json"
     page_flag=""
     [ -n "{{pages}}" ] && page_flag="--pages {{pages}}"
     {{python}} -B -m digitization.recorded_config --source "$src" --output "$cfg" $page_flag
-    run_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$cfg")
+    run_pages=$({{python}} -B -c '{{pages_py}}' "$cfg")
     {{python}} -B -m digitization run --source "$src" --pages "$run_pages" --config "$cfg" --output "$out"
     {{python}} -B -m dsc03.visual.review --descriptor "$out/descriptor.json" --out "$out/review.html" --serve {{port}}
 
 # OCR ground-truth loop (sunset-9op): rasterize a text PDF to pixels, OCR the
 # raster with pinned tesseract (spa), compare OCR regions against the native
 # truth (IoU + text similarity measurement sheet), and serve the OCR claims
-# in the review SPA over the rasterized render. Args: source output [port]
-# [pages] [dpi]. `pages` is a comma-separated 1-based list (default: all).
-# Eval exit 2 = measured discrepancies (expected — that is the finding).
-# E.g.: just ocr-review pba-judicial-2026-07-29.pdf /tmp/pba-ocr 8126 1
-ocr-review source output port="8125" pages="" dpi="200":
+# in the review SPA over the rasterized render. Args: source output [pages]
+# [port] [dpi]. `pages` is a comma-separated 1-based list (default: all).
+# ocr_eval exit 2 = measured discrepancies (expected — that is the finding);
+# any other nonzero exit aborts the recipe. E.g.:
+#   just ocr-review fixtures/carriers/cta-cte-propietario-redacted.pdf /tmp/cta-ocr 1
+ocr-review source output pages="" port="8125" dpi="200":
     #!/usr/bin/env bash
     set -euo pipefail
     src="{{source}}"; root="{{output}}"; dpi="{{dpi}}"
@@ -71,13 +79,21 @@ ocr-review source output port="8125" pages="" dpi="200":
     mkdir -p "$root"
     {{python}} -B -m digitization.rasterize --source "$src" --output-dir "$root/raster" --dpi "$dpi" $page_flag
     {{python}} -B -m digitization.recorded_config --source "$src" --output "$root/truth-config.json" --granularity lines $page_flag
-    truth_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$root/truth-config.json")
+    truth_pages=$({{python}} -B -c '{{pages_py}}' "$root/truth-config.json")
     {{python}} -B -m digitization run --source "$src" --pages "$truth_pages" --config "$root/truth-config.json" --output "$root/truth-run"
     {{python}} -B -m digitization.ocr_config --image-pdf "$root/raster/image.pdf" --pages-dir "$root/raster" --dpi "$dpi" $page_flag --output "$root/ocr-config.json"
-    ocr_pages=$({{python}} -B -c "import json,sys; print(','.join(sorted(json.load(open(sys.argv[1]))['pages'], key=int)))" "$root/ocr-config.json")
+    ocr_pages=$({{python}} -B -c '{{pages_py}}' "$root/ocr-config.json")
     {{python}} -B -m digitization run --source "$root/raster/image.pdf" --pages "$ocr_pages" --config "$root/ocr-config.json" --output "$root/ocr-run"
     set +e
     {{python}} -B -m digitization.ocr_eval --true "$root/truth-run/descriptor.json" --ocr "$root/ocr-run/descriptor.json" --output "$root/ocr-eval.json" --iou 0.5 >/dev/null
-    echo "eval exit $? (2 = discrepancies measured — sheet at $root/ocr-eval.json)"
+    eval_rc=$?
     set -e
+    if [ "$eval_rc" -eq 2 ]; then
+        echo "eval exit 2 (discrepancies measured — sheet at $root/ocr-eval.json)"
+    elif [ "$eval_rc" -eq 0 ]; then
+        echo "eval exit 0 (clean comparison — sheet at $root/ocr-eval.json)"
+    else
+        echo "ocr_eval failed with exit $eval_rc (expected 2 = discrepancies or 0 = clean; aborting)" >&2
+        exit "$eval_rc"
+    fi
     {{python}} -B -m dsc03.visual.review --descriptor "$root/ocr-run/descriptor.json" --out "$root/ocr-run/review.html" --serve {{port}}

@@ -1,0 +1,58 @@
+{
+ "kind": "visual-review-verdicts",
+ "version": 1,
+ "provenance": "AGENT-INGESTED-HUMAN-VERDICTS",
+ "record_sha256": "0e9a3991dd95f4980c197b9aad21253c51a82ff361e051c89f0af80097116700",
+ "base_commit": "a52bf22d3d8d396392829ea0980113b2854bc659",
+ "verdicts": {
+  "reviewer": "agent-smoke",
+  "rules": "no winner election, no smoothing; unknown is an answer",
+  "carriers": [
+   {
+    "carrier": "bank-statement-ca-excerpt",
+    "pages": [
+     {
+      "page": 1,
+      "unavailable": null,
+      "page_size_px": [612, 792],
+      "regions": [
+       {"id": "ledger-block", "verdict": "differ", "note": "ink gap at right edge"},
+       {"id": "margin-lower", "verdict": "agree", "note": ""}
+      ],
+      "missed_ink": [
+       {"rect_px": [10, 20, 30, 40]},
+       {"rect_px": [100, 200, 50, 60]}
+      ]
+     }
+    ]
+   },
+   {
+    "carrier": "diario-de-poesia-excerpt",
+    "pages": [
+     {
+      "page": 1,
+      "unavailable": null,
+      "page_size_px": [595, 842],
+      "regions": [
+       {"id": "dark-panel", "verdict": "agree", "note": ""},
+       {"id": "scan-margin", "verdict": "unknown", "note": "cannot tell under this frame"}
+      ],
+      "missed_ink": []
+     }
+    ]
+   },
+   {
+    "carrier": "visual-strip",
+    "pages": [
+     {
+      "page": 1,
+      "unavailable": "render unavailable: no renderer on PATH",
+      "page_size_px": null,
+      "regions": [],
+      "missed_ink": []
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -7,7 +7,15 @@
 #   simplification, design D4), using the one recorded calibration entry for
 #   the carrier+page. Never a naive mask-vs-pixels diff: rectangles
 #   naturally cover whitespace between glyphs, so the comparison surface is
-#   the simplified source, not raw pixels. Report typed per-page outcomes
+#   the simplified source, not raw pixels. Region claims may scope themselves
+#   to ONE carrier-observation content class (text / vector / raster) via a
+#   "class" key, measured against that class's observed rect-union mask from
+#   a content_classes record under the SAME recorded bounds; and an "ink"
+#   claim that passes its primary window yet overcovers blank area — its
+#   rect area exceeding the contained ink area by more than the pinned
+#   OVERSIZE_MAX_AREA_RATIO — ends differ WITH the "region-oversized"
+#   attribution, so a giant rectangle cannot pass by overcovering. Report
+#   typed per-page outcomes
 #   (agree/differ/unknown/unavailable) with per-region verdicts — every
 #   disagreement retained and region-attributed (including the pinned
 #   "ink-outside-rect" attribution: ink sitting within the dilation band
@@ -70,19 +78,68 @@ alone — no defaults, no fallbacks):
   ``differ``. (These mirror the level-B oracle's pinned per-region
   semantics.)
 
+- Per-class claims: a region may scope its claim to ONE carrier-observation
+  content class — ``"class": "text" | "vector" | "raster"``
+  (``coverage.CONTENT_CLASSES``, the observation classes of
+  ``dsc03/visual/content_classes.py``). A class-scoped claim is measured
+  against THAT class's observed rect-union mask — built by painting every
+  usable record entry's ``rect_px`` — under the SAME recorded ``[min, max]``
+  bounds (the calibration contract is unchanged; no recalibration). The
+  record arrives as the optional ``observations`` argument and is consumed
+  ONLY when at least one claim is class-scoped: claims without a ``class``
+  key are measured against the undifferentiated simplified source exactly
+  as before. A class-scoped claim that cannot be evaluated per class is a
+  typed page ``unknown`` — ``class-observations-missing`` (no record
+  passed) or ``class-observations-invalid`` (the record is not a usable
+  ``content-class-observations`` "observed" record for THIS page, frame,
+  dpi and raster extent) — never a silent fall back. A ``class`` value
+  outside the vocabulary is a retained region ``differ``. When a
+  class-scoped ``"ink"`` claim FAILS its primary test with the claimed
+  class absent from the rect while ANOTHER carrier class's observed rects
+  overlap it, the retained ``differ`` carries the attribution
+  ``"explained-by-<class>"`` (deterministic CONTENT_CLASSES order): the
+  ink present belongs to another content class — a decorative raster band
+  no longer reads as missing text. Ink attributable to no carrier
+  observation stays a plain ``differ``; attribution is never invented, and
+  class-scoped claims never take the ``ink-outside-rect`` attribution
+  (theirs is the class-scoped explanation above).
+
+- Overcoverage penalty (pinned refinement, still ``differ``): when a region
+  claiming ``"ink"`` PASSES its primary test but its rect area exceeds its
+  contained comparison-surface ink area by more than the pinned
+  ``OVERSIZE_MAX_AREA_RATIO`` (region-area : contained-ink-area), the
+  verdict is ``differ`` with attribution ``"region-oversized"``: the region
+  explains the ink but overcovers blank area — a giant rectangle cannot
+  pass by overcovering. The ratio is measured on the SAME surface as the
+  primary test (the simplified source; the class mask for class-scoped
+  claims), and a contained-ink area of zero counts as infinite
+  overcoverage. ``"no-ink"`` claims are never oversized (covering blank
+  area is their claim), and a region failing its primary test keeps a
+  plain ``differ`` — the penalty never invents a second reading. The bound
+  is a pinned morphology parameter of THIS oracle (like
+  content_classes' ``MIN_AREA_PX``), NOT a recorded calibration entry:
+  recorded thresholds and the calibration contract are unchanged. Seeded
+  validation (AGENT-EXECUTED measurements through the pinned pipeline —
+  proxy metrics, a human pass supersedes): the sparsest region any
+  recorded window legitimately admits measures a ratio of ~13.3
+  (bank-statement-ca-excerpt header band, ~7.5% simplified ink); the
+  smallest demonstrated oversized claim measures ~34; the pinned 20 sits
+  between with margin on both sides.
+
 - Ink-outside-rect attribution (pinned refinement, still ``differ``): when a
   region FAILS its primary test, its rect contains no RAW ink (pre-
   simplification), and the raw ink mask has ink within the recorded dilation
   N px (Chebyshev distance) OUTSIDE the rect boundary, the disagreement is
   attributed reason ``"ink-outside-rect"``: the claimed ink is misplaced
-  adjacent to the rect, not absent (missing ink would be a plain ``differ``
+  adjacent to the rect, not missing (missing ink would be a plain ``differ``
   with no reason). The verdict REMAINS ``differ`` — the oracle never elects
   to move or grow the region to manufacture agreement; the reason exists so
   disagreements are attributable, satisfying "No silent resolution". The
   attribution window is exactly the recorded dilation N — the same tolerance
-  the comparison itself uses — and no other threshold exists in this module.
-  A failing ``"no-ink"`` region always has ink inside its rect, so the
-  attribution can never fire for it.
+  the comparison itself uses; the only OTHER threshold in this module is the
+  pinned overcoverage bound above, which is a module constant and touches no
+  recorded calibration entry. A failing ``"no-ink"`` region always has ink
+  inside its rect, so the attribution can never fire for it.
 
 - Region hygiene: malformed rects or rects mapping partly/wholly outside the
   raster, or claims outside the declared vocabulary ``{"ink", "no-ink"}``,
@@ -112,7 +169,14 @@ from dsc03.visual._pixels import (
     comparison_mask,
     parse_dilation,
 )
-from dsc03.visual.coverage import _pixel_rect, _region_fraction
+from dsc03.visual.coverage import (
+    CONTENT_CLASSES,
+    _any_ink,
+    _class_ink_masks,
+    _explained_by,
+    _pixel_rect,
+    _region_fraction,
+)
 
 PROPERTY = "region-alignment"
 
@@ -124,10 +188,21 @@ SCOPED_CLAIM = (
     "the pinned carrier page."
 )
 
-# The disagreement attribution this oracle may attach to a retained,
+# The disagreement attributions this oracle may attach to a retained,
 # region-attributed `differ` verdict (see the module docstring for the
-# pinned rule; its single threshold is the recorded dilation).
+# pinned rules; the ink-outside-rect window is the recorded dilation, the
+# overcoverage bound is the pinned module constant below — neither is a
+# recorded calibration entry).
 INK_OUTSIDE_RECT = "ink-outside-rect"
+OVERSIZE = "region-oversized"
+
+# Pinned overcoverage bound (region-area : contained-comparison-surface-ink-
+# area): an "ink" claim whose rect explains the ink yet overcovers blank
+# area past this ratio ends `differ` with "region-oversized". Seeded-
+# validated against the committed corpus — sparsest legitimate recorded
+# region ~13.3 (bank header band), smallest demonstrated oversize ~34 — and
+# deliberately NOT part of the recorded calibration contract.
+OVERSIZE_MAX_AREA_RATIO = 20.0
 
 
 @dataclass(frozen=True)
@@ -136,10 +211,12 @@ class AlignmentOutcome:
 
     ``regions`` retains one ``{"id": ..., "status": "agree"|"differ"}``
     entry per evaluated claim, in input order, plus an optional ``"reason"``
-    (pinned: ``"ink-outside-rect"``) on disagreeing entries — disagreements
-    are attributed to their source regions and never smoothed or elected
-    away. For page-level ``unknown``/``unavailable`` outcomes no region
-    verdicts exist, so ``regions`` is empty and ``reason`` explains why.
+    (pinned: ``"ink-outside-rect"``, ``"region-oversized"`` or
+    ``"explained-by-<class>"``) on disagreeing entries; class-scoped claims
+    carry their ``"class"`` verbatim — disagreements are attributed to
+    their source regions and never smoothed or elected away. For page-level
+    ``unknown``/``unavailable`` outcomes no region verdicts exist, so
+    ``regions`` is empty and ``reason`` explains why.
     """
 
     status: str
@@ -206,10 +283,7 @@ def _usable_region_calibration(calibration, carrier: str, page: int):
 
 def _has_ink(mask, width: int, x0: int, y0: int, x1: int, y1: int) -> bool:
     """Whether the packed 0/1 mask has any ink in the half-open pixel rect."""
-    for y in range(y0, y1):
-        if mask[y * width + x0:y * width + x1].count(1):
-            return True
-    return False
+    return _any_ink(mask, width, (x0, y0, x1, y1))
 
 
 def _ink_outside_rect(raw, width: int, height: int, rect, dilation: int) -> bool:
@@ -242,16 +316,20 @@ def masks_outcome(
     calibration,
     geometry,
     frame_name,
+    observations=None,
 ) -> AlignmentOutcome:
     """Evaluate geometry-mask (region) alignment on one pinned page.
 
     ``render_result`` is a ``render.Rendered`` or ``render.RenderUnavailable``
     for the page; ``regions`` the page's claimed region rects in descriptor
-    points (``{"id", "x", "y", "w", "h", "expected"}``); ``calibration`` the
-    ONE recorded entry for this carrier+page (or None); ``geometry``/
-    ``frame_name`` name the declared frame the claims are mapped through.
-    See the module docstring for the pinned semantics (comparison surface is
-    the simplified source; exact agree rules; ink-outside-rect attribution).
+    points (``{"id", "x", "y", "w", "h", "expected"}``, optional ``"class"``);
+    ``calibration`` the ONE recorded entry for this carrier+page (or None);
+    ``geometry``/``frame_name`` name the declared frame the claims are mapped
+    through; ``observations`` the page's content-class observations record
+    (consumed only when some claim is class-scoped). See the module docstring
+    for the pinned semantics (comparison surface is the simplified source;
+    exact agree rules; ink-outside-rect attribution; overcoverage penalty;
+    per-class claims).
     """
     config = render_result.config
     carrier = str(carrier)
@@ -278,26 +356,69 @@ def masks_outcome(
         return _unknown(config, carrier, "uncalibrated")
     low, high = bounds
 
+    # Per-class machinery is built only when some claim is actually scoped
+    # to a carrier class; classless claims never consult (or require) it.
+    class_scoped = any(
+        isinstance(region, dict) and region.get("class") in CONTENT_CLASSES
+        for region in regions
+    )
+    class_masks = None
+    if class_scoped:
+        class_masks, class_reason = _class_ink_masks(
+            observations, config=config, frame_name=frame_name,
+            width=width, height=height,
+        )
+        if class_masks is None:
+            return _unknown(config, carrier, class_reason)
+
     evaluated = []
     all_regions_agree = True
     for region in regions:
         rid = region.get("id") if isinstance(region, dict) else None
+        claimed_class = region.get("class") if isinstance(region, dict) else None
+        entry = {"id": rid}
+        if claimed_class is not None:
+            # Retain the claim's class dimension verbatim — including an
+            # out-of-vocabulary value (a retained disagreement below).
+            entry["class"] = claimed_class
         rect = _pixel_rect(mapping, region)
         if rect is None:
             # Malformed or out-of-bounds claim: a retained disagreement, not
             # something to clip, fix or drop ("No silent resolution").
-            entry = {"id": rid, "status": "differ"}
+            entry["status"] = "differ"
+        elif claimed_class is not None and claimed_class not in CONTENT_CLASSES:
+            # Out-of-vocabulary class: contradicts the claim format, never
+            # guessed into a measurable claim.
+            entry["status"] = "differ"
         else:
-            measured = _region_fraction(simplified, width, rect)
+            surface = class_masks[claimed_class] if claimed_class else simplified
+            measured = _region_fraction(surface, width, rect)
             if region["expected"] == "ink":
                 agree = low <= measured <= high
             else:  # "no-ink": nothing beyond the calibration floor
                 agree = measured <= low
-            entry = {"id": rid, "status": "agree" if agree else "differ"}
-            if not agree and region["expected"] == "ink" and _ink_outside_rect(
-                raw, width, height, rect, dilation
-            ):
-                entry["reason"] = INK_OUTSIDE_RECT
+            if agree and region["expected"] == "ink":
+                # Overcoverage penalty: the region explains the ink but its
+                # rect overcovers blank area past the pinned ratio (zero
+                # contained ink counts as infinite overcoverage). The ratio
+                # is measured on the SAME surface as the primary test.
+                area = (rect[2] - rect[0]) * (rect[3] - rect[1])
+                contained_ink = round(measured * area)
+                if contained_ink == 0 or area > OVERSIZE_MAX_AREA_RATIO * contained_ink:
+                    agree = False
+                    entry["reason"] = OVERSIZE
+            entry["status"] = "agree" if agree else "differ"
+            if not agree and region["expected"] == "ink":
+                if claimed_class is not None:
+                    if not _any_ink(surface, width, rect):
+                        explained = _explained_by(rect, claimed_class,
+                                                  class_masks, width)
+                        if explained is not None:
+                            # The ink present belongs to another content
+                            # class — attributed, never read as missing.
+                            entry["reason"] = explained
+                elif _ink_outside_rect(raw, width, height, rect, dilation):
+                    entry["reason"] = INK_OUTSIDE_RECT
         evaluated.append(entry)
         all_regions_agree = all_regions_agree and entry["status"] == "agree"
 

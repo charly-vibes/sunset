@@ -120,8 +120,10 @@ def compose(a, b):
 
     Either operand may be a part descriptor or a prior compose() result —
     nested notation compose(compose(A,B),C) composes envelopes directly, and
-    a refusal on either side propagates (composition of a refusal is refused,
-    never a crash). Returns {"status": "assembled", "descriptor": d} or
+    the join is refusal-absorbing: a classified refusal on either side
+    composes to itself, the envelope returned verbatim (the left one when
+    both operands refuse), never unwrapped into an operand, never dropped.
+    Returns {"status": "assembled", "descriptor": d} or
     {"status": "refused", "rule": ..., "smallest": [...], "detail": {...}}.
     The empty part is the identity on either side. For non-empty operands:
     sources must agree; shared IDs must carry identical records (else refuse
@@ -130,12 +132,15 @@ def compose(a, b):
     result must validate (typed_check) — an invalid union refuses.
     """
     try:
+        # Absorption (identity-profile join laws): a classified refusal
+        # composes to itself on either side — the envelope is returned
+        # verbatim, never unwrapped into an operand and never dropped.
+        if isinstance(a, dict) and a.get("status") == "refused":
+            return copy.deepcopy(a)
+        if isinstance(b, dict) and b.get("status") == "refused":
+            return copy.deepcopy(b)
         a = _operand(a)
-        if a is None:
-            return b  # b is already a refusal envelope — propagate
         b = _operand(b)
-        if b is None:
-            return a
         if is_empty(a):
             return {"status": "assembled", "descriptor": copy.deepcopy(b)}
         if is_empty(b):

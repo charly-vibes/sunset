@@ -162,7 +162,7 @@ def test_native_replay_does_not_call_extractor_or_open_pdf(tmp_path, monkeypatch
     assert replay(run, tmp_path / 'replayed')['status'] == 'replayed'
 
 
-@pytest.mark.parametrize('version', ['1', 'future', '3'])
+@pytest.mark.parametrize('version', ['1', '2', 'future'])
 def test_native_legacy_and_unknown_manifest_versions_are_unsupported(tmp_path, version):
     source, run = tmp_path / 'source.pdf', tmp_path / 'run'
     pdf_fixture(source)

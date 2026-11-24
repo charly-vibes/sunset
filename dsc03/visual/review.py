@@ -27,6 +27,7 @@
 
 import argparse
 import base64
+import hashlib
 import json
 import re
 import shutil
@@ -51,6 +52,43 @@ RULES = "no winner election, no smoothing; unknown is an answer"
 # is carried structurally in page_record["refusal"] = {code, reason}
 # ("unavailable" keeps the prefixed display string for the review SPA).
 CORRELATED_RENDER_REFUSED = "correlated-render-refused"
+
+# Provenance label for verdicts ingested from a human (or human-supervised
+# agent) review pass: every report, counterexample and evaluation summary
+# this module emits carries it, so downstream consumers never mistake
+# ingested verdicts for mechanical oracle outcomes.
+PROVENANCE_LABEL = "AGENT-INGESTED-HUMAN-VERDICTS"
+
+# Sunset-9rg caveat carried verbatim in every missed-ink report entry:
+# missed-ink boxes are a proxy metric, not a measurement. Decorative and
+# graphic ink can be invisible to native text observation (transcript
+# 6ae4669e: on BORA gazettes the decorative heading band is invisible to
+# native text objects; ink-coverage 71.89% -> 99.55% once graphic-region
+# candidates are counted), so the count underestimates missed ink.
+MISSING_INK_CAVEAT = (
+    "ESTIMATE: proxy metric per sunset-9rg (transcript 6ae4669e): decorative/"
+    "graphic ink can be invisible to native text observation (BORA gazettes: "
+    "ink-coverage 71.89% -> 99.55% once graphic-region candidates are "
+    "counted), so missed-ink boxes understate ink and are not a measurement."
+)
+
+# Typed refusal when the verdicts bundle was built against a different
+# calibration record (record sha256 or base_commit mismatch). FP/FN
+# statistics must never be attributed to the wrong record version, so this
+# is a typed error, never a warning.
+RECORD_MISMATCH = "record-version-mismatch"
+
+
+class RecordVersionMismatch(ValueError):
+    """Verdicts bundle does not pin the calibration record being compared
+    against (record sha256 or base_commit mismatch). Refusal is typed and
+    non-negotiable: ingest produces no statistics on a mismatch."""
+
+    code = RECORD_MISMATCH
+
+    def __init__(self, reason):
+        super().__init__(reason)
+        self.reason = reason
 
 # Declared geometry artifacts the calibration record names, mirroring the
 # mapping in tests/tracer/test_visual_calibration.py.
@@ -375,12 +413,249 @@ def _write_bundle(out_path, record):
     out.write_text(html, encoding="utf-8")
 
 
-def main(argv=None):
-    """Build (and optionally serve) the all-examples review bundle.
+# -- verdicts ingest -------------------------------------------------------------------
 
-    ``--out`` writes the self-contained HTML; ``--serve [port]`` then serves
-    the output directory over loopback-only http.server and opens the page.
+
+_VERDICT_VOCABULARY = ("agree", "differ", "unknown")
+
+# Ingest compares human verdicts against the derivation rows the review
+# bundle was built from (build_calibration_review_bundle walks every unique
+# (carrier, file, page, geometry, frame) target across all recorded runs);
+# detection-run outcomes are a different oracle pass and are not attributed
+# to the human pass.
+_INGEST_RUN = "derivation"
+
+
+def _record_sha(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _oracle_rows(calibration):
+    """derivation-run oracle outcomes keyed by (carrier, page, property)."""
+    return {(row["carrier"], row["page"], row["property"]): row
+            for row in calibration["per_page_outcomes"]
+            if row.get("run", _INGEST_RUN) == _INGEST_RUN}
+
+
+def _refuse(bundle, record_path):
+    """Version pinning (typed refusal, never a warning)."""
+    actual = _record_sha(record_path)
+    if bundle.get("record_sha256") != actual:
+        raise RecordVersionMismatch(
+            f"verdicts bundle pins record sha256 "
+            f"{bundle.get('record_sha256')!r} but {record_path} hashes to "
+            f"{actual!r}; FP/FN statistics are never attributed to the "
+            f"wrong record version")
+    if bundle.get("base_commit") != _BASE_COMMIT:
+        raise RecordVersionMismatch(
+            f"verdicts bundle pins base_commit {bundle.get('base_commit')!r} "
+            f"but ingest runs against {_BASE_COMMIT!r}; refusing to "
+            f"attribute verdicts across commits")
+
+
+def _base_commit():
+    import subprocess
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(_ROOT),
+            capture_output=True, text=True, check=True).stdout.strip()
+    except Exception:  # noqa: BLE001 — provenance degrades to typed unknown
+        return None
+
+
+_BASE_COMMIT = _base_commit()
+
+
+def _counterexample(row, record_sha, bundle_sha):
+    """One differ row in the dsc03 counterexample format.
+
+    replayable=false per existing convention (human verdicts are not
+    machine-replayable); dsc03.compare.replay refuses the bundle."""
+    return {
+        "witness": {
+            "rule_id": "visual-review-verdict-differ",
+            "outcome": "differ",
+            "comparator": {"id": "human-visual-review", "version": "1"},
+            "endpoint_types": ["calibration-oracle", "human-verdict"],
+            "observable_scope": ["carrier", "page", "region", "property"],
+            "input_hashes": {
+                "calibration_record": record_sha,
+                "verdicts_bundle": bundle_sha,
+            },
+            "expected": "oracle agree",
+            "observed": "human differ",
+            "message": (f"human verdicts differ on region "
+                        f"{row['region']!r} where the oracle recorded agree "
+                        f"({row['carrier']} page {row['page']} "
+                        f"{row['property']})"),
+            "replayable": False,
+            "redaction": {
+                "omitted": ["rendered page pixels", "human review session"],
+                "limitation": "human visual verdicts cannot be "
+                              "machine-replayed; rerun requires the pinned "
+                              "review bundle and a fresh human pass",
+            },
+            "replay_limitations": ["human verdicts are not machine-replayable"],
+        },
+        "inputs": {
+            "carrier": row["carrier"],
+            "page": row["page"],
+            "region": row["region"],
+            "property": row["property"],
+        },
+    }
+
+
+def ingest_verdicts(verdicts_path, record_path=None, evaluation_record=None):
+    """Ingest a review-verdicts bundle against the pinned calibration record.
+
+    Returns the ingest report: per carrier × page × property agreement
+    counts (human agree/differ/unknown vs the recorded derivation oracle
+    outcome; oracle false-negative = human differ where oracle agree; human
+    unknown never resolves — no winner election, no smoothing), per-page
+    missed-ink accounting (labeled ESTIMATE with the sunset-9rg caveat), and
+    the differ rows exported in the dsc03 counterexample format with
+    replayable=false. Refuses with RecordVersionMismatch when the bundle
+    does not pin ``record_path`` (record sha256) and the ingest commit
+    (base_commit). Never modifies thresholds; when ``evaluation_record`` is
+    a dict, the summary is appended to it via
+    digitization.evaluation.append_visual_review_summary.
     """
+    import copy
+
+    from digitization.evaluation import append_visual_review_summary
+
+    record_path = Path(record_path or _CALIBRATION_PATH)
+    bundle = json.loads(Path(verdicts_path).read_text(encoding="utf-8"))
+    if bundle.get("provenance") not in (None, PROVENANCE_LABEL):
+        raise RecordVersionMismatch(
+            f"unexpected bundle provenance {bundle.get('provenance')!r}; "
+            f"ingest only accepts {PROVENANCE_LABEL} bundles")
+    _refuse(bundle, record_path)
+
+    calibration = json.loads(record_path.read_text(encoding="utf-8"))
+    record_sha = _record_sha(record_path)
+    bundle_sha = _record_sha(verdicts_path)
+    oracle = _oracle_rows(calibration)
+
+    agreement, missed_ink, unavailable_pages, counterexamples = [], [], [], []
+    unknown_total = 0
+    oracle_fn_total = 0
+
+    for carrier_entry in bundle["verdicts"]["carriers"]:
+        carrier = carrier_entry["carrier"]
+        for page_entry in carrier_entry["pages"]:
+            page = page_entry["page"]
+            if page_entry.get("unavailable"):
+                unavailable_pages.append({
+                    "carrier": carrier,
+                    "page": page,
+                    "reason": page_entry["unavailable"],
+                })
+            # tri-state tally; verdicts outside the vocabulary are refused,
+            # never coerced
+            human = {"agree": 0, "differ": 0, "unknown": 0, "pending": 0}
+            region_rows = []
+            differs_here = []
+            for region in page_entry.get("regions", []):
+                verdict = region.get("verdict")
+                if verdict is None:
+                    human["pending"] += 1
+                elif verdict not in _VERDICT_VOCABULARY:
+                    raise RecordVersionMismatch(
+                        f"verdict {verdict!r} outside the "
+                        f"agree/differ/unknown vocabulary "
+                        f"({carrier} page {page} region {region.get('id')!r})")
+                else:
+                    human[verdict] += 1
+                    if verdict == "unknown":
+                        unknown_total += 1
+                    region_rows.append({"id": region["id"], "verdict": verdict})
+                    if verdict == "differ":
+                        differs_here.append(region["id"])
+
+            properties = sorted(
+                prop for (c, _p, prop) in oracle
+                if c == carrier and _p == page)
+            for prop in properties:
+                oracle_status = oracle[(carrier, page, prop)]["status"]
+                confusion = dict(human)
+                confusion.pop("pending")
+                oracle_fn = human["differ"] if oracle_status == "agree" else 0
+                oracle_fn_total += oracle_fn
+                row = {
+                    "carrier": carrier,
+                    "page": page,
+                    "property": prop,
+                    "oracle_status": oracle_status,
+                    "human": dict(human),
+                    "confusion": confusion,
+                    "oracle_false_negatives": oracle_fn,
+                    "regions": [dict(r) for r in region_rows],
+                }
+                if page_entry.get("unavailable"):
+                    row["unavailable"] = page_entry["unavailable"]
+                agreement.append(row)
+            # one counterexample per differing region — the human verdict is
+            # region-level, never re-counted per property
+            for region_id in differs_here:
+                counterexamples.append(_counterexample(
+                    {"carrier": carrier, "page": page,
+                     "region": region_id, "property": properties},
+                    record_sha, bundle_sha))
+
+            # missed-ink accounting: per page, count + total box area vs
+            # page area — a proxy ESTIMATE, never a measurement
+            page_size = page_entry.get("page_size_px") or None
+            boxes = page_entry.get("missed_ink", [])
+            total_area = sum(b["rect_px"][2] * b["rect_px"][3] for b in boxes)
+            page_area = page_size[0] * page_size[1] if page_size else None
+            missed_ink.append({
+                "carrier": carrier,
+                "page": page,
+                "label": "ESTIMATE",
+                "caveat": MISSING_INK_CAVEAT,
+                "count": len(boxes),
+                "total_area_px": total_area,
+                "page_area_px": page_area,
+                "area_fraction": (total_area / page_area
+                                  if page_area else None),
+            })
+
+    report = {
+        "kind": "visual-review-ingest-report",
+        "version": 1,
+        "provenance": PROVENANCE_LABEL,
+        "record_path": str(record_path),
+        "record_sha256": record_sha,
+        "base_commit": bundle.get("base_commit"),
+        "agreement": agreement,
+        "missed_ink": missed_ink,
+        "unavailable_pages": unavailable_pages,
+        "counterexamples": counterexamples,
+        "evaluation_summary": {
+            "provenance": PROVENANCE_LABEL,
+            "record_sha256": record_sha,
+            "base_commit": bundle.get("base_commit"),
+            "oracle_false_negatives": oracle_fn_total,
+            "human_unknown_total": unknown_total,
+            "missed_ink_pages": [
+                {"carrier": m["carrier"], "page": m["page"],
+                 "count": m["count"], "total_area_px": m["total_area_px"],
+                 "area_fraction": m["area_fraction"]}
+                for m in missed_ink if m["count"]],
+            "differ_counterexamples": len(counterexamples),
+        },
+        "thresholds_modified": False,
+        "recorded_thresholds": copy.deepcopy(calibration.get("thresholds")),
+    }
+    if isinstance(evaluation_record, dict):
+        append_visual_review_summary(evaluation_record,
+                                     report["evaluation_summary"])
+    return report
+
+
+def _build_parser():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", default=".visual-review/index.html")
     parser.add_argument("--record", default=None,
@@ -390,7 +665,41 @@ def main(argv=None):
                              "mutually exclusive with --record")
     parser.add_argument("--serve", nargs="?", const="8123", default=None,
                         metavar="PORT")
+    sub = parser.add_subparsers(dest="command")
+    ingest = sub.add_parser(
+        "ingest", help="ingest a review-verdicts bundle against the pinned "
+                       "calibration record; prints the ingest report JSON")
+    ingest.add_argument("verdicts", help="verdicts JSON from the review SPA pass")
+    ingest.add_argument("--record", default=None,
+                        help="calibration record the bundle must pin "
+                             "(default fixtures/visual/calibration.json)")
+    ingest.add_argument("--counterexamples", default=None,
+                        help="write differ rows (dsc03 counterexample format, "
+                             "replayable=false) to this JSON path")
+    return parser
+
+
+def main(argv=None):
+    """Build (and optionally serve) the all-examples review bundle.
+
+    ``--out`` writes the self-contained HTML; ``--serve [port]`` then serves
+    the output directory over loopback-only http.server and opens the page.
+    ``ingest <verdicts.json> [--record RECORD]`` ingests a verdicts bundle
+    (typed refusal on record-version mismatch) and prints the report JSON.
+    """
+    parser = _build_parser()
     args = parser.parse_args(argv)
+
+    if args.command == "ingest":
+        report = ingest_verdicts(args.verdicts, record_path=args.record)
+        if args.counterexamples:
+            out = Path(args.counterexamples)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(
+                json.dumps(report["counterexamples"], indent=1,
+                           ensure_ascii=False) + "\n", encoding="utf-8")
+        print(json.dumps(report, indent=1, ensure_ascii=False, sort_keys=True))
+        return 0
     if args.descriptor and args.record:
         parser.error("--descriptor and --record are mutually exclusive")
 

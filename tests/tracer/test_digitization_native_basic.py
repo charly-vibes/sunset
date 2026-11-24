@@ -55,7 +55,7 @@ def test_native_cli_extracts_and_inspects_source_attributed_words(tmp_path):
     manifest = json.loads((output / 'manifest.json').read_text())
     assert manifest['source']['sha256'] == source_hash
     assert manifest['mode'] == 'native'
-    assert manifest['version'] == '2'
+    assert manifest['version'] == '3'
     descriptor = validator.load(output / manifest['descriptor']['path'])
     assert validator.validate(descriptor) == []
     assert descriptor['source']['sha256'] == source_hash

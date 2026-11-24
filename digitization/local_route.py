@@ -11,7 +11,9 @@
 #   the default suite never launches tesseract; the separately invoked real
 #   smoke closes the ticket. An engine failure must never look completed: the
 #   stop keeps budget-state.json (dispatch-uncertain attempts stay
-#   reconcilable) and writes no manifest.
+#   reconcilable) and writes no manifest. A budget refusal (pinned attempt cap
+#   exceeded) is typed BudgetExhausted: it is pre-I/O, so the stop preserves
+#   the stage ledger without any unresolved-dispatch recovery burden.
 """Local provider route: detect -> dispatch -> attributed DSC export."""
 import os
 import tempfile
@@ -270,14 +272,15 @@ class _LocalRun:
         (self.stage / 'manifest.json').write_bytes(json_bytes(manifest))
         return status, reason, usage
 
-    def fail(self, error):
-        return {'status': 'stopped-with-unresolved-work', 'reason': 'provider-failure',
+    def fail(self, error, reason='provider-failure'):
+        return {'status': 'stopped-with-unresolved-work', 'reason': reason,
                 'detail': str(error), 'provider_calls': len(self.operations),
                 'attempts_dispatched': len(self.ledger.attempts)}
 
 
 def run_local(job, output, runner=None):
     """Run the local route; job = (source_path, pages, config_path)."""
+    from digitization.budget import BudgetExhausted
     from digitization.crop_ocr import LocalProviderFailure
     source_path, pages, config_path = job
     source, config_raw, config = _preflight(source_path, pages, config_path, output)
@@ -294,6 +297,14 @@ def run_local(job, output, runner=None):
         except LocalProviderFailure as error:
             preserved = export.fail(error)
             os.rename(stage, output)  # durable ledger + partial artifacts survive
+            preserved['run'] = str(output)
+            return preserved
+        except BudgetExhausted as error:
+            # Refusal happens at reserve, before any dispatch: no dispatch
+            # uncertainty, no implicit retry. Preserve the ledger and partial
+            # artifacts as a typed stopped outcome.
+            preserved = export.fail(error, reason='budget-exhausted')
+            os.rename(stage, output)
             preserved['run'] = str(output)
             return preserved
         export.conclude()

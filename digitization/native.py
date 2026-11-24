@@ -36,10 +36,14 @@ EXTRACTOR = {'id': 'pymupdf', 'version': pymupdf.VersionBind,
              'mupdf_version': pymupdf.VersionFitz}
 OPTIONS = {'sort': True, 'text_flags': 0}
 NORMALIZATION = 'nfc-token-whitespace-v1'
-# Manifest version carrying the outcome vocabulary (distinguish-native-
-# extraction-outcomes, design Decision 3). Version 1 manifests carry only the
-# legacy partial status and are refused as unsupported-version, never guessed.
-OUTCOME_MANIFEST_VERSION = '2'
+# Manifest version carrying descriptor word/line/block regions and the
+# derived line-map/page-map exports (add-scale-complete-regions task 3.3).
+# Version 1/2 manifests predate descriptor regions and are refused as
+# unsupported-version, never guessed.
+OUTCOME_MANIFEST_VERSION = '3'
+# Box containment tolerance declared by the emitted geometry profile
+# (add-scale-complete-regions Decision 1); the ladder checker reads it.
+GEOMETRY_TOLERANCE_PT = 0.5
 # Identity profile pin (add-anchor-derived-identity task 5.2): native
 # descriptors declare this profile and every record id is the anchor
 # derivation it pins (dsc03.identity). The artifact grammar is enforced by
@@ -48,6 +52,40 @@ OUTCOME_MANIFEST_VERSION = '2'
 IDENTITY_PROFILE = {'kind': 'identity', 'version': '1',
                     'digest': {'algorithm': 'sha256', 'truncation_bits': 128, 'prefix': 'a:'}}
 IDENTITY_PROFILE_ID = 'p-identity'
+
+
+def _parse_area_locator(locator):
+    """Parse a seed selector locator 'page:N/kind:[s,e)/box=[x0,y0,x1,y1]'."""
+    scope, rest = locator.split('/', 1)
+    span, box = rest.split('[', 1)[1].split(')/box=[', 1)
+    start, end = (int(value) for value in span.split(','))
+    return int(scope.split(':', 1)[1]), (start, end), [int(v) for v in box.rstrip(']').split(',')]
+
+
+def export_line_map(descriptor, raw_text):
+    """Derived export: line-map.json regenerated from the descriptor's line
+    regions and their interval+box selectors (add-scale-complete-regions
+    task 3.2). Canonical record order is (page, raw_start) — the extractor's
+    sorted word order makes that identical to the original emission order."""
+    lines = []
+    for region in descriptor['regions']:
+        if region['kind'] != 'line':
+            continue
+        selector = next(s for s in descriptor['selectors']
+                        if s['target'] == region['id'] and s['kind'] == 'pdf-area')
+        page, (start, end), box = _parse_area_locator(selector['locator'])
+        lines.append({'source_sha256': selector['source_sha256'], 'page': page,
+                      'frame': f'page-{page}-pt', 'raw_start': start, 'raw_end': end,
+                      'text': raw_text[start:end], 'box': list(box)})
+    lines.sort(key=lambda item: (item['page'], item['raw_start']))
+    return _json(lines)
+
+
+def export_page_map(geometry_profile):
+    """Derived export: page-map.json regenerated from the geometry profile's
+    frames, in the frames' declared (selection) order."""
+    return _json([{key: value for key, value in frame.items() if key != 'name'}
+                  for frame in geometry_profile['frames']])
 
 
 def classify_outcome(retained_by_page):
@@ -149,7 +187,7 @@ def _evidence_locator(evidence):
     return locator
 
 
-def _rotate_to_identity(desc, excluded_contents, declared_content_locators):
+def _rotate_to_identity(desc, excluded_contents, declared_content_locators, seed_locators=()):
     """Rewrite every record id to its anchor derivation under the declared
     identity profile (add-anchor-derived-identity task 5.2), then serialize
     the set-like sections in canonical order (design Decision 3).
@@ -180,6 +218,11 @@ def _rotate_to_identity(desc, excluded_contents, declared_content_locators):
             region_locator[label] = 'doc:root'
         elif label == 'r-log':
             region_locator[label] = 'doc:log'
+        elif label in seed_locators:
+            # word/line/block region: anchored at its declared interval+box
+            # locator — raw interval and page frame only, never a block
+            # ordinal (sunset-gpd owner flag, 2026-11-24).
+            region_locator[label] = seed_locators[label]
         else:
             raise ValueError('native region carries no declared anchor: ' + label)
     content_locator = dict(declared_content_locators)
@@ -274,7 +317,7 @@ def _rotate_to_identity(desc, excluded_contents, declared_content_locators):
     desc['coverage'].sort(key=lambda c: (c['inventory_id'], c['feature'], c['scope']))
 
 
-def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
+def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha, seeds=()):
     selector_profile = {'kind': 'selector', 'version': '1',
                         'offset_unit': 'unicode-scalar-values', 'endpoints': 'half-open'}
     selector_bytes = _json(selector_profile)
@@ -282,18 +325,8 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
     identity_bytes = _json(IDENTITY_PROFILE)
     (root / 'identity.json').write_bytes(identity_bytes)
     geometry_profile = {'kind': 'geometry', 'version': '1',
-                        'frames': [{'name': f'page-{item["page"]}-pt',
-                                    'unit': item['unit'],
-                                    'source_scope': item['source_scope'],
-                                    'origin': item['origin'],
-                                    'axes': item['axes'],
-                                    'scale': item['scale'],
-                                    'rotation': item['rotation'],
-                                    'crop': item['crop'],
-                                    'source_dimensions': item['source_dimensions'],
-                                    'source_frame': item['source_frame'],
-                                    'target_frame': item['target_frame'],
-                                    'source_to_target': item['source_to_page']}
+                        'tolerance': GEOMETRY_TOLERANCE_PT,
+                        'frames': [dict(item, name=item['frame'])
                                    for item in page_maps]}
     if page_maps:  # all pages aligner-failed: no frames, no native selectors
         geometry_bytes = _json(geometry_profile)
@@ -331,6 +364,26 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
                          if not (r['kind'] == 'has-content' and r['to'] in excluded_contents)]
     # annotations targeting excluded content are demoted during the identity
     # rotation, from the annotation's own declared anchor (no id prefix match)
+    # Descriptor regions below page level (add-scale-complete-regions 3.2):
+    # every retained word, line and block ships as a region with a pdf-area
+    # selector binding its raw-text interval and page-frame box, nested by
+    # contains edges page > block > line > word. Region ids below are labels
+    # only — the identity rotation anchors each one at its declared locator.
+    seed_locators = {}
+    for seed in seeds:
+        # The locator scopes the raw interval by ladder kind: a single-line
+        # block (or single-word line) repeats its child's interval, so the
+        # kind segment keeps anchors distinct without positional ordinals.
+        locator = (f"page:{seed['page']}/{seed['kind']}:[{seed['raw_start']},{seed['raw_end']})"
+                   f"/box=[{seed['box'][0]},{seed['box'][1]},{seed['box'][2]},{seed['box'][3]}]")
+        seed_locators[seed['label']] = locator
+        desc['regions'].append({'id': seed['label'], 'view_id': 'v-main',
+                                'kind': seed['kind']})
+        desc['relations'].append({'id': 'rel-' + seed['label'], 'kind': 'contains',
+                                  'from': seed['parent'], 'to': seed['label']})
+        desc['selectors'].append({'id': 'sel-' + seed['label'], 'kind': 'pdf-area',
+                                  'profile_id': 'selector', 'source_sha256': source_hash,
+                                  'target': seed['label'], 'locator': locator})
     for item in desc['coverage']:
         if item['scope'].startswith('page:'):
             page = int(item['scope'][5:])
@@ -367,7 +420,7 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
                                                'inputs': [source_text], 'outputs': [cid]}})
         desc['relations'].append({'id': f'native-derived-{page}', 'kind': 'derived-from',
                                   'from': eid, 'to': base['id']})
-    _rotate_to_identity(desc, excluded_contents, declared_content_locators)
+    _rotate_to_identity(desc, excluded_contents, declared_content_locators, seed_locators)
     return desc
 
 
@@ -394,9 +447,16 @@ def extract(source, output, pages=None):
                 or any(p < 1 or p > pdf.page_count for p in selected)):
             raise NativeInputError('invalid-pages', 'pages must be unique one-based indices within the PDF')
         raw_pages, word_maps, line_maps, page_maps = {}, [], [], []
+        word_seeds, line_seeds, block_seeds = [], [], []
+        line_ordinals, block_ordinals = {}, {}
+        lines_by_block = {}
+        word_seed_count = 0
         raw_base = 0
         search_base = 0
         for page_num in selected:
+            line_ordinals, block_ordinals = {}, {}
+            lines_by_block = {}
+            word_seed_count = 0
             page = pdf[page_num - 1]
             raw = page.get_text('text', sort=OPTIONS['sort'], flags=OPTIONS['text_flags'])
             if not raw.endswith('\n'):
@@ -451,16 +511,54 @@ def extract(source, output, pages=None):
                                       'raw_end': raw_base + end, 'text': raw[position:end],
                                       'source_box': [x0, y0, x1, y1], 'box': mapped_box,
                                       'search_start': search_base, 'search_end': search_base + len(unicodedata.normalize('NFC', token))})
+                    # Descriptor region seeds (add-scale-complete-regions
+                    # 3.2): word parent is its (block, line) group; the seed
+                    # locator carries the raw interval and quantized box, and
+                    # never the MuPDF block ordinal (sunset-gpd owner flag:
+                    # block numbers serve containment/statistics only, never
+                    # identity locator paths).
+                    line_ordinal = line_ordinals.setdefault((bno, lno), len(line_ordinals))
+                    block_ordinals.setdefault(bno, len(block_ordinals))
+                    word_seeds.append({'label': f'pw{page_num}-{word_seed_count}',
+                                       'kind': 'word', 'page': page_num,
+                                       'frame': f'page-{page_num}-pt',
+                                       'raw_start': raw_base + position, 'raw_end': raw_base + end,
+                                       'box': mapped_box,
+                                       'parent': f'pl{page_num}-{line_ordinal}'})
+                    word_seed_count += 1
                     grouped.setdefault((bno, lno), []).append((raw[position:end], mapped_box, position, end))
                     search_base += len(unicodedata.normalize('NFC', token)) + 1
-                for group in grouped.values():
+                for (bno, lno), group in grouped.items():
                     start, end = group[0][2], group[-1][3]
                     boxes = [word[1] for word in group]
+                    line_box = [min(w[0] for w in boxes), min(w[1] for w in boxes),
+                                max(w[2] for w in boxes), max(w[3] for w in boxes)]
                     line_maps.append({'source_sha256': source_hash, 'page': page_num, 'frame': f'page-{page_num}-pt',
                                       'raw_start': raw_base + start, 'raw_end': raw_base + end,
-                                      'text': raw[start:end],
-                                      'box': [min(w[0] for w in boxes), min(w[1] for w in boxes),
-                                              max(w[2] for w in boxes), max(w[3] for w in boxes)]})
+                                      'text': raw[start:end], 'box': line_box})
+                    line_seeds.append({'label': f'pl{page_num}-{line_ordinals[(bno, lno)]}',
+                                       'kind': 'line', 'page': page_num,
+                                       'frame': f'page-{page_num}-pt',
+                                       'raw_start': raw_base + start, 'raw_end': raw_base + end,
+                                       'box': line_box,
+                                       'parent': f'pb{page_num}-{block_ordinals[bno]}'})
+                    lines_by_block.setdefault(bno, []).append(line_seeds[-1])
+                for bno, block_lines in lines_by_block.items():
+                    # Block seed: union of its lines' raw intervals and boxes.
+                    # The label ordinal is per-page first-appearance order (not
+                    # the MuPDF block number); the anchor locator is the raw
+                    # interval, never a block ordinal (sunset-gpd owner flag).
+                    block_seeds.append({
+                        'label': f'pb{page_num}-{block_ordinals[bno]}',
+                        'kind': 'block', 'page': page_num,
+                        'frame': f'page-{page_num}-pt',
+                        'raw_start': min(line['raw_start'] for line in block_lines),
+                        'raw_end': max(line['raw_end'] for line in block_lines),
+                        'box': [min(line['box'][0] for line in block_lines),
+                                min(line['box'][1] for line in block_lines),
+                                max(line['box'][2] for line in block_lines),
+                                max(line['box'][3] for line in block_lines)],
+                        'parent': f'pg{page_num}'})
             except (ValueError, OverflowError) as error:
                 # Non-finite extractor geometry (refused by quantize_scalar)
                 # is malformed input, not a crash: same typed vocabulary as
@@ -481,8 +579,6 @@ def extract(source, output, pages=None):
         search_text = ' '.join(unicodedata.normalize('NFC', word['text']) for word in words)
         _put(stage, 'search.txt', search_text.encode(), artifacts)
         _put(stage, 'word-map.json', _json(words), artifacts)
-        _put(stage, 'line-map.json', _json(line_maps), artifacts)
-        _put(stage, 'page-map.json', _json(page_maps), artifacts)
         configuration = {'extractor': EXTRACTOR, 'options': OPTIONS, 'pages': selected,
                          'offset_unit': 'unicode-scalar-values', 'normalization': NORMALIZATION, 'version': '1'}
         config_bytes = _json(configuration)
@@ -497,7 +593,15 @@ def extract(source, output, pages=None):
             _sha(config_bytes), ['pymupdf'], ['source.pdf'],
             ['word-map.json', 'line-map.json']))
         (carrier_dir / 'quantization.json').write_bytes(quantization_bytes)
-        desc = _descriptor(source_ref['sha256'], selected, raw_pages, page_maps, carrier_dir, _sha(config_bytes))
+        desc = _descriptor(source_ref['sha256'], selected, raw_pages, page_maps, carrier_dir, _sha(config_bytes),
+                           seeds=word_seeds + line_seeds + block_seeds)
+        # line-map.json / page-map.json are DERIVED exports of the descriptor
+        # (add-scale-complete-regions 3.2): written from the descriptor so the
+        # side files regenerate byte-identically by construction.
+        _put(stage, 'line-map.json', export_line_map(desc, raw_text), artifacts)
+        geometry = ({'kind': 'geometry', 'frames': []} if not page_maps
+                    else json.loads((carrier_dir / 'geometry.json').read_bytes()))
+        _put(stage, 'page-map.json', export_page_map(geometry), artifacts)
         for path in sorted(carrier_dir.rglob('*')):
             if path.is_file():
                 rel = path.relative_to(stage).as_posix()
