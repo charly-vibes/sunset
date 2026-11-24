@@ -960,7 +960,7 @@
   Repo: charly-vibes/sunset (~/para/areas/dev/gh/charly/sunset)
   Branch: main
   HEAD: c76289f21d4c679ba00d35252a5b651ba231f7cd
-  Task: Implement the full remainder of adopted epics sunset-7b4 (render-binding) and sunset-5vh (anchor-derived identity) — sections 2-5 of both changes (continues 9a08523c399be08ec2f942f1db828453c47a9e18945129b6c0b421b7fa7c4887)
+  Task: Implement the full remainder of adopted epics sunset-7b4 (render-binding) and sunset-5vh (anchor-derived identity) — sections 2-5 of both changes (continues 9a08523c399be08ec2f942f1db828453c47a9e18945129b6c0b421b7fa7c4887) (superseded by 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39)
 
   Objective: autonomous implementation of every decomposed child: render-binding §2 (crop-box render, extent binding, native frame record, variant matrix green) and identity §2-§5 (anchor ids + validator rule, canonical set order, quantized geometry, migration + native rotation + assembly regime, fixture byte-identity), orchestrated as parallel TDD subagents per section.
 
@@ -987,3 +987,36 @@
 
 ## 2026-11-24 addendum — review-fix round complete (pushed 03eec7cf)
 Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the union; epics sunset-7b4 + sunset-5vh closed (--force on 7b4: five deferred-stat children remain OPEN, re-parent attempt failed on dep-type conflict, they stay sunset-at7-blocked). CORR-001 → sunset-7b4.2: honest RED (no enforcement at HEAD), typed correlated refusal in review.py at all 3 render sites + lineage labels in digitization/render.py (pixels md5-proven unchanged). CORR-002 → sunset-5vh.2: quantized operative boxes (1/1000pt, half-even) at word/line-map production, line boxes derived from quantized words; raw extractor box KEPT as source_box (declared provenance; inspection re-derives+re-snaps — agent extended scope with approval to fix inspect mismatch 1e-4 < 5e-4); carrier/quantization.json transform record via manifest scan; descriptor bytes unchanged. Spot-check caught agent's fixture gap (4 boxes) — full carrier verified 405+130 boxes, 0 non-int operative coords. Design docs reconciled: locator-grammar vs no-position rule, source_box/box convention in Decision 4, partial-migration semantics, 5.4 scoped to descriptor-only. Doc-only hits: EXCL-001 (pin notes), EXCL-002, CLAR-001/002/003 (OQ1-3 answered: additive opt-in, triple key kept). Deferred stat beads 7b4.3-.7 now under at7 gating. Next: sunset-gpd (G1-G6 rulings, HITL) or sunset-at7 when unblocked; human pass supersedes agent-executed audits.
+- 2026-11-24T21:30:06Z [id:26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39] (#identity-render-epics-complete) Format: 1
+  Timestamp: 2026-11-24T21:30:06Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD a4830b0 (origin/main even; clean tree except intentionally untracked pba-judicial-2026-07-29.pdf)
+  Session: omp session for this cwd (native id not captured); bd-claims state is authoritative for tickets.
+  Task: proposal-set review-fix round complete; recorded G1-G6 rulings assessed; continuation = owner decision on 3 flags. (superseded by 6839599fe357727f96ee74d2562d74c7cf62e5f4bbf06a54d2967f9285bdf1db)
+  
+  Objective: implement the adopted proposal set's review findings (render-binding CORR-001, identity CORR-002, deferred stats) and second-opinion the recorded owner rulings.
+  Phase: review — all code committed and pushed; awaiting owner ruling on flags.
+  State:
+  - sunset-7b4.2 closed: typed correlated refusal in dsc03/visual/review.py at all 3 render sites + lineage labels on digitization/render.py (pixels md5-proven unchanged); honest RED captured at HEAD first.
+  - sunset-5vh.2 closed: 1/1000pt round-half-even quantization at word/line-map production; line boxes derive from quantized words; raw extractor box kept as source_box (declared provenance; inspection re-derives and re-snaps, tolerance untouched); carrier/quantization.json transform record via manifest scan; descriptor bytes unchanged.
+  - Epics sunset-7b4 (--force: five deferred-stat children stay OPEN, sunset-at7-blocked; re-parent to at7 failed on dep-type conflict) and sunset-5vh closed. Commits 80ee7f0, 03eec7c, a4830b0 pushed.
+  - G1-G6: ruled and ticket sunset-gpd closed earlier today (20bc181, ~16:05 local) BEFORE the fix round. My assessment (delivered in chat): agree G1/G2/G4; flags — G3: N>=30 subsumed, Wilson<=1% binds at ~381 zero-failure audits per claim type; G6: MuPDF block numbers must not enter identity locators (Decision 1) absent a selector-profile delta; G5: backups/mounts boundary, live tension with the stray PDF in repo root.
+  Exact next action: owner rules on the 3 flags. If moved: bd reopen sunset-gpd, amend openspec/changes/add-review-queue-and-audit/design.md (G3) and add-scale-complete-regions/design.md (G6), re-close. If not: record clarifications as notes on tasks 4.4 / 2.3 when those execute. Otherwise pick from bd ready (~18 open; sunset-at7 unblocks 7b4.3-.7).
+  Decisions/constraints: conservative git profile honored; pushes done under user's "orchestrate the autonomous implementation" instruction; HITL — owner rulings only via owner; agent-executed audits/measures superseded by human pass; pba-judicial PDF intentionally untracked, NEVER commit it.
+  Ownership: no in-progress claims (bd list in_progress empty); all round tickets closed; bd note parked on sunset-gpd.
+  Validation: just spec-check — ALL GATES PASSED 18/18 on the fix union (2026-11-24); full-carrier spot-check 405+130 boxes, 0 non-integer operative coords.
+  Previous entry: 93eadd2909f1e2724b154403b529c526cb3ee442a79e49d2735dfdbdaa4b0b0d (superseded: its epic-completion state fully replaced by this snapshot) (supersedes 93eadd2909f1e2724b154403b529c526cb3ee442a79e49d2735dfdbdaa4b0b0d)
+- 2026-11-24T22:06:29Z [id:6839599fe357727f96ee74d2562d74c7cf62e5f4bbf06a54d2967f9285bdf1db] (#ro5-review-fixes) Timestamp: 2026-11-24 (post-21:30 local)
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD aa3dd579df (+c4e7a060f1, unpushed at write time)
+  Task: rule-of-5 review-fix round executed at the fix HEAD: shared pixel module, structured refusal, non-finite guard, shared test builders, G6 boundary amendment, GREEN re-measurement.
+  State:
+  - EXCL-001: dsc03/visual/_pixels.py (decode_grayscale/ink_table/parse_dilation/dilate/comparison_mask, MaskUnavailable) replaces the triple duplication in coverage/masks/content_classes; pymupdf imported only there.
+  - Refusal: _maybe_render single render site in review.py; page records carry refusal {code, reason}.
+  - EDGE-001: quantize_scalar refuses non-finite; native.py -> NativeInputError('malformed-pdf').
+  - EXCL-002: tests/tracer/conftest.py hosts pinned RenderConfig builder + make_carrier + CARRIERS; four oracle suites deduplicated (-120 lines); mapping-only suites keep fake-pinned local configs deliberately.
+  - CORR-001: G6 boundary amended into add-scale-complete-regions/design.md (block numbers oracle/containment only, never identity locators absent selector-profile delta).
+  - CORR-002 GREEN: budgeting-basics through the fixed machinery -> typed refusals everywhere (page-extent-mismatch), 0/405 silent false counts; poppler ceils non-integral pt dims vs declared round -> NEW owner-flag candidate filed as sunset-c0v (adjudicate ceil-vs-round convention).
+  - bd: sunset-c0v filed (P2); note parked on sunset-gpd (3 original owner flags G3/G6/G5 still open).
+  Validation: just spec-check ALL GATES PASSED 18/18; tracer suite 677 passed, 2 skipped.
+  Exact next action: owner rules on sunset-c0v (and the 3 sunset-gpd flags); otherwise pick from bd ready (~19 open; sunset-at7 unblocks 7b4.3-.7).
+  Decisions/constraints: agent-executed numbers superseded by human pass; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile, commits under standing orchestration instruction.
+  Previous entry: 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39 (superseded: its awaiting-owner state extended by this round; flags and constraints still stand) (supersedes 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39)
