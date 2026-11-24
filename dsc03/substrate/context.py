@@ -385,3 +385,22 @@ def assembled_meaning(desc):
                 "merged_targets": sorted({a["target"] for a in merged})}
     return {"status": "no_generic_union",
             "reason": "requires_pinned_domain_rule", "claims": claims}
+
+
+def dedupe_annotations(desc):
+    """Idempotent resubmission on the wire: annotations with identical claim
+    identity — digest of (term, target, value, origin), derived from
+    dsc03.claims.claim_id — collapse to the FIRST occurrence; later
+    duplicates (e.g. a resubmitted copy carrying a different status) are
+    dropped. Dispute semantics stay owned by document-context: this only
+    removes identity duplicates, never differing values."""
+    seen = set()
+    out = []
+    for a in desc.get("annotations", []):
+        from dsc03.claims import annotation_identity
+        key = annotation_identity(a)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(a)
+    return out

@@ -5,6 +5,9 @@
 # Rationale: sunset-rmx.2 uses existing PyMuPDF with no OCR prerequisite;
 #   improve-geometry-render-binding D5 labels this in-process path
 #   `correlated` (PyMuPDF render + PyMuPDF extraction share a lineage).
+import hashlib
+import json
+
 import pymupdf
 from dsc03.visual.render import evidence_class
 
@@ -28,6 +31,34 @@ def page_frames(source, pages):
         return {p: {'width': document[p - 1].rect.width,
                     'height': document[p - 1].rect.height,
                     'rotation': document[p - 1].rotation} for p in pages}
+
+
+def render_crop(source, page_number, dpi, box):
+    """Render a page and derive the pixel-space crop record for ``box``
+    (a page-pt frame box). sunset-3oq 2.3: the same lineage labels as the
+    page render — a review crop is correlated evidence (PyMuPDF render +
+    PyMuPDF extraction) and never feeds oracle evaluation."""
+    png, meta = render_page(source, page_number, dpi)
+    scale = dpi / 72.0
+    record = dict(meta)
+    record['box_pt'] = {k: box[k] for k in ('page', 'x', 'y', 'w', 'h') if k in box}
+    record['page_frame'] = meta['frame']
+    record['pixel_box'] = [round(box['x'] * scale), round(box['y'] * scale),
+                           round(box['w'] * scale), round(box['h'] * scale)]
+    return png, record
+
+
+def crop_reference(profile_digest, render_record, box):
+    """The pinned crop reference of a queue item: render profile digest,
+    page frame, box, and a digest binding all three."""
+    reference = {
+        'render_profile_digest': profile_digest,
+        'page_frame': render_record['page_frame'],
+        'box': {k: box[k] for k in ('page', 'x', 'y', 'w', 'h') if k in box},
+    }
+    reference['digest'] = 'crop:' + hashlib.sha256(
+        json.dumps(reference, sort_keys=True).encode('utf-8')).hexdigest()[:32]
+    return reference
 
 
 def render_page(source, page_number, dpi):

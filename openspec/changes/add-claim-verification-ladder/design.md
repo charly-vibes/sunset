@@ -21,6 +21,14 @@ Non-goals: judging whether a document's statements are true; model selection; UI
 9. **Initial domain pack.** CUIT/CUIL check digit, subtotal plus tax equals total, running-balance continuity, date and currency parse. Scoped to Argentine fixtures; each rule ships with negative fixtures per rule (a verifier bug is a silent false accept otherwise).
 10. **Tier 2 deferred.** Independent-agreement machinery (second model run, independence check on producer identity) is not built now: it doubles model spend and no fixture claim type needs autonomy without a domain rule yet. Re-entry trigger in proposal Necessity cuts.
 
+## Reconciliation (task 1.1, done 2026-11-24)
+
+Dispute/conflict retention semantics are owned by **`document-context`** ("Evidence is not truth", "Deterministic semantic rules"): `dsc03/substrate/context.py` keeps incompatible attributed claims disputed/retained and elects no winner without a declared precedence rule (`resolve_bindings`, `elected_winner`). This change reuses those semantics and adds no second mechanism: `dsc03/claims.py:mark_conflicts` retains both attributed claims and marks them `conflicted` without electing, and `dsc03/verify` never promotes a `conflicted` claim. Claim identity dedupe (`dedupe_annotations`) collapses only identical `(term, target, value, origin)` digests — never differing values.
+
+## What "verified" does and does not establish (tasks 5.3)
+
+`verified` means: the claim's anchors resolved, its extractive value equals the registered normalization of the anchored span, and every applicable pinned tier-0/tier-1 check passed as a pure function of claim + descriptor. It does NOT establish that the document's contents are true of the world (no ground-truth oracle ran), and it is bounded by the registry: a missing normalization or missing domain rule yields `unverified` by design. All measured outcomes above are agent-executed against synthetic fixtures; no accuracy or conformance claim is made. Model confidence is stored outside the semantic digest and never read by verifiers (tests: `tests/tracer/test_claims_ladder.py`, `tests/tracer/test_verify_ladder.py`).
+
 ## Risks / Trade-offs
 
 - "verified" may be over-read as "true". Mitigation: status name and docs say *passed pinned checks*; export carries the checks that passed.
