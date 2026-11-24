@@ -16,7 +16,9 @@
 #   emitted_order_edges — above/left-of/overlap evaluated read-only, NEVER
 #   emitting precedes or contains edges (spatial_not_order,
 #   no_spatial_reading_order). Synthetic, validated fixtures only; no OCR
-#   runs, no subprocesses, no real-carrier conformance claims.
+#   runs, no subprocesses, no real-carrier conformance claims; quantization
+#   helpers (7) DO ground the tolerance-0 claim over a real carrier, via
+#   tests/tracer/test_space_quantization.py.
 # Rationale: the deployed kernel carries geometry and selector bindings but
 #   has no spatial predicate evaluator; these fixtures witness the proposed
 #   frame laws machinery-side under dsc03/substrate/ — no wire change.
@@ -44,7 +46,11 @@ def transform_rot90(box_w, box_h):
 
     normalize (rotated -> source): x_s = box_h - (y_r + h_r), y_s = x_r,
     with w/h swapped. denormalize (source -> rotated): the inverse. Exact
-    on integers, so the declared tolerance is 0 for this fixture family.
+    on integers: the coordinate arithmetic is add/subtract/swap only, so
+    forward-then-inverse returns every integer input unchanged (tolerance
+    is 0 for that reason alone). Quantization (quantize_box) is what makes
+    real carrier boxes integers; tests/tracer/test_space_quantization.py
+    grounds the exact round trip on real pymupdf word boxes.
     """
     def forward(g):  # rotated frame -> source frame
         return {"space": _base_of(g["space"]),
@@ -57,6 +63,55 @@ def transform_rot90(box_w, box_h):
                 "width": g["height"], "height": g["width"]}
 
     return Transform("rot90", "1", 0, forward, inverse)
+
+
+# Declared quantization quantum (design Decision 4): default 1/1000 pt.
+# Coordinates are stored as integer counts of this quantum.
+QUANTUM = "1/1000 pt"
+QUANTUM_SCALE = 1000
+# Declared rounding rule: round-half-even (banker's rounding), computed
+# exactly with rational arithmetic so float artifacts near a tie cannot
+# flip the result into round-half-up by accident.
+ROUNDING_RULE = "round-half-even"
+
+
+def quantize_scalar(value, scale=QUANTUM_SCALE):
+    """Quantize one float coordinate to an integer count of quanta.
+
+    Rounds half-even exactly: value is scaled exactly (Fraction), then the
+    half-way case resolves toward the even neighbor. Applied once, at
+    extraction; the pre-quantization float is not retained downstream.
+    """
+    from fractions import Fraction
+    scaled = Fraction(value) * scale
+    n, d = scaled.numerator, scaled.denominator
+    sign = -1 if n < 0 else 1
+    q, r = divmod(abs(n), d)
+    twice = 2 * r
+    if twice > d or (twice == d and q % 2 == 1):
+        q += 1
+    return sign * q
+
+
+def quantize_box(box, scale=QUANTUM_SCALE):
+    """Quantize a float locus to integers in the declared quantum."""
+    return {key: quantize_scalar(value, scale)
+            for key, value in box.items()}
+
+
+def quantization_transform_record(config_sha256, dependencies, inputs,
+                                  outputs):
+    """Explicit quantization transform record, native.py evidence
+    convention (id/version/config_sha256/dependencies/inputs/outputs),
+    extended with the declared quantum, rounding rule and extractor
+    version so the quantization loss is declared, not silent."""
+    import pymupdf
+    return {"id": "box-quantization", "version": "1",
+            "quantum": QUANTUM, "rounding": ROUNDING_RULE,
+            "extractor_version": pymupdf.VersionBind,
+            "config_sha256": config_sha256,
+            "dependencies": list(dependencies),
+            "inputs": list(inputs), "outputs": list(outputs)}
 
 
 def _base_of(space_name):
