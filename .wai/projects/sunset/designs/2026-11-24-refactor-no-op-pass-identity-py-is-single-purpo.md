@@ -1,0 +1,1 @@
+Commands run: .venv/bin/python -B -m pytest tests/tracer/test_identity.py -q -> 22 passed in 0.08s; .venv/bin/python -B -m pytest tests/tracer/test_tracer_validate.py tests/tracer/test_profile_resolution.py -q -> 12 passed in 0.04s. Tests pass after refactor.
