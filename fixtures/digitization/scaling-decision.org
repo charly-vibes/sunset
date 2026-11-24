@@ -21,9 +21,15 @@ quality, economy or scaling conclusion is claimed anywhere in this record.
 - Owner statement (session 2026-11-05, repo =sunset=, branch =main=): the ruling
   was given as =defer= with no conditions attached.
 - The re-entry conditions in [[Re-entry]] are the agent's proposal derived from
-  the recorded evidence; they are NOT owner-approved commitments. Until the
-  owner assents or amends them, read the deferral as unqualified: full-issue
-  stays blocked, nothing is scheduled.
+  the recorded evidence. OWNER ASSENT recorded 2026-11-05 (owner message in the
+  resume session, repo =sunset=, branch =main=): "we need to complete the whole
+  rmx — that's why we're building the SPA check." This assents to the re-entry
+  path (reviewed references via the review SPA, assessment manifest with
+  owner-supplied thresholds, measured human cost). Scope note recorded with the
+  assent: completing rmx = driving the re-entry loop to the MEASURED scaling
+  decision; it does not by itself authorize a full-issue run. Until that
+  measured decision exists, the deferral still reads as unqualified: full-issue
+  stays blocked, nothing beyond the pilot pages is scheduled.
 - This ticket records a decision; it authorizes no commit, push, deploy, paid
   service or external document upload.
 
@@ -87,7 +93,17 @@ bounded stage; the r1 cap (160) belonged to a two-page stage and is not a
 
 * Re-entry
 
-=Agent-proposed; owner assent pending.= Reopen the scaling question only when
+=Agent-proposed; owner ASSENTED 2026-11-05 (see owner statement above).=
+AMENDED by owner 2026-11-05 (later same day, Lane-1 pick in the resume
+session): condition (a)'s references may be LLM-DRAFTED, HUMAN-VERIFIED —
+qwen3.8-flash (via the owner's qwen-token-plan; remote upload authorized for
+pages 1-6 renders of this public 1986 excerpt ONLY, never the pba-judicial
+PDF) pre-drafts agree/differ notes, the human verifies/corrects each row in
+the review SPA, and the measured verification walk remains the human cost
+input to condition (c). Draft provenance lives in the verdict note prefix;
+the checker never drafts unknowns (omission, never guessing); the download
+schema is unchanged; drafts alone confer NO reference status.
+Reopen the scaling question only when
 all three exist:
 1. Independently reviewed references for pages 1-6 (text/layout/coverage plus
    at least one cross-page continuation pair with both endpoints), i.e. the
