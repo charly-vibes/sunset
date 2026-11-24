@@ -1,7 +1,7 @@
 ## 1. Audit and ruling
 
-- [ ] 1.1 List every deployed requirement and validator rule that depends on array position in set-like sections; record findings in design.md
-- [ ] 1.2 Decide Open Question 1 (additive vs 0.4) with the owner
+- [x] 1.1 List every deployed requirement and validator rule that depends on array position in set-like sections; record findings in design.md
+- [x] 1.2 Decide Open Question 1 (additive vs 0.4) with the owner
 
 ## 2. Identity profile
 
@@ -28,3 +28,4 @@
 - [x] 5.2 `native` emits identity-profile descriptors; remove prefix-matching of annotations to pages (`digitization/native.py` `an{page}-`)
 - [x] 5.3 Assembly: replace "left operand first" ordering with canonical order under the profile (enables the join-law tasks in define-document-composition-semantics)
 - [x] 5.4 Re-run all fixture carriers; record byte-identity across two processes in docs/src/status.md as agent-executed
+- [x] 5.5 Native extraction emits quantized geometry: word/line maps integer-valued at the declared quantum; quantization recorded as an explicit transform naming quantum, rule and extractor version (review finding: requirement substance unadopted at extraction)

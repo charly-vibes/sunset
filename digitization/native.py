@@ -27,6 +27,9 @@ import pymupdf
 from dsc03 import validator
 from dsc03.adapters import describe_pdf
 from dsc03.identity import IdentityRegistry
+# Sole sanctioned substrate import (add-anchor-derived-identity Decision 4):
+# exact quantized geometry for word/line boxes and its transform record.
+from dsc03.substrate.space import quantization_transform_record, quantize_scalar
 
 
 EXTRACTOR = {'id': 'pymupdf', 'version': pymupdf.VersionBind,
@@ -436,6 +439,12 @@ def extract(source, output, pages=None):
             for item, (position, end) in zip(extracted_words, spans):
                 x0, y0, x1, y1, token, bno, lno, _ = item
                 mapped_box = _map_box([x0, y0, x1, y1], matrix)
+                # Exact quantized geometry (Decision 4): quantize applied ONCE
+                # here, at extraction; the pre-quantization float is not
+                # retained anywhere downstream (the raw source_box stays
+                # unquantized as extractor output). Line boxes below derive
+                # from these quantized word boxes, so they inherit integers.
+                mapped_box = [quantize_scalar(value) for value in mapped_box]
                 word_maps.append({'source_sha256': source_hash, 'page': page_num,
                                   'frame': f'page-{page_num}-pt', 'raw_start': raw_base + position,
                                   'raw_end': raw_base + end, 'text': raw[position:end],
@@ -472,6 +481,14 @@ def extract(source, output, pages=None):
         _put(stage, 'configuration.json', config_bytes, artifacts)
         carrier_dir = stage / 'carrier'
         carrier_dir.mkdir()
+        # Quantization transform record (Decision 4): emitted under carrier/
+        # mirroring carrier/identity.json, so the existing carrier_dir.rglob
+        # scan below picks it up into the manifest artifact table exactly like
+        # the other profile artifacts, with no scan-side change.
+        quantization_bytes = _json(quantization_transform_record(
+            _sha(config_bytes), ['pymupdf'], ['source.pdf'],
+            ['word-map.json', 'line-map.json']))
+        (carrier_dir / 'quantization.json').write_bytes(quantization_bytes)
         desc = _descriptor(source_ref['sha256'], selected, raw_pages, page_maps, carrier_dir, _sha(config_bytes))
         for path in sorted(carrier_dir.rglob('*')):
             if path.is_file():

@@ -232,7 +232,10 @@ Re-measurement at HEAD before any implementation, from the RED tasks of
   executed twice, each invocation a separate OS process writing a fresh
   directory; the two `descriptor.json` files were compared byte-for-byte
   (identity ids derive from declared anchors — deployed scenario
-  "Independent derivation").
+  "Independent derivation"). Comparison scope is the descriptor only: sibling
+  run artifacts (word-map, line-map) are outside this record and still carried
+  float geometry at run time — the quantization adoption that post-dates this
+  run is identity task 5.5.
 - **Outcome: 11/11 byte-identical.** Descriptor sha256 prefixes per carrier:
 
   | carrier | status | descriptor sha256 (both runs) |
@@ -255,3 +258,31 @@ Re-measurement at HEAD before any implementation, from the RED tasks of
   `--pages all` is rejected ("comma-separated integer PDF indices") and a
   pre-created output directory is refused (`output-already-exists`); the run
   omitted `--pages` and used non-existent `<tmp>/run` paths.
+
+## Render-binding §3-§4 + identity §5.5 review fixes (agent-executed, 2026-11-24)
+
+- **Correlated-render gate (tasks.md 3.1):** RED captured at HEAD — oracle
+  evaluation accepted a correlated render config (failed only via a renderer
+  error, no typed refusal). Now `dsc03/visual/review.py` refuses correlated
+  configs up front with a typed `unavailable` outcome
+  (`CORRELATED_RENDER_REFUSED: evaluation reads only independent renders…`),
+  before any pixels exist; the carrier entry still records
+  `evidence_class: "correlated"`. Deployed scenario "Review crop never feeds
+  an oracle" pinned in `tests/tracer/test_visual_lineage_gate.py`.
+- **Path labeling (tasks.md 3.2):** `digitization/render.py` outputs now carry
+  `extractor_lineage`/`renderer_lineage`/`evidence_class` (always
+  `correlated`: pymupdf render + pymupdf extraction share lineage), reusing
+  `dsc03.visual.render.evidence_class` as the single rule source. Pixel bytes
+  unchanged (page-1 PNG md5 identical before/after: `99e7ae7e8597552ad3373ad014fb46f5`).
+- **Quantization adoption (identity tasks.md 5.5):** native word/line maps now
+  carry integer operative geometry — `box` quantized once at extraction
+  (1/1000 pt, round-half-even via `quantize_scalar`); line boxes derive from
+  quantized word boxes. Verified on `budgeting-basics-excerpt.pdf`: 405 word +
+  130 line boxes, 0 non-integer operative coordinates. The raw extractor box
+  is retained as `source_box` (declared provenance; inspection re-derives and
+  re-snaps from it — exact comparison, tolerance not loosened). The
+  quantization transform record is written per run to `carrier/quantization.json`
+  (quantum/rule/extractor version) and picked up by the manifest artifact
+  scan. Descriptor bytes unchanged by the adoption (byte-compared HEAD vs
+  working tree). RED evidence: word-map boxes float at HEAD, transform record
+  absent, cross-run word-map bytes differed — all three captured before the fix.

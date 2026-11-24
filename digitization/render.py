@@ -1,8 +1,18 @@
 # Purpose: Render selected PDF pages with explicit coordinate provenance.
-# Responsibilities: Read pinned bytes, validate page/box coordinates and render
-#   PNG evidence with dimensions, rotation and pixel-to-page transforms.
-# Rationale: sunset-rmx.2 uses existing PyMuPDF with no OCR prerequisite.
+# Responsibilities: Read pinned bytes, validate page/box coordinates, render
+#   PNG evidence with dimensions, rotation and pixel-to-page transforms, and
+#   label every render with its extractor/renderer lineage and evidence class.
+# Rationale: sunset-rmx.2 uses existing PyMuPDF with no OCR prerequisite;
+#   improve-geometry-render-binding D5 labels this in-process path
+#   `correlated` (PyMuPDF render + PyMuPDF extraction share a lineage).
 import pymupdf
+from dsc03.visual.render import evidence_class
+
+# Two-path labeling (design D5): this path renders in-process with PyMuPDF —
+# the same implementation lineage as the extraction — so its crops are
+# correlated evidence by construction and never feed oracle evaluation.
+EXTRACTOR_LINEAGE = 'pymupdf'
+RENDERER_LINEAGE = 'pymupdf'
 
 
 def page_frames(source, pages):
@@ -31,4 +41,8 @@ def render_page(source, page_number, dpi):
             'frame': f'page-{page_number}-pt',
             'pixel_to_page': [72 / dpi, 0, 0, 72 / dpi, 0, 0],
             'renderer': f'PyMuPDF@{pymupdf.VersionBind}',
+            'extractor_lineage': EXTRACTOR_LINEAGE,
+            'renderer_lineage': RENDERER_LINEAGE,
+            'evidence_class': evidence_class(EXTRACTOR_LINEAGE,
+                                             RENDERER_LINEAGE),
         }

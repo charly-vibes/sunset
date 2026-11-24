@@ -4,13 +4,13 @@
 # Rationale: sunset-jbb.4 keeps inspection offline and hash-bound; sunset-1ry
 #   recomputes the outcome vocabulary (text-complete/text-with-gaps/no-text-read)
 #   from coverage rows instead of trusting the manifest status.
-import math
 from pathlib import Path
 import unicodedata
 
 import pymupdf
 
 from dsc03 import validator
+from dsc03.substrate.space import quantize_scalar
 
 from digitization.native import (NORMALIZATION, OPTIONS, OUTCOME_MANIFEST_VERSION,
                                  _json, _map_box, _sha, classify_outcome)
@@ -126,7 +126,12 @@ def inspect_native(run_directory):
             if len(item['source_box']) != 4 or len(item['box']) != 4:
                 raise ValueError('invalid native word boxes')
             mapped = _map_box(item['source_box'], pymupdf.Matrix(*frame['source_to_page']))
-            if any(not math.isclose(a, b, abs_tol=1e-4) for a, b in zip(mapped, item['box'])):
+            # Exact quantized geometry (Decision 4): extraction quantized the
+            # stored box once, so inspection compares in the same quantized
+            # space — quantize the recomputed box with the same sanctioned
+            # quantizer instead of loosening a float tolerance.
+            mapped = [quantize_scalar(value) for value in mapped]
+            if mapped != item['box']:
                 raise ValueError('native word transform mismatch')
         for item in lines:
             if item['page'] not in frame_by_page or item['frame'] != frame_by_page[item['page']]['frame']:

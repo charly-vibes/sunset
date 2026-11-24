@@ -10,11 +10,11 @@ Non-goals: changing the meaning of any existing relation kind; deciding the wire
 
 ## Decisions
 
-1. **Anchor tuple.** `(source_sha256, record_kind, locator_path, profile_id, profile_version)`. Text values are excluded so two producers reading the same anchor yield the same id and their *claims* about it remain separately attributed. `locator_path` is the selector's profile-bound locator, e.g. `page:3/line:12/word:4`, or a raw-text interval `raw:[120,128)` for text-bound records.
+1. **Anchor tuple.** `(source_sha256, record_kind, locator_path, profile_id, profile_version)`. Text values are excluded so two producers reading the same anchor yield the same id and their *claims* about it remain separately attributed. `locator_path` is the selector's profile-bound locator, e.g. a raw-text interval `raw:[120,128)` for text-bound records, or a page/transform path like `page:3/transform:native-text-extraction`. Ordinal segments (`line:12`, `word:4`) are position-like — they derive identity from producer-local counters — and are valid ONLY where the pinned selector profile defines a deterministic, geometry-derived order for them; the deployed PDF native profile does not, so native anchors stop at page/transform granularity (as shipped in task 5.2). Finer-grained locators need a selector-profile delta and are not guessed here.
 2. **Digest form.** `a:` + first 128 bits of SHA-256 over the canonical JSON of the tuple, lowercase hex. 128 bits keeps ids short; collisions are detected, not assumed impossible (Requirement: Collision refusal).
 3. **Set-like sections.** `regions, contents, selectors, evidence, annotations, coverage, interpretations, profiles`. Sorted ascending by id (coverage by its existing uniqueness triple). Ordered meaning already lives in `precedes` relations; the audit task confirms no deployed requirement relies on array position in these sections.
-4. **Quantum.** Default 1/1000 pt, round-half-even, applied once at extraction. The pre-quantization float is not retained in the descriptor; the transform record names quantum, rule and extractor version so the loss is declared, as DSC already requires for normalization.
-5. **Relabeling.** `migrate` emits `relabel-table` evidence mapping old→new ids. Content values are never touched.
+4. **Quantum.** Default 1/1000 pt, round-half-even, applied once at extraction. The pre-quantization float is not retained in the descriptor; the transform record names quantum, rule and extractor version so the loss is declared, as DSC already requires for normalization. Native run artifacts carry the convention explicitly: the operative `box` (and line boxes derived from it) is the quantized integer geometry; the extractor's raw box is retained alongside as `source_box` — declared raw extractor output for provenance and verification recomputation (inspection re-derives and re-snaps from it), not identity-bearing geometry.
+5. **Relabeling.** `migrate` emits `relabel-table` evidence mapping old→new ids. Content values are never touched. Records whose anchor cannot be derived from declared data are never invented: they keep their label id, are named in the migration report (`unanchored`, with reason), and a nonempty unanchored set types the output `identity_anchor_missing`. The relabel table maps every *migrated* id; the delta scenario "maps every old id" holds for fully-anchorable descriptors.
 
 ## Risks / Trade-offs
 
@@ -25,7 +25,7 @@ Non-goals: changing the meaning of any existing relation kind; deciding the wire
 ## Migration Plan
 
 1. Ship the profile and validator support behind opt-in.
-2. `native` emits identity-profile descriptors; label-id output remains available until identity-profile descriptors become the only emitted form (the rotation is recorded as a task in tasks.md).
+2. `native` emits identity-profile descriptors (executed: task 5.2). End state: native emits only identity-profile descriptors; label-id output is no longer emitted — legacy label-id artifacts are converted by `migrate_to_identity`.
 3. Re-run the fixture corpus and diff canonical bytes between two processes.
 
 ## Open Questions
@@ -33,8 +33,12 @@ Non-goals: changing the meaning of any existing relation kind; deciding the wire
 1. Is the identity profile additive within DSC 0.3, or does set-like sorting require 0.4? Needs owner ruling.
    **Ruled (owner, 2026-11-24, via sunset-gpd gate G1): additive within DSC 0.3.** The identity profile is opt-in; descriptors without it keep the existing label-id semantics and canonical bytes, so no wire break for non-users. The position-dependence audit (below) found zero order dependence outside canonicalization/assembly, supporting the additive reading. Tasks 2.2+ unblocked.
 2. Should `coverage` entries gain derived ids or keep the triple key?
+   **Answered by the audit (below): keep the triple key** — nothing relies on array order for `coverage`; its identity is entirely the uniqueness triple, so entries keep the triple key with no position-order obligation. Derived anchor ids for coverage would be optional and additive; if a future requirement wants them, reopen as its own delta.
 
 ## Position-dependence audit (task 1.1, 2026-11-24, agent-executed at HEAD)
+
+Line references below are as-of the audit-time commit and may drift as the code
+evolves; the cited functions/rules/sections are the stable anchors.
 
 Audit of every dependence on array position in the eight set-like sections of
 Decision 3 (`regions, contents, selectors, evidence, annotations, coverage,

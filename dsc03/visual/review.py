@@ -6,7 +6,11 @@
 #   geometry frames, map claimed descriptor region rects into pixel space,
 #   and embed renders + mapped regions + render configuration + evidence
 #   class into the offline review SPA template
-#   (hitl/visual-review/templates/visual-review-spa.html). Walks every
+#   (hitl/visual-review/templates/visual-review-spa.html). Correlated-lineage
+#   render configs are refused per page with a typed reason
+#   (CORRELATED_RENDER_REFUSED): oracle evaluation reads only independent
+#   renders, so a correlated crop is absent from the record, never silently
+#   skipped. Walks every
 #   unique render target recorded in fixtures/visual/calibration.json for
 #   the all-examples bundle, and walks every page of a DSC 0.3 descriptor
 #   (as produced by `python3 -m digitization run`) for the
@@ -39,6 +43,12 @@ TEMPLATE_PATH = (
 )
 
 RULES = "no winner election, no smoothing; unknown is an answer"
+
+# Design D5: oracle evaluation reads ONLY independent renders. A correlated
+# config (render lineage == extractor lineage, e.g. the in-process PyMuPDF
+# review-crop path) is refused with this typed reason — the crop is absent
+# from the record, never silently skipped and never relabeled.
+CORRELATED_RENDER_REFUSED = "correlated-render-refused"
 
 # Declared geometry artifacts the calibration record names, mirroring the
 # mapping in tests/tracer/test_visual_calibration.py.
@@ -94,6 +104,16 @@ def _page_record(page_number, regions, config, rendered, geometry, frame_name,
     record = {"page": page_number, "file": file, "unavailable": None,
               "regions": [], "image": None, "width": None, "height": None,
               "frame": frame_name}
+    if config.evidence_class == "correlated":
+        # Spec "Render lineage labeling covers both paths": oracle evaluation
+        # SHALL NOT read correlated renders. The crop stays absent and the
+        # carrier entry still records evidence_class `correlated`.
+        record["unavailable"] = (
+            CORRELATED_RENDER_REFUSED
+            + ": evaluation reads only independent renders; this in-process "
+            "PyMuPDF crop is correlated evidence (extractor_lineage == "
+            "renderer_lineage) and never enters oracle evaluation")
+        return record
     if isinstance(rendered, render.RenderUnavailable):
         record["unavailable"] = rendered.reason
         return record

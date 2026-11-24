@@ -20,7 +20,7 @@ Non-Goals: replacing the poppler renderer; text correctness; visual completeness
 
 - Older poppler builds may not support `-cropbox` → mitigation: availability is already typed `unavailable` in the existing render configuration; the pin gains a feature check.
 - Adding fields to the native page-map changes the manifest → mitigation: artifacts are digested per run; no cross-version compat is claimed, and replay verifies within a run.
-- The measured baseline (23/139) is agent-executed from a chat session on 2026-11-24, not from `fixtures/visual/` → mitigation: task 1.2 re-measures at HEAD before implementation numbers are recorded in status.md.
+- The measured baseline (23/139) is agent-executed from a chat session on 2026-11-24, not from `fixtures/visual/` → mitigation: executed — task 1.2 re-measured at HEAD before implementation numbers were recorded in status.md (158/405 on the cropped fixture; docs/src/status.md, agent-executed 2026-11-24).
 
 ## Migration Plan
 

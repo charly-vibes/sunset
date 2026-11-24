@@ -9,8 +9,8 @@ import sys
 import unicodedata
 
 import pymupdf
-import pytest
 from digitization.native import _align_raw_words
+from dsc03.substrate.space import quantize_scalar
 
 ROOT = __import__('pathlib').Path(__file__).resolve().parents[2]
 
@@ -68,7 +68,10 @@ def test_native_layout_maps_every_normalized_token_and_explicit_page_frame(tmp_p
     assert frame['source_to_page'] == [0, 1, -1, 0, 360, 0]
     for word in words:
         x0, y0, x1, y1 = word['source_box']
-        assert word['box'] == pytest.approx([360 - y1, x0, 360 - y0, x1])
+        # Exact quantized geometry (Decision 4): mapped boxes are integer
+        # quanta; expectations derived via the same sanctioned quantizer.
+        assert word['box'] == [quantize_scalar(360 - y1), quantize_scalar(x0),
+                               quantize_scalar(360 - y0), quantize_scalar(x1)]
 
     code, inspected = cli('inspect', '--run', output, '--json')
     assert code == 0 and inspected['mode'] == 'native'
