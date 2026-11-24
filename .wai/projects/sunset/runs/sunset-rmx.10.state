@@ -1,0 +1,14 @@
+# sunset-rmx.10 state — CLOSED (engineering-only ruling)
+ruling: 2026-11-03 owner: "with the new workflow of OCR from pdf-to-image we
+  can skip the human requirement" -> engineering-only mode (no reference.json;
+  missing_scopes = all reference-dependent scopes; evaluation-incomplete; no
+  quality/economy/scaling claims; rmx.16 same treatment; rmx.14 cannot be positive).
+fact: Diario excerpt pages are image-only (no native text) -> 9op mechanical
+  truth loop has no truth side there; recorded in references.org ruling section.
+available fork (not ordered): measured stage on native-text difficult page
+  (pba p.1) via 9op loop — owner may add later.
+remaining steps enforced downstream:
+- rmx.15 finalizes fixtures/digitization/pilot.json (approved:true, real
+  baseline/candidate config digests, nonempty missing_scopes, real byte caps)
+  BEFORE its real smoke and any rmx.11 inference (tasks 2.4/3.1a/3.2).
+chain after rmx.10: rmx.15 -> rmx.11 -> rmx.16 -> rmx.12 -> rmx.13 -> rmx.14

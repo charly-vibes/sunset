@@ -656,3 +656,191 @@
   
   ## Open findings / blockers
   Rule of 5 review CORR-003 remains open as a spec gap: "pilot manifest SHALL pin numerical thresholds" vs empty thresholds accepted by validate_stage (test name at tests/tracer/test_digitization_evaluation.py:110 overstates — it does not assert thresholds). Needs either a requirement amendment or an invalid-manifest assertion; file as its own ticket rather than folding it into queue work.
+- 2026-11-05T16:25:32Z [id:a7770bb7b53afd1d05c0cec9c7334c1ca0be755a53515e05689db28bb52a8e38] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5 (pushed, synced with origin/main)
+  Session: 01a1abd6-fccf-7765-8a14-1be2e1c74708
+  Task: rmx re-entry-loop machinery shipped (rmx.21/.22/.23 via headless subagents); epic-closure owner decisions still pending
+  Previous entry: b67c1ff0506c4c693d09d20b2d2c70594cc0d8bb0cf8e00ec2ec02d144835fc3 (same task thread, different session 01a1a8da; its pending owner decisions remain pending — this entry continues it, not a supersession)
+  
+  ## Objective
+  Close out the sunset-rmx epic honestly after the DEFER, and build the staged re-entry loop machinery (reviewed references via SPA, pinned thresholds, measured human cost).
+  
+  ## Current phase
+  commit/shipped. rmx.21/.22/.23 implemented by three parallel headless pi subagents, owner-verified, committed per owner word, pushed, and CLOSED with evidence reasons. 4 commits: 2aa57a1 (21: continuation-edge diagnosis), 98017f7 (22: CORR-003 guard), c62da79 (23: verdicts-to-reference converter + golden fixture), f2c91f5 (beads close/export + issue-review research record).
+  
+  ## State
+  - Working tree clean except 3 by-design untracked: unfilled handoff template 2026-11-04-session-end.md, .wai/projects/sunset/runs/sunset-rmx.10.state (owner artifact), pba-judicial-2026-07-29.pdf (owner PDF, untriaged).
+  - rmx.21 verdict: hypothesis (a) — frozen six-page configs supply ZERO pages.*.structure proposals; 0 continuation edges is genuine under frozen inputs (no defect; digitization/ untouched). CONSEQUENCE: the future assessment-mode manifest MUST explicitly enable structure proposals or re-measurement reproduces 0 edges.
+  - rmx.23 shipped digitization/references.py (schema v1 + converter), digitization/references-schema.md, and the repo FIRST non-empty golden reference fixtures/digitization/reference-regions-golden.json (match_regions-proven).
+  - Issue-review of the trio: 8 findings, all amended (record in .wai/projects/sunset/research/2026-11-05-issue-review-rmx-21-22-23.org, pushed).
+  
+  ## Exact next action
+  Owner calls first (unchanged from b67c1ff0): (1) epic sunset-rmx disposition — close on DEFER or keep as standing record; (2) archive openspec/changes/add-iterative-document-digitization into openspec/specs/; (3) assent/amend/strike §Re-entry conditions in fixtures/digitization/scaling-decision.org. Then first human-time step of the loop: digitization run on page 1 → dsc03.visual.review --descriptor SPA walk → verdicts through the new converter (schema v1) → sunset-12h ingest. Assessment manifest (when drafted) needs owner numeric thresholds + structure proposals enabled.
+  
+  ## Decisions/constraints (do not violate)
+  - Stage diario-six-page-r2 (31bf682e…) and diario-difficult-page-r1 frozen engineering-only; reference_sha256 null; NO positive quality/economy/scaling conclusions; deferral is precautionary under UNKNOWN, not a scored failure.
+  - validate_stage now REFUSES assessment-mode manifests with empty policy.thresholds; engineering-only + {} stays valid (escape hatch).
+  - Never modify fixtures/digitization/local-regional.json, frozen stage manifests, six-page-runs/, or six-page-reference.json; SPA template untouched; unknown is an answer (no silent resolution).
+  - Commit+push granted this session (done); deploy/paid services/remote upload NOT granted.
+  - Pretender commit gate on new code (cyclomatic<=3, params<=2, lazy_cluster) — passed on all 4 commits; .beads/issues.jsonl needs git add -f.
+  
+  ## Ticket ownership
+  rmx.21/.22/.23 CLOSED. Open unclaimed automatable: sunset-zea, sunset-jix, sunset-qdy, sunset-doc, sunset-2uo, sunset-sc3, sunset-xlh, sunset-chs. Owner HITL gates: sunset-5ay (debugger proposal approval), sunset-elx (profile-induction proposal); sunset-12h open (needs owner SPA verdicts; adopts schema v1 from rmx.23 for descriptor-side ingest). Epic sunset-rmx open (owner decision). tasks.md 3.1a deliberately unticked (reviewed difficult-page references never obtained).
+  
+  ## Validation
+  Full pytest 677 passed / 2 skipped + 18 subtests (196s); just spec-check ALL GATES PASSED (openspec strict 12/12, spk lint, frozen 0.2 validator PASS 11) at HEAD f2c91f5 — verified on the combined tree by the orchestrating session.
+  
+  ## Blockers / unknowns
+  None automatable. Unknown: owner threshold values for the assessment manifest; whether 36-page target implies a new cap size (~2046 attempts projected, 56.8/page).
+- 2026-11-05T16:56:29Z [id:00071fd766d0837605936e75a3eb3b06aa2ad4399f9450d1301f1b852a0ab13e] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-05T16:56:29Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 2026-11-05T16-26-38-076Z_01a1ac88-a27c-7765-8a14-1be54530760c
+  Task: epic-closure rulings resolved by owner word — epic stays OPEN until re-entry loop completes; §Re-entry assented; page-1 SPA review loop launched
+  Previous entry: a7770bb7b53afd1d05c0cec9c7334c1ca0be755a53515e05689db28bb52a8e38 (same task thread, different session; its three pending owner decisions are now resolved — continues it, not a supersession) (superseded by 4f1fe1863180a730f397a852e7f94f11a207ab2384966f2eab565dd9ced20643)
+  
+  ## Objective
+  Drive the sunset-rmx re-entry loop to the MEASURED scaling decision (owner assent recorded in scaling-decision.org); complete rmx then close epic on evidence.
+  
+  ## Current phase
+  review (human-time). Page-1 loop launching: just digitization-review fixtures/carriers/diario-de-poesia-excerpt.pdf /tmp/diario-p1 8124 1.
+  
+  ## State
+  - scaling-decision.org amended (assent + scope note), new sha256 166818c2… — rmx.14 note records digest drift; metadata re-anchor + beads export + commit deferred to next owner-authorized commit.
+  - Epic ruling: stays open; close only after measured decision. NOT a full-issue authorization.
+  - Uncommitted so far: scaling-decision.org edit, beads notes/export, whisper entry.
+  
+  ## Exact next action
+  Owner walks http://localhost:8124, rules page-1 regions (agree/differ/unknown + missed ink), saves review-verdicts.json to /tmp/diario-p1/. Then agent: verdicts_to_reference (schema v1) -> reference-regions.json; repeat pages 2-6 (need one cross-page continuation pair); implement sunset-12h ingest (TDD); collect owner numeric thresholds; draft assessment manifest with structure proposals ENABLED; re-measure.
+  
+  ## Constraints (do not violate)
+  - Frozen: local-regional.json, stage manifests, six-page-runs/, six-page-reference.json, SPA template; validator.py stays 0.2; unknown is an answer.
+  - Assessment manifest MUST enable structure proposals + owner thresholds (rmx.22 guard refuses empty thresholds).
+  - Deferral stays unqualified until measured decision exists; no full-issue run, no deploy/paid/remote-upload.
+  - .beads/issues.jsonl commits need git add -f.
+  
+  ## Validation
+  Not run yet this session (loop launching). Gates at HEAD f2c91f5 were green per a7770bb (pytest 677 passed, spec-check ALL PASSED).
+- 2026-11-05T16:59:06Z [id:4f1fe1863180a730f397a852e7f94f11a207ab2384966f2eab565dd9ced20643] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-05T16:59:06Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 01a1ac88
+  Task: page-1 review SPA LIVE on http://localhost:8130 (104 regions) — owner walk pending; supersedes this session's launch entry (recipe path was wrong for image-only PDF)
+  Previous entry: 00071fd766d0837605936e75a3eb3b06aa2ad4399f9450d1301f1b852a0ab13e (same session+task; corrected below)
+  
+  ## State
+  - Owner rulings recorded: epic sunset-rmx stays OPEN until measured decision; §Re-entry ASSENTED (both in scaling-decision.org, new sha256 166818c2…, drift noted on rmx.14). Archive ruling (deploy add-iterative-document-digitization into specs/) still UNANSWERED. Thresholds still needed (Step 5).
+  - /tmp/diario-p1/: OCR-route run COMPLETED (config fixtures/digitization/local-regional-sixpage.json passed UNMODIFIED, pages 1, 104 provider calls, exit 0); review.html served on 8130 (HTTP 200, 1.25MB).
+  - GOTCHA for future loops: just digitization-review uses recorded_config (native text) and FAILS on this image-only PDF (exit 3, invalid-input) — use the frozen sixpage config + digitization run directly. Stale review servers from old sessions hold 8123+8124 (pids 1204384, 2381092) — left untouched.
+  - Uncommitted (conservative): scaling-decision.org edit, beads notes+export (127 issues), whisper entries.
+  
+  ## Exact next action
+  Owner walks http://localhost:8130, rules 104 page-1 regions (agree/differ/unknown + missed-ink boxes), saves review-verdicts.json into /tmp/diario-p1/. Agent then: verdicts_to_reference -> reference-regions.json; repeat pages 2-6 (+ one continuation pair); implement sunset-12h; collect thresholds; draft assessment manifest (structure proposals ENABLED); re-measure.
+  
+  ## Constraints
+  Unchanged from 00071fd7: frozen fixtures/manifests untouched; deferral unqualified until measured decision; no full-issue/deploy/paid/remote-upload; issues.jsonl needs git add -f. (supersedes 00071fd766d0837605936e75a3eb3b06aa2ad4399f9450d1301f1b852a0ab13e)
+- 2026-11-05T17:14:05Z [id:00826961eeecf6ecefb3371096b68851103401763571a04635a1e415128f3f11] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-05T17:14:05Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 01a1ac88
+  Task: SPA review UX upgraded per owner report (click-to-select both ways + pending/ruled sections); owner walk on page 1 continues
+  Previous entry: 4f1fe1863180a730f397a852e7f94f11a207ab2384966f2eab565dd9ced20643 (same session+task; continues it — SPA changed mid-walk)
+  
+  ## State
+  - Owner found the 104 region boxes indistinguishable on the dense page. TDD fix in hitl/visual-review/templates/visual-review-spa.html: pickRegionAt (smallest containing region wins; half-open rects; unmapped/degenerate never selectable) wired into the missed-ink mouseup click path (drags >=4px still commit missed ink, pure clicks select); selectRegion/applySelection with dataset.rid on boxes+rows, two-way scrollIntoView; list now renders pending (N)/ruled (N) sections via splitByVerdict (any verdict incl. unknown = ruled); re-click deselects; verdict buttons still re-render and selection survives.
+  - Tests: 3 new (2 node core: pickRegionAt, splitByVerdict; 1 template wiring presence) + idempotency stub extended with pick/select contract. test_visual_review_spa.py 24 passed. node --check clean. just spec-check ALL GATES PASSED.
+  - NOTE: a7770bb constraint 'SPA template untouched' was scoped to rmx.21-.23; THIS template change is owner-requested (owner word overrides).
+  - /tmp/diario-p1/review.html REBUILT and served at http://localhost:8130/review.html (plain / is a directory listing — use /review.html). localStorage autosave key unchanged; owner should click Restore on the banner. 0 verdicts recorded at screenshot time.
+  - Still uncommitted: scaling-decision.org assent edit, beads notes+export, whisper entries, SPA template + tests. Commit awaits owner word (hooks will run pretender on new SPA code). Archive ruling + numeric thresholds still open.
+  
+  ## Exact next action
+  Owner refreshes http://localhost:8130/review.html, clicks Restore, walks page 1 (click rects to find rows, rule agree/differ/unknown, rows move pending->ruled), downloads review-verdicts.json into /tmp/diario-p1/. Agent then: verdicts_to_reference, pages 2-6, sunset-12h, thresholds, assessment manifest (structure proposals ON), re-measure.
+- 2026-11-05T19:06:20Z [id:e2a2c08e2ff8f4956e000370b615098f9ee56efd2d6b33f8a72bfdacae1b444c] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-05T19:06:20Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 01a1ac88
+  Task: qwen-assisted review shipped (Lane 2 triage + Lane 1 draft-assist); 6-page SPA + drafts live — owner verification walk pending
+  Previous entry: 00826961eeecf6ecefb3371096b68851103401763571a04635a1e415128f3f11 (same session+task; continues it — checker built per owner's 'implement it') (superseded by 359c03d34c027fb9cb8af8cf5616bf509705fb24dba159d5d4fc068a066db7ce)
+  
+  ## Objective
+  Execute the owner-amended re-entry loop: qwen3.8-flash triages + pre-drafts, human verifies, references land, sunset-12h next, then assessment manifest -> measured scaling decision.
+  
+  ## State
+  - AUTHORIZATION recorded: token-plan spend + remote upload of diario pages 1-6 renders ONLY (never pba-judicial PDF). Amendment written into scaling-decision.org §Re-entry (new sha256 — ask bd notes on rmx.14; supersedes 166818c2…).
+  - NEW: digitization/triage.py + digitization/drafts.py (TDD, tests/tracer/test_digitization_checker.py 9 tests) + SPA mergeDrafts/wireDrafts (node test in SPA file). 292 passed across touched suites; node --check clean; spec-check untouched (no spec delta).
+  - RUNS: /tmp/diario-r6 (6-page OCR run, frozen config unmodified, 341 provider calls); /tmp/diario-triage/ (per-page raw + triage.org). Triage: walk order 4, 2, 1, 5, 6, 3 (p4: 36 differ; p1: 52 unjudged).
+  - DRAFTS: /tmp/diario-r6/drafts.json — 87 drafts (p1:20, p2:7, p3:2, p4:5, p5:31, p6:22); p6 initially refused (truncated JSON) — bounded retry + incremental --pages merge added to drafts.py; refused raws always saved.
+  - SPA live: http://localhost:8131/review.html (6 pages; plain / is a dir listing). Load drafts -> rows prefilled [qwen3.8 draft], human click overwrites, download schema unchanged.
+  - GOTCHAS: pi headless checker = pi --no-session --no-tools --provider qwen-token-plan-individual --model qwen3.8-flash -p <prompt> @image (~2-3 min/call); model catalog already had qwen3.8-flash w/ image input.
+  - Uncommitted: scaling-decision.org (assent+amendment), SPA template+tests, triage.py, drafts.py, checker tests, beads export, whisper.
+  
+  ## Exact next action
+  Owner: open 8131/review.html, Load drafts JSON (/tmp/diario-r6/drafts.json), walk pages in order 4,2,1,5,6,3 verifying each drafted row + ruling undrafted ones (esp. p1's 52 unjudged), download review-verdicts.json -> /tmp/diario-r6/. Agent then: verdicts_to_reference per page -> reference-regions.json (schema v1), repeat/extend continuation pair, implement sunset-12h (TDD), collect owner thresholds, draft assessment manifest (structure proposals ON, thresholds pinned), re-measure -> measured scaling decision -> close epic on evidence.
+  
+  ## Constraints
+  Deferral unqualified until measured decision; no full-issue run; upload authorization scoped to diario 1-6 renders; drafts never resolve unknowns; human verdict always wins; frozen fixtures/manifests untouched; issues.jsonl needs git add -f.
+- 2026-11-06T17:41:39Z [id:f5a53b50c2e5c441fe0713aa67236eef00e912079e1937e198cb9aa6859c1ad5] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-06T17:41:20Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 01a1a88
+  Task: qwen-assisted review shipped (Lane 2 triage + Lane 1 draft-assist); 6-page SPA + drafts live — owner verification walk pending
+  ## Objective
+  Execute the owner-amended re-entry loop: qwen3.8-flash triages + pre-drafts, human verification, references land, sunset-12h next, then assessment manifest -> measured scaling decision -> close epic on evidence.
+  ## State
+  - AUTHORIZATION recorded: token-plan spend + remote upload of diario pages 1-6 renders ONLY (never pba-judicial PDF). Amendment written into scaling-decision.org §Re-entry (new sha256 — ask bd notes on rmx.14; supersedes 166818c2…).
+  - NEW: digitization/triage.py + digitization/drafts.py (TDD, tests/tracer/test_digitization_checker.py 9 tests) + SPA mergeDrafts/wireDrafts (node test in SPA file). 292 passed across suites; node --check clean; spec-check untouched (no spec delta).
+  - RUNS: /tmp/diario-r6 (6-page OCR run, frozen config unmodified, 341 provider calls); /tmp/diario-triage/ (per-page raw + triage.org). Triage: walk order 4, 2, 1, 5, 6, 3 (p4: 36 differ; p1: 52 unjudged). Drafts: /tmp/diario-r6/drafts.json — 87 drafts (p1:20, p2:7, p3:2, p4:5, p5:31, p6:22); p6 initially refused (truncated JSON) — bounded retry + incremental --pages merge added to drafts.py; refused raws always saved.
+  - SPA live: http://localhost:8131/review.html (6 pages; plain / is a directory listing). Load drafts JSON → rows prefilled [qwen3.8 draft], human click overwrites, download schema unchanged.
+  - GOTCHAS: pi headless checker = pi --no-session --no-tools --provider qwen-token-plan-individual --model qwen3.8-flash -p <prompt> @image (~2-3 min/call); model catalog already had qwen3.8-flash w/ image input.
+  - Uncommitted: scaling-decision.org (assent+amendment), SPA template+tests, triage.py, drafts.py, checker tests, beads export, whisper.
+  ## Exact next action
+  Owner: open 8131/review.html, Load drafts JSON (/tmp/diario-r6/drafts.json), walk pages in order 4,2,1,5,6,3 verifying each drafted row + ruling undrafted ones (esp. p1's 52 unjudged), download review-verdicts.json -> /tmp/diario-r6/. Agent then: verdicts_to_reference per page -> reference-regions.json (schema v1), repeat/extend continuation pair, implement sunset-12h (TDD), collect owner thresholds, draft assessment manifest (structure proposals ON, thresholds pinned), re-measure -> measured scaling decision -> close epic on evidence.
+  ## Constraints
+  Deferral unqualified until measured decision; no full-issue run; upload authorization scoped to diario 1-6 renders; drafts never resolve unknowns; human verdict always wins; frozen fixtures/manifests untouched; issues.jsonl needs git add -f." 2>&1 | tail -2
+- 2026-11-06T17:41:57Z [id:359c03d34c027fb9cb8af8cf5616bf509705fb24dba159d5d4fc068a066db7ce] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-06T17:44:00Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 01a1a88
+  Task: qwen-assisted review shipped (Lane 2 triage + Lane 1 draft-assist); 6-page SPA + drafts live — owner verification walk pending
+  ## Objective
+  Execute the owner-amended re-entry loop: qwen3.8-flash triages + pre-drafts, human verification, references land, sunset-12h next, then assessment manifest -> measured scaling decision -> close epic on evidence.
+  ## State
+  - AUTHORIZATION recorded: token-plan spend + remote upload of diario pages 1-6 renders ONLY (never pba-judicial PDF). Amendment written into scaling-decision.org §Re-entry (new sha256 — ask bd notes on rmx.14; supersedes 166818c2…).
+  - NEW: digitization/triage.py + digitization/drafts.py (TDD, tests/tracer/test_digitization_checker.py 9 tests) + SPA mergeDrafts/wireDrafts (node test in SPA file). 292 passed across suites; node --check clean; spec-check untouched (no spec delta).
+  - RUNS: /tmp/diario-r6 (6-page OCR run, frozen config unmodified, 341 provider calls); /tmp/diario-triage/ (per-page raw + triage.org). Triage: walk order 4, 2, 1, 5, 6, 3 (p4: 36 differ; p1: 52 unjudged). Drafts: /tmp/diario-r6/drafts.json — 87 drafts (p1:20, p2:7, p3:2, p4:5, p5:31, p6:22); p6 initially refused (truncated JSON) — bounded retry + incremental --pages merge added to drafts.py; refused raws always saved.
+  - SPA live: http://localhost:8131/review.html (6 pages; plain / is a directory listing). Load drafts JSON → rows prefilled [qwen3.8 draft], human click overwrites, download schema unchanged.
+  - GOTCHAS: pi headless checker = pi --no-session --no-tools --provider qwen-token-plan-individual --model qwen3.8-flash -p <prompt> @image (~2-3 min/call); model catalog already had qwen3.8-flash w/ image input.
+  - Uncommitted: scaling-decision.org (assent+amendment), SPA template+tests, triage.py, drafts.py, checker tests, beads export, whisper.
+  ## Exact next action
+  Owner: open 8131/review.html, Load drafts JSON (/tmp/diario-r6/drafts.json), walk pages in order 4,2,1,5,6,3 verifying each drafted row + ruling undrafted ones (esp. p1's 52 unjudged), download review-verdicts.json -> /tmp/diario-r6/. Agent then: verdicts_to_reference per page -> reference-regions.json (schema v1), repeat/extend continuation pair, implement sunset-12h (TDD), collect owner thresholds, draft assessment manifest (structure proposals ON, thresholds pinned), re-measure -> measured scaling decision -> close epic on evidence.
+  ## Constraints
+  Deferral unqualified until measured decision; no full-issue run; upload authorization scoped to diario 1-6 renders; drafts never resolve unknowns; human verdict always wins; frozen fixtures/manifests untouched; issues.jsonl needs git add -f. (supersedes e2a2c08e2ff8f4956e000370b615098f9ee56efd2d6b33f8a72bfdacae1b444c)
+- 2026-11-12T14:37:58Z [id:58a20bb355c3244971f6093efe225950b5c005d8cca6e914491e26a170c93e02] (#resume-sunset-rmx-epic-close) Format: 1
+  Timestamp: 2026-11-12T14:37:36Z
+  Repo: sunset (para/areas/dev/gh/charly/sunset) — DSC specification corpus
+  Branch: main, HEAD f2c91f5
+  Session: 01a1c761
+  Task: 6-page review SPA (re)deployed on 8131 and verified — owner verification walk still pending
+  Previous entry: 359c03d34c027fb9cb8af8cf5616bf509705fb24dba159d5d4fc068a066db7ce (same task, prior session — continues it, NOT superseded)
+  ## Objective
+  Unchanged: owner-amended re-entry loop — qwen3.8-flash triage + pre-drafts shipped earlier; human verification of drafts next; then verdicts_to_reference -> reference-regions.json, sunset-12h (TDD), assessment manifest, re-measure -> measured scaling decision -> close sunset-rmx epic on evidence.
+  ## State (deltas since prior entry)
+  - PRIOR HANDOFF WAS STALE ON INFRA: 8131 was NOT serving the 6-page SPA — an old single-page page-2 verify run (/tmp/local-verify-run, started Nov 3, pid 3254683) occupied the port; 8130 serves page-1 only (/tmp/diario-p1, still running).
+  - FIX: killed stale pid 3254683 (it had 0/65 ruled — nothing lost); rebuilt /tmp/diario-r6/review.html from /tmp/diario-r6/descriptor.json; relaunched. One failed start (bind race: Address already in use) then retry succeeded.
+  - LIVE NOW: pid 2399944, http://localhost:8131/review.html, HTTP 200. Data island verified: carrier digitization-42292cc690f4c10f, 6 pages — p1:104, p2:65, p3:23, p4:40, p5:56, p6:53 = 341 regions (matches handoff's 341 provider calls).
+  - Owner saw a single page pill before the fix; pills render per served data — page pills appear only for pages in the loaded carrier (top nav: carriers / pages / zoom pills, no keyboard shortcuts).
+  - Uncommitted worktree unchanged from prior entry (SPA template+tests, triage.py, drafts.py, checker tests, scaling-decision.org, beads export, whisper).
+  ## Exact next action
+  Owner: open http://localhost:8131/review.html, Load drafts JSON (/tmp/diario-r6/drafts.json — 87 drafts), walk pages in order 4,2,1,5,6,3, verify drafted rows + rule undrafted (esp. p1's 52 unjudged), download review-verdicts.json -> /tmp/diario-r6/. review-verdicts.json still ABSENT as of this stash. Agent then: verdicts_to_reference per page -> reference-regions.json (schema v1), repeat/extend continuation pair, implement sunset-12h (TDD), collect owner thresholds, draft assessment manifest (structure proposals ON, thresholds pinned), re-measure -> measured scaling decision -> close epic.
+  ## Constraints
+  Deferral unqualified until measured decision; no full-issue run; upload authorization scoped to diario pages 1-6 renders ONLY (never pba-judicial PDF); drafts never resolve unknowns; human verdict always wins; frozen fixtures/manifests untouched; issues.jsonl needs git add -f. GOTCHAS: SPA autosave is per-origin localStorage — progress made on old single-page instances (8130/old 8131) does not carry to the new 6-page origin; check the progress counter matches reality before trusting a restore banner.
+  ## Tickets / validation
+  sunset-rmx epic + sunset-12h open, unclaimed. Validation this session: curl HTTP 200 + data-island parse (6 pages/341 regions). Test suites not re-run (no code changed; prior entry recorded 292 passed).
