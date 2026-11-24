@@ -108,6 +108,10 @@ conformance, and (c) leaves `dsc03/conformance.py` labels untouched. Moving a
 kernel-level composition checker into `dsc03/` would be a later, separately
 specified change.
 
+## Refusal operand representation (added 2026-11-24, join-law extension)
+
+The delta's absorption requirement composes refusals as operands (`compose(refusal, X)`). To keep this implementable without inventing a wire form: a refusal operand is the typed refusal outcome carrying its witness (the state the layer model already names `refused`), never a descriptor; composing a refusal with any operand returns that refusal with the original witness, and refusals never enter canonical descriptor bytes.
+
 ## Falsifiability
 
 The nine fixtures in `tests/substrate/test_assembly_laws.py` map to the

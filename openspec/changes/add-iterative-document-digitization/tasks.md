@@ -25,6 +25,17 @@ These are OpenSpec execution checkpoints; Beads remains the task tracker. Before
 - [x] 3.3 (Beads: sunset-rmx.12, sunset-rmx.14) After sunset-rmx.11 and sunset-rmx.16, evaluate the six-page excerpt including continuations with the same evaluate operation and retained command/config/output digests; publish measured correction effort or UNKNOWN, reference/setup costs, failures and the owner decision on full-issue scaling.
 - [x] 3.4 (Beads: sunset-rmx.13) Run strict proposal/deployed-spec checks, frozen 0.2 PASS 11, new focused tests and full just spec-check; inspect attribution and loss reports; include an interrupted run followed by the documented fresh-process public resume invocation in the complete stubbed pilot journey. Do not broaden conformance labels from this pilot.
 
+## 4. Model-call determinism (merged from the reviewed proposal set, 2026-11-24)
+
+The requirements Pinned model identity, Exact model call key, Schema-validated model output admission, Replay performs zero model calls, and Durable spend boundary for model calls are added to this change rather than a parallel `add-model-record-replay` change (review verdict CORR-005/CORR-004: one capability, no duplicate capability; fresh-run variability remains covered by Fresh inference variability).
+
+- [ ] 4.1 RED: floating model alias refused before dispatch; unavailable revision recorded
+- [ ] 4.2 RED: call-key digest changes on any component change (template, rendered input, schema, decoding params)
+- [ ] 4.3 RED: schema-invalid model output recorded as failed attempt, semantic state unchanged
+- [ ] 4.4 RED: replay of a recorded model run performs zero provider calls; missing record yields incomplete-artifacts
+- [ ] 4.5 RED: uncertain dispatch survives resume without implicit retry; explicit settle recorded
+- [ ] 4.6 Implement the model adapter beside the OCR adapter in `digitization/providers.py`; ledger, replay and artifacts reuse unchanged
+
 ## Checkpoint status notes (decision-time re-anchoring, sunset-rmx.14)
 
 - 2.4, 3.1, 3.2, 3.3 and 3.4 were ticked at decision time to match closed,

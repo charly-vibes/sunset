@@ -128,6 +128,51 @@ The digitizer SHALL pin refinement-round, provider-attempt and monetary limits b
 - **WHEN** state A splits into B and merges back into A with new revision IDs but identical active content, geometry, attribution, relationships and coverage
 - **THEN** execution stops with repeated-state diagnostics and preserves all revisions
 
+### Requirement: Pinned model identity
+A model call dispatched by the digitizer SHALL name a versioned or dated model snapshot, and a floating alias SHALL be refused before any request is dispatched. Where the provider exposes no revision identifier, revision identity SHALL be recorded unavailable as in Fresh inference variability, and no fresh determinism claim SHALL be made.
+
+#### Scenario: Alias refused
+
+- **GIVEN** a configuration naming the model as `latest`
+- **WHEN** a run is started
+- **THEN** it is refused and no provider call is made
+
+### Requirement: Exact model call key
+The model call key SHALL be a digest of model id, snapshot, prompt template digest, rendered input digest, output schema digest and decoding parameters, and changing any component SHALL change the key.
+
+#### Scenario: Template edit changes the key
+
+- **GIVEN** two calls identical except for the prompt template
+- **WHEN** their keys are derived
+- **THEN** the keys differ
+
+### Requirement: Schema-validated model output admission
+Model output SHALL be validated against the declared output schema before any observation or claim is admitted; invalid output SHALL be recorded as a failed attempt with its raw response and SHALL admit nothing into the semantic state.
+
+#### Scenario: Malformed response admits nothing
+
+- **GIVEN** a response that is not valid against the schema
+- **WHEN** it is received
+- **THEN** a failed attempt is recorded with the raw blob and the semantic state is unchanged
+
+### Requirement: Replay performs zero model calls
+Replay of a recorded run SHALL perform zero provider calls and SHALL reproduce recorded model-derived state byte-for-byte; a missing record SHALL yield `incomplete-artifacts` rather than a live call.
+
+#### Scenario: Missing record fails closed
+
+- **GIVEN** a run whose recorded model response blob was deleted
+- **WHEN** replay is requested
+- **THEN** the status is `incomplete-artifacts` and provider calls equal zero
+
+### Requirement: Durable spend boundary for model calls
+Every model call SHALL pass the durable budget ledger before dispatch, and a dispatch whose outcome is uncertain SHALL NOT be retried automatically; an uncertain attempt SHALL be resolved only by an explicit, recorded settle action.
+
+#### Scenario: Process killed after dispatch
+
+- **GIVEN** a call dispatched and the process terminated before a receipt
+- **WHEN** the run is resumed
+- **THEN** the attempt remains uncertain and no new request is sent for it
+
 #### Scenario: Content change is not a cycle
 
 - **WHEN** a new state differs only by a retained raw poem newline
