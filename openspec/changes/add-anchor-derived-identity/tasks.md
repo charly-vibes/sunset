@@ -12,15 +12,15 @@
 
 ## 3. Canonical order
 
-- [ ] 3.1 RED: permuting set-like arrays yields identical canonical bytes in reader A and reader B
-- [ ] 3.2 Implement ascending-id order in both independent readers without sharing code
-- [ ] 3.3 Roundtrip stability test (parse canonical → re-serialize → identical)
+- [x] 3.1 RED: permuting set-like arrays yields identical canonical bytes in reader A and reader B
+- [x] 3.2 Implement ascending-id order in both independent readers without sharing code
+- [x] 3.3 Roundtrip stability test (parse canonical → re-serialize → identical)
 
 ## 4. Geometry
 
-- [ ] 4.1 Quantized integer boxes with declared quantum and rounding rule
-- [ ] 4.2 Record quantization as an explicit transform with extractor version
-- [ ] 4.3 Replace tolerance-0 claim in space fixtures with an exact-integer property over real native boxes
+- [x] 4.1 Quantized integer boxes with declared quantum and rounding rule
+- [x] 4.2 Record quantization as an explicit transform with extractor version
+- [x] 4.3 Replace tolerance-0 claim in space fixtures with an exact-integer property over real native boxes
 
 ## 5. Migration and adoption
 
