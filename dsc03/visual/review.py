@@ -47,7 +47,9 @@ RULES = "no winner election, no smoothing; unknown is an answer"
 # Design D5: oracle evaluation reads ONLY independent renders. A correlated
 # config (render lineage == extractor lineage, e.g. the in-process PyMuPDF
 # review-crop path) is refused with this typed reason — the crop is absent
-# from the record, never silently skipped and never relabeled.
+# from the record, never silently skipped and never relabeled. The refusal
+# is carried structurally in page_record["refusal"] = {code, reason}
+# ("unavailable" keeps the prefixed display string for the review SPA).
 CORRELATED_RENDER_REFUSED = "correlated-render-refused"
 
 # Declared geometry artifacts the calibration record names, mirroring the
@@ -92,6 +94,17 @@ def _default_config():
     )
 
 
+def _maybe_render(config, source_path):
+    """Render unless correlated: refusal precedes rendering (Design D5).
+
+    The typed refusal itself is constructed in _page_record; this helper is
+    the single statement of "a correlated config never invokes a renderer".
+    """
+    if config.evidence_class == "correlated":
+        return None
+    return render.render_page(config, source_path)
+
+
 def _regions_for(calibration, carrier_id):
     matches = [c for c in calibration["carriers"] if c["id"] == carrier_id]
     assert len(matches) == 1, f"carrier {carrier_id!r} not uniquely recorded"
@@ -102,17 +115,22 @@ def _page_record(page_number, regions, config, rendered, geometry, frame_name,
                  file=None):
     """One page entry: pinned render + frame-mapped claimed regions."""
     record = {"page": page_number, "file": file, "unavailable": None,
+              "refusal": None,
               "regions": [], "image": None, "width": None, "height": None,
               "frame": frame_name}
     if config.evidence_class == "correlated":
         # Spec "Render lineage labeling covers both paths": oracle evaluation
         # SHALL NOT read correlated renders. The crop stays absent and the
         # carrier entry still records evidence_class `correlated`.
-        record["unavailable"] = (
-            CORRELATED_RENDER_REFUSED
-            + ": evaluation reads only independent renders; this in-process "
-            "PyMuPDF crop is correlated evidence (extractor_lineage == "
-            "renderer_lineage) and never enters oracle evaluation")
+        refusal_reason = ("evaluation reads only independent renders; this "
+                          "in-process PyMuPDF crop is correlated evidence "
+                          "(extractor_lineage == renderer_lineage) and never "
+                          "enters oracle evaluation")
+        # Structured refusal (rule-of-5 CLAR-001): machine-readable code and
+        # reason, so consumers never prefix-match the display string.
+        record["refusal"] = {"code": CORRELATED_RENDER_REFUSED,
+                             "reason": refusal_reason}
+        record["unavailable"] = CORRELATED_RENDER_REFUSED + ": " + refusal_reason
         return record
     if isinstance(rendered, render.RenderUnavailable):
         record["unavailable"] = rendered.reason
@@ -174,8 +192,7 @@ def build_review_bundle(
     config = config or _default_config()
     # Refusal precedes rendering: a correlated config never invokes a
     # renderer at all — the crop is absent, typed, before any pixels exist.
-    rendered = (None if config.evidence_class == "correlated"
-                else render.render_page(config, pdf_path))
+    rendered = _maybe_render(config, pdf_path)
     page_record = _page_record(config.page, regions, config, rendered,
                                geometry, frame_name)
     record = _bundle_record([{
@@ -214,8 +231,7 @@ def build_calibration_review_bundle(out_path, record_path=None, config=None):
     for (carrier, file_rel, page, geometry_name, frame_name) in targets:
         entry_config = replace(config, page=page)
         geometry = json.loads(_GEOMETRY_ARTIFACTS[geometry_name].read_text())
-        rendered = (None if entry_config.evidence_class == "correlated"
-                    else render.render_page(entry_config, _ROOT / file_rel))
+        rendered = _maybe_render(entry_config, _ROOT / file_rel)
         page_record = _page_record(page, _regions_for(calibration, carrier),
                                    entry_config, rendered, geometry,
                                    frame_name, file=file_rel)
@@ -331,8 +347,7 @@ def build_descriptor_review_bundle(descriptor_path, out_path, config=None):
             continue
         entry_config = replace(config, page=int(matched.group(1)))
         try:
-            rendered = (None if entry_config.evidence_class == "correlated"
-                        else render.render_page(entry_config, source))
+            rendered = _maybe_render(entry_config, source)
         except render.RenderCommandError as exc:
             rendered = render.RenderUnavailable(config=entry_config,
                                                 reason=str(exc))

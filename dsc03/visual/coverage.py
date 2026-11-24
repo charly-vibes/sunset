@@ -82,13 +82,11 @@ alone — no defaults, no fallbacks):
 """
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
-
-import pymupdf
 
 from dsc03.visual import frames
 from dsc03.visual import render
+from dsc03.visual._pixels import MaskUnavailable, comparison_mask
 
 PROPERTY = "ink-coverage"
 
@@ -102,8 +100,6 @@ SCOPED_CLAIM = (
 # Pinned structuring element for ink dilation (design D4 tolerance):
 # 8-connected = square (Chebyshev) ball, separable into two 1-D passes.
 DILATION_CONNECTIVITY = 8
-
-_DILATION_RE = re.compile(r"^ink-dilation-(\d+)px$")
 
 # The declared region-claim vocabulary; anything else contradicts the claim
 # format and is retained as a disagreement, never guessed.
@@ -153,72 +149,6 @@ def _unknown(config, carrier, reason, page=None):
         evidence_class=config.evidence_class, carrier=carrier, regions=(),
         reason=reason,
     )
-
-
-def _decode_grayscale(data: bytes):
-    """Decode rendered PNG bytes to (width, height, gray_samples).
-
-    Pure decoding — not a lineage-bearing step. Raises on undecodable bytes.
-    """
-    pix = pymupdf.Pixmap(data)
-    if pix.alpha:
-        pix = pymupdf.Pixmap(pix, 0)
-    gray = pymupdf.Pixmap(pymupdf.csGRAY, pix)
-    return gray.width, gray.height, bytes(gray.samples)
-
-
-_INK_TABLES = {}
-
-
-def _ink_table(threshold: int) -> bytes:
-    """Byte-translation table: gray value strictly below threshold is ink."""
-    table = _INK_TABLES.get(threshold)
-    if table is None:
-        table = bytes(1 if value < threshold else 0 for value in range(256))
-        _INK_TABLES[threshold] = table
-    return table
-
-
-def _parse_dilation(simplification: str):
-    """Parse the pinned simplification format; None if none is comparable."""
-    if not isinstance(simplification, str):
-        return None
-    match = _DILATION_RE.fullmatch(simplification)
-    if match is None:
-        return None
-    return int(match.group(1))
-
-
-def _dilate(mask: bytearray, width: int, height: int, radius: int) -> bytearray:
-    """8-connected dilation of a packed 0/1 mask (two separable 1-D passes)."""
-    if radius <= 0:
-        return mask
-    one = b"\x01"
-    # horizontal pass, row-wise
-    out = bytearray(width * height)
-    for y in range(height):
-        base = y * width
-        row = bytes(mask[base:base + width])
-        x = row.find(one)
-        while x != -1:
-            x0 = max(0, x - radius)
-            x1 = min(width, x + radius + 1)
-            out[base + x0:base + x1] = b"\x01" * (x1 - x0)
-            x = row.find(one, x + 1)
-    # vertical pass, column-wise (step-slice gather/scatter stays in C)
-    for x in range(width):
-        col = bytes(out[x::width])
-        if col.count(1) == 0:
-            continue
-        column = bytearray(height)
-        y = col.find(one)
-        while y != -1:
-            y0 = max(0, y - radius)
-            y1 = min(height, y + radius + 1)
-            column[y0:y1] = b"\x01" * (y1 - y0)
-            y = col.find(one, y + 1)
-        out[x::width] = column
-    return out
 
 
 def _usable_calibration(calibration, carrier: str, page: int):
@@ -311,26 +241,10 @@ def coverage_outcome(
             reason=render_result.reason,
         )
 
-    binarization = config.binarization
-    if (
-        not binarization.enabled
-        or binarization.method != "fixed-threshold"
-        or not isinstance(binarization.threshold, int)
-        or isinstance(binarization.threshold, bool)
-    ):
-        return _unknown(config, carrier, "binarization-not-configured")
-
     try:
-        width, height, gray = _decode_grayscale(render_result.data)
-    except Exception:
-        return _unknown(config, carrier, "render-decode-failed")
-
-    dilation = _parse_dilation(config.source_simplification)
-    if dilation is None:
-        return _unknown(config, carrier, "source-simplification-missing")
-
-    mask = bytearray(gray.translate(_ink_table(binarization.threshold)))
-    mask = _dilate(mask, width, height, dilation)
+        width, height, _raw, mask = comparison_mask(render_result, config)
+    except MaskUnavailable as unavailable:
+        return _unknown(config, carrier, unavailable.reason)
 
     mapping = frames.frame_mapping(geometry, frame_name, config, (width, height))
     if isinstance(mapping, frames.UnknownMapping):

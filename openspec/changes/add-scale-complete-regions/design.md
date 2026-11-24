@@ -27,3 +27,4 @@ Non-goals: layout analysis (blocks from geometry) beyond what the extractor repo
 
 1. Is a `block` scale in scope for native PDFs (MuPDF block numbers) or deferred until a layout capability exists?
    **Ruled (owner, 2026-11-24, via sunset-gpd gate G6): block scale is in scope — word < line < block < page — using MuPDF block numbers; containment checks uniform per Decision 1.** Task 2.3 unblocked.
+   **Boundary (open owner flag on sunset-gpd, 2026-11-24): MuPDF block numbers serve oracle/region statistics and containment ONLY — they MUST NOT enter identity `locator_path`s. Native anchors stay page/transform-granular (add-anchor-derived-identity Decision 1: ordinal segments are position-like and need a pinned selector profile with a geometry-derived order) until a selector-profile delta is ruled. Region ids and word/line/block provenance records that could feed identity must not encode block ordinals.**

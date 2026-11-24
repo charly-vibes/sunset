@@ -24,6 +24,7 @@
 #   frame laws machinery-side under dsc03/substrate/ — no wire change.
 """Space laws: typed frames, unknown predicates, reflow identity, coexist."""
 import copy
+import math
 
 from dsc03.substrate.laws import synthetic_sha, typed_check
 
@@ -81,7 +82,11 @@ def quantize_scalar(value, scale=QUANTUM_SCALE):
     Rounds half-even exactly: value is scaled exactly (Fraction), then the
     half-way case resolves toward the even neighbor. Applied once, at
     extraction; the pre-quantization float is not retained downstream.
+    Non-finite coordinates are refused with ValueError — they are malformed
+    extractor output, never quantizable geometry (rule-of-5 EDGE-001).
     """
+    if not math.isfinite(value):
+        raise ValueError(f"cannot quantize non-finite coordinate: {value!r}")
     from fractions import Fraction
     scaled = Fraction(value) * scale
     n, d = scaled.numerator, scaled.denominator

@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from dsc03 import adapters, coverage, profiles, validator
 
-CARRIERS = Path(__file__).resolve().parents[2] / "fixtures" / "carriers"
+from conftest import CARRIERS
 PDF = CARRIERS / "agentic-patterns-excerpt.pdf"
 EPUB = CARRIERS / "sunset-carrier-sample.epub"
 

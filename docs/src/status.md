@@ -225,6 +225,31 @@ Re-measurement at HEAD before any implementation, from the RED tasks of
   crop-box disagreement. This is the false-disagreement that tasks 2.1–2.3
   (crop-box render, extent binding, native frame record) must drive to zero.
 
+## Geometry/render-binding re-measurement at the fix HEAD (agent-executed, 2026-11-24)
+
+Same procedure as the RED baseline above, re-run at the fix HEAD (tasks 2.1–2.3
+landed: crop-aware `pdftoppm -cropbox` render, extent binding, declared native
+frames) through the fixed machinery (`resolve_pixel_mapping` + pinned
+`RenderConfig` with `render_cropbox`, threshold 128, 1px ink dilation), agent
+throwaway script, superseding the RED false-miss record.
+
+- **Outcome: 0/405 false word misses counted — every run is a typed refusal.**
+  Cropped and uncropped alike, all 3 pages of
+  `budgeting-basics-excerpt.pdf` are refused by the extent binding with
+  `page-extent-mismatch` (rendered 901×1351 / cropped 776×1226 vs declared
+  900×1350 / 775×1225 at 150 dpi): poppler `pdftoppm` rounds page dimensions
+  **up** (ceil of `pt·dpi/72`), while the declared extent binding uses
+  `round`. The oracle therefore never silently counts cropped-page words —
+  the RED disagreement path is closed with a typed unknown instead.
+- **New observation (owner-flag candidate, recorded 2026-11-24):** this
+  carrier's point dimensions are non-integral (432.063×648.063 pt); for such
+  carriers ceil ≠ round at *every* dpi, so a native frame from
+  `budgeting-basics` cannot bind through `pdftoppm` at any resolution —
+  crop or no crop. Crop-correct binding on integral-dimension carriers is
+  proven by the suite (`test_extent_binding_end_to_end_crop_and_rot_crop`);
+  whether the binding rule should adopt the renderer's ceil convention is an
+  owner ruling, not an agent change.
+
 ## Identity §5.4: native identity-descriptor byte-identity across two processes (agent-executed, 2026-11-24)
 
 - **Run:** for each of the 11 carriers in `fixtures/carriers/`,
@@ -286,3 +311,37 @@ Re-measurement at HEAD before any implementation, from the RED tasks of
   scan. Descriptor bytes unchanged by the adoption (byte-compared HEAD vs
   working tree). RED evidence: word-map boxes float at HEAD, transform record
   absent, cross-run word-map bytes differed — all three captured before the fix.
+
+### Review-fix round (rule-of-5, same day, agent-executed)
+
+- **Structured refusal + single render site (CORR/CLAR):** the correlated
+  refusal now also carries a machine-readable `record["refusal"] =
+  {code, reason}` next to the prefixed display string, and "a correlated
+  config never invokes a renderer" is stated once in `_maybe_render`
+  (`dsc03/visual/review.py`), used by all three render sites.
+- **Shared pixel module (EXCL-001):** decode/binarize/dilate machinery
+  extracted from `coverage.py` (duplicated in `masks.py` and
+  `content_classes.py`) into `dsc03/visual/_pixels.py` with public names
+  (`decode_grayscale`, `ink_table`, `parse_dilation`, `dilate`,
+  `comparison_mask`) and a `MaskUnavailable` typed failure; the three
+  consumers share it and `pymupdf` is imported only there.
+- **Non-finite geometry refused at extraction (EDGE-001):** `quantize_scalar`
+  rejects NaN/±inf with `ValueError`; `digitization/native.py` converts that
+  into the existing typed vocabulary
+  (`NativeInputError('malformed-pdf', 'extraction produced non-finite word
+  geometry')`) instead of crashing mid-run. Word/line geometry red test pinned
+  in `tests/tracer/test_native_quantization.py` /
+  `test_space_quantization.py`.
+- **Shared test builders (EXCL-002):** the pinned poppler `RenderConfig`
+  builder and synthetic-carrier builder, duplicated across four oracle
+  suites, moved to `tests/tracer/conftest.py` together with the shared
+  `CARRIERS` path constant; mapping-only suites keep their deliberately
+  fake-pinned local configs.
+- **G6 boundary amendment (CORR-001):** MuPDF block numbers restricted to
+  oracle/containment statistics; identity `locator_path`s keep
+  page/transform-granular anchors absent a selector-profile delta
+  (`add-scale-complete-regions/design.md` Open Questions).
+- **GREEN re-measurement (CORR-002):** recorded in the
+  "re-measurement at the fix HEAD" section above — typed refusals everywhere,
+  0/405 silent false counts; new owner-flag candidate filed for the
+  ceil-vs-round extent convention (sunset ticket).

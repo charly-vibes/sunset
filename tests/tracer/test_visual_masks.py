@@ -44,6 +44,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dsc03.visual import frames, masks, render
 from dsc03.visual.render import Binarization, RenderConfig
 
+from conftest import make_carrier as _make_carrier, render_config as _render_config
+
 TESTS_DIR = Path(__file__).resolve().parent
 PROFILES = TESTS_DIR / "profiles"
 REAL_CARRIER = TESTS_DIR.parents[1] / "fixtures" / "carriers" / "bank-statement-ca-excerpt.pdf"
@@ -70,41 +72,6 @@ REGION_BLANK_CORNER = {"id": "blank-corner", "x": 450, "y": 50, "w": 100, "h": 1
 # misplaced, not missing.
 REGION_MISPLACED = {"id": "misplaced-ink", "x": 402, "y": 310, "w": 2, "h": 280,
                     "expected": "ink"}
-
-
-def _poppler_executable():
-    return shutil.which("pdftoppm") or "/usr/bin/pdftoppm"
-
-
-def _render_config(*, page=1, dpi=72, enabled=True, threshold=128,
-                   simplification="ink-dilation-2px", extractor="pymupdf",
-                   renderer="poppler", executable=None):
-    return RenderConfig(
-        renderer_name="pdftoppm",
-        renderer_executable=executable or _poppler_executable(),
-        renderer_version=render.detect_renderer_version(executable or _poppler_executable()),
-        dpi=dpi,
-        page=page,
-        binarization=Binarization(enabled=enabled, method="fixed-threshold",
-                                  threshold=threshold),
-        source_simplification=simplification,
-        extractor_lineage=extractor,
-        renderer_lineage=renderer,
-    )
-
-
-def _make_carrier(tmp_path, name, rects, width=PAGE_W, height=PAGE_H,
-                  blank_pages_after=0):
-    """White page + filled black rects (fitz coords) -> saved PDF path."""
-    doc = pymupdf.open()
-    page = doc.new_page(width=width, height=height)
-    for rect in rects:
-        page.draw_rect(rect, color=(0, 0, 0), fill=(0, 0, 0))
-    for _ in range(blank_pages_after):
-        doc.new_page(width=width, height=height)
-    path = tmp_path / name
-    doc.save(str(path))
-    return path
 
 
 def _rendered(tmp_path, config, rects, name="carrier.pdf", width=PAGE_W,

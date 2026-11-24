@@ -13,6 +13,7 @@
 #   boxes integers, so the tolerance-0 claim is grounded in a real-carrier
 #   property, not a fixture-family assertion.
 import pymupdf
+import pytest
 
 from dsc03.substrate import space
 
@@ -98,3 +99,11 @@ class TestRotationRoundTrip:
                                           t.tolerance) is True
             exact += 1
         assert exact == len(words)
+
+
+def test_non_finite_coordinates_are_refused():
+    """Non-finite extractor output is malformed input, never quantizable
+    geometry (rule-of-5 EDGE-001): quantize_scalar refuses it typed."""
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(ValueError, match="non-finite"):
+            space.quantize_scalar(bad)

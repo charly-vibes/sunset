@@ -85,3 +85,19 @@ def test_genuinely_wrong_mapping_still_refuses_after_quantized_compare(tmp_path)
     (output / 'manifest.json').write_bytes(json.dumps(manifest).encode('utf-8'))
     with pytest.raises(IntegrityError, match='native word transform mismatch'):
         inspect_run(output)
+
+
+def test_non_finite_word_geometry_is_typed_refused(tmp_path, monkeypatch):
+    """A degenerate PDF whose word boxes come out non-finite must refuse as
+    a typed NativeInputError ('malformed-pdf'), never escape as an untyped
+    ValueError from deep inside quantization (rule-of-5 EDGE-001)."""
+    import pytest
+    import digitization.native as native_mod
+    from digitization.native import NativeInputError
+
+    source = tmp_path / "degenerate.pdf"
+    layout_pdf(source)
+    monkeypatch.setattr(native_mod, "_map_box",
+                        lambda box, matrix: [float("nan"), 0.0, 1.0, 1.0])
+    with pytest.raises(NativeInputError, match="non-finite"):
+        native_mod.extract(source, tmp_path / "run")

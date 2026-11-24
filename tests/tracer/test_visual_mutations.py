@@ -79,6 +79,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dsc03.visual import coverage, masks, render
 from dsc03.visual.render import Binarization, RenderConfig
 
+from conftest import render_config as _render_config
+
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures" / "visual"
 
 # --- pinned fixture geometry (hand-computed, seed-free; see fixtures README) --
@@ -118,26 +120,6 @@ COV_BOUNDS = {"min": 0.01, "max": 1.0}
 def _calibration(property_name, carrier, bounds):
     return {"property": property_name, "carrier": carrier, "page": 1,
             "min": bounds["min"], "max": bounds["max"]}
-
-
-def _poppler_executable():
-    return shutil.which("pdftoppm") or "/usr/bin/pdftoppm"
-
-
-def _render_config():
-    """The pinned render configuration (identical to the shipped oracle tests)."""
-    return RenderConfig(
-        renderer_name="pdftoppm",
-        renderer_executable=_poppler_executable(),
-        renderer_version=render.detect_renderer_version(_poppler_executable()),
-        dpi=72,
-        page=1,
-        binarization=Binarization(enabled=True, method="fixed-threshold",
-                                  threshold=128),
-        source_simplification="ink-dilation-2px",
-        extractor_lineage="pymupdf",
-        renderer_lineage="poppler",
-    )
 
 
 def _rendered(fixture_name):

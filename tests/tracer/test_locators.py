@@ -31,7 +31,7 @@ from dsc03 import inspect as dbg
 from dsc03 import locators
 from dsc03 import validator
 
-CARRIERS = Path(__file__).resolve().parents[2] / "fixtures" / "carriers"
+from conftest import CARRIERS
 PDF = CARRIERS / "accounting-made-simple-excerpt.pdf"
 EPUB = CARRIERS / "sunset-carrier-sample.epub"
 EPUB_SIDECAR = CARRIERS / "sunset-carrier-sample-annotations.json"

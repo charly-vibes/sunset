@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from dsc03.visual import RenderConfig, render
-from dsc03.visual.coverage import _decode_grayscale, _dilate, _ink_table, _parse_dilation
+from dsc03.visual._pixels import decode_grayscale, dilate, ink_table, parse_dilation
 from dsc03.visual.frames import UnknownMapping, frame_mapping
 
 KIND = "content-class-observations"
@@ -290,14 +290,14 @@ def _morphology_usable(config):
     b = config.binarization
     return (b.enabled and b.method == "fixed-threshold"
             and isinstance(b.threshold, int)
-            and _parse_dilation(config.source_simplification) is not None)
+            and parse_dilation(config.source_simplification) is not None)
 
 
 def _simplified_mask(rendered, config, width, height):
     threshold = config.binarization.threshold
-    dilation = _parse_dilation(config.source_simplification)
-    _w, _h, gray = _decode_grayscale(rendered.data)
-    return _dilate(bytearray(bytes(gray.translate(_ink_table(threshold)))),
+    dilation = parse_dilation(config.source_simplification)
+    _w, _h, gray = decode_grayscale(rendered.data)
+    return dilate(bytearray(bytes(gray.translate(ink_table(threshold)))),
                    width, height, dilation)
 
 
@@ -306,7 +306,7 @@ def _method_record(config):
             "renderer": config.renderer_name, "dpi": config.dpi,
             "renderer_version": config.renderer_version,
             "threshold": config.binarization.threshold,
-            "dilation_px": _parse_dilation(config.source_simplification),
+            "dilation_px": parse_dilation(config.source_simplification),
             "connectivity": CONNECTIVITY, "min_area_px": MIN_AREA_PX}
 
 
@@ -338,7 +338,7 @@ def _render_and_mapping(path, config, geometry, frame_name):
     if not isinstance(rendered, render.Rendered):
         mapping = UnknownMapping("render-unavailable", "no pinned render available")
         return rendered, None, None, mapping
-    width, height, _gray = _decode_grayscale(rendered.data)
+    width, height, _gray = decode_grayscale(rendered.data)
     mapping = frame_mapping(geometry, frame_name, config, (width, height))
     return rendered, width, height, mapping
 

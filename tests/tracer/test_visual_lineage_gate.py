@@ -133,6 +133,11 @@ def test_evaluation_entry_refuses_correlated_render(tmp_path):
         assert page["image"] is None, "correlated crop fed the evaluation"
         assert page["unavailable"], "refusal must be typed, never silent"
         assert page["unavailable"].startswith("correlated-render-refused")
+        # Structured refusal (rule-of-5 CLAR-001): machine-readable code and
+        # reason, so consumers never prefix-match the display string.
+        assert page["refusal"] is not None, "refusal must be structured"
+        assert page["refusal"]["code"] == "correlated-render-refused"
+        assert page["refusal"]["reason"]
 
 
 def test_evaluation_entry_still_renders_independent(tmp_path):

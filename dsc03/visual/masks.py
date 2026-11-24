@@ -107,14 +107,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from dsc03.visual import coverage, frames, render
-from dsc03.visual.coverage import (
-    _decode_grayscale,
-    _dilate,
-    _ink_table,
-    _parse_dilation,
-    _pixel_rect,
-    _region_fraction,
+from dsc03.visual._pixels import (
+    MaskUnavailable,
+    comparison_mask,
+    parse_dilation,
 )
+from dsc03.visual.coverage import _pixel_rect, _region_fraction
 
 PROPERTY = "region-alignment"
 
@@ -264,26 +262,12 @@ def masks_outcome(
             reason=render_result.reason,
         )
 
-    binarization = config.binarization
-    if (
-        not binarization.enabled
-        or binarization.method != "fixed-threshold"
-        or not isinstance(binarization.threshold, int)
-        or isinstance(binarization.threshold, bool)
-    ):
-        return _unknown(config, carrier, "binarization-not-configured")
-
     try:
-        width, height, gray = _decode_grayscale(render_result.data)
-    except Exception:
-        return _unknown(config, carrier, "render-decode-failed")
+        width, height, raw, simplified = comparison_mask(render_result, config)
+    except MaskUnavailable as unavailable:
+        return _unknown(config, carrier, unavailable.reason)
 
-    dilation = _parse_dilation(config.source_simplification)
-    if dilation is None:
-        return _unknown(config, carrier, "source-simplification-missing")
-
-    raw = bytearray(gray.translate(_ink_table(binarization.threshold)))
-    simplified = _dilate(bytearray(raw), width, height, dilation)
+    dilation = parse_dilation(config.source_simplification)
 
     mapping = frames.frame_mapping(geometry, frame_name, config, (width, height))
     if isinstance(mapping, frames.UnknownMapping):

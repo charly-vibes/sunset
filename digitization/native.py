@@ -436,30 +436,38 @@ def extract(source, output, pages=None):
                               'source_frame': 'unrotated-crop-page-pt',
                               'target_frame': 'rotated-visible-page-pt',
                               'source_to_page': _matrix(matrix)})
-            for item, (position, end) in zip(extracted_words, spans):
-                x0, y0, x1, y1, token, bno, lno, _ = item
-                mapped_box = _map_box([x0, y0, x1, y1], matrix)
-                # Exact quantized geometry (Decision 4): quantize applied ONCE
-                # here, at extraction; the pre-quantization float is not
-                # retained anywhere downstream (the raw source_box stays
-                # unquantized as extractor output). Line boxes below derive
-                # from these quantized word boxes, so they inherit integers.
-                mapped_box = [quantize_scalar(value) for value in mapped_box]
-                word_maps.append({'source_sha256': source_hash, 'page': page_num,
-                                  'frame': f'page-{page_num}-pt', 'raw_start': raw_base + position,
-                                  'raw_end': raw_base + end, 'text': raw[position:end],
-                                  'source_box': [x0, y0, x1, y1], 'box': mapped_box,
-                                  'search_start': search_base, 'search_end': search_base + len(unicodedata.normalize('NFC', token))})
-                grouped.setdefault((bno, lno), []).append((raw[position:end], mapped_box, position, end))
-                search_base += len(unicodedata.normalize('NFC', token)) + 1
-            for group in grouped.values():
-                start, end = group[0][2], group[-1][3]
-                boxes = [word[1] for word in group]
-                line_maps.append({'source_sha256': source_hash, 'page': page_num, 'frame': f'page-{page_num}-pt',
-                                  'raw_start': raw_base + start, 'raw_end': raw_base + end,
-                                  'text': raw[start:end],
-                                  'box': [min(w[0] for w in boxes), min(w[1] for w in boxes),
-                                          max(w[2] for w in boxes), max(w[3] for w in boxes)]})
+            try:
+                for item, (position, end) in zip(extracted_words, spans):
+                    x0, y0, x1, y1, token, bno, lno, _ = item
+                    mapped_box = _map_box([x0, y0, x1, y1], matrix)
+                    # Exact quantized geometry (Decision 4): quantize applied ONCE
+                    # here, at extraction; the pre-quantization float is not
+                    # retained anywhere downstream (the raw source_box stays
+                    # unquantized as extractor output). Line boxes below derive
+                    # from these quantized word boxes, so they inherit integers.
+                    mapped_box = [quantize_scalar(value) for value in mapped_box]
+                    word_maps.append({'source_sha256': source_hash, 'page': page_num,
+                                      'frame': f'page-{page_num}-pt', 'raw_start': raw_base + position,
+                                      'raw_end': raw_base + end, 'text': raw[position:end],
+                                      'source_box': [x0, y0, x1, y1], 'box': mapped_box,
+                                      'search_start': search_base, 'search_end': search_base + len(unicodedata.normalize('NFC', token))})
+                    grouped.setdefault((bno, lno), []).append((raw[position:end], mapped_box, position, end))
+                    search_base += len(unicodedata.normalize('NFC', token)) + 1
+                for group in grouped.values():
+                    start, end = group[0][2], group[-1][3]
+                    boxes = [word[1] for word in group]
+                    line_maps.append({'source_sha256': source_hash, 'page': page_num, 'frame': f'page-{page_num}-pt',
+                                      'raw_start': raw_base + start, 'raw_end': raw_base + end,
+                                      'text': raw[start:end],
+                                      'box': [min(w[0] for w in boxes), min(w[1] for w in boxes),
+                                              max(w[2] for w in boxes), max(w[3] for w in boxes)]})
+            except (ValueError, OverflowError) as error:
+                # Non-finite extractor geometry (refused by quantize_scalar)
+                # is malformed input, not a crash: same typed vocabulary as
+                # an unreadable PDF (rule-of-5 EDGE-001).
+                raise NativeInputError(
+                    'malformed-pdf',
+                    'extraction produced non-finite word geometry') from error
             raw_base += len(raw)
         # Selected source pages are retained in the same order supplied by caller.
     words = word_maps

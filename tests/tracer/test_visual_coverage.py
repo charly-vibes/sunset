@@ -36,6 +36,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from dsc03.visual import coverage, frames, render
 from dsc03.visual.render import Binarization, RenderConfig
 
+from conftest import make_carrier as _make_carrier, render_config as _render_config
+
 TESTS_DIR = Path(__file__).resolve().parent
 PROFILES = TESTS_DIR / "profiles"
 REAL_CARRIER = TESTS_DIR.parents[1] / "fixtures" / "carriers" / "bank-statement-ca-excerpt.pdf"
@@ -57,50 +59,9 @@ CALIB_A = {"min": 0.1, "max": 1.0}
 REGION_INK_BOX = {"id": "ink-box", "x": 110, "y": 310, "w": 280, "h": 280, "expected": "ink"}
 REGION_BLANK_CORNER = {"id": "blank-corner", "x": 450, "y": 50, "w": 100, "h": 100,
                        "expected": "no-ink"}
+
 REGION_PHANTOM_INK = {"id": "phantom-ink", "x": 450, "y": 50, "w": 100, "h": 100,
                       "expected": "ink"}
-
-
-def _poppler_executable():
-    return shutil.which("pdftoppm") or "/usr/bin/pdftoppm"
-
-
-def _render_config(*, page=1, dpi=72, enabled=True, threshold=128,
-                   simplification="ink-dilation-2px", extractor="pymupdf",
-                   renderer="poppler", executable=None):
-    return RenderConfig(
-        renderer_name="pdftoppm",
-        renderer_executable=executable or _poppler_executable(),
-        renderer_version=render.detect_renderer_version(executable or _poppler_executable()),
-        dpi=dpi,
-        page=page,
-        binarization=Binarization(enabled=enabled, method="fixed-threshold",
-                                  threshold=threshold),
-        source_simplification=simplification,
-        extractor_lineage=extractor,
-        renderer_lineage=renderer,
-    )
-
-
-def _make_carrier(tmp_path, name, rects, width=PAGE_W, height=PAGE_H,
-                  blank_pages_after=0, white_rects=()):
-    """White page + filled black rects (fitz coords) -> saved PDF path.
-
-    ``white_rects`` are filled white AFTER the black rects (punches holes in
-    the ink); ``blank_pages_after`` appends that many genuinely blank
-    trailing pages (used to render a real blank page 2 of the same document).
-    """
-    doc = pymupdf.open()
-    page = doc.new_page(width=width, height=height)
-    for rect in rects:
-        page.draw_rect(rect, color=(0, 0, 0), fill=(0, 0, 0))
-    for rect in white_rects:
-        page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
-    for _ in range(blank_pages_after):
-        doc.new_page(width=width, height=height)
-    path = tmp_path / name
-    doc.save(str(path))
-    return path
 
 
 def _rendered(tmp_path, config, rects, name="carrier.pdf", width=PAGE_W,
