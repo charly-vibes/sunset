@@ -136,8 +136,8 @@ def snap_box_to_ink(rendered, config, box, tolerance=SNAP_TOLERANCE_PT):
     deltas = {
         "left": measured["left"] / scale - x,
         "right": (measured["right"] + 1) / scale - x1,
-        "top": height - (measured["top"] / scale) - y1,
-        "bottom": height - ((measured["bottom"] + 1) / scale) - y,
+        "top": (height - measured["top"]) / scale - y1,
+        "bottom": (height - (measured["bottom"] + 1)) / scale - y,
     }
     quantized_tight = {
         "x": quantize_scalar(x + deltas["left"]),

@@ -5,11 +5,14 @@
 # Responsibilities: (1) crop references resolved from the descriptor's
 #   declared geometry (region ids are claim anchors); (2) build_queue_bundle
 #   — render pages, embed queue items in the SPA's carriers/pages/regions
-#   data-island shape, record the queue with crop references; (3)
+#   data-island shape, record the queue with crop references, and declare
+#   multi-claim regions (multi_claim_regions); (3)
 #   verdicts_to_decisions — agree → human accept claim, differ → human
-#   rejected claim, unknown → no claim (the item stays queued); anchored
-#   region ids that no queued claim uses produce no claim. Model claims are
-#   never mutated.
+#   rejected claim, unknown → no claim (the item stays queued); a region
+#   anchoring several queued claims yields a typed skip
+#   (`review.region.multi-claim`), never a silent first-item decision.
+#   Anchored region ids that no queued claim uses produce no claim. Model
+#   claims are never mutated.
 # Rationale: design decision "duplicating the HITL review path would fork
 #   the human-evidence record". Render crops are correlated lineage and are
 #   labeled as such by digitization.render; they are for human review only.
@@ -59,6 +62,19 @@ def crop_references(descriptor, source, dpi):
     return refs
 
 
+def multi_claim_regions(queue):
+    """Region id -> sorted claim ids of every queued claim anchoring it,
+    for regions whose scope carries SEVERAL queued claims. Declared in the
+    bundle so humans see up front that a bare agree/differ there is skipped
+    (`review.region.multi-claim`), never silently applied to items[0]."""
+    anchored = {}
+    for item in queue:
+        for anchor in item["scope"]:
+            anchored.setdefault(anchor, []).append(item["claim_id"])
+    return {region: sorted(ids) for region, ids in sorted(anchored.items())
+            if len(ids) > 1}
+
+
 def build_queue_bundle(descriptor, claims, source, out_path, dpi=72,
                        reviewer=None):
     """Derive the queue, render the pages it anchors, and embed everything
@@ -97,6 +113,10 @@ def build_queue_bundle(descriptor, claims, source, out_path, dpi=72,
         "carriers": [{"carrier": descriptor["id"],
                       "pages": page_records}],
         "queue": queue,
+        # regions anchoring several queued claims: one-click agree/differ is
+        # skipped at verdict mapping (review.region.multi-claim); humans
+        # settle these through the SPA's alternatives/edit path
+        "multi_claim_regions": multi_claim_regions(queue),
         "provenance": REVIEW_PROVENANCE,
     }
     template = TEMPLATE_PATH.read_text()
@@ -112,16 +132,20 @@ def build_queue_bundle(descriptor, claims, source, out_path, dpi=72,
 def verdicts_to_decisions(verdicts, desc, claims):
     """Map the existing SPA's verdicts JSON to human-origin claims.
 
-    agree → accept (human claim repeating the canonical value), differ →
-    reject (human claim, status rejected), unknown → nothing recorded
-    (unknown is an answer; the item stays queued). Regions that anchor no
-    queued claim produce no claim — verdicts are never fabricated into
-    claims. Provenance is carried as non-semantic metadata; the model
-    claims are never mutated.
+    Returns {"decisions": [...], "skips": [...]}. agree → accept (human
+    claim repeating the canonical value), differ → reject (human claim,
+    status rejected), unknown → nothing recorded (unknown is an answer; the
+    item stays queued). Regions that anchor no queued claim produce no
+    claim — verdicts are never fabricated into claims. A region anchoring
+    SEVERAL queued claims produces no silent first-item decision either:
+    the verdict is recorded as a typed skip (`review.region.multi-claim`)
+    routing humans to the SPA's alternatives/edit path. Provenance is
+    carried as non-semantic metadata; the model claims are never mutated.
     """
     reviewer = verdicts.get("reviewer")
     queued = review_queue(claims)
-    human = []
+    decisions = []
+    skips = []
     for carrier in verdicts.get("carriers", []):
         for page in carrier.get("pages", []):
             for region in page.get("regions", []):
@@ -132,10 +156,21 @@ def verdicts_to_decisions(verdicts, desc, claims):
                 items = [i for i in queued if region["id"] in i["scope"]]
                 if not items:
                     continue
+                if len(items) > 1:
+                    # several queued claims share this region: electing
+                    # items[0] would fabricate a decision the reviewer never
+                    # saw per claim — record a typed skip instead
+                    skips.append({
+                        "region": region["id"],
+                        "verdict": verdict,
+                        "reason_code": "review.region.multi-claim",
+                        "claim_ids": sorted(i["claim_id"] for i in items),
+                    })
+                    continue
                 item = items[0]
                 model = next(c for c in claims if c["id"] == item["claim_id"])
                 action = "accept" if verdict == "agree" else "reject"
                 decision = decide(desc, model, action, reviewer=reviewer)
                 decision["review_provenance"] = REVIEW_PROVENANCE
-                human.append(decision)
-    return human
+                decisions.append(decision)
+    return {"decisions": decisions, "skips": skips}

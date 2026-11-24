@@ -59,8 +59,8 @@ def _carrier(tmp_path, rects, name="snap-carrier.pdf"):
     return path
 
 
-def _rendered(tmp_path, rects=(FITZ_RECT,), name="snap-carrier.pdf"):
-    config = render_config(dpi=72, simplification="ink-dilation-2px")
+def _rendered(tmp_path, rects=(FITZ_RECT,), name="snap-carrier.pdf", dpi=72):
+    config = render_config(dpi=dpi, simplification="ink-dilation-2px")
     pdf = _carrier(tmp_path, list(rects), name=name)
     result = render.render_page(config, pdf)
     assert isinstance(result, render.Rendered), result.reason
@@ -162,6 +162,66 @@ def test_blank_corner_of_inked_page_does_not_silently_snap(tmp_path):
     outcome = snap.snap_box_to_ink(rendered, config, box)
     assert outcome["status"] == "refused"
     assert outcome["reason"] == "no-contiguous-ink-edge"
+
+
+# --- dpi invariance: pt-space deltas identical across dpi (144 vs 72) ---------
+
+
+LOOSE_BOX = {"x": 197.0, "y": 297.0, "width": 106.0, "height": 106.0}
+LOOSE_TOLERANCE = 3.0
+
+
+def test_144dpi_snap_deltas_match_72dpi_pt_space(tmp_path):
+    # Same synthetic carrier, same declared box: snapping is a pt-space
+    # contract, so per-edge deltas at 144 dpi must match the 72 dpi
+    # hand-computed values within one 144-dpi pixel (0.5 pt) of boundary
+    # quantization — never page-height-scale garbage.
+    config72, _, rendered72 = _rendered(tmp_path, name="c72.pdf", dpi=72)
+    out72 = snap.snap_box_to_ink(rendered72, config72, LOOSE_BOX,
+                                 tolerance=LOOSE_TOLERANCE)
+    assert out72["status"] == "snapped"
+    config144, _, rendered144 = _rendered(tmp_path, name="c144.pdf", dpi=144)
+    out144 = snap.snap_box_to_ink(rendered144, config144, LOOSE_BOX,
+                                  tolerance=LOOSE_TOLERANCE)
+    assert out144["status"] == "snapped"
+    half_px_pt = 0.5 + 1e-9  # one 144-dpi pixel is 0.5 pt
+    for edge, expected in out72["deltas"].items():
+        got = out144["deltas"][edge]
+        assert abs(got - expected) <= half_px_pt, \
+            f"{edge}: 144 dpi delta {got} vs 72 dpi {expected}"
+    for key in ("x", "y", "width", "height"):
+        assert abs(out144["box"][key] - out72["box"][key]) <= half_px_pt * 1000
+
+
+# declared box with slack beyond the 0.5 pt tolerance on the left and top
+# edges (the tolerance band still reaches the ink through the ceil
+# rounding, so both dpi refuse beyond-tolerance). At 72 dpi the tight
+# left/top land on integer pt (200 / 400); at 144 dpi poppler inks one
+# extra boundary pixel, putting them at 199.5 / 400.5 — so the witness
+# slack is 1.2 pt at 72 and 0.7 pt at 144, both > tolerance, and every
+# witness delta is small pt-scale, never page-height-scale.
+REFUSAL_BOX = {"x": 198.8, "y": 299.5, "width": 101.7, "height": 101.7}
+REFUSAL_EXPECTED = {72: {"left": 1.2, "top": -1.2},
+                    144: {"left": 0.7, "top": -0.7}}
+
+
+def test_refusal_witness_deltas_are_pt_scale_across_dpi(tmp_path):
+    # Beyond-tolerance refusal: witness deltas are signed
+    # tight-minus-declared pt values at both dpi — never pixel/
+    # page-height-scale numbers.
+    for dpi, expected in REFUSAL_EXPECTED.items():
+        config, _, rendered = _rendered(tmp_path, name=f"c{dpi}-ref.pdf",
+                                        dpi=dpi)
+        outcome = snap.snap_box_to_ink(rendered, config, REFUSAL_BOX)
+        assert outcome["status"] == "refused", (dpi, outcome)
+        assert outcome["reason"] == "beyond-tolerance", (dpi, outcome)
+        deltas = outcome["witness"]["deltas"]
+        for edge, delta in deltas.items():
+            assert abs(delta) <= 1.5, \
+                f"dpi {dpi} {edge}: witness delta {delta} is not pt-scale"
+        assert outcome["witness"]["edges"] == ["left", "top"], (dpi, deltas)
+        for edge, value in expected.items():
+            assert deltas[edge] == pytest.approx(value, abs=1e-9), (dpi, edge)
 
 
 # --- quantized 1/1000 pt operative boxes preserved ------------------------------

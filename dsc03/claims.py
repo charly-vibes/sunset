@@ -6,11 +6,13 @@
 # Responsibilities: Provide (1) submit_claim — resolve anchors against a
 #   descriptor (dangling anchor refused `claim.anchor.unresolved`), derive
 #   extractive values from the anchored text through the normalization
-#   registry (mismatch refused `claim.value.mismatch`; unregistered type
+#   registry (mismatch refused `claim.value.mismatch`; registered type whose
+#   span fails to parse refused `claim.value.unparseable`; unregistered type
 #   admitted at `unverified` with `claim.normalization.unregistered`), flag
 #   generative claims and cap them at `unverified`; (2) claim_id +
 #   add_claim — digest identity over (type, sorted anchors, canonical value,
-#   origin) with idempotent resubmission; (3) STATUS_ORDER / meet_status —
+#   origin[, decision]) with idempotent resubmission; (3)
+#   STATUS_ORDER / meet_status —
 #   `verified > agreed > unverified > conflicted`, `rejected` excluded from
 #   aggregation, no producer for `agreed` under this change; (4)
 #   mark_conflicts — same scope+type, different values: both retained,
@@ -38,6 +40,7 @@ REJECTED = "rejected"  # human-only; excluded from aggregation
 ANCHOR_UNRESOLVED = "claim.anchor.unresolved"
 VALUE_MISMATCH = "claim.value.mismatch"
 NORMALIZATION_UNREGISTERED = "claim.normalization.unregistered"
+VALUE_UNPARSEABLE = "claim.value.unparseable"
 
 # -- normalization registry (tasks 2.4) ------------------------------------------
 
@@ -139,13 +142,20 @@ def normalize(claim_type, text):
 
 # -- identity (design decision 1) ------------------------------------------------
 
-def claim_id(claim_type, anchors, canonical_value, origin):
-    """Digest of (type, sorted anchors, canonical value, origin)."""
-    payload = json_bytes({
+def claim_id(claim_type, anchors, canonical_value, origin, decision=None):
+    """Digest of (type, sorted anchors, canonical value, origin[, decision]).
+
+    `decision` extends the identity for human decision claims: two
+    decisions about the same value (accept vs reject) must never collide
+    into one id and silently drop each other.
+    """
+    payload = {
         "type": claim_type, "anchors": sorted(anchors),
         "value": canonical_value, "origin": origin,
-    })
-    return "c:" + hashlib.sha256(payload).hexdigest()[:32]
+    }
+    if decision is not None:
+        payload["decision"] = decision
+    return "c:" + hashlib.sha256(json_bytes(payload)).hexdigest()[:32]
 
 
 def json_bytes(obj):
@@ -206,10 +216,20 @@ def submit_claim(desc, spec):
 
     if extractive:
         text = anchored_text(desc, anchors)
+        registered = claim_type in REGISTRY
         normalized_span = normalize(claim_type, text)
-        if normalized_span is None:
+        if not registered:
+            # genuine registry miss: the span is admitted as-is at
+            # `unverified` and flagged — never silently compared
             reasons = [{"code": NORMALIZATION_UNREGISTERED, "type": claim_type}]
             canonical = normalize_whitespace(text)
+        elif normalized_span is None:
+            # registered but the anchored span does not parse: refusing is
+            # typed and honest — storing the raw span as canonical would
+            # discard the model value and make a same-origin corrected
+            # resubmission collide on id
+            raise Refusal(VALUE_UNPARSEABLE,
+                          f"{claim_type!r} cannot parse anchored {text!r}")
         else:
             normalized_value = normalize(claim_type, value)
             if normalized_value != normalized_span:
@@ -231,8 +251,11 @@ def submit_claim(desc, spec):
         "type": claim_type, "anchors": anchors,
         "value": canonical, "origin": origin,
     }
+    decision = spec.get("decision")
+    if decision is not None:
+        digest_input["decision"] = decision
     claim = {
-        "id": claim_id(claim_type, anchors, canonical, origin),
+        "id": claim_id(claim_type, anchors, canonical, origin, decision),
         "type": claim_type,
         "anchors": anchors,
         "value": canonical,

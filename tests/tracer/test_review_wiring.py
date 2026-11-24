@@ -16,7 +16,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from conftest import make_carrier
-from dsc03.claims import REJECTED, add_claim, submit_claim
+from dsc03.claims import REJECTED, add_claim, mark_conflicts, submit_claim
 
 TEMPLATE_PATH = (REPO / "hitl" / "visual-review" / "templates"
                  / "visual-review-spa.html")
@@ -113,13 +113,15 @@ def test_verdicts_map_to_human_claims_without_touching_model(tmp_path):
                 {"id": "r-other", "verdict": "unknown"},
             ]}]}],
     }
-    human = verdicts_to_decisions(verdicts, descriptor(), cs)
+    result = verdicts_to_decisions(verdicts, descriptor(), cs)
     # agree -> human claim repeating the canonical value; r-date/r-other
     # anchor no queued claim here, so only the agree produces a claim
+    human = result["decisions"]
     assert len(human) == 1
     assert human[0]["origin"] == "human"
     assert human[0]["value"] == cs[0]["value"]
     assert human[0]["reviewer"] == "r1"
+    assert result["skips"] == []
 
 
 def test_differ_verdict_rejects_queued_claim(tmp_path):
@@ -131,7 +133,48 @@ def test_differ_verdict_rejects_queued_claim(tmp_path):
             {"page": 1, "regions": [{"id": "r-total",
                                      "verdict": "differ"}]}]}],
     }
-    human = verdicts_to_decisions(verdicts, descriptor(), cs)
+    result = verdicts_to_decisions(verdicts, descriptor(), cs)
+    human = result["decisions"]
     assert len(human) == 1
     assert human[0]["status"] == REJECTED
     assert cs[0]["status"] == "unverified"
+
+
+def test_multi_claim_region_verdict_skipped_typed(tmp_path):
+    # several queued claims share the region: a bare agree/differ must NOT
+    # silently decide items[0] — a typed skip routes humans to the SPA's
+    # alternatives/edit path instead
+    from digitization.review import verdicts_to_decisions
+    d = descriptor()
+    alt = submit_claim(d, {"type": "field:total", "anchors": ["r-total"],
+                           "value": "2.000,00", "origin": "model:b",
+                           "extractive": False})
+    cs = mark_conflicts(claims() + [alt])
+    verdicts = {
+        "reviewer": "r1",
+        "carriers": [{"carrier": "ctx-wire", "pages": [
+            {"page": 1, "regions": [{"id": "r-total",
+                                     "verdict": "agree"}]}]}],
+    }
+    result = verdicts_to_decisions(verdicts, d, cs)
+    assert result["decisions"] == []
+    assert result["skips"] == [{
+        "region": "r-total", "verdict": "agree",
+        "reason_code": "review.region.multi-claim",
+        "claim_ids": sorted(c["id"] for c in cs),
+    }]
+
+
+def test_bundle_reports_multi_claim_regions(tmp_path):
+    # the bundle itself flags regions whose scope carries several queued
+    # claims, so humans see up front that one-click agree/differ is skipped
+    from digitization.review import build_queue_bundle
+    alt = submit_claim(descriptor(), {
+        "type": "field:total", "anchors": ["r-total"],
+        "value": "2.000,00", "origin": "model:b", "extractive": False})
+    cs = mark_conflicts(claims() + [alt])
+    out = tmp_path / "multi-claim-bundle.html"
+    record = build_queue_bundle(descriptor(), cs,
+                                carrier(tmp_path).read_bytes(), out, dpi=72)
+    assert record["multi_claim_regions"] == {
+        "r-total": sorted(c["id"] for c in cs)}

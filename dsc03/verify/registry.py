@@ -7,7 +7,7 @@ the descriptor facts passed to it — no network, no clock, no randomness.
 import hashlib
 import math
 
-from dsc03.claims import json_bytes
+from dsc03.claims import REJECTED, json_bytes
 
 TIER0, TIER1, TIER3 = 0, 1, 3
 
@@ -65,17 +65,27 @@ def _tier0_value(claim, *, descriptor_claims=()):
 # -- tier 1: Argentine domain pack (design decision 9) ---------------------------
 
 def _decimals(claims, types):
-    """Canonical decimal values of sibling claims of the given types."""
+    """Canonical decimal values of sibling claims of the given types.
+
+    Returns (values, None), or (None, problem) with problem:
+    "missing" — no sibling claim for some type (or an unparseable value);
+    "conflicted" — multiple DISTINCT canonical values for one sibling type.
+    A conflict is an undeclared election: reporting it as a typed unknown
+    keeps the exported check from flipping with claim order.
+    """
     out = []
     for t in types:
         found = [c for c in claims if c["type"] == t]
         if not found:
-            return None
+            return None, "missing"
         try:
-            out.append(float(found[0]["value"]))
+            vals = [float(c["value"]) for c in found]
         except (TypeError, ValueError):
-            return None
-    return out
+            return None, "missing"
+        if len(set(vals)) > 1:
+            return None, "conflicted"
+        out.append(vals[0])
+    return out, None
 
 
 _CUIT_WEIGHTS = (5, 4, 3, 2, 7, 6, 5, 4, 3, 2)
@@ -101,9 +111,10 @@ def _rule_cuit(claim, *, descriptor_claims=()):
 
 
 def _rule_total_sum(claim, *, descriptor_claims=()):
-    parts = _decimals(descriptor_claims, ("field:subtotal", "field:tax"))
-    if parts is None:
-        return unsupported("verify.total-sum.siblings-missing")
+    parts, problem = _decimals(descriptor_claims,
+                               ("field:subtotal", "field:tax"))
+    if problem is not None:
+        return unsupported(f"verify.total-sum.siblings-{problem}")
     try:
         total = float(claim["value"])
     except (TypeError, ValueError):
@@ -114,10 +125,10 @@ def _rule_total_sum(claim, *, descriptor_claims=()):
 
 
 def _rule_running_balance(claim, *, descriptor_claims=()):
-    parts = _decimals(descriptor_claims,
-                      ("field:prior-balance", "field:amount"))
-    if parts is None:
-        return unsupported("verify.running-balance.siblings-missing")
+    parts, problem = _decimals(descriptor_claims,
+                               ("field:prior-balance", "field:amount"))
+    if problem is not None:
+        return unsupported(f"verify.running-balance.siblings-{problem}")
     try:
         balance = float(claim["value"])
     except (TypeError, ValueError):
@@ -333,11 +344,13 @@ def run_ladder(claims, *, descriptor=None):
                            **res})
         if c["status"] == "conflicted":
             pass  # never promoted
+        elif c["status"] == REJECTED:
+            pass  # a human rejection stands; the ladder never overrides it
         elif (all(r["outcome"] == "pass" for r in t0_results)
               and any(r["outcome"] == "pass" for _, r in t1_results)):
             c["status"] = "verified"
         else:
-            if c["status"] not in ("conflicted",):
+            if c["status"] not in ("conflicted", REJECTED):
                 c["status"] = "unverified"
         c["checks"] = checks
         out.append(c)

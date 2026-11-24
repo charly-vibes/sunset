@@ -119,6 +119,22 @@ def test_no_applicable_rule_stays_unverified():
     assert [c for c in notes_out["checks"] if c["tier"] == 1] == []
 
 
+def test_ladder_passes_human_rejection_through_unchanged():
+    # a human `rejected` claim must never be promoted to `verified` (or
+    # demoted) by the ladder: rejection is final human evidence
+    from dsc03.claims import REJECTED, claim_id
+    d, claims = invoice_claims()
+    total = claims[0]
+    rejected = dict(total, origin="human", reviewer="r1", status=REJECTED)
+    rejected["id"] = claim_id("field:total", total["anchors"],
+                              total["value"], "human")
+    out = run_ladder([total, rejected], descriptor=d)
+    human = [c for c in out if c["origin"] == "human"][0]
+    assert human["status"] == REJECTED
+    model = [c for c in out if c["origin"] == "model"][0]
+    assert model["status"] == "verified"
+
+
 # -- 4.3 tier 1 domain pack: positive + negative fixture per rule ---------------
 
 def test_cuit_valid_and_negative():
@@ -140,6 +156,25 @@ def test_total_sum_negative():
         lying_total, descriptor_claims=claims)
     assert outcome["outcome"] == "fail"
     assert outcome["reason_code"] == "verify.total-sum.mismatch"
+
+
+def test_conflicted_sibling_is_unsupported_not_order_dependent():
+    # two retained tax claims (a conflict): the tier-1 rule must return the
+    # typed unknown — never silently elect found[0], which flips the exported
+    # check attribution with claim order
+    d, claims = invoice_claims()
+    alt_tax = submit_claim(d, {"type": "field:tax", "anchors": ["c-tax"],
+                               "value": "999.00", "origin": "model-b",
+                               "extractive": False})
+    total = claims[0]
+    out1 = run_ladder(claims + [alt_tax], descriptor=d)
+    out2 = run_ladder(list(reversed(claims + [alt_tax])), descriptor=d)
+    for out in (out1, out2):
+        total_out = [c for c in out if c["type"] == "field:total"][0]
+        check = next(c for c in total_out["checks"]
+                     if c["id"] == "ar.invoice.total-sum")
+        assert check["outcome"] == "unsupported"
+        assert check["reason_code"] == "verify.total-sum.siblings-conflicted"
 
 
 def test_running_balance_positive_and_negative():
@@ -211,9 +246,9 @@ def _render_fact(config, rendered):
 def test_tier3_adapter_unsupported_is_typed():
     outcome = verifier("visual.ink-agreement").check(
         {"type": "field:total", "anchors": ["c-total"]})
-    assert outcome["outcome"] in ("unsupported", "pass", "fail")
-    if outcome["outcome"] == "unsupported":
-        assert outcome["reason_code"].startswith("verify.visual.")
+    # no render fact supplied: the pinned typed unknown — never a pass/fail
+    assert outcome == {"outcome": "unsupported",
+                       "reason_code": "verify.visual.render-result-missing"}
 
 
 def test_tier3_inked_box_passes_and_overhang_accepted(tmp_path):

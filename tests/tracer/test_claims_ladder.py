@@ -71,6 +71,19 @@ def test_missing_normalization_admitted_unverified_with_reason():
                for r in claim["reasons"])
 
 
+def test_registered_type_unparseable_span_refused_typed():
+    # field:date IS registered but the anchored span is prose: this must be
+    # a typed refusal — not `claim.normalization.unregistered` with the raw
+    # span stored as canonical (which discarded the model value and made a
+    # same-origin corrected resubmission collide on id)
+    with pytest.raises(Refusal) as exc:
+        submit_claim(issue_fixture(), {
+            "type": "field:date", "anchors": ["c-quote"],
+            "value": "29/07/2026", "origin": "model", "extractive": True,
+        })
+    assert exc.value.reason_code == "claim.value.unparseable"
+
+
 # -- 2.3 id derivation + idempotent resubmission ------------------------------
 
 def test_claim_id_digest_of_identity_fields():
@@ -173,6 +186,23 @@ def test_human_correction_is_new_claim_model_claim_remains():
     assert len(claims) == 2
     assert {c["origin"] for c in claims} == {"model", "human"}
     assert model in claims
+
+
+def test_human_decision_is_part_of_digest_identity():
+    # accept and reject of the SAME value must not collide into one claim id:
+    # the decision (accept | reject | edit) enters digest_input and the id
+    d = descriptor()
+    base = {"type": "field:total", "anchors": ["r-issue"],
+            "value": "1.234,56", "origin": "human", "extractive": True}
+    accept = submit_claim(d, dict(base, decision="accept"))
+    accept_again = submit_claim(d, dict(base, decision="accept"))
+    reject = submit_claim(d, dict(base, decision="reject"))
+    assert accept["id"] == accept_again["id"]   # repeat decision idempotent
+    assert accept["id"] != reject["id"]         # accept vs reject distinct
+    assert accept["digest_input"]["decision"] == "accept"
+    # non-decision claims keep the 4-field digest exactly as before
+    plain = submit_claim(d, base)
+    assert "decision" not in plain["digest_input"]
 
 
 # -- substrate dedupe + export record ------------------------------------------

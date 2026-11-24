@@ -119,10 +119,10 @@ def _atomic_write(path: Path, payload: bytes) -> None:
     os.replace(tmp, path)
 
 
-def _verify_record(record, key, config, source_sha256, pixels_path) -> None:
+def _verify_record(record, key, config, source_sha256, pixels) -> None:
     """Raise RenderCacheCorrupted unless every stored field verifies."""
     if not isinstance(record, dict):
-        raise RenderCacheCorrupted(f"cache record is not an object: {pixels_path}")
+        raise RenderCacheCorrupted(f"cache record is not an object: {key}")
     if record.get("format") != RECORD_FORMAT:
         raise RenderCacheCorrupted(
             f"cache record format mismatch: {record.get('format')!r}"
@@ -138,7 +138,6 @@ def _verify_record(record, key, config, source_sha256, pixels_path) -> None:
         raise RenderCacheCorrupted("cache record renderer identity mismatch")
     if record.get("source_sha256") != source_sha256:
         raise RenderCacheCorrupted("cache record source digest mismatch")
-    pixels = pixels_path.read_bytes()
     if record.get("pixels_sha256") != hashlib.sha256(pixels).hexdigest():
         raise RenderCacheCorrupted(
             "cache record pixels digest mismatch: stored pixels are stale or tampered"
@@ -161,8 +160,9 @@ def _load_entry(cache_dir, config, source_sha256):
         raise RenderCacheCorrupted(
             f"cache record unparseable: {record_path}"
         ) from exc
-    _verify_record(record, key, config, source_sha256, pixels_path)
-    return pixels_path.read_bytes()
+    pixels = pixels_path.read_bytes()
+    _verify_record(record, key, config, source_sha256, pixels)
+    return pixels
 
 
 def _store_entry(cache_dir, config, source_sha256, data: bytes) -> str:

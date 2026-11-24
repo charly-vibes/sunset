@@ -279,6 +279,45 @@ def test_tampered_pixels_force_typed_re_render_and_heal(tmp_path):
     assert record["pixels_sha256"] == hashlib.sha256(first.data).hexdigest()
 
 
+def test_cache_hit_reads_pixels_exactly_once_and_returns_verified_bytes(
+    tmp_path, monkeypatch
+):
+    """The loader reads the pixels file once and returns the digest-verified
+    object: no second, unverified read may supply the returned bytes."""
+    carrier = make_carrier(tmp_path, "carrier.pdf", BASE_RECTS)
+    config = render_config(dpi=72)
+    cache_dir = tmp_path / "cache"
+    spy = RenderSpy()
+
+    first = render_cache.cached_render_page(config, carrier, cache_dir, render=spy)
+    assert isinstance(first, render.Rendered)
+    record_path, pixels_path = entry_paths(cache_dir, config, carrier)
+
+    reads: list[bytes] = []
+    real_read_bytes = Path.read_bytes
+
+    def counting_read_bytes(self):
+        data = real_read_bytes(self)
+        if self == pixels_path:
+            reads.append(data)
+        return data
+
+    monkeypatch.setattr(Path, "read_bytes", counting_read_bytes)
+    hit = render_cache.cached_render_page(config, carrier, cache_dir, render=spy)
+    monkeypatch.undo()
+
+    assert isinstance(hit, render_cache.CacheHit)
+    assert len(reads) == 1, (
+        "loader must read the pixels file exactly once and return that object; "
+        f"got {len(reads)} reads"
+    )
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    assert record["pixels_sha256"] == hashlib.sha256(hit.data).hexdigest(), (
+        "returned bytes must be the digest-verified bytes"
+    )
+    assert hit.data == reads[0] == first.data
+
+
 def test_unparseable_record_forces_re_render(tmp_path):
     carrier = make_carrier(tmp_path, "carrier.pdf", BASE_RECTS)
     config = render_config(dpi=72)

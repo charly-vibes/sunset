@@ -13,7 +13,8 @@
 # Rationale: design decisions 1-3; the queue derives, it does not curate,
 # and decisions are evidence, not edits of model output.
 """Derived review queue and human decision actions."""
-from dsc03.claims import REJECTED, human_decision
+from dsc03.claims import (REJECTED, REGISTRY, VALUE_UNPARSEABLE, Refusal,
+                          human_decision, normalize)
 
 QUEUE_STATUSES = ("unverified", "conflicted")
 
@@ -57,23 +58,46 @@ def decide(desc, claim, action, value=None, reviewer=None):
     """Record a reviewer decision as an `origin: human` claim; the model
     claim is never modified (the caller keeps both).
 
-    - accept: a human claim repeating the claim's canonical value and anchors.
+    The decision (accept | reject | edit) is part of the human claim's
+    digest identity, so accept and reject of the same value never collide
+    into one id and silently drop each other.
+
+    - accept: a human claim repeating the claim's canonical value and
+      anchors. Generative claims (`value_origin == "model"`) are recorded
+      generative-of-human: their value never came from the anchored span,
+      so routing them through the extractive path would refuse
+      `claim.value.mismatch` and crash verdict ingestion.
     - reject: a human claim with status REJECTED (excluded from meet/export).
-    - edit: a human claim with the adjusted value (or anchors via
-      ``anchors=``), recorded generative-of-human so it is capped at
-      `unverified` and never silently validated against the model's span.
+    - edit: a human claim with the adjusted value normalized through the
+      registry (raw string only for unregistered types; unparseable values
+      refused typed), or anchors via ``anchors=`` — recorded
+      generative-of-human so it is capped at `unverified` and never
+      silently validated against the model's span.
     """
+    # a generative claim's value did not come from the anchored span: the
+    # human decision mirrors it generatively (capped at `unverified`)
+    extractive = claim.get("value_origin") != "model"
     if action == "accept":
         spec = {"type": claim["type"], "anchors": claim["anchors"],
-                "value": claim["value"], "extractive": True}
+                "value": claim["value"], "extractive": extractive,
+                "decision": "accept"}
     elif action == "reject":
         spec = {"type": claim["type"], "anchors": claim["anchors"],
-                "value": claim["value"], "extractive": True}
+                "value": claim["value"], "extractive": extractive,
+                "decision": "reject"}
     elif action == "edit":
         if value is None:
             raise ValueError("edit requires a value")
+        if claim["type"] in REGISTRY:
+            canonical = normalize(claim["type"], value)
+            if canonical is None:
+                raise Refusal(VALUE_UNPARSEABLE,
+                              f"edit value {value!r} not parseable as "
+                              f"{claim['type']!r}")
+        else:
+            canonical = value  # unregistered: no normalization to apply
         spec = {"type": claim["type"], "anchors": claim["anchors"],
-                "value": value, "extractive": False}
+                "value": canonical, "extractive": False, "decision": "edit"}
     else:
         raise ValueError(f"unknown action {action!r}")
     human = human_decision(desc, spec)
