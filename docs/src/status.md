@@ -188,3 +188,39 @@ textless pages and unsupported/mixed page features remain partial or
 unexamined. OCR, visual completeness and installable packaging are not part of
 this baseline. Commands and exit statuses are documented in
 [digitization.org](digitization.org).
+
+## Geometry/render-binding baseline (agent-executed, 2026-11-24)
+
+Re-measurement at HEAD before any implementation, from the RED tasks of
+[`improve-geometry-render-binding`](../../openspec/changes/improve-geometry-render-binding/proposal.md)
+(beads sunset-7b4.1). Both records are agent-executed and supersede the
+2026-11-24 chat baseline (23/139 false word misses on a cropped fixture).
+
+- **Variant matrix (tasks.md 1.1, test
+  `tests/tracer/test_visual_variant_matrix.py`):** every PDF carrier in
+  `fixtures/carriers/` (11 carriers) deterministically derived into rotation
+  (0/90/180/270) and cropbox (30pt inset) variants at test runtime; native
+  extraction run per variant; every native page-map frame resolved against a
+  pinned `RenderConfig` via `resolve_pixel_mapping`. Outcome: 200 frames
+  (carrier × variant × page) — **all 200 `unknown/unresolvable_source_scope`**,
+  because native page-map records carry `source_frame`/`target_frame`/
+  `source_to_page`/`source_origin`/`source_dimensions` but not the declared
+  `source_scope`/`origin`/`axes`/`scale`/`rotation`/`crop` fields. No
+  carrier×variant produced zero frames — the image-only carriers
+  (`diario-de-poesia-excerpt.pdf`, `lab-result-redacted.pdf`) still yield one
+  page-map frame per page; `resumen-periodical-excerpt.pdf` yields 5 frames
+  per variant (page 1 aligner-fails on every variant, `text-with-gaps`).
+  Suite green with the strict xfail honored.
+- **Cropped-page oracle word-miss path (tasks.md 1.2):** carrier
+  `fixtures/carriers/budgeting-basics-excerpt.pdf` (3 pages, 405 extracted
+  words), cropbox = mediabox inset by 30pt on each side (e.g. page 1:
+  crop 30,30 → 402,618 of media 0,0 → 432,648), saved deterministically with
+  pymupdf. Rendered through the independent poppler path
+  (`dsc03/visual/render.py`, `pdftoppm` 26.01.0, 150 dpi — renders the media
+  box, no `-cropbox`); each word's cropbox-relative box mapped as the HEAD
+  machinery would (no crop knowledge) and binarized ink presence evaluated
+  per word (fixed threshold 128, 1px ink dilation). **False word misses:
+  158/405** (page 1: 55/127, page 2: 61/165, page 3: 42/113); the uncropped
+  carrier measures 0 misses under the identical pipeline, isolating the
+  crop-box disagreement. This is the false-disagreement that tasks 2.1–2.3
+  (crop-box render, extent binding, native frame record) must drive to zero.
