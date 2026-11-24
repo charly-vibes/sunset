@@ -24,7 +24,7 @@
 
 ## 5. Migration and adoption
 
-- [ ] 5.1 `migrate` emits relabel-table evidence; content values unchanged (test)
-- [ ] 5.2 `native` emits identity-profile descriptors; remove prefix-matching of annotations to pages (`digitization/native.py` `an{page}-`)
-- [ ] 5.3 Assembly: replace "left operand first" ordering with canonical order under the profile (enables the join-law tasks in define-document-composition-semantics)
-- [ ] 5.4 Re-run all fixture carriers; record byte-identity across two processes in docs/src/status.md as agent-executed
+- [x] 5.1 `migrate` emits relabel-table evidence; content values unchanged (test)
+- [x] 5.2 `native` emits identity-profile descriptors; remove prefix-matching of annotations to pages (`digitization/native.py` `an{page}-`)
+- [x] 5.3 Assembly: replace "left operand first" ordering with canonical order under the profile (enables the join-law tasks in define-document-composition-semantics)
+- [x] 5.4 Re-run all fixture carriers; record byte-identity across two processes in docs/src/status.md as agent-executed

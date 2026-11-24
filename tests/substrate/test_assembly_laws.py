@@ -4,7 +4,11 @@
 #   Properties table (compatible_pair, duplicate_conflict, left_right_identity,
 #   associate_three, no_invented_order, shared_id_merges) plus two decision
 #   backstops (same-source conflicting claims; namespace mismatch) against the
-#   consumer-side assembly module dsc03/substrate/assembly.py. Every refusal is
+#   consumer-side assembly module dsc03/substrate/assembly.py, and the
+#   identity-profile ordering regime (add-anchor-derived-identity 5.3): under
+#   declared identity profiles compose(a,b) and compose(b,a) are canonically
+#   equal (ascending id order); without the profile the label-id left-first
+#   order is kept byte-identical. Every refusal is
 #   classified and structured (never a crash); canonical equality is measured
 #   with both independent readers from dsc03.canonical. No real-carrier
 #   conformance is claimed anywhere.
@@ -15,12 +19,14 @@
 """Assembly law fixtures: identity, associativity, refusal, merge, order."""
 import copy
 import hashlib
+import json
 import sys
 import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from dsc03 import identity
 from dsc03.substrate.assembly import canonically_equal, compose, empty_part
 from dsc03.substrate.laws import typed_check
 
@@ -218,6 +224,107 @@ class TestAssemblyLaws(unittest.TestCase):
         result = compose(a, b)
         self.assertEqual(result["status"], "refused")
         self.assertEqual(result["rule"], "source_mismatch")
+
+
+# -- identity-profile ordering regime (add-anchor-derived-identity 5.3) -------------
+
+IDENTITY_PROFILE_ID = "p-id"
+
+
+def _identity_decl():
+    """The pinned identity profile declaration (same artifact bytes as
+    tests/tracer/test_identity.py resolves at profiles/identity-v1.json)."""
+    artifact = {"kind": "identity", "version": "1",
+                "digest": {"algorithm": "sha256", "truncation_bits": 128, "prefix": "a:"}}
+    return {
+        "id": IDENTITY_PROFILE_ID, "kind": "identity",
+        "uri": "profiles/identity-v1.json", "version": "1",
+        "sha256": hashlib.sha256(
+            json.dumps(artifact, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest(),
+    }
+
+
+def _anchored(rec_kind, locator, **fields):
+    """A record whose id derives from its declared anchor under (p-id, "1")."""
+    source = fields.get("source_sha256", SHA_EDITION_A)
+    rec = dict(fields)
+    rec["anchor"] = {"record_kind": rec_kind, "locator_path": locator}
+    rec["id"] = identity.derive_id((source, rec_kind, locator, IDENTITY_PROFILE_ID, "1"))[1]
+    return rec
+
+
+def _id_part(page, art, text):
+    """An identity-profile part: shared issue root + one anchored article.
+
+    Mirrors _part()'s shape, but every region/content/evidence record is
+    anchored and derives its id; the issue root carries the same anchor in
+    every part, so its derived id is the shared assembly identity.
+    """
+    shared = _anchored("region", f"{CARRIER}#issue", view_id="v-log", kind="issue")
+    region = _anchored("region", f"page:{page}", view_id="v-log", kind="article")
+    content = _anchored("content", f"raw:[{page}00,{page}05)", kind="text", value=text)
+    evidence = _anchored("evidence", f"{CARRIER}#page:{page}", origin="source",
+                         source_ref=f"{CARRIER}#page:{page}",
+                         content_ids=[content["id"]], selector_ids=[])
+    return {
+        "version": "0.3",
+        "id": f"part-id-{art}",
+        "source": {"format": "application/pdf", "sha256": SHA_EDITION_A,
+                   "locator": CARRIER},
+        "views": [{"id": "v-log", "kind": "logical", "root": shared["id"]}],
+        "regions": [shared, region],
+        "contents": [content],
+        "relations": [
+            {"id": f"rel-c-{art}", "kind": "contains", "from": shared["id"],
+             "to": region["id"]},
+            {"id": f"rel-hc-{art}", "kind": "has-content", "from": region["id"],
+             "to": content["id"]},
+        ],
+        "annotations": [],
+        "evidence": [evidence],
+        "vocabularies": [{"namespace": "mag", "version": "1"}],
+        "selectors": [], "interpretations": [], "coverage": [],
+        "profiles": [_identity_decl()],
+    }
+
+
+class TestCanonicalOrderUnderIdentityProfile(unittest.TestCase):
+    def test_compose_is_commutative_under_identity_profile(self):
+        """Under declared identity profiles in BOTH operands, merged
+        set-like sections emit ascending by id, so compose(a,b) and
+        compose(b,a) are canonically equal (both independent readers)."""
+        a = _id_part(1, "essay", "first column")
+        b = _id_part(2, "poem", "second column")
+        self.assertEqual(typed_check(a)[0], "accepted")  # fixture soundness
+        self.assertEqual(typed_check(b)[0], "accepted")
+        ab, ba = compose(a, b), compose(b, a)
+        self.assertEqual(ab["status"], "assembled")
+        self.assertEqual(ba["status"], "assembled")
+        merged_ab, merged_ba = _assembled(ab), _assembled(ba)
+        self.assertEqual(typed_check(merged_ab)[0], "accepted")
+        self.assertTrue(canonically_equal(merged_ab, merged_ba))
+        # the emission order is the ascending-id order, per section
+        for section in ("views", "regions", "contents", "relations",
+                        "annotations", "evidence", "selectors",
+                        "interpretations", "profiles"):
+            ids = [item["id"] for item in merged_ab[section]]
+            self.assertEqual(ids, sorted(ids), section)
+        self.assertEqual([item["id"] for item in merged_ab["regions"]],
+                         [item["id"] for item in merged_ba["regions"]])
+
+    def test_label_id_pair_keeps_left_first_order(self):
+        """Hard constraint: without the profile, today's left-operand-first
+        behavior is byte-identical — operand order stays observable."""
+        a = _part(1, "r-art-1", "column one")
+        b = _part(2, "r-art-2", "column two")
+        ab = _assembled(compose(a, b))
+        ba = _assembled(compose(b, a))
+        self.assertEqual([r["id"] for r in ab["regions"]],
+                         ["r-issue", "r-art-1", "r-art-2"])  # left's items first
+        self.assertEqual([r["id"] for r in ba["regions"]],
+                         ["r-issue", "r-art-2", "r-art-1"])
+        self.assertFalse(canonically_equal(ab, ba))
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 #   expected failures, and read-only native inspection through fresh CLI processes.
 # Rationale: Native text extraction cannot establish visual completeness or that
 #   a page with no text is blank; excluded and unsupported scopes stay explicit.
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -12,8 +13,14 @@ import pytest
 import pymupdf
 
 from dsc03 import validator
+from dsc03.identity import derive_id
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def native_id(source_hash, record_kind, locator_path):
+    """The anchor-derived id native descriptors must carry for one record."""
+    return derive_id((source_hash, record_kind, locator_path, 'p-identity', '1'))[1]
 
 
 def cli(*args):
@@ -46,7 +53,13 @@ def test_partial_native_result_keeps_scopes_and_inspects_without_claiming_comple
     manifest = json.loads((output / 'manifest.json').read_text())
     descriptor = validator.load(output / manifest['descriptor']['path'])
     assert validator.validate(descriptor) == []
-    assert [r['id'] for r in descriptor['regions'] if r['id'].startswith('pg')] == ['pg1', 'pg2', 'pg3']
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    regions = {r['anchor']['locator_path']: r['id'] for r in descriptor['regions']}
+    assert regions == {'page:1': native_id(source_hash, 'region', 'page:1'),
+                       'page:2': native_id(source_hash, 'region', 'page:2'),
+                       'page:3': native_id(source_hash, 'region', 'page:3'),
+                       'doc:root': native_id(source_hash, 'region', 'doc:root'),
+                       'doc:log': native_id(source_hash, 'region', 'doc:log')}
     by_scope = {(c['feature'], c['scope']): c for c in descriptor['coverage']}
     assert by_scope['pdf:glyphs', 'page:2']['status'] == 'unexamined'
     assert 'no native text' in by_scope['pdf:glyphs', 'page:2']['reason']
@@ -128,7 +141,16 @@ def test_page_selection_excludes_unselected_text_but_preserves_inventory(tmp_pat
     assert validator.validate(descriptor) == []
     assert 'secret first page' not in (output / 'raw.txt').read_text()
     assert all('secret' not in c.get('value', '') for c in descriptor['contents'])
-    assert [r['id'] for r in descriptor['regions'] if r['id'].startswith('pg')] == ['pg1', 'pg2']
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    regions = {r['anchor']['locator_path']: r['id'] for r in descriptor['regions']}
+    assert regions == {'page:1': native_id(source_hash, 'region', 'page:1'),
+                       'page:2': native_id(source_hash, 'region', 'page:2'),
+                       'doc:root': native_id(source_hash, 'region', 'doc:root'),
+                       'doc:log': native_id(source_hash, 'region', 'doc:log')}
+    # the excluded page's source text is gone; the selected page carries its
+    # source observation and the run's extraction chain at distinct anchors
+    assert {c['anchor']['locator_path'] for c in descriptor['contents']} == {
+        'page:2', 'page:2/transform:native-text-extraction'}
     excluded = [c for c in descriptor['coverage'] if c['scope'] == 'page:1']
     assert excluded and all(c['status'] == 'unexamined' and 'excluded' in c['reason'] for c in excluded)
     code, report = cli('inspect', '--run', output, '--json')

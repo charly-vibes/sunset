@@ -7,7 +7,9 @@
 #   claims merges into a single identity; conflicting source or claims refuses
 #   with the smallest known witness; vocabulary namespace version mismatch
 #   refuses), reference resolution against the union, no invented edges or
-#   ordering (only operand-declared edges are carried). Also empty_part() —
+#   ordering (only operand-declared edges are carried; merged set-like
+#   sections emit ascending id order when both operands declare an identity
+#   profile, left-operand-first otherwise). Also empty_part() —
 #   the assembly-layer identity element — and canonically_equal() — equality
 #   under BOTH independent canonical readers from dsc03.canonical. Validated
 #   synthetic fixtures only; this is machinery-level witnessing, NOT a
@@ -25,8 +27,12 @@ import copy
 from dsc03.substrate.laws import TypedError, typed_check
 
 # Sections merged per assembly; coverage entries are keyed by their validator
-# uniqueness triple, everything else by id. Order matters for canonical bytes:
-# left operand's items first (first occurrence wins), then the right's new ones.
+# uniqueness triple, everything else by id. Two ordering regimes (add-anchor-
+# derived-identity 5.3): when BOTH operands declare an identity profile, the
+# merged sections (these plus coverage) emit in ascending id order — coverage
+# by its triple — so compose(a,b) and compose(b,a) are canonically equal;
+# when either operand lacks the profile, label-id semantics hold: left
+# operand's items first (first occurrence wins), then the right's new ones.
 _BY_ID = ("views", "regions", "contents", "relations", "annotations",
           "evidence", "selectors", "interpretations", "profiles")
 _EMPTY_KEYS = _BY_ID + ("coverage",)
@@ -163,7 +169,20 @@ def _compose_nonempty(a, b):
         return refusal
 
     # 3. Section merge: shared ID with identical record → single identity.
-    out = {"version": a["version"], "id": a["id"],
+    # Under the identity regime the assembled descriptor's own label and
+    # namespace-merged vocabulary list must not depend on operand order
+    # either, or compose(a,b) and compose(b,a) could never be canonically
+    # equal whatever the section order: the label becomes the smallest
+    # operand label, vocabularies emit ascending by namespace (they are
+    # namespace-keyed — duplicates merge, version mismatch refuses). The
+    # label-id regime keeps the left operand's label and list order.
+    from dsc03 import canonical
+    identity_regime = (canonical._declares_identity_profile(a)
+                       and canonical._declares_identity_profile(b))
+    if identity_regime:
+        vocabs.sort(key=lambda v: v["namespace"])
+    out = {"version": a["version"],
+           "id": min(a["id"], b["id"]) if identity_regime else a["id"],
            "source": copy.deepcopy(a["source"]), "vocabularies": vocabs}
     for section in _BY_ID:
         merged, refusal = _merge_by_key(a[section], b[section],
@@ -179,6 +198,19 @@ def _compose_nonempty(a, b):
     if refusal:
         return refusal
     out["coverage"] = merged
+
+    # Ordering regime (add-anchor-derived-identity 5.3): under a declared
+    # identity profile in BOTH operands — same detection semantics as the
+    # validator and the canonical readers, one shared convention — merged
+    # set-like sections emit ascending by id, coverage by its uniqueness
+    # triple: compose(a,b) and compose(b,a) then canonically agree. With any
+    # operand lacking the profile, the merge order above stands untouched
+    # (byte-identical label-id behavior).
+    if identity_regime:
+        for section in _BY_ID:
+            out[section] = sorted(out[section], key=lambda item: item["id"])
+        out["coverage"] = sorted(
+            out["coverage"], key=lambda c: tuple(c[k] for k in _COVERAGE_KEY))
 
     # 4. The assembled union must itself be a valid descriptor.
     status, reasons = typed_check(out)

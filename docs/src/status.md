@@ -224,3 +224,34 @@ Re-measurement at HEAD before any implementation, from the RED tasks of
   carrier measures 0 misses under the identical pipeline, isolating the
   crop-box disagreement. This is the false-disagreement that tasks 2.1–2.3
   (crop-box render, extent binding, native frame record) must drive to zero.
+
+## Identity §5.4: native identity-descriptor byte-identity across two processes (agent-executed, 2026-11-24)
+
+- **Run:** for each of the 11 carriers in `fixtures/carriers/`,
+  `python -m digitization native --source <carrier> --output <tmp>/run` was
+  executed twice, each invocation a separate OS process writing a fresh
+  directory; the two `descriptor.json` files were compared byte-for-byte
+  (identity ids derive from declared anchors — deployed scenario
+  "Independent derivation").
+- **Outcome: 11/11 byte-identical.** Descriptor sha256 prefixes per carrier:
+
+  | carrier | status | descriptor sha256 (both runs) |
+  |---|---|---|
+  | accounting-made-simple-excerpt.pdf | text-with-gaps | b12f370af5c1fcac |
+  | agentic-patterns-excerpt.pdf | text-complete | 1c0df55d43b5a14a |
+  | bank-statement-ca-excerpt.pdf | text-complete | 5549f29b3e945a05 |
+  | bank-transfer-redacted.pdf | text-complete | 0e810898cbd9115b |
+  | budgeting-basics-excerpt.pdf | text-complete | c91af76f89464c52 |
+  | cta-cte-propietario-redacted.pdf | text-complete | 07c2fdcd0ea927ed |
+  | diario-de-poesia-excerpt.pdf | no-text-read | 77b929477ae6daf7 |
+  | estado-deuda-abl-redacted.pdf | text-complete | 2d83563fe9f172a4 |
+  | invoice-arca-redacted.pdf | text-complete | 5c5ed13c624c3313 |
+  | lab-result-redacted.pdf | no-text-read | 3ebc45bf8c3425ed |
+  | resumen-periodical-excerpt.pdf | text-with-gaps | 309d55d0ddaa42fd |
+
+  Image-only carriers (`diario-de-poesia-excerpt.pdf`,
+  `lab-result-redacted.pdf`) still emit page-map-only identity descriptors.
+- **Harness notes (pre-existing CLI defects, ticketed sunset-qdy):**
+  `--pages all` is rejected ("comma-separated integer PDF indices") and a
+  pre-created output directory is refused (`output-already-exists`); the run
+  omitted `--pages` and used non-existent `<tmp>/run` paths.

@@ -1,0 +1,1 @@
+commands run: .venv/bin/python -B -m pytest tests/tracer/test_identity_migration.py tests/substrate/test_assembly_laws.py -q (18 passed); verified: existing suites test_migrate.py/test_views_space_context.py/test_identity.py/test_canonical_set_order.py 57 passed.

@@ -62,7 +62,7 @@ def test_renamed_identical_sources_have_identical_declared_semantics_and_replay(
     assert 'PyMuPDF==1.28.2' in (ROOT / 'requirements-native.txt').read_text()
     descriptor = json.loads((first / 'descriptor.json').read_text())
     native_transform = next(e['transform'] for e in descriptor['evidence']
-                            if e['id'] == 'native-evidence-1')
+                            if e['anchor']['locator_path'] == 'page:1/transform:native-text-extraction')
     assert 'MuPDF@1.28.2' in native_transform['dependencies']
     replayed = tmp_path / 'replayed'
     code, result = cli('replay', '--run', first, '--output', replayed)

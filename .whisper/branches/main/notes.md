@@ -956,3 +956,31 @@
   Validation: spec-check green (283s run); pytest tests/tracer/test_visual_variant_matrix.py 1 passed 1 xfailed (strict); bd shows 3 tickets closed.
 
   Unresolved/blockers: none in this thread; epics sunset-7b4/sunset-5vh remain open with remaining tasks.
+- 2026-11-24T21:01:01Z [id:93eadd2909f1e2724b154403b529c526cb3ee442a79e49d2735dfdbdaa4b0b0d] (#identity-render-epics-complete) Timestamp: 2026-11-24T21:01:01Z
+  Repo: charly-vibes/sunset (~/para/areas/dev/gh/charly/sunset)
+  Branch: main
+  HEAD: c76289f21d4c679ba00d35252a5b651ba231f7cd
+  Task: Implement the full remainder of adopted epics sunset-7b4 (render-binding) and sunset-5vh (anchor-derived identity) — sections 2-5 of both changes (continues 9a08523c399be08ec2f942f1db828453c47a9e18945129b6c0b421b7fa7c4887)
+
+  Objective: autonomous implementation of every decomposed child: render-binding §2 (crop-box render, extent binding, native frame record, variant matrix green) and identity §2-§5 (anchor ids + validator rule, canonical set order, quantized geometry, migration + native rotation + assembly regime, fixture byte-identity), orchestrated as parallel TDD subagents per section.
+
+  Current phase: complete — ALL GATES PASSED on the final union (openspec strict 18/18, spk lint, tracer pytest, frozen 0.2 validator PASS 11, openspec 1.x strict).
+
+  Current state:
+  - sunset-7b4 §2 (ogj): pdftoppm renders -cropbox with pinned-version feature check (unsupported renderer -> typed unknown, never silent media-box); extent binding replaces declared page record with crop dims; native page-map frames carry declared source_scope/origin/axes/scale/rotation/crop (crop null under crop-bound renderer: crop-relative coords need no media offset — empirical 0.145 vs 0.006 ink-fraction proof recorded); variant matrix 240/240 resolved (was 200/200 unknown); false word misses 158/405 -> 0 on the cropped fixture.
+  - identity §2 (v0j): derive_id + IdentityRegistry (anchor tuple source_sha256/record_kind/locator_path/profile_id/profile_version, first-128-bit sha256, a: prefix); collision refusal with both-tuples witness; validator rejects non-derived ids under a declared identity profile (identity_mismatch/identity_anchor_missing); RED determinism (two processes, identical ids).
+  - identity §3 (0gi): both independent readers sort the 8 set-like sections ascending by id (coverage by triple) under the profile; relations/other sections keep order; without profile byte-identical; permutation RED captured.
+  - identity §4 (7af): quantize_box 1/1000 pt round-half-even via exact Fraction; quantization_transform_record in native convention; rot90 tolerance-0 now grounded by 127/127 exact real-box round trip.
+  - identity §5 (c6i): migrate_to_identity emits relabel-table evidence (values untouched, unanchorable reported, validator-passing); native emits identity descriptors (an{page}- prefix deleted, annotation page binding from declared target anchors, identity.json artifact, unanchorable -> typed error); compose() canonical order under profile (commutative), left-first without; 5.4 run: 11/11 carriers byte-identical descriptors across separate processes, recorded in docs/src/status.md with per-carrier sha256s.
+  - bd: ogj v0j 0gi 7af 0b0 c6i closed; epics sunset-7b4 and sunset-5vh closed this session; sunset-gpd (G1-G6) closed earlier today.
+
+  Exact next action: pick from bd ready — nearest follow-ons: define-document-composition-semantics join laws (unblocked by 5.3), sunset-12h review-verdicts ingest, sunset-9rg ChatGPT findings integration, sunset-qdy CLI defects (the --pages/output-dir issues hit in the 5.4 run).
+
+  Decisions/constraints:
+  - All numbers agent-executed until a human pass supersedes (repo honesty convention); the two wai tdd-ro5 pipeline runs sit at their human-approval ship steps, not approved.
+  - pba-judicial-2026-07-29.pdf stays intentionally untracked.
+  - Label-id output is no longer emitted by native (5.2 rotation); migrate_to_identity converts legacy descriptors.
+
+  Validation: just spec-check ALL GATES PASSED (327s) on the final tree; targeted suites green per section (canonical 7, space 4+19, identity 71, migration+assembly 18+57+27, calibration 7).
+
+  Unresolved/blockers: none in this thread.
