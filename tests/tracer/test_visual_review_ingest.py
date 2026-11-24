@@ -27,6 +27,20 @@ VERDICTS_PATH = ROOT / "fixtures" / "visual" / "verdicts-agent-sample.json"
 
 
 def _ingest(record_path=RECORD_PATH):
+    # The committed bundle pins the commit its verdicts were recorded
+    # against; ingest refuses cross-commit attribution by design. Re-pin a
+    # copy to the live HEAD so the positive path tracks HEAD movement the
+    # way a fresh recording session would. The fixture itself stays the
+    # untouched historical artifact.
+    import dsc03.visual.review as _review
+    import tempfile
+    bundle = json.loads(VERDICTS_PATH.read_text())
+    if bundle.get("base_commit") != _review._BASE_COMMIT:
+        bundle["base_commit"] = _review._BASE_COMMIT
+        with tempfile.TemporaryDirectory() as tmp:
+            repinned = Path(tmp) / "verdicts-agent-sample.json"
+            repinned.write_text(json.dumps(bundle))
+            return ingest_verdicts(repinned, record_path=record_path)
     return ingest_verdicts(VERDICTS_PATH, record_path=record_path)
 
 
@@ -172,8 +186,16 @@ def test_ingest_does_not_modify_thresholds():
 def test_cli_ingest_subcommand(tmp_path, capsys):
     from dsc03.visual import review
 
+    # Re-pin a copy to the live HEAD (fresh-recording-session semantics);
+    # the committed fixture keeps its historical pin (see _ingest).
+    import dsc03.visual.review as _review
+    bundle = json.loads(VERDICTS_PATH.read_text())
+    bundle["base_commit"] = _review._BASE_COMMIT
+    repinned = tmp_path / "verdicts-repinned.json"
+    repinned.write_text(json.dumps(bundle))
+
     out = tmp_path / "counterexamples.json"
-    rc = review.main(["ingest", str(VERDICTS_PATH),
+    rc = review.main(["ingest", str(repinned),
                       "--record", str(RECORD_PATH),
                       "--counterexamples", str(out)])
     assert rc == 0
