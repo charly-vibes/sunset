@@ -5,10 +5,10 @@
 
 ## 2. Implementation
 
-- [ ] 2.1 `pdftoppm -cropbox` with a feature/pin check in the render configuration
-- [ ] 2.2 Extent binding: declared page record → expected pixels; `unknown(page-extent-mismatch)` on mismatch
-- [ ] 2.3 Native page-map frame record (`source_scope`, `origin`, `axes`, `scale`, `rotation`, `crop`) derived from existing fields; delete no existing fields
-- [ ] 2.4 Variant matrix passes (frame resolution + extent binding) for all fixtures
+- [x] 2.1 `pdftoppm -cropbox` with a feature/pin check in the render configuration
+- [x] 2.2 Extent binding: declared page record → expected pixels; `unknown(page-extent-mismatch)` on mismatch
+- [x] 2.3 Native page-map frame record (`source_scope`, `origin`, `axes`, `scale`, `rotation`, `crop`) derived from existing fields; delete no existing fields
+- [x] 2.4 Variant matrix passes (frame resolution + extent binding) for all fixtures
 
 ## 3. Lineage labeling
 
