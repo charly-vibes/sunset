@@ -30,4 +30,5 @@ Non-goals: judging whether a document's statements are true; model selection; UI
 ## Open Questions
 
 1. Encode claims as annotations with a profile, or add a `claims` section in a later DSC version?
+   **Ruled (owner, 2026-11-24, via sunset-gpd gate G2): annotations with a claim-extension profile.** No new wire section; task 2.3 unblocked.
 2. Which claim type vocabulary is pinned first (`field:*`, `heading`, `table-cell`)?

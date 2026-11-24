@@ -29,3 +29,4 @@ Non-goals: authentication and multi-tenant serving; a hosted service; a GUI.
 
 1. Is MCP the first-class adapter or a thin layer over the CLI?
 2. Which PyMuPDF licensing route does the project intend (AGPL-3.0 obligations accepted, or commercial)? Blocks packaging.
+   **Ruled (owner, 2026-11-24, via sunset-gpd gate G4): AGPL-3.0 obligations accepted for repo-internal use; distribution stays out of scope.** Task 5.2 (packaging) remains gated on an explicit future licensing decision before any release.

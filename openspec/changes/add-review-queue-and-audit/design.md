@@ -28,4 +28,5 @@ Non-goals: UI polish; multi-reviewer adjudication workflows; model selection; re
 ## Open Questions
 
 1. Default threshold and minimum N per claim type; needs owner ruling.
+   **Ruled (owner, 2026-11-24, via sunset-gpd gate G3): a type opens the autonomy gate when its Wilson false-accept upper bound at 95% confidence is ≤ 1% and the audited sample is ≥ 30 per claim type (human-labeled audits only, Decision 7).** Task 4.4 unblocked.
 2. Should audits sample across documents or within each document?

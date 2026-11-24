@@ -36,12 +36,12 @@ add-anchor-derived-identity ──► add-scale-complete-regions ──┬─►
 
 ## Owner gates (all block approval of the named change)
 
-- [ ] G1 — Identity profile additive in DSC 0.3, or 0.4? Blocks add-anchor-derived-identity tasks 2.2+.
-- [ ] G2 — Claims as annotations-with-profile vs new `claims` section? Blocks add-claim-verification-ladder task 2.3.
-- [ ] G3 — Autonomy gate defaults: false-accept threshold and minimum audited N. Blocks add-review-queue-and-audit task 4.4.
-- [ ] G4 — PyMuPDF AGPL vs commercial. Blocks add-agent-tool-surface packaging only (task 5.2); repo-internal use unaffected.
-- [ ] G5 — Retention policy for recorded model I/O containing document text. Blocks add-iterative-document-digitization §4 rollout.
-- [ ] G6 — Block scale in the ladder. Blocks add-scale-complete-regions task 2.3.
+- [x] G1 — Identity profile additive in DSC 0.3, or 0.4? Blocks add-anchor-derived-identity tasks 2.2+. (Ruled 2026-11-24 via sunset-gpd: additive in 0.3, opt-in profile.)
+- [x] G2 — Claims as annotations-with-profile vs new `claims` section? Blocks add-claim-verification-ladder task 2.3. (Ruled 2026-11-24 via sunset-gpd: annotations-with-profile.)
+- [x] G3 — Autonomy gate defaults: false-accept threshold and minimum audited N. Blocks add-review-queue-and-audit task 4.4. (Ruled 2026-11-24 via sunset-gpd: Wilson 95% upper bound ≤ 1%, N ≥ 30, human-labeled audits only.)
+- [x] G4 — PyMuPDF AGPL vs commercial. Blocks add-agent-tool-surface packaging only (task 5.2); repo-internal use unaffected. (Ruled 2026-11-24 via sunset-gpd: AGPL accepted for repo-internal use; distribution stays out of scope.)
+- [x] G5 — Retention policy for recorded model I/O containing document text. Blocks add-iterative-document-digitization §4 rollout. (Ruled 2026-11-24 via sunset-gpd: retain locally only, never push/sync/export.)
+- [x] G6 — Block scale in the ladder. Blocks add-scale-complete-regions task 2.3. (Ruled 2026-11-24 via sunset-gpd: block scale in scope, word < line < block < page.)
 
 ## Necessity cuts (over-engineering audit, 2026-11-24)
 

@@ -86,3 +86,7 @@ Region-first recognition can lose context; region crops must retain declared pad
 ## Deferred decisions
 
 Select engines, models, numerical budgets and quality thresholds in the pinned pilot manifest before execution. Production-scale issue processing, a general editor and demonstrated cross-tool conformance are outside this proposal.
+
+## Owner ruling G5 (2026-11-24, via sunset-gpd)
+
+Retention policy for recorded model I/O containing document text: **retain locally only.** Raw responses, validated normalized outputs and prompts are kept on the machine that produced the run — required for replay determinism and audit — and are never pushed, synced or exported beyond it. This is a handling rule, not a schema change; §4 rollout proceeds under it.

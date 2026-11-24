@@ -26,3 +26,4 @@ Non-goals: layout analysis (blocks from geometry) beyond what the extractor repo
 ## Open Questions
 
 1. Is a `block` scale in scope for native PDFs (MuPDF block numbers) or deferred until a layout capability exists?
+   **Ruled (owner, 2026-11-24, via sunset-gpd gate G6): block scale is in scope — word < line < block < page — using MuPDF block numbers; containment checks uniform per Decision 1.** Task 2.3 unblocked.
