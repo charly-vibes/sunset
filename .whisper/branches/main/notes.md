@@ -844,3 +844,61 @@
   Deferral unqualified until measured decision; no full-issue run; upload authorization scoped to diario pages 1-6 renders ONLY (never pba-judicial PDF); drafts never resolve unknowns; human verdict always wins; frozen fixtures/manifests untouched; issues.jsonl needs git add -f. GOTCHAS: SPA autosave is per-origin localStorage — progress made on old single-page instances (8130/old 8131) does not carry to the new 6-page origin; check the progress counter matches reality before trusting a restore banner.
   ## Tickets / validation
   sunset-rmx epic + sunset-12h open, unclaimed. Validation this session: curl HTTP 200 + data-island parse (6 pages/341 regions). Test suites not re-run (no code changed; prior entry recorded 292 passed).
+- 2026-11-24T18:40:42Z [id:a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575] (#proposal-set-adoption) Format: 1
+  Timestamp: 2026-11-24T18:55:00Z
+  Repo: charly-vibes/sunset (~/para/areas/dev/gh/charly/sunset)
+  Branch: main
+  HEAD: 40cbd3a4ac209f6c8dd1c4b6754392eb0074bf7c
+  Session: 01a20e9e-9c1f-71ba-9844-0768a3d0358e
+  Task: Adopt reviewed sunset proposal set as OpenSpec changes + beads epics
+  
+  Objective: ground the corpus proposal set (chat e505b9ec, 8 changes) against HEAD, adopt it without duplicating in-flight work, file tracked tickets.
+  
+  Current phase: commit (work committed and pushed; follow-up filing pending).
+  
+  Current state:
+  - 7 commits pushed (f38f41d..40cbd3a): 6 new openspec changes + PROPOSAL-SET.md, additive merges into define-document-composition-semantics (join laws, law-catalogue tasks) and add-iterative-document-digitization (5 model-call requirements, tasks §4), 4 commits of pre-session work (drafts/triage lanes, SPA draft surface, scaling assent record, session notes).
+  - Necessity audit cut 4 features with triggers: dense region table, zoom_out, tier-2 agreement, MCP adapter (see PROPOSAL-SET.md "Necessity cuts").
+  - 7 beads tickets filed and dolt-synced: chain sunset-5vh -> sunset-at7 -> sunset-1x7 -> sunset-3oq -> sunset-14b; ready now: sunset-7b4 (render-binding, fixes live crop-box bug), sunset-5vh (identity), sunset-gpd (owner rulings G1-G6).
+  - Gates green: openspec validate --all --strict 18/18 (local + pinned 1.14.2), spk lint 0 issues, full pytest 690 passed/2 skipped.
+  
+  Exact next action: apply the issue-review findings (advisory report delivered, not yet applied): (1) file 2 ALIGN-001 tickets — composition join-law work has no tracker home; digitization §4 needs a sunset-rmx child; (2) add metadata to all 7 tickets: files, base_commit=40cbd3a, estimates, lanes (gpd=hitl, epics=complexity:xl); (3) decompose first children of sunset-7b4 and sunset-5vh before anyone claims them.
+  
+  Decisions/constraints:
+  - Everything numeric is agent-executed until a human pass supersedes (repo honesty convention).
+  - Owner gates G1-G6 block: G1 identity tasks 2.2+, G2 claims task 2.3, G3 review task 4.4, G4 agent packaging only, G5 digitization §4 rollout, G6 zoom task 2.3.
+  - pba-judicial-2026-07-29.pdf intentionally left untracked (recorded as local-only acceptance example).
+  -ddl complexity gate enforces abc<=30 on app code; drafts.py main() was refactored (_write_payload extracted) to pass.
+  
+  Validation: just spec-check green; pytest tests -q 690 passed 2 skipped; both gates rerun after fixes.
+  
+  Unresolved/blockers: issue-review fixes unapplied; owner rulings G1-G6 pending (sunset-gpd); bd dolt push done 2026-11-24 after ticket creation.
+
+- 2026-11-24T19:07:00Z [id:642c14ee15a57915ae123ccda63310d877967843bf8a8fa9c7c4877765fc7a02] (#proposal-set-adoption) Format: 1
+  Timestamp: 2026-11-24T19:07:00Z
+  Repo: charly-vibes/sunset (~/para/areas/dev/gh/charly/sunset)
+  Branch: main
+  HEAD: 40cbd3a4ac209f6c8dd1c4b6754392eb0074bf7c
+  Session: 01a20edf-ecda-7411-9b3c-6c181590da05
+  Task: Apply issue-review findings for the adopted proposal set (continues a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575)
+
+  Objective: file the 2 ALIGN-001 tracker-gap tickets, enrich the 7 adopted tickets with metadata, decompose first children of sunset-7b4 and sunset-5vh.
+
+  Current phase: done (tracker mutations complete; export refreshed; commit/sync pending authorization).
+
+  Current state:
+  - ALIGN-001 tickets filed: sunset-72s (composition join-law tasks + law catalogue; blocked-by sunset-5vh, complexity:m, 360m), sunset-rmx.24 (digitization §4 model-call determinism tasks 4.1-4.6; parent sunset-rmx, blocked-by sunset-gpd via G5, complexity:m, 240m).
+  - Metadata applied to all 7: base_commit=40cbd3a + files lists; estimates 2400m epics / 120m gpd; lanes: 6 epics complexity:xl, sunset-gpd hitl.
+  - First children decomposed: sunset-7b4.1 (render-binding §1 RED baseline re-measurement, 240m), sunset-5vh.1 (identity task 1.1 position-dependence audit, 120m); both ready to claim, parents preserved as epics.
+  - bd export -o .beads/issues.jsonl: 140 issues; git diff +11/-7 rows.
+
+  Exact next action: claim an unblocked child (sunset-7b4.1 or sunset-5vh.1) or sunset-gpd; pending handoff: bd dolt push + commit of .beads/issues.jsonl and this note.
+
+  Decisions/constraints:
+  - Adoption-session report text unrecoverable (transcript 01a20e9e pruned); executed from the handoff summary + PROPOSAL-SET.md + tasks.md grounding.
+  - Estimates are planning judgment (not from the lost report); epics uniform 2400m.
+  - No git commit / bd dolt push run: conservative profile, proposed at handoff.
+
+  Validation: bd ready shows both children claimable; sunset-72s blocked-by sunset-5vh and sunset-rmx.24 blocked-by sunset-gpd verified via bd show; metadata visible on spot-checked tickets.
+
+  Unresolved/blockers: owner rulings G1-G6 (sunset-gpd) still pending; commit/dolt-sync unauthorized.
