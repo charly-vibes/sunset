@@ -1,3 +1,9 @@
+---
+tags: [pipeline-run:tdd-ro5-2026-11-24-ro5-review-fixes, pipeline-step:refactor]
+---
+
+RED (sunset-7b4.3, BoxAgreement): wrote tests/tracer/test_visual_box_agreement.py first (test file, gate-exempt); production module dsc03/visual/agreement.py not yet created — import failures expected. Recorded in active run tdd-ro5-2026-11-24-ro5-review-fixes step 5 without advancing (topic belongs to another workstream).
+
 
 Verification evidence (orchestrator re-run 2026-11-24): `uv run pytest` of the touched tracer suites — claims+verify ladder 36 passed; snapping 10 passed; box agreement 32 passed; scalestats 12 passed; certificates 9 passed; render cache 26 passed; review queue/audit/wiring 21 passed; substrate context+assembly regression 33 passed. RED evidence per slice recorded in the slice completion reports (ModuleNotFoundError/ImportError collections).
 
