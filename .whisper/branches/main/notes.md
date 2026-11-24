@@ -1019,4 +1019,25 @@ Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the u
   Validation: just spec-check ALL GATES PASSED 18/18; tracer suite 677 passed, 2 skipped.
   Exact next action: owner rules on sunset-c0v (and the 3 sunset-gpd flags); otherwise pick from bd ready (~19 open; sunset-at7 unblocks 7b4.3-.7).
   Decisions/constraints: agent-executed numbers superseded by human pass; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile, commits under standing orchestration instruction.
-  Previous entry: 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39 (superseded: its awaiting-owner state extended by this round; flags and constraints still stand) (supersedes 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39)
+  Previous entry: 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39 (superseded: its awaiting-owner state extended by this round; flags and constraints still stand) (supersedes 26596192f6101ef9a8ecfb6345fca1e3b19833fe2c312f5e1262ea84df7e1b39) (superseded by ffa14c2b26705ca040d5a4601f7cabebbd9535d8657e546589b783fa2bd3451e)
+- 2026-11-24T22:08:08Z [id:ffa14c2b26705ca040d5a4601f7cabebbd9535d8657e546589b783fa2bd3451e] (#ro5-review-fixes) Timestamp: 2026-11-24T22:07:57Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD a52bf22 (origin/main even)
+  Session: omp session for this cwd (native id not captured); bd is authoritative for tickets.
+  Task: rule-of-5 review-fix round complete and pushed; continuation = owner rulings, else bd ready.
+  Format: 1
+  
+  Objective: implement the rule-of-5 review-fix findings on the fix HEAD (shared pixel module, single render site, structured refusal, non-finite guard, shared test builders) and re-measure the cropped-page oracle through the fixed machinery.
+  Phase: commit — all work committed and pushed (c4e7a060f1 refactor, aa3dd579df chore wai artifacts, a52bf22d3d whisper); review round closed.
+  State:
+  - dsc03/visual/_pixels.py owns decode/binarize/dilate (public names, MaskUnavailable); coverage/masks/content_classes consume it; pymupdf imported only there.
+  - review.py: _maybe_render is the single correlated-refusal render site; page records carry refusal {code, reason}.
+  - quantize_scalar refuses non-finite (ValueError -> NativeInputError 'malformed-pdf' in digitization/native.py).
+  - tests/tracer/conftest.py: pinned poppler RenderConfig builder, make_carrier, CARRIERS constant; 4 oracle suites deduplicated; mapping-only suites keep fake-pinned local configs deliberately.
+  - G6 boundary amended into add-scale-complete-regions/design.md: MuPDF block numbers oracle/containment ONLY, never identity locator_path absent a selector-profile delta.
+  - GREEN re-measurement (docs/src/status.md): budgeting-basics through the fixed machinery -> typed page-extent-mismatch refusals everywhere, 0/405 silent false counts (RED was 158/405). Cause: pdftoppm ceils non-integral pt dims, binding declares round; mismatch at EVERY dpi for this carrier.
+  Exact next action: owner rules on sunset-c0v (ceil-vs-round convention; options in ticket). If moved, also the 3 sunset-gpd flags (G3/G6/G5). Otherwise pick from bd ready (~19 open; sunset-at7 unblocks 7b4.3-.7).
+  Decisions/constraints: all numbers agent-executed until a human pass supersedes; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile honored, pushes under standing orchestration instruction; owner rulings only via owner.
+  Ownership: no in-progress claims (bd list in_progress empty); sunset-c0v open/unassigned with parked resume note; sunset-gpd noted.
+  Validation: just spec-check ALL GATES PASSED 18/18; tracer suite 677 passed, 2 skipped (2026-11-24).
+  Unresolved/blockers: none in this thread beyond the owner rulings above.
+  Previous entry: 6839599fe357727f96ee74d2562d74c7cf62e5f4bbf06a54d2967f9285bdf1db (supersedes: same session/task, this v1 snapshot fully replaces it) (supersedes 6839599fe357727f96ee74d2562d74c7cf62e5f4bbf06a54d2967f9285bdf1db)
