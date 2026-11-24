@@ -907,7 +907,7 @@
   Branch: main
   HEAD: f254cb679419f6f85b6c06ce09a0e07d5eb18d4a
   Session: 01a20edf-ecda-7411-9b3c-6c181590da05
-  Task: Apply issue-review findings for the adopted proposal set (continues a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575)
+  Task: Apply issue-review findings for the adopted proposal set (continues a6cd7a288cab48f9ee321950164835038ed403f0efe4378ce1c3012716528575) (superseded by 9a08523c399be08ec2f942f1db828453c47a9e18945129b6c0b421b7fa7c4887)
   
   Objective: file the 2 ALIGN-001 tracker-gap tickets, enrich the 7 adopted tickets with metadata, decompose first children of sunset-7b4 and sunset-5vh; land the result.
   
@@ -929,3 +929,30 @@
   Validation: bd ready shows both children claimable; deps verified via bd show (sunset-72s blocked-by sunset-5vh; sunset-rmx.24 blocked-by sunset-gpd); push verified — branch up to date with origin/main.
   
   Unresolved/blockers: none in this thread; G1-G6 owner rulings pending on sunset-gpd. (supersedes 642c14ee15a57915ae123ccda63310d877967843bf8a8fa9c7c4877765fc7a02)
+- 2026-11-24T20:06:08Z [id:9a08523c399be08ec2f942f1db828453c47a9e18945129b6c0b421b7fa7c4887] (#proposal-set-first-children) Timestamp: 2026-11-24T20:06:08Z
+  Repo: charly-vibes/sunset (~/para/areas/dev/gh/charly/sunset)
+  Branch: main
+  HEAD: 20bc1811d815dcbcfc6da29ee19eddcd06abfa24
+  Session: 01a20edf-ecda-7411-9b3c-6c181590da05
+  Task: Implement first children of the adopted proposal set + owner rulings (continues 0362f36a56507757d5e445a792bb37cc8f10090dd5d2645ae0b352561be2caff)
+
+  Objective: implement sunset-7b4.1 (render-binding RED baseline), sunset-5vh.1 (identity position-dependence audit), sunset-gpd (owner rulings G1-G6); orchestrated via two parallel subagents + one owner ruling form.
+
+  Current phase: complete (commits 97cb6158c1 test(visual) RED baseline, 3eced634a6 docs(identity) audit, 20bc1811d8 docs(proposals) rulings; bd tickets 7b4.1/5vh.1/gpd closed).
+
+  Current state:
+  - sunset-7b4.1: tests/tracer/test_visual_variant_matrix.py (strict xfail, 200/200 frames unknown/unresolvable_source_scope at HEAD, marker removed by 7b4 tasks 2.1-2.3); cropped-page oracle measurement 158/405 false misses (budgeting-basics-excerpt 30pt inset, poppler media-box, 150dpi; uncropped control 0) recorded in docs/src/status.md, superseding chat baseline 23/139.
+  - sunset-5vh.1: audit appended to add-anchor-derived-identity/design.md — zero order dependence in regions/contents/selectors/coverage/interpretations/profiles; hits: evidence producers[i][0] (degenerate), annotations an{page}- prefix, canonicalization (both readers), assembly left-operand-first, migrate insertion-order ids; coverage answer for OQ2: triple key suffices.
+  - sunset-gpd: G1 additive-in-0.3 (opt-in profile); G2 annotations-with-profile; G3 Wilson 95% <= 1%, N >= 30 human-labeled; G4 AGPL repo-internal, distribution out of scope; G5 retain recorded I/O locally only; G6 block scale in scope. All six ticked in PROPOSAL-SET.md; rulings in the six design.md files.
+  - just spec-check ALL GATES PASSED on the union (openspec strict 18/18, spk lint, tracer pytest, frozen 0.2 validator PASS 11, openspec 1.x strict).
+
+  Exact next action: decompose/implement next children — sunset-7b4 render fix (tasks 2.1-2.3, unblocked), sunset-5vh identity tasks 2.1+ (unblocked by G1).
+
+  Decisions/constraints:
+  - All numbers agent-executed until a human pass supersedes (repo honesty convention).
+  - pba-judicial-2026-07-29.pdf stays intentionally untracked.
+  - Estimates: 7b4.1 was 240m budget, spent ~5m agent time; treat future epic estimates as planning judgment.
+
+  Validation: spec-check green (283s run); pytest tests/tracer/test_visual_variant_matrix.py 1 passed 1 xfailed (strict); bd shows 3 tickets closed.
+
+  Unresolved/blockers: none in this thread; epics sunset-7b4/sunset-5vh remain open with remaining tasks.
