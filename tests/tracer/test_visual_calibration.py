@@ -40,14 +40,12 @@ is not vacuously blocking), and adding the real faint page (or any
 unknown/unavailable/differ outcome) blocks it with the blocking page listed.
 """
 import json
-import shutil
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from dsc03.visual import coverage, masks, render
-from dsc03.visual.render import Binarization, RenderConfig
 
 from conftest import render_config as _render_config
 

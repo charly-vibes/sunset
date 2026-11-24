@@ -25,7 +25,6 @@
 #   hand-computed coordinates) so every measured fraction is deterministic.
 """Binarized ink-coverage oracle tests (sunset-xzy.3)."""
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -34,7 +33,6 @@ import pymupdf
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from dsc03.visual import coverage, frames, render
-from dsc03.visual.render import Binarization, RenderConfig
 
 from conftest import make_carrier as _make_carrier, render_config as _render_config
 
