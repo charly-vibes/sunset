@@ -1,6 +1,9 @@
 # Purpose: Extract embedded PDF text with source-bound word and line locations.
 # Responsibilities: Validate native inputs, retain pinned local artifacts, build
-#   a valid DSC 0.3 descriptor, normalize searchable tokens and inspect mappings.
+#   a valid DSC 0.3 descriptor (whose geometry-profile frames declare every
+#   field resolve_pixel_mapping needs: unit, source_scope, origin, axes,
+#   scale, rotation, crop, source_dimensions), normalize searchable tokens
+#   and inspect mappings.
 # Rationale: sunset-jbb.4 declares deterministic semantic artifacts and uses the
 #   same integrity boundary for read-only inspection, resume and offline replay;
 #   sunset-1ry classifies per-page text retention into the outcome vocabulary
@@ -116,6 +119,14 @@ def _descriptor(source_hash, pages, raw_pages, page_maps, root, config_sha):
     (root / 'selector.json').write_bytes(selector_bytes)
     geometry_profile = {'kind': 'geometry', 'version': '1',
                         'frames': [{'name': f'page-{item["page"]}-pt',
+                                    'unit': item['unit'],
+                                    'source_scope': item['source_scope'],
+                                    'origin': item['origin'],
+                                    'axes': item['axes'],
+                                    'scale': item['scale'],
+                                    'rotation': item['rotation'],
+                                    'crop': item['crop'],
+                                    'source_dimensions': item['source_dimensions'],
                                     'source_frame': item['source_frame'],
                                     'target_frame': item['target_frame'],
                                     'source_to_target': item['source_to_page']}
@@ -234,8 +245,23 @@ def extract(source, output, pages=None):
                 continue
             raw_pages[page_num] = raw
             matrix = page.rotation_matrix
+            # Declared frame fields (improve-geometry-render-binding 2.3):
+            # everything resolve_pixel_mapping needs, derived from the same
+            # cropbox data as the existing records. crop is declared null:
+            # PyMuPDF word boxes are already crop-relative and the pinned
+            # renderer is crop-bound (pdftoppm -cropbox), so the descriptor's
+            # local origin coincides with the rendered raster origin and no
+            # offset is added; the cropbox's position relative to the
+            # media-box origin stays recorded in the legacy source_origin /
+            # cropbox fields. (Adding the media-relative offset here would
+            # shift every mapped box by the rotated crop offset — verified
+            # against rendered ink on a cropped+rotated carrier.)
             page_maps.append({'page': page_num, 'rotation': page.rotation,
                               'cropbox': list(page.cropbox), 'frame': f'page-{page_num}-pt',
+                              'source_scope': f'page:{page_num}',
+                              'origin': 'bottom-left', 'axes': 'x-right-y-up',
+                              'unit': 'pt', 'scale': [1.0, 1.0],
+                              'crop': None,
                               'source_origin': [page.cropbox.x0, page.cropbox.y0],
                               'source_dimensions': [page.cropbox.width, page.cropbox.height],
                               'target_dimensions': [page.rect.width, page.rect.height],

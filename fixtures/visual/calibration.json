@@ -164,6 +164,7 @@
     "page": 1,
     "binarization": {"enabled": true, "method": "fixed-threshold", "threshold": 128},
     "source_simplification": "ink-dilation-2px",
+    "render_cropbox": false,
     "extractor_lineage": "pymupdf",
     "renderer_lineage": "poppler",
     "evidence_class": "independent",

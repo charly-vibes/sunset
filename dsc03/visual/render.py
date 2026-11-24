@@ -1,7 +1,9 @@
 # Purpose: Pinned oracle-render infrastructure (sunset-xzy.1, tasks.md 3.1).
 # Responsibilities: Provide the immutable RenderConfig record (renderer
 #   name/version, DPI, page selection, binarization settings, source
-#   simplification, extractor/renderer lineage declarations); render a PDF page
+#   simplification, extractor/renderer lineage declarations, and whether the
+#   render is bound to the page crop box); check renderer feature support
+#   (supports_cropbox) for the `-cropbox` flag; render a PDF page
 #   through poppler `pdftoppm` so identical configurations produce
 #   byte-identical output; return typed render-level outcomes — Rendered
 #   (bytes + config) or typed RenderUnavailable (reason) for a missing
@@ -11,7 +13,12 @@
 #   demonstrations only — they can never support accuracy claims.
 # Rationale: document-visual-oracles "Pinned render configuration"
 #   (reproducible render; renderer unavailable → typed `unavailable`) and
-#   "Labeled evidence class"; design D2 (poppler pdftoppm as the initial
+#   "Labeled evidence class"; design D1 (render with the crop box — PyMuPDF
+#   extraction coordinates are crop-relative, pdftoppm without `-cropbox`
+#   renders the media box, so a flag-less render would silently misalign
+#   every word box; missing flag support is typed
+#   `renderer-cropbox-unsupported`, never a silent media-box render),
+#   design D2 (poppler pdftoppm as the initial
 #   independent renderer, recorded + byte-identical), D4 (source
 #   simplification recorded per config), D5 (outcome vocabulary with typed
 #   `unavailable`). Applying binarization to rendered pixels is the ink-mask
@@ -83,6 +90,9 @@ class RenderConfig:
     renderer_lineage: str
     binarization: Binarization = field(default_factory=Binarization)
     source_simplification: str = "none"
+    # Design D1: bind the render to the page crop box. Default False so
+    # recorded configs from before this field load unchanged via from_dict.
+    render_cropbox: bool = False
 
     @property
     def evidence_class(self) -> str:
@@ -99,6 +109,7 @@ class RenderConfig:
             "page": self.page,
             "binarization": self.binarization.to_dict(),
             "source_simplification": self.source_simplification,
+            "render_cropbox": self.render_cropbox,
             "extractor_lineage": self.extractor_lineage,
             "renderer_lineage": self.renderer_lineage,
         }
@@ -113,6 +124,7 @@ class RenderConfig:
             page=int(record["page"]),
             binarization=Binarization.from_dict(record["binarization"]),
             source_simplification=str(record["source_simplification"]),
+            render_cropbox=bool(record.get("render_cropbox", False)),
             extractor_lineage=str(record["extractor_lineage"]),
             renderer_lineage=str(record["renderer_lineage"]),
         )
@@ -182,13 +194,30 @@ def detect_renderer_version(executable: str) -> str:
     return match.group(1) if match else ""
 
 
+def supports_cropbox(version: str) -> bool:
+    """Whether a poppler version supports the pdftoppm `-cropbox` flag.
+
+    Parses the version string produced by detect_renderer_version (dotted
+    integer components, e.g. "0.26.0", "26.01.0"). `-cropbox` first appeared
+    in poppler 0.26, so the parsed tuple is compared against (0, 26). An
+    empty or unparseable version string does NOT count as support — the
+    caller must refuse, never guess.
+    """
+    parts = version.split(".")
+    if not parts or not all(part.isdigit() for part in parts):
+        return False
+    return tuple(int(part) for part in parts) >= (0, 26)
+
+
 def render_page(config: RenderConfig, pdf_path) -> Rendered | RenderUnavailable:
     """Render one PDF page through the pinned renderer.
 
     Returns Rendered (bytes + config) on success, or a typed
-    RenderUnavailable when the pinned renderer executable is missing —
-    never bytes from a substitute renderer, never a silent skip. A renderer
-    that exists but fails raises the typed RenderCommandError.
+    RenderUnavailable when the pinned renderer executable is missing or
+    lacks the `-cropbox` flag a crop-bound config requires (reason
+    `renderer-cropbox-unsupported`) — never bytes from a substitute
+    renderer, never a silent media-box render, never a silent skip. A
+    renderer that exists but fails raises the typed RenderCommandError.
     """
     pdf_path = Path(pdf_path)
     resolved = shutil.which(config.renderer_executable) or (
@@ -205,6 +234,17 @@ def render_page(config: RenderConfig, pdf_path) -> Rendered | RenderUnavailable:
                 f"version={config.renderer_version!r})"
             ),
         )
+    if config.render_cropbox:
+        detected = detect_renderer_version(resolved)
+        if not supports_cropbox(detected):
+            return RenderUnavailable(
+                config=config,
+                reason=(
+                    "renderer-cropbox-unsupported: pinned config requires the "
+                    f"-cropbox flag (poppler >= 0.26) but detected version "
+                    f"{detected!r} does not support it"
+                ),
+            )
     with TemporaryDirectory(prefix="sunset-render-") as tmp:
         out_prefix = str(Path(tmp) / "page")
         command = [
@@ -214,6 +254,7 @@ def render_page(config: RenderConfig, pdf_path) -> Rendered | RenderUnavailable:
             "-l", str(config.page),
             "-singlefile",
             "-png",
+            *(["-cropbox"] if config.render_cropbox else []),
             str(pdf_path),
             out_prefix,
         ]

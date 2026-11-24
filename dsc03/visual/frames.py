@@ -5,7 +5,9 @@
 #   profiles.resolve_frame; derive the mapping exclusively from the declared
 #   fields (unit → pixel scale, origin/axes → canonical flips, declared
 #   scale, declared rotation, declared crop offset, source_scope → page
-#   binding) and return a typed outcome — PixelMapping (forward/inverse
+#   binding) and the declared page extent (source_dimensions → expected
+#   rendered pixel extent at the pinned dpi, swapped for rotations 90/270;
+#   mismatch → `page-extent-mismatch`) and return a typed outcome — PixelMapping (forward/inverse
 #   transforms) or UnknownMapping (reason) — for missing, incompatible,
 #   ambiguous or non-resolvable frames. Never a guessed coordinate
 #   convention, never an identity fallback, and never comparison verdicts
@@ -25,7 +27,10 @@
 #   descriptor's local origin relative to the page origin); the transform is
 #   exactly invertible. (4) The pinned pixel tolerance (PINNED_PIXEL_TOLERANCE_PX)
 #   bounds round-trip recovery error: mapping(point) → pixel → mapping⁻¹(pixel)
-#   must recover the original descriptor point within it.
+#   must recover the original descriptor point within it. (5) A frame that
+#   declares `source_dimensions` pins the rendered raster extent (design D2:
+#   expected = round(w·dpi/72) × round(h·dpi/72), swapped for 90/270) —
+#   extent mismatch converts a silent misalignment into a typed refusal.
 """Declared frame mapping: pixel↔descriptor coordinate resolution."""
 from __future__ import annotations
 
@@ -204,6 +209,38 @@ def resolve_pixel_mapping(frame, render_config, page_px):
         return UnknownMapping(
             "unsupported_rotation", f"rotation {rotation!r} not in {sorted(SUPPORTED_ROTATIONS)}"
         )
+
+    # Extent binding (design D2, spec "Crop-box render binding"): a frame
+    # that declares its page size pins the rendered raster extent —
+    # round(width * dpi / 72) × round(height * dpi / 72) in the frame's
+    # unit, with width and height swapped for declared rotations 90/270
+    # (the raster rectangle is the rotated page; same convention as
+    # PixelMapping._forward_axes, so the swap is applied exactly once).
+    # Mismatch is typed `page-extent-mismatch` — never a silent misalignment.
+    # Frames WITHOUT declared dimensions skip this check.
+    source_dimensions = frame.get("source_dimensions")
+    if source_dimensions is not None:
+        if not (
+            isinstance(source_dimensions, (tuple, list))
+            and len(source_dimensions) == 2
+            and all(_is_number(v) and v > 0 for v in source_dimensions)
+        ):
+            return UnknownMapping(
+                "malformed_frame", "source_dimensions must be two positive numbers"
+            )
+        points_per_unit = SUPPORTED_UNITS[unit]
+        expected = (
+            round(source_dimensions[0] * dpi / points_per_unit),
+            round(source_dimensions[1] * dpi / points_per_unit),
+        )
+        if rotation in (90, 270):
+            expected = (expected[1], expected[0])
+        if (page_px[0], page_px[1]) != expected:
+            return UnknownMapping(
+                "page-extent-mismatch",
+                f"rendered extent {tuple(page_px)} != declared extent "
+                f"{expected} (dpi={dpi}, rotation={rotation})",
+            )
 
     # declared crop: null, or {"x","y"} numbers in frame units (pt).
     crop = frame.get("crop")

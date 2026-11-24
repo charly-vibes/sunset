@@ -325,3 +325,117 @@ def test_non_canonical_axes_is_unknown_never_guessed():
     )
     assert result.status == "unknown"
     assert result.reason == "unsupported_axes"
+
+
+# --- (h) extent binding via source_dimensions (tasks 2.2, design D2) ---------
+
+
+def _extent_frame(rotation, dims):
+    return {
+        "kind": "geometry",
+        "version": "1",
+        "subunit": "integers-are-points",
+        "frames": [{
+            "name": "page-1",
+            "unit": "pt",
+            "origin": "bottom-left",
+            "axes": "x-right-y-up",
+            "scale": [1, 1],
+            "rotation": rotation,
+            "crop": None,
+            "source_scope": "page:1",
+            "source_dimensions": dims,
+        }],
+    }
+
+
+def test_extent_rotation0_matches_declared_extent():
+    # 612x792 pt at 72 dpi -> exactly (612, 792) pixels.
+    result = frames.frame_mapping(
+        _extent_frame(0, [612.0, 792.0]),
+        "page-1", _render_config(dpi=72, page=1), (612, 792))
+    assert result.status == "resolved"
+    assert result.page_px == (612, 792)
+
+
+def test_extent_rotation90_swaps_width_height_hand_computed():
+    # 612x792 pt at 150 dpi -> round(1275.0) x round(1650.0); rotation 90
+    # renders the raster rotated, so the expected extent is (1650, 1275).
+    result = frames.frame_mapping(
+        _extent_frame(90, [612.0, 792.0]),
+        "page-1", _render_config(dpi=150, page=1), (1650, 1275))
+    assert result.status == "resolved"
+    assert result.page_px == (1650, 1275)
+
+
+def test_extent_rotation270_swaps_width_height_hand_computed():
+    # 612x792 pt at 100 dpi -> round(850.0) x round(1100.0); rotation 270
+    # swaps exactly like 90 (same _forward_axes convention).
+    result = frames.frame_mapping(
+        _extent_frame(270, [612.0, 792.0]),
+        "page-1", _render_config(dpi=100, page=1), (1100, 850))
+    assert result.status == "resolved"
+    assert result.page_px == (1100, 850)
+
+
+def test_extent_mismatch_is_typed_page_extent_mismatch():
+    result = frames.frame_mapping(
+        _extent_frame(0, [612.0, 792.0]),
+        "page-1", _render_config(dpi=72, page=1), (600, 792))
+    assert result.status == "unknown"
+    assert result.reason == "page-extent-mismatch"
+
+
+def test_extent_mismatch_on_unswapped_rotated_extent_is_unknown():
+    # Feeding the UNswapped extent to a 90-degree frame is exactly the
+    # double-swap mistake the check exists to catch.
+    result = frames.frame_mapping(
+        _extent_frame(90, [612.0, 792.0]),
+        "page-1", _render_config(dpi=150, page=1), (1275, 1650))
+    assert result.status == "unknown"
+    assert result.reason == "page-extent-mismatch"
+
+
+def test_frame_without_source_dimensions_skips_extent_check():
+    frame = _extent_frame(0, [612.0, 792.0])
+    del frame["frames"][0]["source_dimensions"]
+    result = frames.frame_mapping(
+        frame, "page-1", _render_config(dpi=72, page=1), (300, 400))
+    assert result.status == "resolved"
+
+
+def test_malformed_source_dimensions_is_unknown():
+    result = frames.frame_mapping(
+        _extent_frame(0, [612.0]), "page-1",
+        _render_config(dpi=72, page=1), (612, 792))
+    assert result.status == "unknown"
+    assert result.reason == "malformed_frame"
+
+
+# --- (i) crop-box render support (tasks 2.1, design D1) -----------------------
+
+
+def test_supports_cropbox_version_boundaries():
+    from dsc03.visual.render import supports_cropbox
+    assert supports_cropbox("0.26.0") is True
+    assert supports_cropbox("0.26") is True
+    assert supports_cropbox("0.25.4") is False
+    assert supports_cropbox("0.25") is False
+    assert supports_cropbox("26.01.0") is True  # new-style poppler versioning
+    assert supports_cropbox("0.90.0") is True
+    assert supports_cropbox("") is False
+    assert supports_cropbox("unknown") is False
+
+
+def test_render_config_cropbox_defaults_and_round_trips():
+    from dsc03.visual.render import RenderConfig
+    config = RenderConfig(
+        renderer_name="pdftoppm", renderer_executable="pdftoppm",
+        renderer_version="26.01.0", dpi=150, page=1,
+        extractor_lineage="pymupdf-1.28.2", renderer_lineage="poppler-26.01.0")
+    assert config.render_cropbox is False  # recorded configs load unchanged
+    record = config.to_dict()
+    assert record["render_cropbox"] is False
+    assert RenderConfig.from_dict(record) == config
+    pinned = dict(record, render_cropbox=True)
+    assert RenderConfig.from_dict(pinned).render_cropbox is True
