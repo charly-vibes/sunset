@@ -1,10 +1,20 @@
 # Purpose: Define sunset's reproducible Python runtime for uv and devenv.
 # Responsibilities: Pin the native extractor (PyMuPDF) and test tooling; keep
-#   requirements-native.txt as the pin record asserted by the tracer contract.
+#   requirements-native.txt as the pin record asserted by the tracer contract;
+#   provide the repo-internal build decision and the `sunset` console script
+#   (add-agent-tool-surface task 5.2).
 # Rationale: sunset-jbb.4 binds run artifacts to the extractor version;
 #   sunset-olu adopts uv.lock + devenv (tambor/DDL-irv fleet pattern) so the
 #   same bytes in produce the same wheels and interpreter everywhere.
+#   Licensing (owner gate G4, 2026-11-24): AGPL-3.0 obligations accepted for
+#   the PyMuPDF-linked path, repo-internal use only; distribution stays out
+#   of scope, so building/installing inside this repository is authorized and
+#   no release is gated here.
 # Verify: uv sync && just spec-check
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "sunset"
@@ -16,6 +26,10 @@ dependencies = [
     "PyMuPDF==1.28.2",
 ]
 
+[project.scripts]
+# Phase-1 adapter over the typed tool surface (parity with the Python API).
+sunset = "sunset.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8",
@@ -24,4 +38,9 @@ dev = [
 [tool.uv]
 # The suite also runs under any python3 with pytest+pymupdf (see justfile
 # SUNSET_PYTHON); the lockfile is the supported path.
-package = false
+package = true
+
+[tool.hatch.build.targets.wheel]
+# Only the agent entry package ships in the repo-internal wheel; dsc03 and
+# digitization stay source-linked (checked out, not installed).
+packages = ["sunset"]

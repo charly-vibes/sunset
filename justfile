@@ -97,3 +97,25 @@ ocr-review source output pages="" port="8125" dpi="200":
         exit "$eval_rc"
     fi
     {{python}} -B -m dsc03.visual.review --descriptor "$root/ocr-run/descriptor.json" --out "$root/ocr-run/review.html" --serve {{port}}
+
+# Typed agent tool surface gates (sunset-14b, add-agent-tool-surface task
+# 5.3): parity + leakage + idempotence are the change's wired gates; the full
+# suite target keeps the remaining surface suites one command away. These
+# targets append to, and never reorder, the recipes above.
+agent-surface-gate:
+    @echo "==> agent tool surface: parity + leakage + idempotence"
+    {{python}} -B -m pytest \
+        tests/tracer/test_tool_surface_parity.py \
+        tests/tracer/test_tool_surface_leakage.py \
+        tests/tracer/test_tool_surface_idempotence.py -q
+
+agent-surface-suite:
+    @echo "==> agent tool surface: full suite"
+    {{python}} -B -m pytest tests/tracer/test_tool_surface_envelope.py \
+        tests/tracer/test_tool_surface_reads.py \
+        tests/tracer/test_tool_surface_addressing.py \
+        tests/tracer/test_tool_surface_idempotence.py \
+        tests/tracer/test_tool_surface_leakage.py \
+        tests/tracer/test_tool_surface_bounds.py \
+        tests/tracer/test_tool_surface_export.py \
+        tests/tracer/test_tool_surface_parity.py -q
