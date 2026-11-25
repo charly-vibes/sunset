@@ -119,3 +119,10 @@ agent-surface-suite:
         tests/tracer/test_tool_surface_bounds.py \
         tests/tracer/test_tool_surface_export.py \
         tests/tracer/test_tool_surface_parity.py -q
+
+# Prose gate (sunset-tur): sad flags in-code prose doing work the code should
+# do. sad.toml excludes the preserved bundle (spec/) and tool-state dirs; the
+# committed sad-baseline.json is shrink-only — new findings fail the gate.
+sad-check:
+    @echo "==> sad prose gate (baseline delta)"
+    sad check --all

@@ -44,6 +44,7 @@ env:
   SUNSET_UV_VERSION: "0.13.9"
   SUNSET_JUST_VERSION: "1.59.0"
   SUNSET_SPECODELIC_VERSION: "0.14.0"
+  SUNSET_SAD_VERSION: "0.2.0"
   SUNSET_PLAYWRIGHT_VERSION: "1.65.2"
   # Strict env contract (sunset-2uo): env_pins skips become failures.
   SUNSET_STRICT_ENV: "1"
@@ -110,9 +111,14 @@ jobs:
           cargo install "specodelic@${SUNSET_SPECODELIC_VERSION}"
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
+      - name: "Pinned env: sad ${{ env.SUNSET_SAD_VERSION }} (sad-vibes crate, prose gate)"
+        run: |
+          cargo install "sad-vibes@${SUNSET_SAD_VERSION}"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
       - name: Verify the pinned canonical environment (every pin asserted)
         run: |
-          command -v pdftoppm pdfinfo pdftotext tesseract just node uv spk
+          command -v pdftoppm pdfinfo pdftotext tesseract just node uv spk sad
           command -v pdftoppm | grep -Fx /usr/local/bin/pdftoppm
           pdftoppm -v 2>&1  | grep -F "version ${SUNSET_POPPLER_VERSION}"
           pdftotext -v 2>&1 | grep -F "version ${SUNSET_POPPLER_VERSION}"
@@ -124,10 +130,12 @@ jobs:
           just --version | grep -Fx "just ${SUNSET_JUST_VERSION}"
           uv --version   | grep -F "uv ${SUNSET_UV_VERSION}"
           spk --version  | grep -F "${SUNSET_SPECODELIC_VERSION}"
+          sad --version  | grep -F "${SUNSET_SAD_VERSION}"
 
-      - name: "uv sync && just spec-check (canonical, SUNSET_STRICT_ENV=1)"
+      - name: "uv sync && just spec-check + sad-check (canonical, SUNSET_STRICT_ENV=1)"
         run: |
           uv sync --locked
           uv pip install "playwright==${SUNSET_PLAYWRIGHT_VERSION}"
           .venv/bin/playwright install --with-deps chromium
           just spec-check
+          just sad-check

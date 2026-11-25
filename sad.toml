@@ -1,0 +1,13 @@
+# sad gate configuration — deterministic gate on in-code prose (comments and
+# doc strings). Only intentional overrides live here; defaults are documented
+# in sad's gate-model.md.
+#
+# The preserved research bundle under spec/ is part of the record: its prose
+# must never be rewritten to satisfy a gate (repo rule in AGENTS.md), so it
+# is excluded outright rather than baselined. Tool-state directories mirror
+# pretender.toml's excludes.
+exclude = [
+  "spec/**",
+  ".wai/**", ".whisper/**", ".beads/**", ".podras/**", ".kaya/**",
+  ".visual-review/**",
+]
