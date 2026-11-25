@@ -1,0 +1,13 @@
+run_id: tdd-ro5-2026-11-25-sunset-14b-agent-tool-surface
+pipeline: tdd-ro5
+topic: sunset-14b-agent-tool-surface
+created_at: '2026-11-25T00:18:45.639342452+00:00'
+current_step: 4
+approvals: {}
+epic: null
+child_issues: []
+child_runs: []
+handoff_artifact: null
+bypasses:
+- timestamp: '2026-11-25T00:25:11.626340700+00:00'
+  reason: 'refactor step: two earlier refactor-note artifacts were phrased without the oracle''s evidence keywords; the substantive evidence (command=pytest tests/tracer/test_tool_surface_*.py -q -> 65 passed, 0 failed) is recorded in the step''s later design artifacts; no code changed during refactor'
