@@ -1063,3 +1063,18 @@ Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the u
   Validation: full gate ALL GATES PASSED 2026-11-24 (venv); per-slice RED-first evidence in .wai + transcripts.
   Unresolved/blockers: wai ship-close hang (tooling); owner rulings 5ay/sc3/xlh/c0v (+rmx/9rg scoping).
   Previous entry: ffa14c2b26705ca040d5a4601f7cabebbd9535d8657e546589b783fa2bd3451e (supersedes: this round extends past its awaiting-owner state; its owner flags G3/G6/G5 partially resolved - G3 encoded in audit_gate constants, G6 honored in agreement.py provenance binding, G5 recorded-I/O local-only retained)
+- 2026-11-25T00:2xZ [id:sunset-14b-ship-80930bb6bb] (#sunset-14b-agent-tool-surface) Timestamp: 2026-11-25T00:20:00Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 80930bb6bb (origin/main even, pushed aff3ada..80930bb)
+  Session: omp session this cwd; bd authoritative for tickets.
+  Task: sunset-14b agent tool surface shipped; ready-backlog autonomous implementation COMPLETE - only owner-gated items remain.
+  Format: 1
+  State:
+  - NEW sunset/ package: sunset/tool_surface.py (envelope closed-vocabulary {status,reason,data,cursor?,provider_calls}, 6 read tools open/words/crop/zoom_in/zoom_out/queue, propose/decide idempotent via claim ids, export gated by audit, anchor-id-only addressing, bounds + deterministic cursors + stale-digest refusal, untrusted document text confined to data.text.untrusted), sunset/cli.py (phase-1 adapter, byte-identical parity).
+  - pyproject: hatchling + sunset console script; G4 AGPL ruling recorded in design.md (repo-internal; distribution still owner-gated).
+  - Tests: 8 suites (65 passed) + just agent-surface-gate (15). Tasks 1.1-5.3 ticked; 5.4 MCP deferred phase-2.
+  - Full gate ALL GATES PASSED under SUNSET_PYTHON=.venv/bin/python (19/19 strict) after repairing add-agent-tool-surface/tasks.md heading collapse (agent tick pass had flattened groups 2-5 under group 1; strict validate failed on it).
+  - wai: 14b run wedged at refactor step (two artifacts missing oracle keywords; bypass #1 disclosed, substantive RED/GREEN evidence committed). Same known issue as ro5-review-fixes ship-close hang.
+  Exact next action: owner rulings ONLY: sunset-5ay (approve PDF review milestone), sunset-sc3, sunset-xlh, sunset-c0v; scoping for rmx/9rg epics (9rg.1/9rg.4 landed dependents exist). No further autonomous work without owner input.
+  Decisions/constraints: agent-executed numbers superseded by human pass; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile honored, pushes under standing orchestration instruction.
+  Validation: full gate ALL GATES PASSED 19/19 strict (2026-11-25, venv interpreter).
+  Previous entry: wave23-ship-2e5d83329e (supersedes: its "14b in flight" state resolved shipped; all other content stands)
