@@ -1041,3 +1041,25 @@ Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the u
   Validation: just spec-check ALL GATES PASSED 18/18; tracer suite 677 passed, 2 skipped (2026-11-24).
   Unresolved/blockers: none in this thread beyond the owner rulings above.
   Previous entry: 6839599fe357727f96ee74d2562d74c7cf62e5f4bbf06a54d2967f9285bdf1db (supersedes: same session/task, this v1 snapshot fully replaces it) (supersedes 6839599fe357727f96ee74d2562d74c7cf62e5f4bbf06a54d2967f9285bdf1db)
+- 2026-11-24T23:4xZ [id:wave23-ship-2e5d83329e] (#wave-2-3-implementation) Timestamp: 2026-11-24T23:40:00Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 2e5d83329e (origin/main even, pushed a52bf22..2e5d833)
+  Session: omp session this cwd; bd authoritative for tickets (20 closed this round).
+  Task: autonomous implementation of the ready backlog wave 2-3 complete, ro5u review round landed, pushed.
+  Format: 1
+  Objective: implement all unblocked non-owner-gated tickets (7b4.3-.7 deferred oracle stats, 1x7 claim ladder, 3oq review queue + audit gate, 14b agent tool surface) through the tdd-ro5 pipeline with an ro5u review round.
+  Phase: shipped - all product commits pushed; tdd-ro5 run at step 9/9 with ship-close advance hanging (tooling; see residue).
+  State:
+  - NEW visual-oracle statistics: dsc03/visual/{agreement,scalestats,certificates,render_cache,snap}.py - box agreement (IoU 0.5, integer core, coverage vocabulary), scale-free ink stats (TOLERANCE 0.002, seeded-defect 6.7x above noise), per-page sensitivity certificates (EDGE-002: never aggregate), render cache (source/dpi/crop/renderer key, digest-verified single read), tight-ink snapping (declared 0.5pt, dpi-invariant after ro5u fix).
+  - Claim ladder: dsc03/claims.py + dsc03/verify/ (tiers 0/1/3; tier-2 deferred 4.4); human decisions decision-scoped in claim id; rejected passthrough in run_ladder; siblings-conflicted -> typed unsupported; claim.value.unparseable split from unregistered.
+  - Review queue: dsc03/review_queue.py + dsc03/audit_gate.py - derived queue (scope/type/id), seeded sampler, Wilson 95% <=1% N>=30 HUMAN-ONLY gate (G3 constants), metrics evidence-class labeled; digitization/review.py wires existing visual-review SPA (multi-claim region verdicts typed-skip review.region.multi-claim).
+  - openspec changes add-claim-verification-ladder + add-review-queue-and-audit fully ticked (4.4 tier-2 deferred by design in both where applicable).
+  - ro5u review round: 4 Critical (snap px/pt unit mix at dpi!=72; run_ladder rejected->verified; accept/reject id collision; generative accept Refusal crash) + 4 Medium + 3 Low ALL fixed RED-first (commit 90f632ecbc).
+  - Gate repair: verdicts fixture base_commit pin went stale by design (cross-commit refusal); positive paths now re-pin a tmp copy to live HEAD, committed fixture untouched (fee0d7c64f). Full gate ALL GATES PASSED via SUNSET_PYTHON=.venv/bin/python just spec-check (933 passed 2 skipped; openspec strict 19/19; spk lint green; frozen validator PASS).
+  - ENVIRONMENT WARNING: .env pins SUNSET_PYTHON=/usr/bin/python3 (3.14) whose user-site hypothesis crashes (PosixPath.endswith in scrutineer); machine-global, predates this session; override at invocation until user updates .env or hypothesis. .env untouched (user config).
+  - wai residue: tdd-ro5 run ship-close advance hangs (wai pipeline next exit 124 repro x3) DESPITE artifact+ledger recorded; do NOT wai close --force; diagnose next session, then close normally.
+  Exact next action: sunset-14b agent tool surface IN FLIGHT (claimed, AgentToolSurface agent dispatched this session; check its output/agent://AgentToolSurface or bd). After 14b: remaining bd ready items are owner-gated (5ay approval, sc3/xlh/c0v owner rulings) or large epics rmx/9rg needing owner input on scaling - STOP for owner there.
+  Decisions/constraints: agent-executed numbers superseded by human pass; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile honored, pushes under standing orchestration instruction; owner rulings only via owner.
+  Ownership: 14b claimed/in-progress; all other tickets closed or open/unassigned owner-gated.
+  Validation: full gate ALL GATES PASSED 2026-11-24 (venv); per-slice RED-first evidence in .wai + transcripts.
+  Unresolved/blockers: wai ship-close hang (tooling); owner rulings 5ay/sc3/xlh/c0v (+rmx/9rg scoping).
+  Previous entry: ffa14c2b26705ca040d5a4601f7cabebbd9535d8657e546589b783fa2bd3451e (supersedes: this round extends past its awaiting-owner state; its owner flags G3/G6/G5 partially resolved - G3 encoded in audit_gate constants, G6 honored in agreement.py provenance binding, G5 recorded-I/O local-only retained)
