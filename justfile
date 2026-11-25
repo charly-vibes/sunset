@@ -21,6 +21,8 @@ pages_py := 'import json,sys; print(",".join(sorted(json.load(open(sys.argv[1]))
 spec-check:
     @echo "==> spk lint (Specodelic layer of openspec/changes, incl. archive)"
     spk lint openspec/changes
+    @echo "==> spk lint (Specodelic layer of deployed specs)"
+    spk lint openspec/specs
     @echo "==> full test suite (pytest tests)"
     {{python}} -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"
