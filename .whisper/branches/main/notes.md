@@ -1078,3 +1078,76 @@ Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the u
   Decisions/constraints: agent-executed numbers superseded by human pass; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile honored, pushes under standing orchestration instruction.
   Validation: full gate ALL GATES PASSED 19/19 strict (2026-11-25, venv interpreter).
   Previous entry: wave23-ship-2e5d83329e (supersedes: its "14b in flight" state resolved shipped; all other content stands)
+- 2026-11-25T00:38:04Z [id:a1b4b51578380007eec8b5ad55e412c22f0447b5ff287e5684d445a63913e9ef] (#autonomous-backlog-complete) Timestamp: 2026-11-25T00:38:04Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 83ddf93 (origin/main even, pushed)
+  Session: omp session for this cwd; bd is authoritative for tickets.
+  Task: autonomous ready-backlog implementation complete (waves 1-4 + ro5u review round + sunset-14b); continuation = owner rulings only.
+  Format: 1
+  
+  Objective: implement every unblocked non-owner-gated ticket in bd ready through the tdd-ro5 pipeline with a rule-of-5 review round, keeping the full gate green and pushing continuously.
+  Phase: shipped - all product commits pushed; 21 tickets closed this session; no in-progress claims; nothing stubbed.
+  State:
+  - Wave 1: at7 scale-complete regions, 72s join laws, rmx.24 model-call determinism, 12h verdict ingest, jix overcoverage masks, zea table geometry, qdy CLI defects, doc justfile hygiene, chs budget-refusal stop, f06+mav README/distribution docs, elx profile-induction proposal.
+  - Wave 2: 2uo CI workflow, 7b4.3-.7 oracle statistics (dsc03/visual/{agreement,scalestats,certificates,render_cache,snap}.py), 1x7 claim ladder (dsc03/claims.py, dsc03/verify/), 3oq review queue + audit gate (Wilson 95%<=1% N>=30 human-only).
+  - ro5u review round: 11 findings (4 Critical incl. snap px/pt unit mix, rejected-passthrough in run_ladder, accept/reject id collision, generative accept Refusal crash) fixed RED-first (90f632ecbc).
+  - Wave 4: sunset-14b NEW sunset/ package (tool_surface.py typed envelope + 6 read tools + propose/decide/export, anchor-id addressing, untrusted-text confinement; cli.py parity), pyproject hatchling + console script, G4 AGPL ruling recorded; 8 suites (65) + just agent-surface-gate (15).
+  - Full gate ALL GATES PASSED 19/19 strict under SUNSET_PYTHON=.venv/bin/python; add-agent-tool-surface/tasks.md heading collapse repaired en route.
+  Exact next action: owner rulings ONLY: sunset-5ay (approve document-structural-debugger milestone; gates 36n/5bu/j1c), sunset-sc3, sunset-xlh, sunset-c0v; scoping for rmx/9rg epics. No further autonomous work without owner input.
+  Decisions/constraints: agent-executed numbers superseded by a human pass; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it; conservative git profile honored, pushes under standing orchestration instruction; owner rulings only via owner.
+  Ownership: zero in-progress claims; all session tickets closed.
+  Validation: full gate ALL GATES PASSED 19/19 strict (2026-11-25, venv interpreter; system-python 3.14 hypothesis is machine-broken - see .env note).
+  Unresolved/blockers: wai pipeline wedged runs (ro5-review-fixes ship-close hang; 14b refactor-step oracle keywords, bypass #1 disclosed) - diagnose wai next session; do NOT wai close --force (runs are shipped, not abandoned).
+  Previous entry: sunset-14b-ship-80930bb6bb (supersedes: extends its in-flight-14b state to shipped; all other content of the wave23/14b entries stands)
+- 2026-11-25T11:57:02Z [id:b8c3c8e3725962512713f5389e1e537883de7ea1cea470d8ab20f1cb51d10f7a] (#uv-venv-setup) Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 83ddf93 (origin/main even; no commits made this session)
+  Session: omp session for this cwd; bd is authoritative for tickets.
+  Task: machine-side uv setup verified; repo uv wiring (sunset-olu) was already complete.
+  Format: 1 (superseded by 1a9037a8bcb4d05fa27d8874d7b64b2f23ba266653e7c60541fe2dde60a46c41)
+  
+  Objective: make the supported uv path the live interpreter for gates on this machine.
+  Phase: shipped (environment task; nothing in flight, nothing stubbed).
+  State:
+  - .venv recreated by `uv sync` from committed uv.lock (was hand-made brew venv): Python 3.15.2, pymupdf 1.28.2, pytest 9.2.0, sunset 0.3.0 editable; 7 locked packages; reproducible in ~3s.
+  - .env (gitignored, machine-local): dropped `SUNSET_PYTHON=/usr/bin/python3` override (system-python 3.14 hypothesis machine-broken per prior handoff); file now documents the override mechanism only. justfile resolves python := .venv/bin/python by default.
+  - No tracked-file changes this session. Worktree still carries the +20 uncommitted handoff-note lines from the prior session and intentionally untracked pba-judicial-2026-07-29.pdf (NEVER commit it).
+  Validation: just spec-check ALL GATES PASSED (pytest 1076 passed / 2 skipped / 18 subtests in 4:20; frozen 0.2 validator PASS 11 descriptor fixtures; openspec 1.14.2 strict 19/19; spk lint ok).
+  Exact next action: unchanged from autonomous-backlog-complete: owner rulings ONLY — sunset-5ay (unblocks 36n/5bu/j1c), sunset-sc3, sunset-xlh, sunset-c0v; scope rmx/9rg epics; then diagnose wai wedged runs (do NOT wai close --force; runs are shipped).
+  Decisions/constraints: conservative git profile (no commit/push without authority); devenv shell path still pending Nix install — uv alone is the supported reproducibility path until then; agent-executed numbers superseded by a human pass.
+  Ownership: zero in-progress claims (bd verified this session).
+  Unresolved/blockers: wai wedged runs as previously recorded; 3 PytestUnraisableException warnings observed in the gate run (gates green; likely pre-existing).
+  Previous entry: none (separate task; extends context of autonomous-backlog-complete a1b4b51578380007eec8b5ad55e412c22f0447b5ff287e5684d445a63913e9ef without superseding it).
+- 2026-11-25T11:57:22Z [id:1a9037a8bcb4d05fa27d8874d7b64b2f23ba266653e7c60541fe2dde60a46c41] (#uv-venv-setup) Timestamp: 2026-11-25T11:57:22Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 83ddf93 (origin/main even; no commits made this session)
+  Session: omp session for this cwd; bd is authoritative for tickets.
+  Task: machine-side uv setup verified; repo uv wiring (sunset-olu) was already complete.
+  Format: 1
+  
+  Objective: make the supported uv path the live interpreter for gates on this machine.
+  Phase: shipped (environment task; nothing in flight, nothing stubbed).
+  State:
+  - .venv recreated by `uv sync` from committed uv.lock (was hand-made brew venv): Python 3.15.2, pymupdf 1.28.2, pytest 9.2.0, sunset 0.3.0 editable; 7 locked packages; reproducible in ~3s.
+  - .env (gitignored, machine-local): dropped `SUNSET_PYTHON=/usr/bin/python3` override (system-python 3.14 hypothesis machine-broken per prior handoff); file now documents the override mechanism only. justfile resolves python := .venv/bin/python by default.
+  - No tracked-file changes this session. Worktree still carries the +20 uncommitted handoff-note lines from the prior session and intentionally untracked pba-judicial-2026-07-29.pdf (NEVER commit it).
+  Validation: just spec-check ALL GATES PASSED (pytest 1076 passed / 2 skipped / 18 subtests in 4:20; frozen 0.2 validator PASS 11 descriptor fixtures; openspec 1.14.2 strict 19/19; spk lint ok).
+  Exact next action: unchanged from autonomous-backlog-complete: owner rulings ONLY — sunset-5ay (unblocks 36n/5bu/j1c), sunset-sc3, sunset-xlh, sunset-c0v; scope rmx/9rg epics; then diagnose wai wedged runs (do NOT wai close --force; runs are shipped).
+  Decisions/constraints: conservative git profile (no commit/push without authority); devenv shell path still pending Nix install — uv alone is the supported reproducibility path until then; agent-executed numbers superseded by a human pass.
+  Ownership: zero in-progress claims (bd verified this session).
+  Unresolved/blockers: wai wedged runs as previously recorded; 3 PytestUnraisableException warnings observed in the gate run (gates green; likely pre-existing).
+  Previous entry: b8c3c8e3725962512713f5389e1e537883de7ea1cea470d8ab20f1cb51d10f7a (supersedes: same task, seconds earlier — its Timestamp line stored as a literal unexpanded command; body otherwise identical).
+- 2026-11-25T14:37:40Z [id:a3f10c2e9d114b7a8e5c2d6b0f48a917e6b3c5d2f8a1b4c9d7e2f0a3b5c8d1e6] (#orchestrator-sweep-2026-11-25) Timestamp: 2026-11-25T14:37:40Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 83ddf93 + this entry and the orchestration worktree (committed/pushed this session under standing instruction).
+  Session: omp orchestration session for this cwd; bd authoritative for tickets; owner delegated full orchestration ("ok orchestrate them").
+  Task: execute the six ready-ticket actions — owner rulings (5ay/sc3/xlh/c0v), epic dispositions (rmx/9rg), wedged-wai remediation — and the approved implementation slices (5bu/36n/j1c).
+  Phase: shipped (all sixteen orchestrator items done; nothing stubbed, nothing in flight except noted review-pending state).
+  State:
+  - Owner rulings recorded 2026-11-25 (single form): 5ay APPROVE (implementation authorized); sc3 option B-narrowed (explicit ambiguous replay status ruled OUT; change add-anchor-revision-pinning drafted+validated: version_mismatch outcome, mandatory anchor_scheme_version, digest-equality enforcement); xlh restore-original-modality (both drifted requirements restored verbatim against archived pre-split text; SHALL-free split parts healed by moving the preceding SHALL sentence across the split boundary; tests/test_spec_composition.py guards both); c0v option A poppler ceil parity (frames.py math.ceil(pt*dpi/ppu), ceil-per-axis before 90/270 swap; RED via stash: round() binder 156/240 page-extent-mismatch at (901,1351); GREEN 3 passed); rmx DEFER-confirmed then closed (mx.14 DEFER recorded 2026-11-05, all 24/24 children closed, re-entry path re-derived: reference-spassem-first, spec checkpoint corrected); 9rg closed (all named children pkj/jix/zea/elx/ayj/gpd closed or dispositioned; profile-induction is a proposal-only deliverable, closed with that note).
+  - Implemented via two disjoint subagents against a fixed contract: SheetCore = dsc03/visual/sheet_import.py (import_sheets -> SheetImportResult, 6 sheets/203 regions, typed ImportRefusal closed set, frames.resolve_pixel_mapping-only binding, SHA256SUMS digest gate) + 14 contract tests; SurfaceInt = review.py import-inspection/ab-comparison modes + region_to_source_px + reopen_counterexample (5 typed states) + CLI + SPA modes (keyboard/pointer journeys, typed refusal rows, export-download, offline reopen port, no-winner scan) + 3 fail-not-skip real-browser suites. Corrective round: overlapping region boxes -> pointer-events:none highlights with row-surface activation (journey assertions preserved). Tests-first honored per slice; RED/GREEN/review/fixes/ledger ledgered in the milestone tdd-ro5 run.
+  - Playwright + chromium installed into .venv (uv add --dev playwright; pyproject+uv.lock updated): spec-mandated by the 5ay browser-gate rows (fail-not-skip, no delegated skip).
+  - wai runs end-state: tdd-ro5 sunset-c0v-ceil-extent-binding pipeline-complete; tdd-ro5-2026-11-24-ro5-review-fixes pipeline-complete (amended artifact keywords, approve+next, spec-corpus green); tdd-ro5-2026-11-25-sunset-14b-agent-tool-surface un-wedged refactor->ro5u-review (bypasses:1 recorded; review pending, work itself shipped); tdd-ro5-2026-11-25-sunset-5bu-36n-j1c-debugger-slices pipeline-complete after ship-close (approval re-recorded post artifact amendment).
+  - Pipeline definition fix: .wai/resources/pipelines/tdd-ro5.toml spec-corpus oracle timeout 300->600 — measured just spec-check ~266s on this machine; 300s left 12% headroom and failed the milestone ship-close (two oracle attempts timed out before the fix).
+  - Gates: full gate ALL GATES PASSED 20/20 (SUNSET_PYTHON=.venv/bin/python just spec-check) standalone + inside ship-close oracles; targeted slice suites 85 passed; openspec change validates strict x3 (debugger/anchor-pinning/digitization); openspec validate --specs --strict 8/8.
+  - Tickets: sc3, xlh, c0v, 5ay, 5bu, 36n, j1c, rmx, 9rg all closed with recorded rationale; zero claims remain.
+  Decisions/constraints: agent-executed evidence throughout — a human pass supersedes; conservative git profile honored, pushes under the owner's standing orchestration instruction; pba-judicial-2026-07-29.pdf intentionally untracked, NEVER commit it.
+  Ownership: zero in-progress claims (bd verified at close).
+  Unresolved/blockers: sunset-14b run awaits its ro5u-review step (review pending; no ship-close attempted there); wai suggests `wai reflect` (6 sessions since last); machine note: orchestrator shell carried stale SUNSET_PYTHON=/usr/bin/python3 (system-python 3.14 hypothesis is machine-broken) — always pin SUNSET_PYTHON=.venv/bin/python.
+  Previous entry: 1a9037a8bcb4d05fa27d8874d7b64b2f23ba266653e7c60541fe2dde60a46c41 (no supersession; separate orchestration task extending the uv-setup context). (supersedes b8c3c8e3725962512713f5389e1e537883de7ea1cea470d8ab20f1cb51d10f7a)

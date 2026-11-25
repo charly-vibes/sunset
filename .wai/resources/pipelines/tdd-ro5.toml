@@ -246,7 +246,7 @@ timeout = 300
 [[steps.gate.oracles]]
 name = "spec-corpus"
 description = "Run just spec-check: strict deployed/proposal specs, lint, tests and frozen 0.2 fixtures"
-timeout = 300
+timeout = 600
 
 [steps.gate.approval]
 required = true
