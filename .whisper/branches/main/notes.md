@@ -1151,3 +1151,11 @@ Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the u
   Ownership: zero in-progress claims (bd verified at close).
   Unresolved/blockers: sunset-14b run awaits its ro5u-review step (review pending; no ship-close attempted there); wai suggests `wai reflect` (6 sessions since last); machine note: orchestrator shell carried stale SUNSET_PYTHON=/usr/bin/python3 (system-python 3.14 hypothesis is machine-broken) — always pin SUNSET_PYTHON=.venv/bin/python.
   Previous entry: 1a9037a8bcb4d05fa27d8874d7b64b2f23ba266653e7c60541fe2dde60a46c41 (no supersession; separate orchestration task extending the uv-setup context). (supersedes b8c3c8e3725962512713f5389e1e537883de7ea1cea470d8ab20f1cb51d10f7a)
+- 2026-11-25T15:12:00Z [id:b7e4a1c8d2f65e90a3c4b8d7e1f2a5c6b9d0e3f4a5b6c7d8e9f0a1b2c3d4e5f6] (#14b-ro5u-review-complete) Timestamp: 2026-11-25T15:12:00Z
+  Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 6bac999 (origin/main even, pushed).
+  Task: ro5u review of the parked sunset-14b tool-surface run (resolves the orchestrator-sweep entry's "14b awaits ro5u-review" residual).
+  Phase: shipped.
+  State: RO5U verdict pass (0 critical, 0 high; 2 MEDIUM + 4 LOW, all fixed tests-first in the same round: 4 RED -> 24/45 GREEN, agent-surface-gate 15 passed, ship-close oracles green incl. spec-corpus; run tdd-ro5-2026-11-25-sunset-14b-agent-tool-surface pipeline-complete). Fixes: lean page-frame crop refusal typed (was IndexError->internal.error), partial extract dirs re-extract on missing manifest.json, corrupt session claims payloads reset cleanly, export audit evidence_class type-checked, cli dead store + unused param removed. Committed 68588e36aa->amended 6bac999 (take("**") swept the never-commit PDF in a second time; amended out both times - watch for this with take-all).
+  Decisions/constraints: agent-executed evidence - human pass supersedes; pushes under standing orchestration instruction; pba-judicial-2026-07-29.pdf still intentionally untracked, NEVER commit it.
+  Unresolved/blockers: none known. wai runs now all pipeline-complete; wai reflect still suggested (7 sessions).
+  Previous entry: a3f10c2e9d114b7a8e5c2d6b0f48a917e6b3c5d2f8a1b4c9d7e2f0a3b5c8d1e6 (extends its Unresolved item; no supersession of other content).
