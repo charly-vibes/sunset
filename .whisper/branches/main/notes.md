@@ -1159,3 +1159,16 @@ Both HITL-cleared review findings implemented; ALL GATES PASSED (18/18) on the u
   Decisions/constraints: agent-executed evidence - human pass supersedes; pushes under standing orchestration instruction; pba-judicial-2026-07-29.pdf still intentionally untracked, NEVER commit it.
   Unresolved/blockers: none known. wai runs now all pipeline-complete; wai reflect still suggested (7 sessions).
   Previous entry: a3f10c2e9d114b7a8e5c2d6b0f48a917e6b3c5d2f8a1b4c9d7e2f0a3b5c8d1e6 (extends its Unresolved item; no supersession of other content).
+- 2026-11-25T14:53:39Z [id:7d58db5d11d820fa313a34b234773e474c652aa80b2baf6a50ceaa2efe569f80] (#sunset-orchestration-2026-11-25) Repo: sunset (cv:charly-vibes/sunset), branch main, HEAD 56aa3b4 (origin/main even, pushed; worktree clean apart from intentionally untracked pba-judicial-2026-07-29.pdf - NEVER commit it).
+  Session: omp orchestration session for this cwd ("ok orchestrate them" -> full sweep + 14b review); bd authoritative for tickets.
+  Task: execute all six ready-ticket actions and the approved implementation slices; then ro5u-review the parked sunset-14b tool-surface run.
+  Phase: shipped - nothing in flight, nothing stubbed, zero in-progress claims (bd verified).
+  State:
+  - Owner rulings executed and recorded: 5ay APPROVE (implementation authorized); sc3 B-narrowed (change add-anchor-revision-pinning drafted+validated, implementation NOT started); xlh modality restored verbatim + composition guard; c0v poppler ceil parity (RED 156/240 via stash -> GREEN); rmx closed (mx.14 DEFER 2026-11-05 stands; re-entry path re-derived); 9rg closed (children done/dispositioned). All nine tickets closed with rationale.
+  - Shipped and pushed (83ddf93 -> 56aa3b4, 7 commits): c0v ceil binding; debugger slices 5bu/36n/j1c via two disjoint subagents (sheet_import core 203 regions + review.py import-inspection/ab-comparison/reopen + SPA + 4 fail-not-skip real-browser suites; playwright dev dep); xlh/sc3/rmx spec dispositions; wai artifacts + oracle timeout 300->600 (measured spec-check ~266s); 14b ro5u round (verdict pass, 2 MEDIUM + 4 LOW all fixed tests-first: 4 RED -> 24/45 GREEN, agent-surface-gate 15).
+  - Gates: full spec-check ALL GATES PASSED 20/20 under SUNSET_PYTHON=.venv/bin/python (standalone + three ship-close oracles); wai runs all pipeline-complete.
+  - Detailed lineage in whisper notes.md entries a3f10c2e (orchestrator-sweep) and b7e4a1c8 (14b review), both hand-written in Format 1.
+  Decisions/constraints: agent-executed evidence throughout - a human pass supersedes; pushes under the owner's standing orchestration instruction; orchestrator shell may carry stale SUNSET_PYTHON=/usr/bin/python3 (system-python 3.14 hypothesis machine-broken) - always pin .venv.
+  Ownership: zero claims; nothing to unclaim.
+  Unresolved/blockers: none. Optional follow-ups: `wai reflect` (7 sessions accumulated); implement add-anchor-revision-pinning change (drafted only); mx.14 DEFER re-entry path (references-first via review SPA) when the owner revives sunset-rmx.
+  Previous entry: b7e4a1c8d2f65e90a3c4b8d7e1f2a5c6b9d0e3f4a5b6c7d8e9f0a1b2c3d4e5f6 (extends; no supersession).
