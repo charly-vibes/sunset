@@ -23,6 +23,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 from collections import Counter
 from pathlib import Path
 
@@ -161,6 +162,13 @@ def _is_int(value):
     return type(value) is int
 
 
+def _valid_claims(claims):
+    """Session-store claims must be a list of objects; anything else is a
+    corrupt payload and resets to an empty claim list."""
+    return isinstance(claims, list) and \
+        all(isinstance(c, dict) for c in claims)
+
+
 def _quantum_scale(quantization):
     """The declared box quantum ("1/1000 pt") as an integer divisor."""
     quantum = (quantization or {}).get("quantum", "")
@@ -231,7 +239,8 @@ class ToolSurface:
             if session.get("version") != SESSION_VERSION:
                 return
             self._load_run(Path(session["run"]))
-            self.claims = list(session.get("claims", []))
+            claims = session.get("claims", [])
+            self.claims = list(claims) if _valid_claims(claims) else []
         except (OSError, ValueError, KeyError):
             self.run_dir = None
             self.descriptor = None
@@ -303,7 +312,7 @@ class ToolSurface:
     def _spec_refused(self, reason):
         return envelope(REFUSED, reason, {})
 
-    def _anchor(self, value, field):
+    def _anchor(self, value):
         """Anchor-form address check (task 3.3): labels and indexes refused."""
         if value is None:
             return self._spec_refused("address.missing")
@@ -337,7 +346,8 @@ class ToolSurface:
             except (OSError, ValueError):
                 previous = None
         if previous and previous.get("run_digest") == self.run_digest:
-            self.claims = list(previous.get("claims", []))
+            claims = previous.get("claims", [])
+            self.claims = list(claims) if _valid_claims(claims) else []
         else:
             self.claims = []
         self._persist()
@@ -361,6 +371,14 @@ class ToolSurface:
             return envelope(REFUSED, "source.unreadable",
                             {"source": str(source)})
         target = self.workspace / "runs" / sha256(data)[:16]
+        if target.is_dir() and not (target / "manifest.json").is_file():
+            # interrupted extract: rebuild deterministically instead of
+            # refusing this source forever
+            try:
+                shutil.rmtree(target)
+            except OSError:
+                return envelope(REFUSED, "source.unreadable",
+                                {"source": str(source)})
         if not target.is_dir():
             try:
                 extract(source, target)
@@ -489,7 +507,7 @@ class ToolSurface:
                                 {"cursor_run": payload["run"]})
             scope = payload["scope"]
             offset = payload["offset"]
-        refused = self._anchor(scope, "scope")
+        refused = self._anchor(scope)
         if refused:
             return refused
         if scope not in self._regions_by_id():
@@ -518,7 +536,7 @@ class ToolSurface:
         """Pinned crop reference plus in-memory raster of one region."""
         if not self._opened():
             return envelope(REFUSED, "session.unopened", {})
-        refused = self._anchor(anchor, "anchor")
+        refused = self._anchor(anchor)
         if refused:
             return refused
         regions = self._regions_by_id()
@@ -574,9 +592,10 @@ class ToolSurface:
             frame = self._frames.get(f"page-{page}-pt")
             if frame:
                 cropbox = frame.get("cropbox") or frame.get(
-                    "source_dimensions") or [0, 0]
-                return {"page": page, "x": 0.0, "y": 0.0,
-                        "w": float(cropbox[2]), "h": float(cropbox[3])}
+                    "source_dimensions")
+                if cropbox and len(cropbox) >= 4:
+                    return {"page": page, "x": 0.0, "y": 0.0,
+                            "w": float(cropbox[2]), "h": float(cropbox[3])}
         return None
 
     @_tool
@@ -584,7 +603,7 @@ class ToolSurface:
         """Restriction of the view to one ladder scope (pure; dsc03.zoom)."""
         if not self._opened():
             return envelope(REFUSED, "session.unopened", {})
-        refused = self._anchor(scope, "scope")
+        refused = self._anchor(scope)
         if refused:
             return refused
         result, dropped_refs = self._restrict(scope)
@@ -609,7 +628,7 @@ class ToolSurface:
         """The parent scopes of one scope on the containment ladder."""
         if not self._opened():
             return envelope(REFUSED, "session.unopened", {})
-        refused = self._anchor(scope, "scope")
+        refused = self._anchor(scope)
         if refused:
             return refused
         regions = self._regions_by_id()
@@ -737,6 +756,7 @@ class ToolSurface:
                     "claim_type", "evidence_class", "n", "errors"} <= set(record):
                 return self._spec_refused("spec.invalid")
             if not isinstance(record["claim_type"], str) or \
+                    not isinstance(record["evidence_class"], str) or \
                     not _is_int(record["n"]) or not _is_int(record["errors"]):
                 return self._spec_refused("spec.invalid")
         accepted = {

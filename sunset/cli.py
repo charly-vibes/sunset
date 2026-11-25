@@ -39,7 +39,6 @@ def main(argv=None):
     except ValueError:
         kwargs = None
     if not isinstance(kwargs, dict):
-        kwargs = {}
         envelope = {"status": "refused", "reason": "spec.invalid",
                     "data": {"args": args.args}, "provider_calls": 0}
         print(_envelope_text(envelope))

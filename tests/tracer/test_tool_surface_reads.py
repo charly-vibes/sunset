@@ -177,3 +177,57 @@ def test_read_tools_leave_session_and_run_untouched(tmp_path):
     assert session_bytes(surface) == before_session
     assert (Path(run) / "descriptor.json").read_bytes() == before_descriptor
     assert fx.canonical(surface.claims) == claims_before
+
+
+# -- ro5u review round (2026-11-25): boundary hardening ---------------------------
+
+def test_crop_of_a_lean_page_frame_is_a_typed_refusal(tmp_path):
+    # EDGE-001: a geometry frame without cropbox/source_dimensions must yield
+    # crop.geometry-missing, never internal.error (ro5u review 2026-11-25).
+    surface, _, pages, _ = opened(tmp_path)
+    page_id = page_scope(surface, 1)
+    region = next(r for r in surface.descriptor["regions"] if r["id"] == page_id)
+    region.pop("geometry", None)
+    surface._frames = {"page-1-pt": {"name": "page-1-pt"}}
+    env = surface.crop(anchor=page_id)
+    assert env["status"] == "refused", env
+    assert env["reason"] == "crop.geometry-missing", env
+
+
+def test_open_source_reextracts_an_incomplete_run_dir(tmp_path, monkeypatch):
+    # EDGE-002: a runs/<digest16> dir without manifest.json is an interrupted
+    # extract; open(source=...) must rebuild it, not refuse permanently.
+    import hashlib
+    import digitization.native as native
+    carrier = fx.make_text_carrier(tmp_path / "inc.pdf", ["REEXTRACT 1"])
+    data = carrier.read_bytes()
+    ws = tmp_path / "ws"
+    target = ws / "runs" / hashlib.sha256(data).hexdigest()[:16]
+    target.mkdir(parents=True)  # partial: no manifest
+    real = native.extract
+    calls = []
+
+    def recording_extract(src, dst):
+        calls.append(str(dst))
+        return real(src, dst)
+
+    monkeypatch.setattr(native, "extract", recording_extract)
+    surface = ToolSurface(ws)
+    env = surface.open(source=str(carrier))
+    assert env["status"] == "ok", env
+    assert calls, "incomplete run dir must be re-extracted"
+
+
+def test_corrupt_claims_payload_resets_cleanly(tmp_path):
+    # CORR-001: a session file with a non-list claims payload must reset the
+    # session instead of leaking TypeErrors into later tool calls.
+    surface, run, _, _ = opened(tmp_path)
+    payload = {"version": 1, "run": str(run),
+               "run_digest": surface.run_digest, "claims": "not-a-list"}
+    surface.session_path.write_bytes(fx.canonical(payload).encode("utf-8"))
+    fresh = ToolSurface(surface.workspace)  # _load_session restore path
+    assert fresh.claims == []
+    assert fresh.queue()["status"] == "ok"
+    again = fresh.open(run=str(run))  # open() same-digest restore path
+    assert again["status"] == "ok", again
+    assert fresh.claims == []

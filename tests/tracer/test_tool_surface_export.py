@@ -142,3 +142,14 @@ def test_export_is_deterministic(tmp_path):
     audits = [fx.audit_record("field:total")]
     assert fx.canonical(surface.export(audit_records=audits)) == \
         fx.canonical(surface.export(audit_records=audits))
+
+
+def test_non_string_evidence_class_is_spec_invalid(tmp_path):
+    # EDGE-004: audit records with a non-string evidence_class are a typed
+    # spec.invalid refusal, not an internal.error from gate_open.
+    surface = opened(tmp_path)
+    audits = [{"claim_type": "field:total", "evidence_class": 7,
+               "n": 400, "errors": 0}]
+    env = surface.export(audit_records=audits)
+    assert env["status"] == "refused", env
+    assert env["reason"] == "spec.invalid", env
