@@ -18,6 +18,7 @@
 #   matrix is deterministic.
 """Variant-matrix GREEN suite: native frames resolve for every carrier x variant."""
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -99,8 +100,8 @@ def _variant_page_extent(variant_path: Path, page_number: int, dpi: int = RENDER
     with pymupdf.open(variant_path) as doc:
         page = doc[page_number - 1]
         expected = (
-            round(page.cropbox.width * dpi / 72),
-            round(page.cropbox.height * dpi / 72),
+            math.ceil(page.cropbox.width * dpi / 72),
+            math.ceil(page.cropbox.height * dpi / 72),
         )
         if page.rotation in (90, 270):
             expected = (expected[1], expected[0])

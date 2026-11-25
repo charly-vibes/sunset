@@ -29,11 +29,13 @@
 #   bounds round-trip recovery error: mapping(point) → pixel → mapping⁻¹(pixel)
 #   must recover the original descriptor point within it. (5) A frame that
 #   declares `source_dimensions` pins the rendered raster extent (design D2:
-#   expected = round(w·dpi/72) × round(h·dpi/72), swapped for 90/270) —
+#   expected = ceil(w·dpi/72) × ceil(h·dpi/72), swapped for 90/270,
+#   matching the renderer's convention) —
 #   extent mismatch converts a silent misalignment into a typed refusal.
 """Declared frame mapping: pixel↔descriptor coordinate resolution."""
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 
@@ -212,8 +214,9 @@ def resolve_pixel_mapping(frame, render_config, page_px):
 
     # Extent binding (design D2, spec "Crop-box render binding"): a frame
     # that declares its page size pins the rendered raster extent —
-    # round(width * dpi / 72) × round(height * dpi / 72) in the frame's
-    # unit, with width and height swapped for declared rotations 90/270
+    # ceil(width * dpi / 72) × ceil(height * dpi / 72) in the frame's
+    # unit, matching poppler pdftoppm's ceil convention, with width and
+    # height swapped for declared rotations 90/270
     # (the raster rectangle is the rotated page; same convention as
     # PixelMapping._forward_axes, so the swap is applied exactly once).
     # Mismatch is typed `page-extent-mismatch` — never a silent misalignment.
@@ -230,8 +233,8 @@ def resolve_pixel_mapping(frame, render_config, page_px):
             )
         points_per_unit = SUPPORTED_UNITS[unit]
         expected = (
-            round(source_dimensions[0] * dpi / points_per_unit),
-            round(source_dimensions[1] * dpi / points_per_unit),
+            math.ceil(source_dimensions[0] * dpi / points_per_unit),
+            math.ceil(source_dimensions[1] * dpi / points_per_unit),
         )
         if rotation in (90, 270):
             expected = (expected[1], expected[0])
