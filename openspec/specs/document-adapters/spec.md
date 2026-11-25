@@ -246,8 +246,6 @@ using this precedence, highest first:
 `unexamined > unsupported > omitted > approximated > transformed > preserved`.
 Reason SHALL identify the partial loss. The same rule computes feature-wide
 summary status over all scopes; unknown scope enumeration is always unexamined.
-Summaries SHALL NOT replace the per-scope entries or imply completeness outside
-the inventory.
 
 #### Scenario: One page omitted
 
@@ -258,12 +256,14 @@ the inventory.
 #### Scenario: Partial loss within a page
 
 - **WHEN** half the glyphs on page 1 are retained and half omitted
-- **THEN** `page:1` is `omitted` with a partial-loss explanation
+- **THEN** the descriptor is invalid, even if both entries agree
 
 ### Requirement: Absence and unavailability honesty
 
-Features absent from the source SHALL be preserved only after verified
-inspection establishes absence; `unavailable` means replay unverifiable.
+Summaries SHALL NOT replace the per-scope entries or imply completeness outside
+the inventory. Features absent from the source may be preserved only after
+verified inspection establishes absence. `unavailable` means replay
+unverifiable.
 
 #### Scenario: Preserved without verified absence
 

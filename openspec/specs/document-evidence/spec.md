@@ -160,8 +160,7 @@ URI alone.
 A `text-range` target SHALL be text content. Its profile SHALL declare offset
 unit (UTF-8 bytes, Unicode scalar values, or grapheme clusters), half-open or
 closed endpoints, and the applicable Unicode segmentation version. Offsets
-SHALL index the exact target value without normalization. Range boundaries
-SHALL be in bounds and respect the declared units.
+SHALL index the exact target value without normalization.
 
 #### Scenario: Different offset units
 
@@ -170,9 +169,10 @@ SHALL be in bounds and respect the declared units.
 
 ### Requirement: Selector outcome codes
 
-With a resolved profile, malformed locators/ranges SHALL yield
-`invalid_selector`; missing profile references SHALL yield
-`dangling_reference`; unavailable declared profiles SHALL yield
+Range boundaries SHALL be in bounds and respect the declared units. With a
+resolved profile, malformed locators/ranges yield
+`invalid_selector`; missing profile references yield
+`dangling_reference`; unavailable declared profiles yield
 `unsupported_profile` at resolution, not invented interpretation.
 
 #### Scenario: Malformed locator under known profile

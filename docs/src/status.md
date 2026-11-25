@@ -69,8 +69,16 @@
   absent from the source may be preserved" → "SHALL be preserved"
   (document-adapters, Absence and unavailability honesty) and "yield" →
   "SHALL yield" ×3 (document-evidence, Selector outcome codes) — modality
-  strengthened, meaning unchanged. A few scenarios were restated as
-  witnesses for newly standalone requirements.
+  strengthened, meaning unchanged; both flips were **reverted to the
+  original archived wording on 2026-11-25** per owner ruling sunset-xlh.
+  The revert left two split parts ("Absence and unavailability honesty",
+  "Selector outcome codes") with SHALL-free bodies, which openspec 1.x
+  strict rejects (body-keyword rule); the SHALL-bearing sentence directly
+  preceding each in the archived body moved across the split boundary
+  into the part (verbatim, order-preserving; no normative text added or
+  dropped; `tests/test_spec_composition.py` guards these requirements
+  against future modality drift). A few scenarios were
+  restated as witnesses for newly standalone requirements.
 - **Specodelic Revision 19 delta migration (sunset-hhy, 2026-10-21):** the
   original residual gap (dual-format deltas failing 1.x strict: the
   `## Requirements` mirror registered as orphaned requirements, the

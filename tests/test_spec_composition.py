@@ -30,8 +30,10 @@ REPLACEMENTS = {
         "View declaration", "Containment ownership", "Reading order partiality",
     },
     "document-conformance": {"Reader independence"},
+    "document-adapters": {"Scoped coverage dispositions"},
     "document-evidence": {
         "Evidence link resolution", "Replay material for derived observations",
+        "Typed profile-defined source selectors",
     },
     "document-semantics": {"Typed annotation claims"},
 }
@@ -65,6 +67,19 @@ SPLITS = {
         "Replay material for derived observations": [
             "Replay material for derived observations",
             "Transform lineage edges",
+        ],
+        "Typed profile-defined source selectors": [
+            "Typed profile-defined source selectors",
+            "Selector source digest pinning",
+            "Profile-defined text ranges", "Selector outcome codes",
+        ],
+    },
+    "document-adapters": {
+        "Scoped coverage dispositions": [
+            "Coverage entry identity and pinning", "Single-run coverage entries",
+            "Coverage scope grammar", "Complete scope enumeration",
+            "Unique coverage dispositions", "Least-preserving status precedence",
+            "Absence and unavailability honesty",
         ],
     },
 }
