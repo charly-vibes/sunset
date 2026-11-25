@@ -8,6 +8,16 @@
 # session boundaries.
 #
 # Usage: wai pipeline start tdd-ro5 --topic="<what you're building>"
+#
+# Gate/timeout notes (see wai openspec change fix-gate-approval-first-and-oracle-timeout,
+# and sunset beads sunset-mcw):
+# - Oracle `timeout` values ARE enforced by wai (killed + gate failure on expiry).
+#   This pipeline declares tests-pass 300s and spec-corpus 600s.
+# - The approval gate is evaluated BEFORE oracles: an unapproved ship-close
+#   advance fails fast on the missing approval instead of running oracles.
+# - After `wai pipeline approve`, the next `wai pipeline next` runs the
+#   ship-close oracles (up to 300s + 600s). Do NOT wrap that advance in a
+#   90s timeout — use >= 960s (or no timeout) for approved ship-close advances.
 
 [pipeline]
 name = "tdd-ro5"
