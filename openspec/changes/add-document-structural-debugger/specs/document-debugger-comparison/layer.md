@@ -15,6 +15,7 @@ statement: "WHEN multiple compatible DSC representations or mappings are compare
 | counterexample_replay | invariant | `An exported witness records rule, input hashes, exact scope, versions, expected/observed and replay limitations` | [[document.debugger.comparison.layer]] |
 | loss_visibility | invariant | `Loss, unresolved evidence and unexamined coverage cannot be converted into pass by normalization` | [[document.debugger.comparison.layer]] |
 | independent_agreement | invariant | `Two independently implemented readers agree on canonical fixture outputs for declared comparison policies` | [[document.debugger.comparison.layer]] |
+| real_browser_gate | invariant | `Acceptance of the inspect-compare-reopen journey SHALL execute an actual browser and SHALL fail when the browser runtime is unavailable; modeled interaction alone does not satisfy it` | [[document.debugger.comparison.layer]] |
 
 ## Model
 
@@ -46,3 +47,4 @@ statement: "WHEN multiple compatible DSC representations or mappings are compare
 | replay_roundtrip | unit | [[document.debugger.comparison.layer.counterexample_replay]] | `wrong_order_minimal_witness()` | `replayed diagnostic equals exported rule and witness when replayable` |
 | no_loss_as_success | unit | [[document.debugger.comparison.layer.loss_visibility]] | `drop_column_position_and_unknown_coverage()` | `preservation not certified and limitation remains visible` |
 | dual_readers | unit | [[document.debugger.comparison.layer.independent_agreement]] | `pinned_canonical_comparison_fixtures()` | `two independent outputs byte-identical after specified canonicalization` |
+| browser_execution_required | unit | [[document.debugger.comparison.layer.real_browser_gate]] | `journey_acceptance_without_browser_runtime()` | `acceptance fails when browser runtime unavailable; modeled interaction alone insufficient` |

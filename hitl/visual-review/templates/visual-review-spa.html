@@ -58,6 +58,44 @@
   #download { font-size:1rem; padding:.4rem 1rem; }
   #progress { font-size:.85rem; color:#555; margin-left:.6rem; }
   .hint { color:#777; font-size:.8rem; }
+  /* document-structural-debugger journeys (sunset-5bu, sunset-36n, sunset-j1c) */
+  [hidden] { display: none !important; }
+  #mode-verdict, #mode-inspect, #mode-compare { display: contents; }
+  .pane.narrow { max-width:calc(33vw - 1.5rem); }
+  .box.rdr-a { border-color:#6a1b9a; background:rgba(106,27,154,.13); }
+  .box.rdr-a .lbl { color:#6a1b9a; }
+  .box.rdr-b { border-color:#e65100; background:rgba(230,81,0,.13); }
+  .box.rdr-b .lbl { color:#e65100; }
+  /* debugger journeys: region boxes overlap on real sheets, so overlays are
+     pure visual highlights — pointer activation happens on the region rows,
+     never through box hit-testing */
+  #wrap-inspect .box, #wrap-compare-source .box,
+  #wrap-reading-a .box, #wrap-reading-b .box { pointer-events: none; }
+  .region-row { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; margin:.3rem 0;
+                padding:.15rem .3rem; border-radius:.35rem; cursor:pointer; }
+  .region-row:hover { background:#f2f6fc; }
+  .region-row:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+  .region-row.selected { background:#eaf2fc; outline:1px solid var(--accent); }
+  .unmapped { color:var(--unknown); font-size:.8rem; font-weight:600; }
+  .refusal-row { display:flex; gap:.4rem; align-items:baseline; flex-wrap:wrap; margin:.35rem 0;
+                 padding:.25rem .4rem; border:1px dashed var(--bad);
+                 background:rgba(198,40,40,.06); border-radius:.35rem; }
+  .refusal-tag { color:var(--bad); font-weight:700; font-size:.8rem; }
+  .sheet-row { font-size:.85rem; color:#444; margin:.2rem 0; }
+  .comparison-row { margin:.4rem 0; padding:.3rem .4rem; border:1px solid #ddd;
+                    border-radius:.35rem; cursor:pointer; }
+  .comparison-row:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+  .comparison-row.selected { background:#eaf2fc; outline:1px solid var(--accent); }
+  .detail-json { font-size:.75rem; white-space:pre-wrap; word-break:break-all; color:#444;
+                 max-height:9rem; overflow:auto; }
+  #inspect-source-status[data-digest-state] { color:var(--bad); font-weight:600; }
+  #reopen-status { margin-top:.4rem; font-size:.85rem; }
+  #reopen-status[data-state="replayed"] { color:var(--ok); font-weight:600; }
+  #reopen-status[data-state="source-digest-mismatch"],
+  #reopen-status[data-state="not-replayable"],
+  #reopen-status[data-state="source-digest-unavailable"] { color:var(--bad); font-weight:600; }
+  #reopen-status[data-state="invalid-bundle"],
+  #reopen-status[data-state="environment-unavailable"] { color:var(--unknown); font-weight:600; }
 </style>
 </head>
 <body>
@@ -70,7 +108,7 @@
   <button id="resume-restore">Restore</button>
   <button id="resume-discard">Discard and start fresh</button>
 </div>
-<nav>
+<nav id="nav-verdict">
   <span class="navlabel">carriers:</span>
   <span id="carrier-pills"></span>
   <span class="navlabel">pages:</span>
@@ -90,7 +128,33 @@
     <label for="view-overlay">overlay</label>
   </span>
 </nav>
+<nav id="nav-inspect" hidden>
+  <span class="navlabel">carriers:</span>
+  <span id="inspect-carrier-pills"></span>
+  <span class="navlabel">pages:</span>
+  <span id="inspect-page-pills"></span>
+  <span id="inspect-progress"></span>
+  <span class="navlabel">zoom:</span>
+  <span id="inspect-zoombar">
+    <button class="pill zoom active" data-zoom="fit">fit</button>
+    <button class="pill zoom" data-zoom="1">1&times;</button>
+    <button class="pill zoom" data-zoom="2">2&times;</button>
+    <button class="pill zoom" data-zoom="4">4&times;</button>
+  </span>
+</nav>
+<nav id="nav-compare" hidden>
+  <span class="navlabel">pages:</span>
+  <span id="compare-page-pills"></span>
+  <span class="navlabel">zoom:</span>
+  <span id="compare-zoombar">
+    <button class="pill zoom active" data-zoom="fit">fit</button>
+    <button class="pill zoom" data-zoom="1">1&times;</button>
+    <button class="pill zoom" data-zoom="2">2&times;</button>
+    <button class="pill zoom" data-zoom="4">4&times;</button>
+  </span>
+</nav>
 <main>
+  <div id="mode-verdict">
   <div class="pane" id="pane-clean">
     <h2>Page render (pinned)</h2>
     <div class="wrap" id="wrap-clean"></div>
@@ -124,6 +188,87 @@
     its region. Visual comparison judges structure claims only; it establishes
     nothing about text correctness or reading order.</div>
   </aside>
+  </div>
+  <div id="mode-inspect" hidden>
+  <div class="pane" id="inspect-source-pane">
+    <h2>PDF source (pinned render) — imported regions via the recorded page
+    frames · select regions from the list (pointer, arrows / Tab / Enter);
+    boxes are highlights, not click targets</h2>
+    <div class="wrap" id="wrap-inspect"></div>
+    <div class="hint" id="inspect-source-status" aria-live="polite"></div>
+  </div>
+  <aside>
+    <div class="card">
+      <h2>Imported regions <span class="hint">(arrow keys / Tab / Enter move
+      focus; the source highlight follows focus)</span></h2>
+      <div id="inspect-region-list"></div>
+    </div>
+    <div class="card" id="inspect-refusals-card">
+      <h2>Import refusals — typed unresolved entries</h2>
+      <div id="inspect-refusals"></div>
+    </div>
+    <div class="card">
+      <h2>Sheets</h2>
+      <div id="inspect-sheets"></div>
+    </div>
+    <div id="rules">Inspection rules: every imported region renders with its
+    sheet attribution and type provenance (blank and machine-inferred types
+    are labeled, never promoted to human judgment). A region is highlighted
+    on the source only when the pinned source digest, the pinned render and
+    the recorded page frame all verify — otherwise its row carries the typed
+    reason, and every import refusal stays listed as unresolved.</div>
+  </aside>
+  </div>
+  <div id="mode-compare" hidden>
+  <div class="pane narrow" id="compare-source-pane">
+    <h2>PDF source (pinned render)</h2>
+    <div class="wrap" id="wrap-compare-source"></div>
+    <div class="hint" id="compare-source-status" aria-live="polite"></div>
+  </div>
+  <div class="pane narrow" id="reading-pane-a">
+    <h2 id="reading-title-a"></h2>
+    <div class="wrap" id="wrap-reading-a"></div>
+    <div id="reading-list-a"></div>
+  </div>
+  <div class="pane narrow" id="reading-pane-b">
+    <h2 id="reading-title-b"></h2>
+    <div class="wrap" id="wrap-reading-b"></div>
+    <div id="reading-list-b"></div>
+  </div>
+  <aside>
+    <div class="card">
+      <h2>Comparison outcomes <span class="hint">(declared scope · neither
+      side is promoted)</span></h2>
+      <div id="comparison-list"></div>
+      <div class="hint" id="compare-scope-line" style="margin-top:.4rem;"></div>
+    </div>
+    <div class="card">
+      <h2>Export / reopen disagreement</h2>
+      <button id="export-counterexample" class="v">Export counterexample bundle (.json)</button>
+      <div class="hint" id="export-note" style="margin-top:.3rem;">Exports the
+      selected comparison's pinned bundle — built at generation time via
+      export_counterexample + serialize_bundle; source PDF bytes are omitted
+      by default (sha256 digest only).</div>
+      <hr style="border:none;border-top:1px solid #ddd;margin:.6rem 0;">
+      <label style="display:block;">exported bundle (.json)
+        <input type="file" id="reopen-bundle" accept=".json,application/json"></label>
+      <label style="display:block;margin-top:.3rem;">local PDF
+        <input type="file" id="reopen-pdf" accept="application/pdf,.pdf"></label>
+      <button id="reopen-run" class="v" style="margin-top:.4rem;">Reopen with local PDF</button>
+      <div id="reopen-status" role="status" aria-live="polite"></div>
+    </div>
+    <div class="card" id="compare-refusals-card" hidden>
+      <h2>Import refusals</h2>
+      <div id="compare-refusals"></div>
+    </div>
+    <div id="rules">Comparison rules: both readings render as claimed, under
+    the declared observable scope only. Identity across readers is never
+    inferred and neither side is promoted; a missing judgment stays
+    typed unexamined. Reopen replays only after the local PDF's sha256
+    matches the bundle's pinned source digest — a mismatch renders an
+    explicit refusal and no outcome is claimed.</div>
+  </aside>
+  </div>
 </main>
 <script type="application/json" id="review-data">__REVIEW_DATA_ISLAND__</script>
 <script>
@@ -604,9 +749,615 @@ function wireChrome() {
   }
 }
 
-wireChrome();
-wireDrafts();
-renderAll();
+/* -- document-structural-debugger journeys (sunset-5bu, sunset-36n, sunset-j1c) --- */
+
+function renderPillsInto(hostId, labels, activeIndex, onPick) {
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  labels.forEach((label, i) => {
+    host.appendChild(pill(label, i === activeIndex, "", () => onPick(i)));
+  });
+}
+
+function wireZoomBar(barId, rerender) {
+  document.querySelectorAll("#" + barId + " .zoom").forEach(b => {
+    b.addEventListener("click", () => {
+      zoom = b.dataset.zoom;
+      document.querySelectorAll("#" + barId + " .zoom")
+        .forEach(x => x.classList.toggle("active", x === b));
+      rerender();
+    });
+  });
+}
+
+function applyRegionSelection(boxSelectors, rowSelectors, id) {
+  boxSelectors.flatMap(s => [...document.querySelectorAll(s)]).forEach(box => {
+    const on = box.dataset.rid === id;
+    box.classList.toggle("selected", on);
+    if (on) box.scrollIntoView({ block: "nearest" });
+  });
+  rowSelectors.flatMap(s => [...document.querySelectorAll(s)]).forEach(row => {
+    const on = row.dataset.rid === id;
+    row.classList.toggle("selected", on);
+    row.setAttribute("aria-pressed", on ? "true" : "false");
+    if (on) row.scrollIntoView({ block: "nearest" });
+  });
+}
+
+function regionRowKeydown(ev, host, select) {
+  const row = ev.target.closest(".region-row");
+  if (!row) return;
+  if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+    ev.preventDefault();
+    const rows = [...host.querySelectorAll(".region-row")];
+    const i = rows.indexOf(row);
+    const target = ev.key === "ArrowDown" ? rows[i + 1] : rows[i - 1];
+    if (target) target.focus();
+  } else if (ev.key === "Enter" || ev.key === " ") {
+    ev.preventDefault();
+    select(row.dataset.rid);
+  }
+}
+
+function buildImportedRow(r) {
+  const row = document.createElement("div");
+  row.className = "region-row";
+  row.tabIndex = 0;
+  row.setAttribute("role", "button");
+  row.setAttribute("aria-pressed", "false");
+  row.dataset.rid = r.region_id;
+  row.dataset.provenance = r.type_provenance || "unknown";
+  row.dataset.reader = r.reader || "";
+  const id = document.createElement("span");
+  id.className = "rid";
+  id.textContent = r.region_id;
+  row.appendChild(id);
+  const rdr = document.createElement("span");
+  rdr.className = "badge";
+  rdr.textContent = r.reader || "unattributed";
+  row.appendChild(rdr);
+  const typ = document.createElement("span");
+  typ.className = "exp";
+  typ.textContent = "type: " + (String(r.type || "").trim() || "—") +
+    " · provenance: " + (r.type_provenance || "unknown") +
+    " · rank: " + (r.order_rank === null || r.order_rank === undefined ? "—" : r.order_rank);
+  row.appendChild(typ);
+  if (r.evidence) {
+    const evEl = document.createElement("span");
+    evEl.className = "exp";
+    evEl.textContent = r.evidence;
+    row.appendChild(evEl);
+  }
+  if (!r.rect_px) {
+    const warn = document.createElement("span");
+    warn.className = "unmapped";
+    warn.textContent = "unmapped — " + (r.unmapped_reason || "no highlight derivable");
+    row.appendChild(warn);
+  }
+  return row;
+}
+
+function buildRefusalRow(ref) {
+  const row = document.createElement("div");
+  row.className = "refusal-row";
+  row.dataset.refusalReason = ref.reason;
+  row.dataset.regionKey = ref.region_key;
+  row.setAttribute("role", "status");
+  const tag = document.createElement("span");
+  tag.className = "refusal-tag";
+  tag.textContent = "REFUSAL · " + ref.reason + " · unresolved";
+  row.appendChild(tag);
+  const detail = document.createElement("span");
+  detail.className = "exp";
+  detail.textContent = ref.region_key + " — " + ref.detail;
+  row.appendChild(detail);
+  return row;
+}
+
+function drawRegionBoxes(wrap, pageRecord, regions, boxClass, labelText) {
+  (regions || []).forEach(r => {
+    if (!r.rect_px) return;
+    const el = document.createElement("div");
+    el.className = "box" + (boxClass ? " " + boxClass : "");
+    el.dataset.rid = r.region_id;
+    el.dataset.rect = JSON.stringify(r.rect_px);
+    el.dataset.reader = r.reader || "";
+    applyBox(el, pctBox(r.rect_px, pageRecord));
+    const lbl = document.createElement("span");
+    lbl.className = "lbl";
+    lbl.textContent = labelText(r);
+    el.appendChild(lbl);
+    wrap.appendChild(el);
+  });
+}
+
+/* -- sunset-5bu: source-linked inspection -- */
+
+let inspectSelectedId = null;
+
+function selectInspect(id) {
+  inspectSelectedId = id;
+  applyRegionSelection(["#wrap-inspect .box"],
+                       ["#inspect-region-list .region-row"], id);
+}
+
+function renderInspect() {
+  const c = DATA.carriers[cur.c];
+  renderPillsInto("inspect-carrier-pills", DATA.carriers.map(x => x.carrier),
+                  cur.c, i => { cur = { c: i, p: 0 }; renderInspect(); });
+  renderPillsInto("inspect-page-pills", c.pages.map(p => "page " + p.page),
+                  cur.p, i => { cur.p = i; renderInspect(); });
+  const p = c.pages[cur.p] || null;
+  const wrap = document.getElementById("wrap-inspect");
+  wrap.innerHTML = "";
+  if (p && p.image) {
+    const img = imageFor(p);
+    applyZoom(img, p);
+    wrap.appendChild(img);
+  }
+  const status = document.getElementById("inspect-source-status");
+  const mismatch = c.source_digest_mismatch || [];
+  if (mismatch.length) {
+    status.dataset.digestState = "source-digest-mismatch";
+    status.textContent = "SOURCE DIGEST MISMATCH — highlights refused: " +
+      mismatch.map(m => "sheet " + m.sheet_id + " pins " + m.expected +
+                        ", bundled source hashes " + (m.actual || "unavailable")).join("; ");
+  } else {
+    delete status.dataset.digestState;
+    status.textContent = (p && p.unavailable) ? "status: " + p.unavailable : "";
+  }
+  if (p) drawRegionBoxes(wrap, p, p.regions, "",
+                         r => r.region_id + " · " + (r.type_provenance || "?"));
+  const host = document.getElementById("inspect-region-list");
+  host.innerHTML = "";
+  if (p) (p.regions || []).forEach(r => host.appendChild(buildImportedRow(r)));
+  const rhost = document.getElementById("inspect-refusals");
+  rhost.innerHTML = "";
+  (c.refusals || []).forEach(ref => rhost.appendChild(buildRefusalRow(ref)));
+  document.getElementById("inspect-refusals-card").hidden = !(c.refusals || []).length;
+  const shost = document.getElementById("inspect-sheets");
+  shost.innerHTML = "";
+  (c.sheets || []).forEach(s => {
+    const div = document.createElement("div");
+    div.className = "sheet-row";
+    div.textContent = s.sheet_id + " · reader " + (s.reader || "?") +
+      " · pinned source sha256 " +
+      (s.source_sha256 ? s.source_sha256.slice(0, 12) + "…" : "none") +
+      " · page frames recorded: " + Object.keys(s.page_frames || {}).join(", ");
+    shost.appendChild(div);
+  });
+  document.getElementById("inspect-progress").textContent =
+    (p ? (p.regions || []).length + " regions on page " + p.page
+       : "no claimed pages") +
+    " · " + (c.refusals || []).length + " unresolved import refusals";
+  applyRegionSelection(["#wrap-inspect .box"],
+                       ["#inspect-region-list .region-row"], inspectSelectedId);
+}
+
+function bootInspect() {
+  document.getElementById("nav-verdict").hidden = true;
+  document.getElementById("mode-verdict").hidden = true;
+  document.getElementById("nav-inspect").hidden = false;
+  document.getElementById("mode-inspect").hidden = false;
+  const c = DATA.carriers[0];
+  document.getElementById("carrier-name").textContent =
+    "— " + c.carrier + " (source-linked inspection)";
+  document.getElementById("evidence-badge").textContent = c.evidence_class + " evidence";
+  document.getElementById("meta-line").textContent =
+    "source: " + c.source_file + " · sha256 " + (c.source_sha256 || "unavailable") +
+    " · sheets: " + c.sheets.map(s => s.sheet_id).join(", ");
+  const host = document.getElementById("inspect-region-list");
+  const wrap = document.getElementById("wrap-inspect");
+  host.addEventListener("click", ev => {
+    const row = ev.target.closest(".region-row");
+    if (row) selectInspect(row.dataset.rid);
+  });
+  host.addEventListener("keydown", ev => regionRowKeydown(ev, host, selectInspect));
+  host.addEventListener("focusin", ev => {
+    const row = ev.target.closest(".region-row");
+    if (row && row.dataset.rid !== inspectSelectedId) selectInspect(row.dataset.rid);
+  });
+  wireZoomBar("inspect-zoombar", renderInspect);
+  window.__INSPECT__ = {
+    select: selectInspect,
+    selected: () => inspectSelectedId,
+    selectedRect: () => {
+      const b = wrap.querySelector(".box.selected");
+      return b ? JSON.parse(b.dataset.rect) : null;
+    },
+  };
+  renderInspect();
+}
+
+/* -- sunset-36n / sunset-j1c: attributed A/B comparison + export/reopen -- */
+
+let compareSelectedId = null;
+let selectedComparisonPage = null;
+
+function selectCompare(id) {
+  compareSelectedId = id;
+  applyRegionSelection(["#wrap-reading-a .box", "#wrap-reading-b .box"],
+                       ["#reading-list-a .region-row", "#reading-list-b .region-row"], id);
+}
+
+function selectComparison(pageValue) {
+  selectedComparisonPage = pageValue;
+  document.querySelectorAll(".comparison-row").forEach(row => {
+    const on = String(row.dataset.page) === String(pageValue);
+    row.classList.toggle("selected", on);
+    row.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  if (window.__COMPARE__) window.__COMPARE__.selectedPage = pageValue;
+}
+
+function renderComparisonList() {
+  const host = document.getElementById("comparison-list");
+  host.innerHTML = "";
+  (DATA.comparisons || []).forEach(cmp => {
+    const row = document.createElement("div");
+    row.className = "comparison-row";
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.dataset.page = cmp.page;
+    row.dataset.outcome = cmp.outcome;
+    row.dataset.witness = cmp.witness || "";
+    row.dataset.ruleId = cmp.rule_id;
+    if (cmp.missing_reading) row.dataset.missingReading = cmp.missing_reading;
+    const head = document.createElement("span");
+    head.className = "rid";
+    head.textContent = "page " + cmp.page + " · " + cmp.outcome;
+    row.appendChild(head);
+    const rule = document.createElement("span");
+    rule.className = "exp";
+    rule.textContent = cmp.rule_id + " · witness " + (cmp.witness ?? "none");
+    row.appendChild(rule);
+    if (cmp.missing_reading) {
+      const miss = document.createElement("span");
+      miss.className = "unmapped";
+      miss.textContent = "missing reading: " + cmp.missing_reading;
+      row.appendChild(miss);
+    }
+    const msg = document.createElement("div");
+    msg.className = "exp";
+    msg.textContent = cmp.message;
+    row.appendChild(msg);
+    const det = document.createElement("details");
+    const sum = document.createElement("summary");
+    sum.textContent = "expected / observed";
+    det.appendChild(sum);
+    const pre = document.createElement("pre");
+    pre.className = "detail-json";
+    pre.textContent = JSON.stringify(
+      { expected: cmp.expected, observed: cmp.observed }, null, 1);
+    det.appendChild(pre);
+    row.appendChild(det);
+    if (String(cmp.page) === String(selectedComparisonPage)) {
+      row.classList.add("selected");
+      row.setAttribute("aria-selected", "true");
+    }
+    host.appendChild(row);
+  });
+  document.getElementById("compare-scope-line").textContent =
+    "comparator " + DATA.spec.comparator_id + "@" + DATA.spec.version +
+    " · scope: " + DATA.spec.observable_scope.join(", ") +
+    " · endpoints: " + DATA.spec.input_types.join(" vs ");
+  const refusals = DATA.import_refusals || [];
+  const rhost = document.getElementById("compare-refusals");
+  rhost.innerHTML = "";
+  refusals.forEach(ref => rhost.appendChild(buildRefusalRow(ref)));
+  document.getElementById("compare-refusals-card").hidden = !refusals.length;
+}
+
+function renderCompare() {
+  const pages = DATA.source_pages || [];
+  renderPillsInto("compare-page-pills", pages.map(p => "page " + p.page),
+                  cur.p, i => { cur.p = i; renderCompare(); });
+  const p = pages[cur.p] || { regions: [] };
+  const swrap = document.getElementById("wrap-compare-source");
+  swrap.innerHTML = "";
+  if (p.image) {
+    const img = imageFor(p);
+    applyZoom(img, p);
+    swrap.appendChild(img);
+  }
+  document.getElementById("compare-source-status").textContent =
+    p.unavailable ? "status: " + p.unavailable : "";
+  DATA.readings.forEach((reading, i) => {
+    const side = "ab"[i];
+    const wrap = document.getElementById("wrap-reading-" + side);
+    const list = document.getElementById("reading-list-" + side);
+    wrap.innerHTML = "";
+    list.innerHTML = "";
+    document.getElementById("reading-title-" + side).textContent =
+      reading.reader + " — sheets: " + reading.sheet_ids.join(", ");
+    const pageEntry = reading.pages.find(pg => pg.page === p.page) || { regions: [] };
+    pageEntry.regions.forEach(r => {
+      if (r.rect_px) {
+        drawRegionBoxes(wrap, p, [r], "rdr-" + side,
+          x => reading.reader + " · " + x.region_id + " · " +
+               (x.type_provenance || "?"));
+      }
+      list.appendChild(buildImportedRow(r));
+    });
+    if (!pageEntry.regions.length) {
+      const none = document.createElement("div");
+      none.className = "exp";
+      none.textContent = "no recorded claims on page " + p.page +
+        " — absence stays typed unexamined, never agreement";
+      list.appendChild(none);
+    }
+  });
+  renderComparisonList();
+  applyRegionSelection(["#wrap-reading-a .box", "#wrap-reading-b .box"],
+                       ["#reading-list-a .region-row", "#reading-list-b .region-row"],
+                       compareSelectedId);
+}
+
+function downloadText(name, text, type) {
+  const blob = new Blob([text], { type: type });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+/* Offline mirror of dsc03/compare.py scoped_compare + replay (document-debugger
+   comparison spec): the SPA runs without a Python runtime, so reopen mirrors
+   the canonical semantics here. The canonical path is
+   review.reopen_counterexample (dsc03.compare.load_bundle + replay); the
+   sunset-j1c browser journey pins this mirror to the same typed outcomes. */
+function canonicalJson(value) {
+  if (Array.isArray(value)) return "[" + value.map(canonicalJson).join(",") + "]";
+  if (value && typeof value === "object") {
+    return "{" + Object.keys(value).sort()
+      .map(k => JSON.stringify(k) + ":" + canonicalJson(value[k])).join(",") + "}";
+  }
+  return JSON.stringify(value);
+}
+
+function jsScopedCompare(spec, left, right) {
+  if (!spec) {
+    return { outcome: "unsupported", rule_id: "dbg.compare.scope.unsupported",
+             witness: "comparator",
+             message: "no comparator declared; comparison refused" };
+  }
+  if (left.endpoint_type !== spec.input_types[0] ||
+      right.endpoint_type !== spec.input_types[1]) {
+    return { outcome: "unsupported", rule_id: "dbg.compare.scope.unsupported",
+             witness: left.endpoint_type + "->" + right.endpoint_type,
+             message: "endpoint types incompatible with declared comparator inputs" };
+  }
+  const lp = left.payload || {}, rp = right.payload || {};
+  for (const key of spec.observable_scope) {
+    if (!(key in lp) && !(key in rp)) {
+      return { outcome: "unexamined", rule_id: "dbg.compare.unexamined",
+               witness: key,
+               message: "observable scope key " + JSON.stringify(key) +
+                        " not examined on either endpoint" };
+    }
+  }
+  if (spec.observable_scope.includes("sign_column_positions")) {
+    const ls = lp.sign_column_positions, rs = rp.sign_column_positions;
+    if (canonicalJson(ls) !== canonicalJson(rs)) {
+      const differing = [...new Set([...Object.keys(ls || {}),
+                                     ...Object.keys(rs || {})])]
+        .filter(k => canonicalJson((ls || {})[k]) !== canonicalJson((rs || {})[k]))
+        .sort();
+      return { outcome: "different", rule_id: "dbg.compare.sign.loss",
+               witness: differing.length ? "sign_column:" + differing[0]
+                                         : "sign_column_positions",
+               message: "cannot certify sign preservation from flattened text",
+               details: { loss: "sign preservation not certified",
+                          expected: ls, observed: rs,
+                          scope: [...spec.observable_scope] } };
+    }
+  }
+  const lt = lp.flattened_text || "", rt = rp.flattened_text || "";
+  if (lt !== rt) {
+    let idx = null;
+    const n = Math.min(lt.length, rt.length);
+    for (let i = 0; i < n; i++) {
+      if (lt[i] !== rt[i]) { idx = i; break; }
+    }
+    if (idx === null) idx = n;
+    return { outcome: "different", rule_id: "dbg.compare.text.different",
+             witness: "char:" + idx, message: "flattened text differs",
+             details: { expected: lt, observed: rt } };
+  }
+  if (canonicalJson(lp) === canonicalJson(rp)) {
+    return { outcome: "equivalent", rule_id: "dbg.compare.equivalent",
+             witness: "payload", message: "all scoped observables equivalent" };
+  }
+  for (const key of spec.observable_scope) {
+    const lv = key in lp ? lp[key] : null;
+    const rv = key in rp ? rp[key] : null;
+    if (canonicalJson(lv) !== canonicalJson(rv)) {
+      return { outcome: "different", rule_id: "dbg.compare.text.different",
+               witness: key,
+               message: "scoped observable " + JSON.stringify(key) + " differs",
+               details: { expected: lv, observed: rv } };
+    }
+  }
+  return { outcome: "different", rule_id: "dbg.compare.text.different",
+           witness: "payload", message: "payloads differ outside declared scope",
+           details: { expected: lp, observed: rp } };
+}
+
+function jsReplay(bundle) {
+  const witness = bundle.witness || {};
+  if (witness.replayable === false) {
+    throw new Error("not replayable: " +
+      (witness.replay_limitations || ["redacted"]).join("; "));
+  }
+  const spec = {
+    comparator_id: (witness.comparator || {}).id,
+    version: (witness.comparator || {}).version,
+    input_types: witness.endpoint_types || [],
+    observable_scope: witness.observable_scope || [],
+  };
+  const asInput = d => ({ endpoint_type: (d || {}).endpoint_type,
+                          payload: (d || {}).payload });
+  return jsScopedCompare(spec, asInput((bundle.inputs || {}).left),
+                         asInput((bundle.inputs || {}).right));
+}
+
+async function sha256Hex(buffer) {
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+const REOPEN_LABELS = {
+  "replayed": "REPLAYED",
+  "source-digest-mismatch": "SOURCE MISMATCH — replay refused",
+  "not-replayable": "NOT REPLAYABLE — replay refused",
+  "source-digest-unavailable": "SOURCE UNVERIFIABLE — replay refused",
+  "invalid-bundle": "INVALID BUNDLE",
+  "environment-unavailable": "ENVIRONMENT UNAVAILABLE — digest cannot be computed",
+};
+
+function setReopenState(state, text) {
+  const el = document.getElementById("reopen-status");
+  el.dataset.state = state;
+  el.textContent = (REOPEN_LABELS[state] || state) + " · " + text;
+  if (window.__COMPARE__) window.__COMPARE__.replayState = { state: state, text: text };
+}
+
+async function runReopen() {
+  const bundleFile = document.getElementById("reopen-bundle").files[0];
+  const pdfFile = document.getElementById("reopen-pdf").files[0];
+  if (!bundleFile || !pdfFile) {
+    setReopenState("invalid-bundle",
+      "select both the exported counterexample bundle and the local PDF");
+    return;
+  }
+  let bundle;
+  try {
+    bundle = JSON.parse(await bundleFile.text());   /* load_bundle semantics */
+  } catch (err) {
+    setReopenState("invalid-bundle", "bundle file is not valid JSON: " + err.message);
+    return;
+  }
+  const witness = bundle.witness || {};
+  if (witness.replayable === false) {
+    setReopenState("not-replayable",
+      "bundle for " + (witness.rule_id || "?") + " is not replayable: " +
+      (witness.replay_limitations || ["redacted"]).join("; "));
+    return;
+  }
+  const inputs = bundle.inputs || {};
+  const pinned = [(inputs.left || {}).source_sha256,
+                  (inputs.right || {}).source_sha256].filter(Boolean);
+  if (!pinned.length) {
+    setReopenState("source-digest-unavailable",
+      "bundle pins no source digest — refusing to replay against an unverified local PDF");
+    return;
+  }
+  if (!window.crypto || !crypto.subtle) {
+    setReopenState("environment-unavailable",
+      "WebCrypto (crypto.subtle) unavailable; cannot verify the local PDF digest");
+    return;
+  }
+  const digest = await sha256Hex(await pdfFile.arrayBuffer());
+  if (!pinned.includes(digest)) {
+    setReopenState("source-digest-mismatch",
+      "local PDF sha256 " + digest + " does not match the bundle's pinned " +
+      "source digest " + pinned.join(" / ") + " — no outcome is claimed");
+    return;
+  }
+  let outcome;
+  try {
+    outcome = jsReplay(bundle);
+  } catch (err) {
+    setReopenState("not-replayable", err.message);
+    return;
+  }
+  const matches = outcome.outcome === witness.outcome;
+  setReopenState("replayed",
+    outcome.outcome + " (rule " + outcome.rule_id + ", witness " +
+    (outcome.witness ?? "none") + ") — " +
+    (matches ? "matches the exported disagreement"
+             : "DIFFERS from the exported outcome (" + witness.outcome + ")") +
+    " · locus: source sha256 " + digest.slice(0, 12) + "… · witness " +
+    (outcome.witness ?? "none"));
+}
+
+function onExportClicked() {
+  const note = document.getElementById("export-note");
+  const counterexamples = DATA.counterexamples || [];
+  if (!counterexamples.length) {
+    note.textContent = "no counterexample: every recorded comparison is equivalent — nothing to export";
+    return;
+  }
+  const target = counterexamples.find(c => String(c.page) === String(selectedComparisonPage)) ||
+                 counterexamples[0];
+  downloadText("counterexample-" + DATA.carrier + "-page-" + target.page + ".json",
+               target.serialized, "application/json");
+  note.textContent = "exported pinned counterexample for page " + target.page +
+    " (rule " + target.rule_id + ", outcome " + target.outcome +
+    ") — pinned at build time via export_counterexample + serialize_bundle; " +
+    "source PDF bytes are omitted by default (sha256 digest only)";
+}
+
+function bootCompare() {
+  document.getElementById("nav-verdict").hidden = true;
+  document.getElementById("mode-verdict").hidden = true;
+  document.getElementById("nav-compare").hidden = false;
+  document.getElementById("mode-compare").hidden = false;
+  document.getElementById("carrier-name").textContent =
+    "— " + DATA.carrier + " (A/B attributed comparison)";
+  document.getElementById("evidence-badge").textContent = DATA.evidence_class + " evidence";
+  document.getElementById("meta-line").textContent =
+    "source: " + DATA.source_file + " · sha256 " + (DATA.source_sha256 || "unavailable") +
+    " · readings: " + DATA.readings.map(r => r.reader).join(" vs ");
+  window.__COMPARE__ = { replayState: null, selectedPage: null };
+  const firstCounterexample = (DATA.counterexamples || [])[0];
+  const firstComparison = (DATA.comparisons || [])[0];
+  selectedComparisonPage = firstCounterexample ? firstCounterexample.page
+                            : (firstComparison ? firstComparison.page : null);
+  document.getElementById("export-counterexample")
+    .addEventListener("click", onExportClicked);
+  document.getElementById("reopen-run")
+    .addEventListener("click", () => { runReopen(); });
+  const chost = document.getElementById("comparison-list");
+  chost.addEventListener("click", ev => {
+    const row = ev.target.closest(".comparison-row");
+    if (row) selectComparison(row.dataset.page);
+  });
+  chost.addEventListener("keydown", ev => {
+    const row = ev.target.closest(".comparison-row");
+    if (row && (ev.key === "Enter" || ev.key === " ")) {
+      ev.preventDefault();
+      selectComparison(row.dataset.page);
+    }
+  });
+  ["#reading-list-a", "#reading-list-b"].forEach(sel => {
+    const host = document.querySelector(sel);
+    host.addEventListener("click", ev => {
+      const row = ev.target.closest(".region-row");
+      if (row) selectCompare(row.dataset.rid);
+    });
+    host.addEventListener("keydown", ev => regionRowKeydown(ev, host, selectCompare));
+    host.addEventListener("focusin", ev => {
+      const row = ev.target.closest(".region-row");
+      if (row && row.dataset.rid !== compareSelectedId) selectCompare(row.dataset.rid);
+    });
+  });
+  wireZoomBar("compare-zoombar", renderCompare);
+  renderCompare();
+}
+
+const MODE = DATA.mode || "verdict";
+if (MODE === "verdict") {
+  wireChrome();
+  wireDrafts();
+  renderAll();
+} else if (MODE === "import-inspection") {
+  bootInspect();
+} else if (MODE === "ab-comparison") {
+  bootCompare();
+}
 </script>
 </body>
 </html>

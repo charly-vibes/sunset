@@ -15,6 +15,7 @@ statement: "WHEN a reader inspects a DSC description with a source document, THE
 | typed_diagnostics | invariant | `Check results distinguish validated violation, review/dispute, unsupported and unexamined; every violation links to its rule and smallest available witness` | [[document.debugger.layer]] |
 | evidence_truth_boundary | invariant | `Human or extractor annotations are attributed claims and not automatically semantically true` | [[document.debugger.layer]] |
 | accessibility | invariant | `All inspector actions are keyboard operable with non-color status labels` | [[document.debugger.layer]] |
+| real_browser_gate | invariant | `Acceptance of the executable PDF inspection journey SHALL execute an actual browser and SHALL fail when the browser runtime is unavailable; modeled interaction alone does not satisfy it` | [[document.debugger.layer]] |
 
 ## Model
 
@@ -46,3 +47,4 @@ statement: "WHEN a reader inspects a DSC description with a source document, THE
 | witnessed_failure | unit | [[document.debugger.layer.typed_diagnostics]] | `cycle_and_bad_reference_fixtures()` | `correct stable rule IDs and minimal available witness emitted` |
 | no_truth_inference | unit | [[document.debugger.layer.evidence_truth_boundary]] | `two_conflicting_extractor_claims()` | `both claims retained with attribution and no automatic winner` |
 | keyboard_navigation | unit | [[document.debugger.layer.accessibility]] | `keyboard_only_selection_flow()` | `every inspected detail reachable without pointer` |
+| browser_execution_required | unit | [[document.debugger.layer.real_browser_gate]] | `journey_acceptance_without_browser_runtime()` | `acceptance fails when browser runtime unavailable; modeled interaction alone insufficient` |
