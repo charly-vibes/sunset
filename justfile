@@ -18,11 +18,18 @@ python := env_var_or_default("SUNSET_PYTHON", ".venv/bin/python")
 pages_py := 'import json,sys; print(",".join(sorted(json.load(open(sys.argv[1]))["pages"], key=int)))'
 
 # Run all spec-corpus gates (OpenSpec strict validation + frozen 0.2 validator)
+layer_dirs := `find openspec/specs -mindepth 1 -maxdepth 1 -type d | wc -l`
+layer_files := `find openspec/specs -mindepth 2 -maxdepth 2 -name layer.md | wc -l`
+
+# SSOT parity (rule-of-5 CORR-003/EDGE-003): every deployed capability must
+# carry a specodelic layer sidecar; spk lint alone passes vacuously without one.
 spec-check:
     @echo "==> spk lint (Specodelic layer of openspec/changes, incl. archive)"
     spk lint openspec/changes
     @echo "==> spk lint (Specodelic layer of deployed specs)"
     spk lint openspec/specs
+    @echo "==> layer parity guard (every deployed capability carries a layer sidecar)"
+    @test "{{layer_files}}" -eq "{{layer_dirs}}" || { echo "FAIL: a capability directory under openspec/specs lacks layer.md (spk lint passes vacuously without one)" >&2; exit 1; }
     @echo "==> full test suite (pytest tests)"
     {{python}} -B -m pytest tests -q
     @echo "==> frozen 0.2 reference validator"

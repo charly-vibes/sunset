@@ -118,6 +118,14 @@ preserved as received under `spec/document-model-specodelic-v3/` (except its
 - Spec edits: `openspec validate --specs --strict` must pass
   (8 capabilities as of 2026-11-03, when `document-visual-oracles` was
   deployed from the archived change `2026-11-03-add-raster-visual-oracles`).
+- Specodelic layers: each capability directory also carries a `layer.md`
+  sidecar (Intent/Constraints/Model/Properties) — an additive, lint-checked
+  **view** of the deployed requirements, never a second truth: `spec.md`
+  stays byte-plain and normative. When a delta changes requirements, the
+  layer rides the change flow (`spk migrate` wrap → `archive-companion`
+  deploys the updated sidecar); don't hand-edit layers against `main`.
+  Every capability directory must carry one — `just spec-check` fails on
+  parity break (`spk lint` alone passes vacuously without a layer).
 - The 0.3 executable machinery lives in `dsc03/` with tests under
   `tests/tracer/` (gate: `just spec-check`). Note: the scripted machinery and
   its reviews were agent-executed — recorded deviations; a human pass
@@ -142,6 +150,8 @@ Rules when touching the bundle:
 
 - Issues: `bd ready` / `bd show <id>` / `bd update <id> --claim` / `bd close <id>`
 - Notes: `.org` format
+- Orientation precedence: `podras brief --json` (what's happening now) →
+  `wai status` (workflow why/state) → `turu recall` (session memory)
 - Fleet conventions: [dulce-de-leche standardization](https://github.com/charly-vibes/dulce-de-leche/blob/main/docs/standardization.md)
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:46cd31e7 -->

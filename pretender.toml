@@ -2,7 +2,8 @@
 mode = "gate"
 languages = ["auto"]
 exclude = ["vendor/**", "node_modules/**", "**/*_generated.*",
-  ".wai/**", ".whisper/**", ".beads/**", ".visual-review/**"]
+  ".wai/**", ".whisper/**", ".beads/**", ".podras/**", ".kaya/**",
+  ".visual-review/**"]
 
 [roles.test]
 paths = ["tests/**", "**/*_test.*", "spec/**"]

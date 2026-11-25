@@ -32,7 +32,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # --- canonical pins (mirrored by tests/tracer/env_pins.py) ---------------
+  # --- canonical pins (asserted by the verify step below; tests/tracer/env_pins.py
+  # --- mirrors the native toolchain subset: poppler/tesseract/OCR/playwright) ---
   SUNSET_POPPLER_VERSION: "26.01.0"
   SUNSET_POPPLER_SHA256: "1cb944a4b88847f5fb6551683bc799db59f04990f5d8be07aba2acbf38601089"
   # Ubuntu 24.04 archive default tesseract (verified 2026-11-24); the spa

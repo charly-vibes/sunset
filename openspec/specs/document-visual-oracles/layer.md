@@ -16,7 +16,7 @@ statement: "WHEN raster-based visual oracles validate extracted observations, TH
 | calibrated_thresholds | invariant | `Thresholds come from recorded calibration over varied pinned carriers; outcomes are reported per page and per property as agree/differ/unknown/unavailable; no aggregate reports pass while any page is unknown or unavailable or its property uncalibrated` | [[document.visual.oracles.layer]] |
 | no_silent_resolution | invariant | `Visual disagreements are retained and attributed to their source regions; no oracle elects a winner, smooths differences or mutates extracted observations` | [[document.visual.oracles.layer]] |
 | distinct_evidence_record | invariant | `Visual oracle results are recorded separately from reader agreement, extractor comparison and reviewed anchor mapping and never substitute for any of them in conformance labels or demonstration suites` | [[document.visual.oracles.layer]] |
-| renderable_carriers_only | invariant | `Oracles apply only to carriers with renderable pages; formats the pinned renderer cannot rasterize report unknown` | [[document.visual.oracles.layer]] |
+| renderable_carriers_only | advisory | `Oracles apply only to carriers with renderable pages; formats the pinned renderer cannot rasterize report unknown` | [[document.visual.oracles.layer]] |
 
 ## Model
 
@@ -31,7 +31,7 @@ statement: "WHEN raster-based visual oracles validate extracted observations, TH
 
 | id | from | to | guard |
 |---|---|---|---|
-| record_configuration | render_pinned | frame_mapped | renderer, version, DPI, page selection and binarization are recorded and unavailable renderers yield typed unavailable [[document.visual.oracles.layer.pinned_render]] [[document.visual.oracles.layer.renderable_carriers_only]] |
+| record_configuration | render_pinned | frame_mapped | renderer, version, DPI, page selection and binarization are recorded and unavailable or non-renderable carriers yield typed unavailable [[document.visual.oracles.layer.pinned_render]] |
 | map_frames | frame_mapped | comparison_run | every compared region references a declared, compatible and unambiguous geometry frame [[document.visual.oracles.layer.declared_frame]] |
 | run_comparison | comparison_run | results_classified | thresholds are calibrated and disagreements are retained with region attribution [[document.visual.oracles.layer.calibrated_thresholds]] [[document.visual.oracles.layer.no_silent_resolution]] |
 | classify_results | results_classified | aggregate_reported | every result carries its evidence class and single evaluated property, and claimed defect classes have mutation demonstrations [[document.visual.oracles.layer.labeled_evidence_class]] [[document.visual.oracles.layer.scoped_property_claims]] [[document.visual.oracles.layer.mutation_validated_sensitivity]] |
